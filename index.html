@@ -163,6 +163,45 @@ td.mu{color:var(--mu);font-style:italic;}
 .thr{height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;}
 .thf{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gl),var(--gl2));transition:width .7s ease;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(201,168,76,.18);border-radius:2px;}
+
+/* ═══ RESPONSIVE MOBILE ═══ */
+@media (max-width: 768px) {
+  :root{--sw:0px;}
+  .sb{transform:translateX(-244px);transition:transform .3s ease;width:244px;}
+  .sb.open{transform:translateX(0);box-shadow:4px 0 30px rgba(0,0,0,.5);}
+  .mn{margin-left:0;}
+  .tb{padding:12px 16px;}
+  .tbt{font-size:17px;}
+  .tbs{display:none;}
+  .avb{padding:8px 16px;font-size:10px;}
+  .ct{padding:14px;}
+  .ks{grid-template-columns:1fr 1fr;gap:8px;}
+  .kp{padding:12px 10px;}
+  .kpv{font-size:20px;}
+  .g2{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr;}
+  .g4{grid-template-columns:1fr 1fr;}
+  .fr{grid-template-columns:1fr;}
+  .tw{font-size:11px;}
+  thead th{padding:8px 8px;font-size:9px;}
+  tbody td{padding:7px 8px;font-size:11px;}
+  .cd{border-radius:10px;}
+  .cdb{padding:12px 14px;}
+  .mdl{width:95vw;margin:10px;}
+  .mb{padding:14px 16px;}
+  .mh{padding:14px 16px 12px;}
+  .mf{padding:10px 16px;}
+  /* Overlay quando sidebar aberta */
+  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;}
+  .sb-overlay.show{display:block;}
+  /* Botão hamburger */
+  .hamburger{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(201,168,76,.1);border:1px solid var(--bd);border-radius:8px;cursor:pointer;flex-shrink:0;}
+  .hamburger span{font-size:18px;color:var(--gl);}
+}
+@media (min-width:769px){
+  .hamburger{display:none;}
+  .sb-overlay{display:none!important;}
+}
 </style></head><body>
 
 <div id="ls">
@@ -218,8 +257,12 @@ td.mu{color:var(--mu);font-style:italic;}
   </div>
 </nav>
 <div class="mn">
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSb()"></div>
   <div class="tb">
-    <div><div class="tbt" id="pgt">Dashboard</div><div class="tbs">SWC Vizela 2026 · Seniors World Championship · 14–17 Outubro</div></div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="hamburger" onclick="toggleSb()"><span>☰</span></div>
+      <div><div class="tbt" id="pgt">Dashboard</div><div class="tbs">SWC Vizela 2026 · Seniors World Championship · 14–17 Outubro</div></div>
+    </div>
     <div class="tbd" id="clk"></div>
   </div>
   <div class="avb">⚠ <strong>Nota fundamental:</strong> Todos os valores financeiros são meramente indicativos e de referência histórica. Cada rubrica deve ser preenchida com valores reais confirmados pelos órgãos competentes — WMF, EMF, FPM, CM Vizela e Vizelgolfe.</div>
@@ -715,6 +758,7 @@ function setAdminBars(){
 function nav(el,id,title){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
   document.querySelectorAll('.si').forEach(s=>s.classList.remove('act'));
+  closeSb();
   document.getElementById('pg-'+id).classList.add('act');
   el.classList.add('act');
   document.getElementById('pgt').textContent=title;
@@ -1232,6 +1276,18 @@ function loadChk(){
   });
 }
 
+// ═══ SIDEBAR MOBILE ═══
+function toggleSb(){
+  const sb=document.querySelector('.sb');
+  const ov=document.getElementById('sb-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSb(){
+  document.querySelector('.sb').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('show');
+}
+
 // ═══ EXPOR FUNÇÕES AO HTML ═══
 window.doLogin=doLogin;
 window.doLogout=doLogout;
@@ -1268,5 +1324,7 @@ window.delInv=delInv;
 window.renderBal=renderBal;
 window.renderDR=renderDR;
 window.renderChk=renderChk;
+window.toggleSb=toggleSb;
+window.closeSb=closeSb;
 window.updateChkStatus=updateChkStatus;
 </script></body></html>

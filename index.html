@@ -514,7 +514,6 @@ td.mu{color:var(--mu);font-style:italic;}
 </div>
 <div class="tw"><table><thead><tr><th>Conta SNC</th><th>Descrição</th><th>Déb. Mês</th><th>Cré. Mês</th><th>Saldo Mês</th><th>Déb. Acum.</th><th>Cré. Acum.</th><th>Saldo Acum.</th></tr></thead>
 <tbody id="t-bal"><tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem dados para o período</td></tr></tbody></table></div>
-<div style="margin-top:10px;font-size:11px;color:var(--mu);text-align:right;font-style:italic;">© Rui Gonçalves — Contabilista Certificado — Inscrito na OCC 46003</div>
 </div>
 
 <!-- DR -->
@@ -532,7 +531,6 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="sd">Ativo · Passivo · Capital Próprio · Quadratura absoluta garantida — Total Ativo = Passivo + CP</div>
 <div class="bb"><button class="btn bo" onclick="exportBalanco()">Exportar PDF</button></div>
 <div id="bal-ct"></div>
-<div style="margin-top:10px;font-size:11px;color:var(--mu);text-align:right;font-style:italic;">© Rui Gonçalves — Contabilista Certificado — Inscrito na OCC 46003</div>
 </div>
 
 <!-- IPDJ -->
@@ -1070,7 +1068,7 @@ function renderDR(){
   const res=tR-tD;const L=drL;
   const r7=['724','729','751','7151','7153','781','788'].map(c=>{const v=_rec.filter(r=>r.conta===c).reduce((a,r)=>a+Number(r.valor||0),0);if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--ok);font-weight:500;">${fmt(v)}</td></tr>`;}).join('');
   const r6=['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899'].map(c=>{const v=_desp.filter(d=>d.conta===c).reduce((a,d)=>a+Number(d.valor||0),0);if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--er);">${fmt(v)}</td></tr>`;}).join('');
-  document.getElementById('dr-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${L==='PT'?'Demonstração de Resultados':'Income Statement'}</div><div class="cds">SWC Vizela 2026 · ${L==='PT'?'Intercalar — valores reais':'Interim — actual values'}</div></div></div><div class="cdb"><table style="width:100%;border-collapse:collapse;"><thead><tr style="background:rgba(201,168,76,.06);"><th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Rubrica':'Item'}</th><th style="padding:10px 14px;text-align:right;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Valor real (€)':'Actual value (€)'}</th></tr></thead><tbody><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--ok);background:rgba(74,184,122,.04);">${L==='PT'?'RENDIMENTOS':'INCOME'}</td></tr>${r7}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Rendimentos':'Total Income'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--ok);">${fmt(tR)}</td></tr><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--er);background:rgba(224,82,82,.04);">${L==='PT'?'GASTOS':'EXPENSES'}</td></tr>${r6}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Gastos':'Total Expenses'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--er);">${fmt(tD)}</td></tr><tr style="background:rgba(201,168,76,.08);border-top:2px solid var(--gl);"><td style="padding:14px;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gl);">${L==='PT'?'Resultado do Evento':'Event Result'}</td><td style="padding:14px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:${res>=0?'var(--ok)':'var(--er)'};">${fmt(res)}</td></tr></tbody></table><div style="margin-top:14px;padding:10px 14px;border-top:1px solid var(--bd);font-size:11px;color:var(--mu);font-style:italic;">${L==='PT'?'Documento intercalar. Valores definitivos após encerramento total do evento.':'Interim document. Final values after complete event closure.'} © Rui Gonçalves — Contabilista Certificado OCC 46003</div></div></div>`;
+  document.getElementById('dr-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${L==='PT'?'Demonstração de Resultados':'Income Statement'}</div><div class="cds">SWC Vizela 2026 · ${L==='PT'?'Intercalar — valores reais':'Interim — actual values'}</div></div></div><div class="cdb"><table style="width:100%;border-collapse:collapse;"><thead><tr style="background:rgba(201,168,76,.06);"><th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Rubrica':'Item'}</th><th style="padding:10px 14px;text-align:right;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Valor real (€)':'Actual value (€)'}</th></tr></thead><tbody><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--ok);background:rgba(74,184,122,.04);">${L==='PT'?'RENDIMENTOS':'INCOME'}</td></tr>${r7}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Rendimentos':'Total Income'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--ok);">${fmt(tR)}</td></tr><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--er);background:rgba(224,82,82,.04);">${L==='PT'?'GASTOS':'EXPENSES'}</td></tr>${r6}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Gastos':'Total Expenses'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--er);">${fmt(tD)}</td></tr><tr style="background:rgba(201,168,76,.08);border-top:2px solid var(--gl);"><td style="padding:14px;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gl);">${L==='PT'?'Resultado do Evento':'Event Result'}</td><td style="padding:14px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:${res>=0?'var(--ok)':'var(--er)'};">${fmt(res)}</td></tr></tbody></table><div style="margin-top:14px;padding:10px 14px;border-top:1px solid var(--bd);font-size:11px;color:var(--mu);font-style:italic;">${L==='PT'?'Documento intercalar. Valores definitivos após encerramento total do evento.':'Interim document. Final values after complete event closure.'}</div></div></div>`;
 }
 
 // ═══ BALANÇO ═══
@@ -1093,14 +1091,14 @@ function renderIPDJ(){
   const tD=_desp.reduce((a,d)=>a+Number(d.valor||0),0);
   const pub=_rec.filter(r=>r.conta==='751').reduce((a,r)=>a+Number(r.valor||0),0);
   const prv=tR-pub;
-  document.getElementById('ipdj-ct').innerHTML=`<div class="av"><strong>Formulário Anexo B — IPDJ · Programa de Eventos Desportivos Internacionais</strong><br>Federação Portuguesa de Minigolfe · SWC Vizela 2026 · Gerado com valores reais registados no sistema.</div><div class="cd"><div class="cdh"><div><div class="cdt">Mapa Síntese</div><div class="cds">FPM · SWC Vizela 2026</div></div></div><div class="cdb"><div class="g4" style="margin-bottom:16px;"><div class="sm"><div class="sml">Total Gastos (cl. 6)</div><div class="smv tv">${fmt(tD)}</div></div><div class="sm"><div class="sml">Total Rendimentos (cl. 7)</div><div class="smv tok">${fmt(tR)}</div></div><div class="sm"><div class="sml">Rend. públicos (751)</div><div class="smv">${fmt(pub)}</div><div class="smn">${tR>0?(pub/tR*100).toFixed(1)+'%':'-'} do total</div></div><div class="sm"><div class="sml">Rend. privados</div><div class="smv">${fmt(prv)}</div><div class="smn">${tR>0?(prv/tR*100).toFixed(1)+'%':'-'} do total</div></div></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid var(--gl);font-size:15px;font-weight:600;"><span style="color:var(--gl);">Resultado Apurado</span><span style="color:${tR-tD>=0?'var(--ok)':'var(--er)'};">${fmt(tR-tD)}</span></div><div style="font-size:11px;color:var(--mu);margin-top:12px;font-style:italic;">Pronto para submissão ao IPDJ e arquivo com a FPM.<br>© Rui Gonçalves — Contabilista Certificado — Inscrito na OCC 46003</div></div></div>`;
+  document.getElementById('ipdj-ct').innerHTML=`<div class="av"><strong>Formulário Anexo B — IPDJ · Programa de Eventos Desportivos Internacionais</strong><br>Federação Portuguesa de Minigolfe · SWC Vizela 2026 · Gerado com valores reais registados no sistema.</div><div class="cd"><div class="cdh"><div><div class="cdt">Mapa Síntese</div><div class="cds">FPM · SWC Vizela 2026</div></div></div><div class="cdb"><div class="g4" style="margin-bottom:16px;"><div class="sm"><div class="sml">Total Gastos (cl. 6)</div><div class="smv tv">${fmt(tD)}</div></div><div class="sm"><div class="sml">Total Rendimentos (cl. 7)</div><div class="smv tok">${fmt(tR)}</div></div><div class="sm"><div class="sml">Rend. públicos (751)</div><div class="smv">${fmt(pub)}</div><div class="smn">${tR>0?(pub/tR*100).toFixed(1)+'%':'-'} do total</div></div><div class="sm"><div class="sml">Rend. privados</div><div class="smv">${fmt(prv)}</div><div class="smn">${tR>0?(prv/tR*100).toFixed(1)+'%':'-'} do total</div></div></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid var(--gl);font-size:15px;font-weight:600;"><span style="color:var(--gl);">Resultado Apurado</span><span style="color:${tR-tD>=0?'var(--ok)':'var(--er)'};">${fmt(tR-tD)}</span></div><div style="font-size:11px;color:var(--mu);margin-top:12px;font-style:italic;">Pronto para submissão ao IPDJ e arquivo com a FPM.</div></div></div>`;
 }
 
 // ═══ WMF ═══
 function renderWMF(){
   const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
   const c1=325,c2=2000,liq=taxas-c1-c2;
-  document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement — WMF/EMF</div><div class="cds">SWC Vizela 2026 · Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 — WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 — Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) — 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) — post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0045 1401 4037 3110 4744 6 · NIF 509 227 902<br>Vizelgolfe — Associação de Minigolfe de Vizela · © Rui Gonçalves — Certified Accountant OCC 46003</div></div></div>`;
+  document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement — WMF/EMF</div><div class="cds">SWC Vizela 2026 · Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 — WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 — Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) — 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) — post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0045 1401 4037 3110 4744 6 · NIF 509 227 902<br>Vizelgolfe — Associação de Minigolfe de Vizela</div></div></div>`;
 }
 
 // ═══ CHECKLIST WMF OFICIAL ═══
@@ -1294,44 +1292,103 @@ function closeSb(){
 // ═══ EXPORTAÇÃO PDF ═══
 const {jsPDF} = window.jspdf;
 
-function pdfHeader(doc, titulo, subtitulo){
-  // Fundo topo
-  doc.setFillColor(10,22,40);
-  doc.rect(0,0,210,30,'F');
-  // Título
-  doc.setTextColor(201,168,76);
-  doc.setFontSize(16);
+const _LOGO_B64 = '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8888888888888888888888888TOkAHQIYeFMeUd8/YCK61C8888888888888888888888888888888888888888888+NO+euOdu+tO8e+u+ueuO+P88888888888888888888888888888888888888888888888888888888v39xx2311z88888888888888888888888888888888888888888888888888888888/R61weTTJC888888888888888888888888888888888888888888888888888888888MMMMMMMMf8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888/8QAIxEBAAIBBAICAwEAAAAAAAAAAQARMRAhQWEgUDBRQHGBkP/aAAgBAwEBPxD/AFwFF8EW5ndLTsh9kIH3IJBHHtgMTKfHdQERn2R5RvwC4Qtj6/CMxV3YC4g3EHyyvLNso4nTK/Up9Sn1OqXcS2W4ZVww1k+x614K5nJiTCLxTlglRMgfAuBD7ocMTwR0nv0SQeSCc+p2A8kIXiXBSngC4gsu0/pFsbRVzoRSTYFRitQFnVOqUkwkFzBvHpCz+CcNxArVhCcxEmwinOt6uIrbmIqiEweYFg8UOSKY0YHZz6J7CKrb8IsIkfTEY8AtqH9ItO6ZSYT40OYFehq7oip8gvEV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';
+
+function pdfHeader(doc, titulo, subtitulo, isLandscape){
+  const W = isLandscape ? 297 : 210;
+  const H = 38;
+
+  // Fundo navy escuro total
+  doc.setFillColor(8,16,32);
+  doc.rect(0,0,W,H,'F');
+
+  // Faixa gold fina no topo
+  doc.setFillColor(201,168,76);
+  doc.rect(0,0,W,1.2,'F');
+
+  // Logo SWC2026 — fundo branco arredondado
+  doc.setFillColor(255,255,255);
+  doc.roundedRect(8,4,22,22,2,2,'F');
+  try{
+    doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',9,5,20,20);
+  }catch(e){}
+
+  // Linha vertical gold separadora
+  doc.setFillColor(201,168,76);
+  doc.rect(33,5,0.4,18,'F');
+
+  // Título principal
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(15);
   doc.setFont('helvetica','bold');
-  doc.text(titulo, 14, 12);
+  doc.text(titulo, 38, 14);
+
   // Subtítulo
-  doc.setFontSize(9);
-  doc.setFont('helvetica','normal');
-  doc.setTextColor(180,160,120);
-  doc.text(subtitulo, 14, 19);
-  // Data
-  const hoje = new Date().toLocaleDateString('pt-PT');
   doc.setFontSize(8);
-  doc.setTextColor(120,120,120);
-  doc.text('Gerado em: ' + hoje, 196, 19, {align:'right'});
-  // Linha separadora
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(180,155,100);
+  doc.text(subtitulo, 38, 21);
+
+  // SWC badge direita
+  doc.setFillColor(25,45,80);
+  doc.roundedRect(W-52,5,44,18,2,2,'F');
   doc.setDrawColor(201,168,76);
-  doc.setLineWidth(0.5);
-  doc.line(0,30,210,30);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(W-52,5,44,18,2,2,'S');
+  doc.setTextColor(201,168,76);
+  doc.setFontSize(8);
+  doc.setFont('helvetica','bold');
+  doc.text('SWC VIZELA 2026', W-30, 12, {align:'center'});
+  doc.setFontSize(7);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(150,130,90);
+  doc.text('13–17 Outubro 2026', W-30, 18, {align:'center'});
+
+  // Data geração
+  const hoje = new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
+  doc.setFontSize(7);
+  doc.setTextColor(100,100,100);
+  doc.text(hoje, W-56, 28, {align:'right'});
+
+  // Faixa gold fina no fundo do header
+  doc.setFillColor(201,168,76);
+  doc.rect(0,H-0.8,W,0.8,'F');
 }
 
-function pdfFooter(doc){
+function pdfFooter(doc, isLandscape){
   const pages = doc.internal.getNumberOfPages();
+  const W = isLandscape ? 297 : 210;
+  const PH = isLandscape ? 210 : 297;
+  const FY = PH - 14;
   for(let i=1;i<=pages;i++){
     doc.setPage(i);
-    doc.setFillColor(10,22,40);
-    doc.rect(0,284,210,13,'F');
+    // Fundo footer navy
+    doc.setFillColor(8,16,32);
+    doc.rect(0,FY-2,W,16,'F');
+    // Linha gold topo footer
+    doc.setFillColor(201,168,76);
+    doc.rect(0,FY-2,W,0.5,'F');
+    // Texto esquerda
     doc.setFontSize(7);
-    doc.setTextColor(120,120,120);
-    doc.text('SWC Vizela 2026 · Vizelgolfe — Associação de Minigolfe de Vizela · NIF 509 227 902', 14, 291);
-    doc.setTextColor(150,130,80);
-    doc.text('© Rui Gonçalves — Contabilista Certificado — Inscrito na OCC 46003', 14, 296);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(130,110,70);
+    doc.text('Vizelgolfe — Associação de Minigolfe de Vizela · NIF 509 227 902', 8, FY+3);
+    // Texto centro
     doc.setTextColor(100,100,100);
-    doc.text('Pág. '+i+' / '+pages, 196, 291, {align:'right'});
+    doc.text('Vizelgolfe — Associação de Minigolfe de Vizela', W/2, FY+3, {align:'center'});
+    // Paginação direita
+    doc.setTextColor(150,130,80);
+    doc.setFont('helvetica','bold');
+    doc.text(i+' / '+pages, W-8, FY+3, {align:'right'});
+    // Linha decorativa
+    doc.setDrawColor(40,35,20);
+    doc.setLineWidth(0.2);
+    doc.line(8,FY+6,W-8,FY+6);
+    // Confidencial
+    doc.setFontSize(6);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(60,60,60);
+    doc.text('Documento interno — SWC Vizela 2026 · Vizelgolfe · Gerado pelo Sistema de Gestão SWC2026', W/2, FY+10, {align:'center'});
   }
 }
 
@@ -1427,7 +1484,7 @@ function exportDR(){
   doc.setTextColor(res>=0?[100,220,130]:[220,100,100]);
   doc.text(fmtPDF(res), 196, y+8, {align:'right'});
 
-  pdfFooter(doc);
+  pdfFooter(doc,false);
   doc.save('SWC2026_Demonstracao_Resultados.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -1435,7 +1492,7 @@ function exportDR(){
 // ── BALANÇO PDF ──
 function exportBalanco(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Balanço do Evento', 'SWC Vizela 2026 · Ativo · Passivo · Capital Próprio');
+  pdfHeader(doc, 'Balanço do Evento', 'SWC Vizela 2026 · Ativo · Passivo · Capital Próprio', false);
 
   const cx=_lan.filter(l=>l.cb==='Caixa').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
   const bk=_lan.filter(l=>l.cb==='Banco').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
@@ -1477,11 +1534,11 @@ function exportBalanco(){
       ['Total Capital Próprio', fmtPDF(cp)],
     ],
     foot:[['Total Passivo + CP', fmtPDF(forn+cp)]],
-    theme:'plain',
-    styles:{fontSize:10, textColor:[200,200,200], cellPadding:4},
-    headStyles:{fillColor:[15,30,56], textColor:[201,168,76], fontStyle:'bold'},
-    footStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:11},
-    columnStyles:{1:{halign:'right'}},
+    theme:'grid',
+    styles:{fontSize:10, textColor:[40,40,40], cellPadding:5, lineColor:[220,210,190], lineWidth:0.2},
+    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:9, cellPadding:5},
+    footStyles:{fillColor:[245,240,220], textColor:[140,100,20], fontStyle:'bold', fontSize:11, cellPadding:5},
+    columnStyles:{1:{halign:'right', fontStyle:'bold'}},
     margin:{left:110,right:14},
   });
 
@@ -1495,7 +1552,7 @@ function exportBalanco(){
   doc.setTextColor(eq?[100,220,130]:[220,100,100]);
   doc.text(eq?'✓ Balanço equilibrado — Total Ativo = Total Passivo + Capital Próprio':'⚠ Diferença: '+fmtPDF(ativo-(forn+cp)), 105, yq+6.5, {align:'center'});
 
-  pdfFooter(doc);
+  pdfFooter(doc,false);
   doc.save('SWC2026_Balanco.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -1505,7 +1562,7 @@ function exportBalancete(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const mes = document.getElementById('bal-mes').value;
   const meses = {'2025-12':'Dezembro 2025','2026-01':'Janeiro 2026','2026-02':'Fevereiro 2026','2026-03':'Março 2026','2026-04':'Abril 2026','2026-05':'Maio 2026','2026-06':'Junho 2026','2026-07':'Julho 2026','2026-08':'Agosto 2026','2026-09':'Setembro 2026','2026-10':'Outubro 2026','2026-11':'Novembro 2026'};
-  pdfHeader(doc, 'Balancete Mensal SNC-ESNL', 'SWC Vizela 2026 · '+meses[mes]);
+  pdfHeader(doc, 'Balancete Mensal SNC-ESNL', 'SWC Vizela 2026 · '+meses[mes], true);
 
   const[ano,m]=mes.split('-').map(Number);
   const mv={},acum={};
@@ -1532,9 +1589,9 @@ function exportBalancete(){
     head:[['Conta','Descrição','Déb. Mês','Cré. Mês','Saldo Mês','Déb. Acum.','Cré. Acum.','Saldo Acum.']],
     body: rows.length ? rows : [['—','Sem dados para o período','','','','','','']],
     theme:'striped',
-    styles:{fontSize:8, textColor:[50,50,50], cellPadding:3},
-    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:8},
-    alternateRowStyles:{fillColor:[240,240,245]},
+    styles:{fontSize:8, textColor:[35,35,35], cellPadding:4, lineColor:[200,190,170], lineWidth:0.15},
+    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:8, cellPadding:5},
+    alternateRowStyles:{fillColor:[250,247,240]},
     columnStyles:{
       0:{cellWidth:18,fontStyle:'bold'},1:{cellWidth:55},
       2:{halign:'right',cellWidth:22},3:{halign:'right',cellWidth:22},4:{halign:'right',cellWidth:22,fontStyle:'bold'},
@@ -1543,7 +1600,7 @@ function exportBalancete(){
     margin:{left:5,right:5},
   });
 
-  pdfFooter(doc);
+  pdfFooter(doc,true);
   doc.save('SWC2026_Balancete_'+mes+'.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -1551,7 +1608,7 @@ function exportBalancete(){
 // ── IPDJ PDF ──
 function exportIPDJ(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Formulário Anexo B — IPDJ', 'Programa de Eventos Desportivos Internacionais · SWC Vizela 2026');
+  pdfHeader(doc, 'Formulário Anexo B — IPDJ', 'Programa de Eventos Desportivos Internacionais · SWC Vizela 2026', false);
 
   const tR=_rec.reduce((a,r)=>a+Number(r.valor||0),0);
   const tD=_desp.reduce((a,d)=>a+Number(d.valor||0),0);
@@ -1578,10 +1635,10 @@ function exportIPDJ(){
       ['  dos quais — Rendimentos privados', fmtPDF(prv)],
     ],
     foot:[['Resultado Apurado (Rendimentos − Gastos)', fmtPDF(tR-tD)]],
-    theme:'plain',
-    styles:{fontSize:10, textColor:[50,50,50], cellPadding:4},
-    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold'},
-    footStyles:{fillColor:[10,22,40], textColor:[tR-tD>=0?[50,150,80]:[180,50,50]], fontStyle:'bold', fontSize:11},
+    theme:'grid',
+    styles:{fontSize:10, textColor:[35,35,35], cellPadding:5, lineColor:[210,200,180], lineWidth:0.2},
+    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', cellPadding:5},
+    footStyles:{fillColor:[240,235,210], textColor:tR-tD>=0?[20,100,40]:[150,20,20], fontStyle:'bold', fontSize:12, cellPadding:6},
     columnStyles:{1:{halign:'right', cellWidth:45}},
     margin:{left:14,right:14},
   });
@@ -1631,7 +1688,7 @@ function exportIPDJ(){
     });
   }
 
-  pdfFooter(doc);
+  pdfFooter(doc,false);
   doc.save('SWC2026_Anexo_B_IPDJ.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -1639,7 +1696,7 @@ function exportIPDJ(){
 // ── WMF PDF ──
 function exportWMF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Financial Statement — WMF/EMF', 'SWC Vizela 2026 · Participation Fees Statement');
+  pdfHeader(doc, 'Financial Statement — WMF/EMF', 'SWC Vizela 2026 · Participation Fees Statement', false);
 
   const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
   const c1=325,c2=2000,liq=taxas-c1-c2;
@@ -1664,10 +1721,10 @@ function exportWMF(){
       ['Pre-payment (75%) — 4 weeks before event', fmtPDF(liq*0.75)],
       ['Remaining (25%) — post-event inventory approval', fmtPDF(liq*0.25)],
     ],
-    theme:'plain',
-    styles:{fontSize:10,textColor:[50,50,50],cellPadding:4},
-    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
-    columnStyles:{1:{halign:'right',cellWidth:45}},
+    theme:'grid',
+    styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,175],lineWidth:0.2},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',cellPadding:5},
+    columnStyles:{1:{halign:'right',cellWidth:50,fontStyle:'bold'}},
     margin:{left:14,right:14},
   });
 
@@ -1678,10 +1735,10 @@ function exportWMF(){
   doc.line(14,yf,100,yf);
   doc.setFontSize(8);
   doc.setTextColor(100,100,100);
-  doc.text('Rui Gonçalves — Certified Accountant — OCC 46003', 14, yf+5);
+  doc.text('Vizelgolfe — Associação de Minigolfe de Vizela', 14, yf+5);
   doc.text('Date: '+new Date().toLocaleDateString('pt-PT'), 14, yf+10);
 
-  pdfFooter(doc);
+  pdfFooter(doc,false);
   doc.save('SWC2026_WMF_Financial_Statement.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -1689,7 +1746,7 @@ function exportWMF(){
 // ── DIÁRIO PDF ──
 function exportDiario(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Diário de Caixa / Banco', 'SWC Vizela 2026 · Valores reais registados');
+  pdfHeader(doc, 'Diário de Caixa / Banco', 'SWC Vizela 2026 · Valores reais registados', true);
 
   let cx=0,bk=0;
   const rows=_lan.map(l=>{
@@ -1705,7 +1762,7 @@ function exportDiario(){
     theme:'striped',
     styles:{fontSize:8,textColor:[50,50,50],cellPadding:3},
     headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},
-    alternateRowStyles:{fillColor:[240,240,245]},
+    alternateRowStyles:{fillColor:[245,243,238]},
     columnStyles:{
       0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:18},3:{cellWidth:70},
       4:{cellWidth:12,halign:'center'},5:{cellWidth:18},6:{cellWidth:28,halign:'right'},7:{cellWidth:28,halign:'right',fontStyle:'bold'}
@@ -1713,7 +1770,7 @@ function exportDiario(){
     margin:{left:5,right:5},
   });
 
-  pdfFooter(doc);
+  pdfFooter(doc,true);
   doc.save('SWC2026_Diario_Caixa_Banco.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -1721,7 +1778,7 @@ function exportDiario(){
 // ── RECEITAS PDF ──
 function exportReceitas(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Receitas','SWC Vizela 2026 · Valores reais registados');
+  pdfHeader(doc,'Receitas','SWC Vizela 2026 · Valores reais registados',true);
   const rows=_rec.map(r=>[r.data||'',r.conta||'',nomC[r.conta]||'',r.desc||'',fmtPDF(r.valor),r.estado||'',r.obs||'']);
   doc.autoTable({startY:38,head:[['Data','SNC','Rubrica','Descrição','Valor','Estado','Obs.']],body:rows.length?rows:[['','','','Sem receitas','','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{4:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:40},4:{cellWidth:28,halign:'right'},5:{cellWidth:25}},margin:{left:5,right:5}});
   pdfFooter(doc);doc.save('SWC2026_Receitas.pdf');toast('PDF gerado com sucesso');
@@ -1730,7 +1787,7 @@ function exportReceitas(){
 // ── DESPESAS PDF ──
 function exportDespesas(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Despesas','SWC Vizela 2026 · Valores reais registados');
+  pdfHeader(doc,'Despesas','SWC Vizela 2026 · Valores reais registados',true);
   const rows=_desp.map(d=>[d.data||'',d.doc||'',d.conta||'',nomC[d.conta]||'',d.desc||'',fmtPDF(d.valor),d.estado||'']);
   doc.autoTable({startY:38,head:[['Data','Doc.','SNC','Rubrica','Descrição','Valor','Estado']],body:rows.length?rows:[['','','','','Sem despesas','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{5:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:15},3:{cellWidth:40},5:{cellWidth:28,halign:'right'},6:{cellWidth:22}},margin:{left:5,right:5}});
   pdfFooter(doc);doc.save('SWC2026_Despesas.pdf');toast('PDF gerado com sucesso');
@@ -1739,7 +1796,7 @@ function exportDespesas(){
 // ── PATROCÍNIOS PDF ──
 function exportPat(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Patrocínios & CRM','SWC Vizela 2026 · Valores reais confirmados');
+  pdfHeader(doc,'Patrocínios & CRM','SWC Vizela 2026 · Valores reais confirmados',true);
   const rows=_pat.map(p=>[p.empresa||'',p.tipo||'',p.contacto||'',fmtPDF(p.valor),(p.contrapartidas||'').substring(0,40),p.estado||'']);
   doc.autoTable({startY:38,head:[['Empresa','Tipo','Contacto','Valor confirmado','Contrapartidas','Estado']],body:rows.length?rows:[['','','','','Sem patrocinadores','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{3:{halign:'right',cellWidth:35},1:{cellWidth:30},5:{cellWidth:28}},margin:{left:5,right:5}});
   pdfFooter(doc);doc.save('SWC2026_Patrocinios.pdf');toast('PDF gerado com sucesso');
@@ -1749,7 +1806,7 @@ function exportPat(){
 function exportChkPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const L = chkLang;
-  pdfHeader(doc,L==='PT'?'Checklist WMF Oficial':'WMF Official Checklist','SWC Vizela 2026 · '+(L==='PT'?'45 itens · 6 categorias':'45 items · 6 categories'));
+  pdfHeader(doc,L==='PT'?'Checklist WMF Oficial':'WMF Official Checklist','SWC Vizela 2026 · '+(L==='PT'?'45 itens · 6 categorias':'45 items · 6 categories'),false);
   const rows=CHK_ITEMS.map(it=>{
     const st=(_chkData[it.id]||{}).status||it.status;
     const scfg=STATUS_CFG[st]||STATUS_CFG.Pending;

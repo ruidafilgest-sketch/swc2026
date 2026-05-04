@@ -336,7 +336,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <!-- CRONOLOGIA -->
 <div class="pg" id="pg-cronologia">
 <div class="av"><strong>Prazos WMF/EMF/FPM:</strong> Incumprimento = cancelamento do evento sem compensação. Alertas a 30/15/7/1 dias.</div>
-<div class="bb" id="bar-cron"><button class="btn bp" onclick="openM('m-prazo')">+ Novo prazo / tarefa</button><button class="btn bo" onclick="window.print()">Imprimir cronologia</button></div>
+<div class="bb" id="bar-cron"><button class="btn bp" onclick="openM('m-prazo')">+ Novo prazo / tarefa</button><button class="btn bo" onclick="exportCronPDF()">Exportar PDF</button></div>
 <div id="cron-list"></div>
 </div>
 
@@ -1422,14 +1422,20 @@ function pdfFooter(doc, isLandscape){
     doc.rect(0,FY,W,FH,'F');
     doc.setFillColor(201,168,76);
     doc.rect(0,FY,W,0.8,'F');
-    const lgH=10, lgW=10, spacing=14;
+    const lgH=10, lgW=10, spacing=15;
     const lg5=[
       {src:_LOGO_VZG,tp:'JPEG'},{src:_LOGO_FPM,tp:'JPEG'},
       {src:_LOGO_WMF,tp:'JPEG'},{src:_LOGO_EMF,tp:'PNG'},
       {src:_LOGO_CMV,tp:'PNG'}
     ];
     const sx=(W-(lg5.length*spacing))/2+2;
-    lg5.forEach((lg,j)=>{try{doc.addImage(lg.src,lg.tp,sx+j*spacing,FY+2,lgW,lgH);}catch(e){}});
+    lg5.forEach((lg,j)=>{
+      const lx=sx+j*spacing, ly=FY+1.5;
+      // Fundo branco para cada logo
+      doc.setFillColor(255,255,255);
+      doc.roundedRect(lx-0.5,ly-0.5,lgW+1,lgH+1,1,1,'F');
+      try{doc.addImage(lg.src,lg.tp,lx,ly,lgW,lgH);}catch(e){}
+    });
     doc.setDrawColor(210,195,165);
     doc.setLineWidth(0.2);
     doc.line(5,FY+13.5,W-5,FY+13.5);
@@ -1856,6 +1862,119 @@ function exportPat(){
   pdfFooter(doc);doc.save('SWC2026_Patrocinios.pdf');toast('PDF gerado com sucesso');
 }
 
+// ── CRONOLOGIA PDF ──
+function exportCronPDF(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Cronologia & Prazos WMF','SWC Vizela 2026 · Acordo Tripartido WMF/EMF/FPM',false);
+
+  const hoje = new Date();
+  const evento = new Date('2026-10-13');
+  const diasEvento = Math.ceil((evento-hoje)/86400000);
+
+  // Bloco countdown
+  doc.setFillColor(10,22,40);
+  doc.roundedRect(14,42,182,14,3,3,'F');
+  doc.setDrawColor(201,168,76);
+  doc.setLineWidth(0.4);
+  doc.roundedRect(14,42,182,14,3,3,'S');
+  doc.setFontSize(9);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(201,168,76);
+  doc.text('⏱  ' + diasEvento + ' dias para o evento', 105, 49, {align:'center'});
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(160,140,90);
+  doc.text('Abertura oficial: 13 Outubro 2026 · Vizela, Portugal', 105, 54, {align:'center'});
+
+  // Aviso WMF
+  doc.setFillColor(60,30,10);
+  doc.roundedRect(14,59,182,9,2,2,'F');
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(255,180,80);
+  doc.text('⚠  Incumprimento dos prazos WMF pode resultar no cancelamento do evento sem compensação.', 105, 64.5, {align:'center'});
+
+  let y = 72;
+
+  if(_praz.length === 0){
+    // Mostrar prazos contratuais WMF base
+    const prazosBase = [
+      {data:'31 Mar 2026', titulo:'Contacto técnico + cronograma software torneio', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
+      {data:'14 Abr 2026', titulo:'Website EN ativo · Alojamento garantido · Patrocínios Gold endereço', resp:'Comunicação + Finanças', prioridade:'critico', estado:'pendente'},
+      {data:'31 Mai 2026', titulo:'Material informativo e lista de alojamento publicados', resp:'Chefe Comunicação', prioridade:'urgente', estado:'pendente'},
+      {data:'14 Ago 2026', titulo:'Salas reunião WMF · Prazo espaço venda Gold 8m²', resp:'Logística', prioridade:'normal', estado:'pendente'},
+      {data:'Set 2026',    titulo:'Dados bancários WMF · Rooming lists · Guia atleta · Sinalética', resp:'COE', prioridade:'normal', estado:'pendente'},
+      {data:'2 sem. antes','titulo':'Demonstração financeira taxas à WMF', resp:'Finanças', prioridade:'urgente', estado:'pendente'},
+      {data:'13 Out 2026', titulo:'Treino oficial + Cerimónia de Abertura 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
+      {data:'14-17 Out',   titulo:'Competição — 4 dias', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
+      {data:'17 Out 2026', titulo:'Cerimónia de Encerramento e Medalhas 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
+      {data:'Pós-evento',  titulo:'Lista resultados + inventário WMF → receber 25%', resp:'Finanças', prioridade:'critico', estado:'pendente'},
+    ];
+    renderPrazosTable(doc, prazosBase, y);
+  } else {
+    renderPrazosTable(doc, _praz, y);
+  }
+
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Cronologia_Prazos.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+function renderPrazosTable(doc, prazos, startY){
+  const STATUS_COLORS = {
+    concluido:  {fill:[230,245,232], text:[20,120,40],  label:'✓ Concluído'},
+    em_curso:   {fill:[255,248,225], text:[140,100,10],  label:'⟳ Em curso'},
+    pendente:   {fill:[255,242,242], text:[180,30,30],   label:'○ Pendente'},
+    Done:       {fill:[230,245,232], text:[20,120,40],   label:'✓ Concluído'},
+    InProgress: {fill:[255,248,225], text:[140,100,10],  label:'⟳ Em curso'},
+    Pending:    {fill:[255,242,242], text:[180,30,30],   label:'○ Pendente'},
+  };
+  const PRIO_COLORS = {
+    critico: {fill:[200,30,30],   text:[255,255,255]},
+    urgente: {fill:[220,140,20],  text:[255,255,255]},
+    normal:  {fill:[60,100,160],  text:[255,255,255]},
+  };
+
+  const rows = prazos.map(p => {
+    const sc = STATUS_COLORS[p.estado] || STATUS_COLORS.pendente;
+    const pc = PRIO_COLORS[p.prioridade] || PRIO_COLORS.normal;
+    return [p.data||'', p.titulo||'', p.resp||'', p.prioridade||'normal', p.estado||'pendente'];
+  });
+
+  doc.autoTable({
+    startY,
+    head:[['Data','Tarefa / Prazo','Responsável','Prioridade','Estado']],
+    body: rows,
+    theme:'grid',
+    styles:{fontSize:8.5, textColor:[35,35,35], cellPadding:4, lineColor:[210,200,180], lineWidth:0.2},
+    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:8, cellPadding:5},
+    columnStyles:{
+      0:{cellWidth:22, fontStyle:'bold', textColor:[100,70,20]},
+      1:{cellWidth:90},
+      2:{cellWidth:35, fontSize:7.5, textColor:[80,80,80]},
+      3:{cellWidth:20, halign:'center', fontSize:7},
+      4:{cellWidth:22, halign:'center', fontSize:7.5, fontStyle:'bold'},
+    },
+    didParseCell: function(data){
+      if(data.column.index === 3 && data.section === 'body'){
+        const prio = data.cell.raw;
+        const pc = PRIO_COLORS[prio] || PRIO_COLORS.normal;
+        data.cell.styles.fillColor = pc.fill;
+        data.cell.styles.textColor = pc.text;
+        data.cell.text = [prio.toUpperCase()];
+      }
+      if(data.column.index === 4 && data.section === 'body'){
+        const st = data.cell.raw;
+        const sc = STATUS_COLORS[st] || STATUS_COLORS.pendente;
+        data.cell.styles.fillColor = sc.fill;
+        data.cell.styles.textColor = sc.text;
+        data.cell.text = [sc.label];
+      }
+    },
+    margin:{left:14, right:14, bottom:28},
+  });
+}
+
 // ── ORGANIZAÇÃO PDF ──
 function exportOrgPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -1942,6 +2061,7 @@ window.exportDespesas=exportDespesas;
 window.exportPat=exportPat;
 window.exportChkPDF=exportChkPDF;
 window.exportOrgPDF=exportOrgPDF;
+window.exportCronPDF=exportCronPDF;
 window.exportSegPDF=exportSegPDF;
 window.closeSb=closeSb;
 window.updateChkStatus=updateChkStatus;

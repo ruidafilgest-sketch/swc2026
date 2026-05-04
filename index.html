@@ -202,7 +202,10 @@ td.mu{color:var(--mu);font-style:italic;}
   .hamburger{display:none;}
   .sb-overlay{display:none!important;}
 }
-</style></head><body>
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head><body>
 
 <div id="ls">
   <div class="lb">
@@ -438,7 +441,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="st"><span class="sn">DI</span>Diário de Caixa / Banco</div>
 <div class="sd">Lançamento a lançamento · Caixa e Banco separados · Saldo corrente · Apenas valores reais com confirmação documental</div>
 <div class="av"><strong>Rigor contabilístico absoluto:</strong> Cada lançamento requer confirmação documental (fatura, recibo, transferência). Nunca são inseridos valores estimados.</div>
-<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="window.print()">Exportar PDF</button></div>
+<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Saldo Caixa</div><div class="smv" id="s-cx">0,00€</div></div>
   <div class="sm"><div class="sml">Saldo Banco</div><div class="smv" id="s-bk">0,00€</div></div>
@@ -453,7 +456,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-receitas">
 <div class="st"><span class="sn">REC</span>Receitas</div>
 <div class="sd">Classe 7 SNC-ESNL · Valores reais confirmados — nunca estimados ou assumidos</div>
-<div class="bb" id="bar-rec"><button class="btn bp" onclick="openM('m-rec')">+ Nova receita</button><button class="btn bo" onclick="window.print()">Exportar PDF</button></div>
+<div class="bb" id="bar-rec"><button class="btn bp" onclick="openM('m-rec')">+ Nova receita</button><button class="btn bo" onclick="exportReceitas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total recebido</div><div class="smv" id="r-tot" style="color:var(--ok)">0,00€</div><div class="smn">valor real</div></div>
   <div class="sm"><div class="sml">Pendente</div><div class="smv" id="r-pen" style="color:var(--wr)">0,00€</div></div>
@@ -468,7 +471,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-despesas">
 <div class="st"><span class="sn">DESP</span>Despesas</div>
 <div class="sd">Classe 6 SNC-ESNL · 17 rubricas · Valores reais por documento fiscal confirmado</div>
-<div class="bb" id="bar-desp"><button class="btn bp" onclick="openM('m-desp')">+ Nova despesa</button><button class="btn bo" onclick="window.print()">Exportar PDF</button></div>
+<div class="bb" id="bar-desp"><button class="btn bp" onclick="openM('m-desp')">+ Nova despesa</button><button class="btn bo" onclick="exportDespesas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total pago</div><div class="smv" id="d-tot" style="color:var(--er)">0,00€</div><div class="smn">valor real</div></div>
   <div class="sm"><div class="sml">Pendente</div><div class="smv" id="d-pen" style="color:var(--wr)">0,00€</div></div>
@@ -483,7 +486,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-patrocinios">
 <div class="st"><span class="sn">PAT</span>Patrocínios &amp; CRM</div>
 <div class="sd">Angariação · Gold WMF (direitos especiais) · Patrocinadores locais · Estado do processo</div>
-<div class="bb" id="bar-pat"><button class="btn bp" onclick="openM('m-pat')">+ Novo patrocinador</button><button class="btn bo" onclick="window.print()">Exportar PDF</button></div>
+<div class="bb" id="bar-pat"><button class="btn bp" onclick="openM('m-pat')">+ Novo patrocinador</button><button class="btn bo" onclick="exportPat()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total confirmado</div><div class="smv" id="p-cf" style="color:var(--ok)">0,00€</div><div class="smn">valor real</div></div>
   <div class="sm"><div class="sml">Em negociação</div><div class="smv" id="p-ng" style="color:var(--wr)">0,00€</div></div>
@@ -507,7 +510,7 @@ td.mu{color:var(--mu);font-style:italic;}
   <select class="fse" id="bal-mes" style="width:180px;" onchange="renderBal()">
     <option value="2025-12">Dezembro 2025</option><option value="2026-01">Janeiro 2026</option><option value="2026-02">Fevereiro 2026</option><option value="2026-03">Março 2026</option><option value="2026-04">Abril 2026</option><option value="2026-05">Maio 2026</option><option value="2026-06">Junho 2026</option><option value="2026-07">Julho 2026</option><option value="2026-08">Agosto 2026</option><option value="2026-09">Setembro 2026</option><option value="2026-10">Outubro 2026</option><option value="2026-11">Novembro 2026</option>
   </select>
-  <button class="btn bo" onclick="window.print()">Exportar PDF</button>
+  <button class="btn bo" onclick="exportBalancete()">Exportar PDF</button>
 </div>
 <div class="tw"><table><thead><tr><th>Conta SNC</th><th>Descrição</th><th>Déb. Mês</th><th>Cré. Mês</th><th>Saldo Mês</th><th>Déb. Acum.</th><th>Cré. Acum.</th><th>Saldo Acum.</th></tr></thead>
 <tbody id="t-bal"><tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem dados para o período</td></tr></tbody></table></div>
@@ -518,7 +521,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-dr">
 <div class="st"><span class="sn">DR</span>Demonstração de Resultados</div>
 <div class="sd">Rendimentos vs Gastos · Resultado líquido · PT/EN · Intercalar e versão final</div>
-<div class="bb"><button class="btn bo" onclick="drL=drL==='PT'?'EN':'PT';renderDR()">PT ↔ EN</button><button class="btn bo" onclick="window.print()">Exportar PDF</button></div>
+<div class="bb"><button class="btn bo" onclick="drL=drL==='PT'?'EN':'PT';renderDR()">PT ↔ EN</button><button class="btn bo" onclick="exportDR()">Exportar PDF</button></div>
 <div class="av">Documento intercalar gerado com valores reais registados até à data. Valor definitivo apenas após encerramento total do evento.</div>
 <div id="dr-ct"></div>
 </div>
@@ -527,7 +530,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-balanco">
 <div class="st"><span class="sn">BAL</span>Balanço do Evento</div>
 <div class="sd">Ativo · Passivo · Capital Próprio · Quadratura absoluta garantida — Total Ativo = Passivo + CP</div>
-<div class="bb"><button class="btn bo" onclick="window.print()">Exportar PDF</button></div>
+<div class="bb"><button class="btn bo" onclick="exportBalanco()">Exportar PDF</button></div>
 <div id="bal-ct"></div>
 <div style="margin-top:10px;font-size:11px;color:var(--mu);text-align:right;font-style:italic;">© Rui Gonçalves — Contabilista Certificado — Inscrito na OCC 46003</div>
 </div>
@@ -536,7 +539,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-ipdj">
 <div class="st"><span class="sn">IPDJ</span>Formulário Anexo B — IPDJ</div>
 <div class="sd">5 folhas · Formato oficial · Orçamental + Execução real · Pronto a submeter ao IPDJ e FPM</div>
-<div class="bb"><button class="btn bp" onclick="window.print()">Exportar PDF completo</button></div>
+<div class="bb"><button class="btn bp" onclick="exportIPDJ()">Exportar PDF completo</button></div>
 <div id="ipdj-ct"></div>
 </div>
 
@@ -544,7 +547,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-wmf">
 <div class="st"><span class="sn">WMF</span>Relatório WMF / EMF</div>
 <div class="sd">Demonstração financeira taxas · C1+C2 deduzidos · Adiantamento 75%/25% · EN/PT</div>
-<div class="bb"><button class="btn bp" onclick="window.print()">Exportar PDF (EN)</button></div>
+<div class="bb"><button class="btn bp" onclick="exportWMF()">Exportar PDF (EN)</button></div>
 <div class="av"><strong>Obrigação contratual:</strong> Esta demonstração deve ser apresentada à WMF 2 semanas antes da competição.</div>
 <div id="wmf-ct"></div>
 </div>
@@ -555,7 +558,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="sd">45 itens · 6 categorias · EN / PT · Contador de dias · Estado cirúrgico</div>
 <div class="bb">
   <button class="btn bo" onclick="chkLang=chkLang==='EN'?'PT':'EN';renderChk()" id="btn-chk-lang">PT ↔ EN</button>
-  <button class="btn bo" onclick="window.print()">Exportar PDF</button>
+  <button class="btn bo" onclick="exportChkPDF()">Exportar PDF</button>
 </div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Total itens</div><div class="smv">45</div></div>
@@ -1288,6 +1291,474 @@ function closeSb(){
   document.getElementById('sb-overlay').classList.remove('show');
 }
 
+// ═══ EXPORTAÇÃO PDF ═══
+const {jsPDF} = window.jspdf;
+
+function pdfHeader(doc, titulo, subtitulo){
+  // Fundo topo
+  doc.setFillColor(10,22,40);
+  doc.rect(0,0,210,30,'F');
+  // Título
+  doc.setTextColor(201,168,76);
+  doc.setFontSize(16);
+  doc.setFont('helvetica','bold');
+  doc.text(titulo, 14, 12);
+  // Subtítulo
+  doc.setFontSize(9);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(180,160,120);
+  doc.text(subtitulo, 14, 19);
+  // Data
+  const hoje = new Date().toLocaleDateString('pt-PT');
+  doc.setFontSize(8);
+  doc.setTextColor(120,120,120);
+  doc.text('Gerado em: ' + hoje, 196, 19, {align:'right'});
+  // Linha separadora
+  doc.setDrawColor(201,168,76);
+  doc.setLineWidth(0.5);
+  doc.line(0,30,210,30);
+}
+
+function pdfFooter(doc){
+  const pages = doc.internal.getNumberOfPages();
+  for(let i=1;i<=pages;i++){
+    doc.setPage(i);
+    doc.setFillColor(10,22,40);
+    doc.rect(0,284,210,13,'F');
+    doc.setFontSize(7);
+    doc.setTextColor(120,120,120);
+    doc.text('SWC Vizela 2026 · Vizelgolfe — Associação de Minigolfe de Vizela · NIF 509 227 902', 14, 291);
+    doc.setTextColor(150,130,80);
+    doc.text('© Rui Gonçalves — Contabilista Certificado — Inscrito na OCC 46003', 14, 296);
+    doc.setTextColor(100,100,100);
+    doc.text('Pág. '+i+' / '+pages, 196, 291, {align:'right'});
+  }
+}
+
+function fmtPDF(v){return Number(v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
+
+// ── DR PDF ──
+function exportDR(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const L = drL;
+  pdfHeader(doc,
+    L==='PT'?'Demonstração de Resultados':'Income Statement',
+    'SWC Vizela 2026 · '+(L==='PT'?'Intercalar — valores reais registados':'Interim — actual registered values')
+  );
+
+  const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
+  const tD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
+
+  const rows7=[];
+  ['724','729','751','7151','7153','781','788'].forEach(c=>{
+    const v=_rec.filter(r=>r.conta===c).reduce((a,r)=>a+Number(r.valor||0),0);
+    if(v>0) rows7.push([c, nomC[c]||c, fmtPDF(v)]);
+  });
+
+  const rows6=[];
+  ['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899'].forEach(c=>{
+    const v=_desp.filter(d=>d.conta===c).reduce((a,d)=>a+Number(d.valor||0),0);
+    if(v>0) rows6.push([c, nomC[c]||c, fmtPDF(v)]);
+  });
+
+  let y = 38;
+
+  // Rendimentos
+  doc.setFillColor(20,60,30);
+  doc.rect(0,y,210,7,'F');
+  doc.setTextColor(100,220,130);
+  doc.setFontSize(9);
+  doc.setFont('helvetica','bold');
+  doc.text(L==='PT'?'RENDIMENTOS':'INCOME', 14, y+5);
+  y+=7;
+
+  if(rows7.length){
+    doc.autoTable({
+      startY: y,
+      head:[['Conta SNC', L==='PT'?'Descrição':'Description', L==='PT'?'Valor real (€)':'Actual value (€)']],
+      body: rows7,
+      foot:[[L==='PT'?'Total Rendimentos':'Total Income', '', fmtPDF(tR)]],
+      theme:'plain',
+      styles:{fontSize:9, textColor:[200,200,200], cellPadding:3},
+      headStyles:{fillColor:[15,30,56], textColor:[201,168,76], fontStyle:'bold', fontSize:8},
+      footStyles:{fillColor:[15,30,56], textColor:[100,220,130], fontStyle:'bold'},
+      columnStyles:{0:{cellWidth:25}, 2:{halign:'right', cellWidth:35}},
+      margin:{left:0,right:0},
+    });
+    y = doc.lastAutoTable.finalY + 4;
+  }
+
+  // Gastos
+  doc.setFillColor(60,20,20);
+  doc.rect(0,y,210,7,'F');
+  doc.setTextColor(220,100,100);
+  doc.setFontSize(9);
+  doc.setFont('helvetica','bold');
+  doc.text(L==='PT'?'GASTOS':'EXPENSES', 14, y+5);
+  y+=7;
+
+  if(rows6.length){
+    doc.autoTable({
+      startY: y,
+      head:[['Conta SNC', L==='PT'?'Descrição':'Description', L==='PT'?'Valor real (€)':'Actual value (€)']],
+      body: rows6,
+      foot:[[L==='PT'?'Total Gastos':'Total Expenses', '', fmtPDF(tD)]],
+      theme:'plain',
+      styles:{fontSize:9, textColor:[200,200,200], cellPadding:3},
+      headStyles:{fillColor:[15,30,56], textColor:[201,168,76], fontStyle:'bold', fontSize:8},
+      footStyles:{fillColor:[15,30,56], textColor:[220,100,100], fontStyle:'bold'},
+      columnStyles:{0:{cellWidth:25}, 2:{halign:'right', cellWidth:35}},
+      margin:{left:0,right:0},
+    });
+    y = doc.lastAutoTable.finalY + 4;
+  }
+
+  // Resultado
+  const res = tR - tD;
+  doc.setFillColor(10,22,40);
+  doc.rect(0,y,210,12,'F');
+  doc.setDrawColor(201,168,76);
+  doc.setLineWidth(0.3);
+  doc.line(0,y,210,y);
+  doc.setFontSize(12);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(201,168,76);
+  doc.text(L==='PT'?'Resultado do Evento':'Event Result', 14, y+8);
+  doc.setTextColor(res>=0?[100,220,130]:[220,100,100]);
+  doc.text(fmtPDF(res), 196, y+8, {align:'right'});
+
+  pdfFooter(doc);
+  doc.save('SWC2026_Demonstracao_Resultados.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+// ── BALANÇO PDF ──
+function exportBalanco(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc, 'Balanço do Evento', 'SWC Vizela 2026 · Ativo · Passivo · Capital Próprio');
+
+  const cx=_lan.filter(l=>l.cb==='Caixa').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
+  const bk=_lan.filter(l=>l.cb==='Banco').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
+  const cred=_rec.filter(r=>r.estado==='Pendente').reduce((a,r)=>a+Number(r.valor||0),0);
+  const forn=_desp.filter(d=>d.estado==='Pendente').reduce((a,d)=>a+Number(d.valor||0),0);
+  const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
+  const tD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
+  const ativo=cx+bk+cred;
+  const res=tR-tD;
+  const ajuste=ativo-forn-res;
+  const cp=res+ajuste;
+
+  doc.autoTable({
+    startY: 38,
+    head:[['ATIVO','Valor (€)']],
+    body:[
+      ['Caixa', fmtPDF(cx)],
+      ['Banco', fmtPDF(bk)],
+      ['Créditos a receber', fmtPDF(cred)],
+    ],
+    foot:[['Total Ativo', fmtPDF(ativo)]],
+    theme:'plain',
+    styles:{fontSize:10, textColor:[200,200,200], cellPadding:4},
+    headStyles:{fillColor:[15,30,56], textColor:[201,168,76], fontStyle:'bold'},
+    footStyles:{fillColor:[10,22,40], textColor:[100,220,130], fontStyle:'bold', fontSize:11},
+    columnStyles:{1:{halign:'right'}},
+    margin:{left:14,right:110},
+  });
+
+  doc.autoTable({
+    startY: 38,
+    head:[['PASSIVO + CAPITAL PRÓPRIO','Valor (€)']],
+    body:[
+      ['Fornecedores a pagar', fmtPDF(forn)],
+      ['Total Passivo', fmtPDF(forn)],
+      ['', ''],
+      ['Resultado do evento', fmtPDF(res)],
+      ajuste!==0?['Ajustamentos de encerramento', fmtPDF(ajuste)]:['',''],
+      ['Total Capital Próprio', fmtPDF(cp)],
+    ],
+    foot:[['Total Passivo + CP', fmtPDF(forn+cp)]],
+    theme:'plain',
+    styles:{fontSize:10, textColor:[200,200,200], cellPadding:4},
+    headStyles:{fillColor:[15,30,56], textColor:[201,168,76], fontStyle:'bold'},
+    footStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:11},
+    columnStyles:{1:{halign:'right'}},
+    margin:{left:110,right:14},
+  });
+
+  // Quadratura
+  const eq = Math.abs(ativo-(forn+cp))<0.01;
+  const yq = doc.lastAutoTable.finalY + 8;
+  doc.setFillColor(eq?[15,40,15]:[40,15,15]);
+  doc.rect(14,yq,182,10,'F');
+  doc.setFontSize(9);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(eq?[100,220,130]:[220,100,100]);
+  doc.text(eq?'✓ Balanço equilibrado — Total Ativo = Total Passivo + Capital Próprio':'⚠ Diferença: '+fmtPDF(ativo-(forn+cp)), 105, yq+6.5, {align:'center'});
+
+  pdfFooter(doc);
+  doc.save('SWC2026_Balanco.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+// ── BALANCETE PDF ──
+function exportBalancete(){
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const mes = document.getElementById('bal-mes').value;
+  const meses = {'2025-12':'Dezembro 2025','2026-01':'Janeiro 2026','2026-02':'Fevereiro 2026','2026-03':'Março 2026','2026-04':'Abril 2026','2026-05':'Maio 2026','2026-06':'Junho 2026','2026-07':'Julho 2026','2026-08':'Agosto 2026','2026-09':'Setembro 2026','2026-10':'Outubro 2026','2026-11':'Novembro 2026'};
+  pdfHeader(doc, 'Balancete Mensal SNC-ESNL', 'SWC Vizela 2026 · '+meses[mes]);
+
+  const[ano,m]=mes.split('-').map(Number);
+  const mv={},acum={};
+  const add=(obj,c,isG,v)=>{if(!obj[c])obj[c]={d:0,c:0};isG?obj[c].d+=v:obj[c].c+=v;};
+  [..._rec,..._desp].forEach(r=>{
+    const d=new Date(r.data||'2099-01-01');const rA=d.getFullYear(),rM=d.getMonth()+1;
+    const c=r.conta||'';const v=Number(r.valor||0);const isG=c.startsWith('6');
+    if(rA<ano||(rA===ano&&rM<m))add(acum,c,isG,v);
+    if(rA===ano&&rM===m){add(mv,c,isG,v);add(acum,c,isG,v);}
+  });
+
+  const contas=[...new Set([...Object.keys(mv),...Object.keys(acum)])].sort();
+  const rows = contas.map(c=>{
+    const mv_=mv[c]||{d:0,c:0};const ac_=acum[c]||{d:0,c:0};
+    const sm=mv_.c-mv_.d;const sa=ac_.c-ac_.d;
+    return[c, nomC[c]||c,
+      mv_.d>0?fmtPDF(mv_.d):'—', mv_.c>0?fmtPDF(mv_.c):'—', fmtPDF(sm),
+      ac_.d>0?fmtPDF(ac_.d):'—', ac_.c>0?fmtPDF(ac_.c):'—', fmtPDF(sa)
+    ];
+  });
+
+  doc.autoTable({
+    startY: 38,
+    head:[['Conta','Descrição','Déb. Mês','Cré. Mês','Saldo Mês','Déb. Acum.','Cré. Acum.','Saldo Acum.']],
+    body: rows.length ? rows : [['—','Sem dados para o período','','','','','','']],
+    theme:'striped',
+    styles:{fontSize:8, textColor:[50,50,50], cellPadding:3},
+    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:8},
+    alternateRowStyles:{fillColor:[240,240,245]},
+    columnStyles:{
+      0:{cellWidth:18,fontStyle:'bold'},1:{cellWidth:55},
+      2:{halign:'right',cellWidth:22},3:{halign:'right',cellWidth:22},4:{halign:'right',cellWidth:22,fontStyle:'bold'},
+      5:{halign:'right',cellWidth:22},6:{halign:'right',cellWidth:22},7:{halign:'right',cellWidth:22,fontStyle:'bold'},
+    },
+    margin:{left:5,right:5},
+  });
+
+  pdfFooter(doc);
+  doc.save('SWC2026_Balancete_'+mes+'.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+// ── IPDJ PDF ──
+function exportIPDJ(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc, 'Formulário Anexo B — IPDJ', 'Programa de Eventos Desportivos Internacionais · SWC Vizela 2026');
+
+  const tR=_rec.reduce((a,r)=>a+Number(r.valor||0),0);
+  const tD=_desp.reduce((a,d)=>a+Number(d.valor||0),0);
+  const pub=_rec.filter(r=>r.conta==='751').reduce((a,r)=>a+Number(r.valor||0),0);
+  const prv=tR-pub;
+
+  // Cabeçalho entidade
+  let y=38;
+  doc.setFontSize(9);
+  doc.setTextColor(150,150,150);
+  doc.setFont('helvetica','normal');
+  doc.text('Entidade organizadora: Vizelgolfe — Associação de Minigolfe de Vizela', 14, y);
+  doc.text('NIF: 509 227 902 | Evento: SWC Vizela 2026 | Data: 13–17 Outubro 2026', 14, y+5);
+  y+=14;
+
+  // Mapa síntese
+  doc.autoTable({
+    startY: y,
+    head:[['Rubrica','Valor (€)']],
+    body:[
+      ['Total Gastos (Classe 6)', fmtPDF(tD)],
+      ['Total Rendimentos (Classe 7)', fmtPDF(tR)],
+      ['  dos quais — Rendimentos públicos (751)', fmtPDF(pub)],
+      ['  dos quais — Rendimentos privados', fmtPDF(prv)],
+    ],
+    foot:[['Resultado Apurado (Rendimentos − Gastos)', fmtPDF(tR-tD)]],
+    theme:'plain',
+    styles:{fontSize:10, textColor:[50,50,50], cellPadding:4},
+    headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold'},
+    footStyles:{fillColor:[10,22,40], textColor:[tR-tD>=0?[50,150,80]:[180,50,50]], fontStyle:'bold', fontSize:11},
+    columnStyles:{1:{halign:'right', cellWidth:45}},
+    margin:{left:14,right:14},
+  });
+
+  y = doc.lastAutoTable.finalY + 10;
+
+  // Detalhe receitas
+  const rowsR = ['724','729','751','7151','7153','781','788'].map(c=>{
+    const v=_rec.filter(r=>r.conta===c).reduce((a,r)=>a+Number(r.valor||0),0);
+    return v>0?[c,nomC[c]||c,fmtPDF(v)]:null;
+  }).filter(Boolean);
+
+  if(rowsR.length){
+    doc.autoTable({
+      startY:y,
+      head:[['Conta','Rubrica de Rendimento','Valor (€)']],
+      body:rowsR,
+      foot:[['','Total Rendimentos',fmtPDF(tR)]],
+      theme:'plain',
+      styles:{fontSize:9,textColor:[50,50,50],cellPadding:3},
+      headStyles:{fillColor:[15,40,15],textColor:[100,200,100],fontStyle:'bold',fontSize:8},
+      footStyles:{fillColor:[15,40,15],textColor:[100,200,100],fontStyle:'bold'},
+      columnStyles:{0:{cellWidth:20},2:{halign:'right',cellWidth:40}},
+      margin:{left:14,right:14},
+    });
+    y = doc.lastAutoTable.finalY + 6;
+  }
+
+  // Detalhe despesas
+  const rowsD = ['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899'].map(c=>{
+    const v=_desp.filter(d=>d.conta===c).reduce((a,d)=>a+Number(d.valor||0),0);
+    return v>0?[c,nomC[c]||c,fmtPDF(v)]:null;
+  }).filter(Boolean);
+
+  if(rowsD.length){
+    doc.autoTable({
+      startY:y,
+      head:[['Conta','Rubrica de Gasto','Valor (€)']],
+      body:rowsD,
+      foot:[['','Total Gastos',fmtPDF(tD)]],
+      theme:'plain',
+      styles:{fontSize:9,textColor:[50,50,50],cellPadding:3},
+      headStyles:{fillColor:[40,15,15],textColor:[200,100,100],fontStyle:'bold',fontSize:8},
+      footStyles:{fillColor:[40,15,15],textColor:[200,100,100],fontStyle:'bold'},
+      columnStyles:{0:{cellWidth:20},2:{halign:'right',cellWidth:40}},
+      margin:{left:14,right:14},
+    });
+  }
+
+  pdfFooter(doc);
+  doc.save('SWC2026_Anexo_B_IPDJ.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+// ── WMF PDF ──
+function exportWMF(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc, 'Financial Statement — WMF/EMF', 'SWC Vizela 2026 · Participation Fees Statement');
+
+  const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
+  const c1=325,c2=2000,liq=taxas-c1-c2;
+
+  let y=42;
+  doc.setFontSize(9);
+  doc.setTextColor(150,150,150);
+  doc.text('Organising Association: Vizelgolfe — Associação de Minigolfe de Vizela', 14, y);
+  doc.text('NIF: 509 227 902 | IBAN: PT50 0045 1401 4037 3110 4744 6', 14, y+5);
+  y+=14;
+
+  doc.autoTable({
+    startY:y,
+    head:[['Item','Amount (€)']],
+    body:[
+      ['Gross participation fees received (acct 729)', fmtPDF(taxas)],
+      ['C1 — WMF Championship fee (fixed contractual)', '- '+fmtPDF(c1)],
+      ['C2 — Sponsorship income share (fixed contractual)', '- '+fmtPDF(c2)],
+      ['', ''],
+      ['Net amount to organiser', fmtPDF(liq)],
+      ['', ''],
+      ['Pre-payment (75%) — 4 weeks before event', fmtPDF(liq*0.75)],
+      ['Remaining (25%) — post-event inventory approval', fmtPDF(liq*0.25)],
+    ],
+    theme:'plain',
+    styles:{fontSize:10,textColor:[50,50,50],cellPadding:4},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+    columnStyles:{1:{halign:'right',cellWidth:45}},
+    margin:{left:14,right:14},
+  });
+
+  // Assinatura
+  const yf = doc.lastAutoTable.finalY + 20;
+  doc.setDrawColor(180,150,80);
+  doc.setLineWidth(0.3);
+  doc.line(14,yf,100,yf);
+  doc.setFontSize(8);
+  doc.setTextColor(100,100,100);
+  doc.text('Rui Gonçalves — Certified Accountant — OCC 46003', 14, yf+5);
+  doc.text('Date: '+new Date().toLocaleDateString('pt-PT'), 14, yf+10);
+
+  pdfFooter(doc);
+  doc.save('SWC2026_WMF_Financial_Statement.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+// ── DIÁRIO PDF ──
+function exportDiario(){
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc, 'Diário de Caixa / Banco', 'SWC Vizela 2026 · Valores reais registados');
+
+  let cx=0,bk=0;
+  const rows=_lan.map(l=>{
+    const v=Number(l.vl||0);
+    if(l.cb==='Caixa')l.tp==='C'?cx+=v:cx-=v;else l.tp==='C'?bk+=v:bk-=v;
+    return[l.data||'',l.dc||'',l.cn||'',l.ds||'',l.tp==='C'?'C':'D',l.cb||'',(l.tp==='C'?'+':'-')+fmtPDF(v),fmtPDF(cx+bk)];
+  });
+
+  doc.autoTable({
+    startY:38,
+    head:[['Data','Doc.','SNC','Descrição','D/C','Conta','Montante','Saldo']],
+    body: rows.length?rows:[['','','','Sem lançamentos registados','','','','']],
+    theme:'striped',
+    styles:{fontSize:8,textColor:[50,50,50],cellPadding:3},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},
+    alternateRowStyles:{fillColor:[240,240,245]},
+    columnStyles:{
+      0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:18},3:{cellWidth:70},
+      4:{cellWidth:12,halign:'center'},5:{cellWidth:18},6:{cellWidth:28,halign:'right'},7:{cellWidth:28,halign:'right',fontStyle:'bold'}
+    },
+    margin:{left:5,right:5},
+  });
+
+  pdfFooter(doc);
+  doc.save('SWC2026_Diario_Caixa_Banco.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+// ── RECEITAS PDF ──
+function exportReceitas(){
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Receitas','SWC Vizela 2026 · Valores reais registados');
+  const rows=_rec.map(r=>[r.data||'',r.conta||'',nomC[r.conta]||'',r.desc||'',fmtPDF(r.valor),r.estado||'',r.obs||'']);
+  doc.autoTable({startY:38,head:[['Data','SNC','Rubrica','Descrição','Valor','Estado','Obs.']],body:rows.length?rows:[['','','','Sem receitas','','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{4:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:40},4:{cellWidth:28,halign:'right'},5:{cellWidth:25}},margin:{left:5,right:5}});
+  pdfFooter(doc);doc.save('SWC2026_Receitas.pdf');toast('PDF gerado com sucesso');
+}
+
+// ── DESPESAS PDF ──
+function exportDespesas(){
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Despesas','SWC Vizela 2026 · Valores reais registados');
+  const rows=_desp.map(d=>[d.data||'',d.doc||'',d.conta||'',nomC[d.conta]||'',d.desc||'',fmtPDF(d.valor),d.estado||'']);
+  doc.autoTable({startY:38,head:[['Data','Doc.','SNC','Rubrica','Descrição','Valor','Estado']],body:rows.length?rows:[['','','','','Sem despesas','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{5:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:15},3:{cellWidth:40},5:{cellWidth:28,halign:'right'},6:{cellWidth:22}},margin:{left:5,right:5}});
+  pdfFooter(doc);doc.save('SWC2026_Despesas.pdf');toast('PDF gerado com sucesso');
+}
+
+// ── PATROCÍNIOS PDF ──
+function exportPat(){
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Patrocínios & CRM','SWC Vizela 2026 · Valores reais confirmados');
+  const rows=_pat.map(p=>[p.empresa||'',p.tipo||'',p.contacto||'',fmtPDF(p.valor),(p.contrapartidas||'').substring(0,40),p.estado||'']);
+  doc.autoTable({startY:38,head:[['Empresa','Tipo','Contacto','Valor confirmado','Contrapartidas','Estado']],body:rows.length?rows:[['','','','','Sem patrocinadores','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{3:{halign:'right',cellWidth:35},1:{cellWidth:30},5:{cellWidth:28}},margin:{left:5,right:5}});
+  pdfFooter(doc);doc.save('SWC2026_Patrocinios.pdf');toast('PDF gerado com sucesso');
+}
+
+// ── CHECKLIST WMF PDF ──
+function exportChkPDF(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const L = chkLang;
+  pdfHeader(doc,L==='PT'?'Checklist WMF Oficial':'WMF Official Checklist','SWC Vizela 2026 · '+(L==='PT'?'45 itens · 6 categorias':'45 items · 6 categories'));
+  const rows=CHK_ITEMS.map(it=>{
+    const st=(_chkData[it.id]||{}).status||it.status;
+    const scfg=STATUS_CFG[st]||STATUS_CFG.Pending;
+    return[String(it.id),L==='PT'?it.pt:it.en,it.resp||'',L==='PT'?scfg.pt:scfg.en];
+  });
+  doc.autoTable({startY:38,head:[['#',L==='PT'?'Item':'Item',L==='PT'?'Responsável':'Responsible',L==='PT'?'Estado':'Status']],body:rows,theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:10,halign:'center'},1:{cellWidth:130},2:{cellWidth:25},3:{cellWidth:25,halign:'center'}},margin:{left:5,right:5}});
+  pdfFooter(doc);doc.save('SWC2026_Checklist_WMF.pdf');toast('PDF gerado com sucesso');
+}
+
 // ═══ EXPOR FUNÇÕES AO HTML ═══
 window.doLogin=doLogin;
 window.doLogout=doLogout;
@@ -1325,6 +1796,16 @@ window.renderBal=renderBal;
 window.renderDR=renderDR;
 window.renderChk=renderChk;
 window.toggleSb=toggleSb;
+window.exportDR=exportDR;
+window.exportBalanco=exportBalanco;
+window.exportBalancete=exportBalancete;
+window.exportIPDJ=exportIPDJ;
+window.exportWMF=exportWMF;
+window.exportDiario=exportDiario;
+window.exportReceitas=exportReceitas;
+window.exportDespesas=exportDespesas;
+window.exportPat=exportPat;
+window.exportChkPDF=exportChkPDF;
 window.closeSb=closeSb;
 window.updateChkStatus=updateChkStatus;
 </script></body></html>

@@ -198,6 +198,8 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="si" onclick="nav(this,'desportivo','Desportivo &amp; Árbitros')"><span class="sic">◎</span>Desportivo &amp; Árbitros</div>
     <div class="si" onclick="nav(this,'comunicacao','Comunicação &amp; Branding')"><span class="sic">◬</span>Comunicação</div>
     <div class="si" onclick="nav(this,'seguranca','Segurança &amp; Seguros')"><span class="sic">◆</span>Segurança &amp; Seguros</div>
+    <div class="sbs">WMF</div>
+    <div class="si" onclick="nav(this,'wmfcheck','Checklist WMF Oficial')"><span class="sic">☑</span>Checklist WMF Oficial</div>
     <div class="sbs">Financeiro SNC-ESNL</div>
     <div class="si" onclick="nav(this,'diario','Diário de Caixa / Banco')"><span class="sic">▤</span>Diário Caixa / Banco</div>
     <div class="si" onclick="nav(this,'receitas','Receitas')"><span class="sic">▲</span>Receitas</div>
@@ -504,6 +506,27 @@ td.mu{color:var(--mu);font-style:italic;}
 <div id="wmf-ct"></div>
 </div>
 
+  <!-- CHECKLIST WMF OFICIAL -->
+<div class="pg" id="pg-wmfcheck">
+<div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026</div>
+<div class="sd">45 itens · 6 categorias · EN / PT · Contador de dias · Estado cirúrgico</div>
+<div class="bb">
+  <button class="btn bo" onclick="chkLang=chkLang==='EN'?'PT':'EN';renderChk()" id="btn-chk-lang">PT ↔ EN</button>
+  <button class="btn bo" onclick="window.print()">Exportar PDF</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total itens</div><div class="smv">45</div></div>
+  <div class="sm"><div class="sml" style="color:var(--ok)">✓ Concluído</div><div class="smv tok" id="chk-done">0</div></div>
+  <div class="sm"><div class="sml" style="color:var(--wr)">⟳ Em curso</div><div class="smv" id="chk-prog" style="color:var(--wr)">0</div></div>
+  <div class="sm"><div class="sml" style="color:var(--er)">○ Pendente</div><div class="smv tv" id="chk-pend">0</div></div>
+</div>
+<div style="margin-bottom:16px;">
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--se);margin-bottom:5px;"><span>Progresso geral</span><span id="chk-pct">0%</span></div>
+  <div class="pt" style="height:8px;border-radius:4px;"><div class="pf ok" id="chk-bar" style="width:0%;height:100%;border-radius:4px;"></div></div>
+</div>
+<div id="chk-content"></div>
+</div>
+
   </div></div></div>
 
 <!-- MODAIS -->
@@ -680,7 +703,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  loadAll();initChecklist();
+  loadAll();loadChk();initChecklist();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -700,6 +723,7 @@ function nav(el,id,title){
   if(id==='balanco')renderBalanco();
   if(id==='ipdj')renderIPDJ();
   if(id==='wmf')renderWMF();
+  if(id==='wmfcheck')renderChk();
 }
 function tick(){const n=new Date();document.getElementById('clk').textContent=n.toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});}
 
@@ -1032,6 +1056,182 @@ function renderWMF(){
   document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement — WMF/EMF</div><div class="cds">SWC Vizela 2026 · Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 — WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 — Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) — 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) — post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0045 1401 4037 3110 4744 6 · NIF 509 227 902<br>Vizelgolfe — Associação de Minigolfe de Vizela · © Rui Gonçalves — Certified Accountant OCC 46003</div></div></div>`;
 }
 
+// ═══ CHECKLIST WMF OFICIAL ═══
+let chkLang = 'PT';
+let _chkData = {};
+
+const CHK_ITEMS = [
+  // FACILITIES & INFRASTRUCTURE
+  {id:1, cat:'FACILITIES', en:'Part of building available for WADA use, with toilet', pt:'Espaço no edifício disponível para uso WADA, com casa de banho', resp:'Vizelgolfe', notes:'WADA pode usar a sala de reuniões do edifício principal. Tem casa de banho.', status:'Done'},
+  {id:2, cat:'FACILITIES', en:'Information board available', pt:'Painel de informação disponível', resp:'Vizelgolfe', notes:'Quais as dimensões recomendadas?', status:'Pending'},
+  {id:3, cat:'FACILITIES', en:'TV screens available for results display', pt:'Ecrãs TV disponíveis para exibição de resultados', resp:'Vizelgolfe', notes:'Quantos ecrãs são recomendados?', status:'Pending'},
+  {id:4, cat:'FACILITIES', en:'Internet working properly in all areas', pt:'Internet a funcionar correctamente em todas as áreas', resp:'Vizelgolfe', notes:'', status:'InProgress'},
+  {id:5, cat:'FACILITIES', en:'Mail boxes for info distribution (Clubs / Officials / Referees)', pt:'Caixas de correio para distribuição de info (Clubes / Oficiais / Árbitros)', resp:'Vizelgolfe', notes:'', status:'Pending'},
+  {id:6, cat:'FACILITIES', en:'Sound installation available', pt:'Sistema de som disponível', resp:'Vizelgolfe', notes:'', status:'InProgress'},
+  {id:7, cat:'FACILITIES', en:'Copy machine available for tournament use', pt:'Fotocopiadora disponível para uso no torneio', resp:'Vizelgolfe', notes:'', status:'Done'},
+  {id:8, cat:'FACILITIES', en:'Enough toilets available on site', pt:'Casas de banho suficientes no local', resp:'Vizelgolfe', notes:'1 WC para staff e 2 WC para jogadores', status:'Done'},
+  {id:9, cat:'FACILITIES', en:'Wind screens available (confirm location)', pt:'Cortinas de vento disponíveis (confirmar localização)', resp:'Vizelgolfe', notes:'Quantas são necessárias?', status:'Pending'},
+  // COURSE SETUP
+  {id:10, cat:'COURSE', en:'Brooms and Wipers (18 each) per course', pt:'Vassouras e esfregonas (18 de cada) por percurso', resp:'', notes:'É mesmo necessário 1 vassoura + 1 esfregona por pista?', status:'InProgress'},
+  {id:11, cat:'COURSE', en:'Coach / Referee meeting tent on course', pt:'Tenda de reunião treinadores/árbitros no percurso', resp:'', notes:'', status:'Pending'},
+  {id:12, cat:'COURSE', en:'Lane Referees assigned for lanes 2 and 7', pt:'Árbitros de pista atribuídos às pistas 2 e 7', resp:'', notes:'', status:'InProgress'},
+  {id:13, cat:'COURSE', en:'Green house(s) on each course (incoming/outgoing players)', pt:'Casa verde em cada percurso (jogadores entrada/saída)', resp:'', notes:'', status:'InProgress'},
+  {id:14, cat:'COURSE', en:'Big umbrellas on course (sun / rain protection)', pt:'Chapéus grandes no percurso (protecção sol/chuva)', resp:'', notes:'', status:'Pending'},
+  {id:15, cat:'COURSE', en:'Sufficient volunteers available around the course', pt:'Voluntários suficientes em redor do percurso', resp:'', notes:'', status:'InProgress'},
+  // ADMINISTRATION & SCORING
+  {id:16, cat:'ADMIN', en:'Paper scorecards available for all players (backup for cell phones)', pt:'Cartões de pontuação em papel para todos os jogadores (backup telemóvel)', resp:'', notes:'', status:'Pending'},
+  {id:17, cat:'ADMIN', en:'Paper in greenhouse for players – results and score signing', pt:'Papel na casa verde para jogadores – resultados e assinatura pontuações', resp:'', notes:'', status:'Pending'},
+  {id:18, cat:'ADMIN', en:'Starters assigned to call players to courses (one practice shot per player)', pt:'Starters atribuídos para chamar jogadores ao percurso (um tiro de prática por jogador)', resp:'', notes:'', status:'Pending'},
+  {id:19, cat:'ADMIN', en:'Drawing schedule on computer displayable on screen during opening ceremony', pt:'Calendário do sorteio em computador exibível em ecrã durante cerimónia de abertura', resp:'', notes:'', status:'InProgress'},
+  {id:20, cat:'ADMIN', en:'Bowls (2) for drawing both groups – Women and Men', pt:'Taças (2) para sorteio de ambos os grupos – Senhoras e Homens', resp:'', notes:'', status:'Pending'},
+  {id:21, cat:'ADMIN', en:'Lane playing order available on site for players', pt:'Ordem de jogo por pista disponível no local para jogadores', resp:'', notes:'', status:'Done'},
+  {id:22, cat:'ADMIN', en:'ALL participants (including Referees) must sign WADA list', pt:'TODOS os participantes (incluindo Árbitros) devem assinar lista WADA', resp:'', notes:'O que é a lista WADA?', status:'Pending'},
+  {id:23, cat:'ADMIN', en:'Working with BA (Bahngolf Arena) – confirmed', pt:'A trabalhar com BA (Bahngolf Arena) – confirmado', resp:'', notes:'', status:'Done'},
+  {id:24, cat:'ADMIN', en:'Staff trained and available to work with BA (Bahngolf Arena)', pt:'Staff treinado e disponível para trabalhar com BA (Bahngolf Arena)', resp:'', notes:'', status:'Pending'},
+  {id:25, cat:'ADMIN', en:'Best Qualification round players positioned at front in Match Play rounds', pt:'Melhores jogadores da qualificação posicionados à frente nos jogos de Match Play', resp:'', notes:'', status:'Pending'},
+  // AWARDS & CEREMONIES
+  {id:26, cat:'AWARDS', en:'Diplomas for first 8 players – Men & Women – Stroke Play (October)', pt:'Diplomas para os primeiros 8 jogadores – Homens e Senhoras – Stroke Play (Outubro)', resp:'', notes:'', status:'Pending'},
+  {id:27, cat:'AWARDS', en:'Diplomas for first 8 players – Men & Women – Match Play (October)', pt:'Diplomas para os primeiros 8 jogadores – Homens e Senhoras – Match Play (Outubro)', resp:'', notes:'', status:'Pending'},
+  {id:28, cat:'AWARDS', en:'Diplomas / Certificates for all teams', pt:'Diplomas / Certificados para todas as equipas', resp:'', notes:'', status:'Pending'},
+  {id:29, cat:'AWARDS', en:'Team Medals 1st–3rd: 6 for Ladies (incl. 2 coaches), 8 for Men (incl. 2 coaches)', pt:'Medalhas por equipas 1.º–3.º: 6 para Senhoras (incl. 2 treinadores), 8 para Homens (incl. 2 treinadores)', resp:'', notes:'', status:'Pending'},
+  {id:30, cat:'AWARDS', en:'Bocals (trophies) for first 3 players – Women & Men – Stroke Play', pt:'Bocais (troféus) para os primeiros 3 jogadores – Senhoras e Homens – Stroke Play', resp:'', notes:'', status:'Pending'},
+  {id:31, cat:'AWARDS', en:'Bocals (trophies) for first 3 players – Women & Men – Match Play', pt:'Bocais (troféus) para os primeiros 3 jogadores – Senhoras e Homens – Match Play', resp:'', notes:'', status:'Pending'},
+  {id:32, cat:'AWARDS', en:'Medals for first 3 players – Women & Men – Stroke Play', pt:'Medalhas para os primeiros 3 jogadores – Senhoras e Homens – Stroke Play', resp:'', notes:'', status:'Pending'},
+  {id:33, cat:'AWARDS', en:'Medals for first 3 players – Women & Men – Match Play', pt:'Medalhas para os primeiros 3 jogadores – Senhoras e Homens – Match Play', resp:'', notes:'', status:'Pending'},
+  {id:34, cat:'AWARDS', en:'CD with national anthems', pt:'CD com hinos nacionais', resp:'', notes:'', status:'Pending'},
+  {id:35, cat:'AWARDS', en:'Flags from EMF and countries (multiple copies – e.g. Sweden, Germany)', pt:'Bandeiras da EMF e países (múltiplas cópias – ex: Suécia, Alemanha)', resp:'', notes:'A EMF já tem todas essas bandeiras?', status:'Pending'},
+  // EVENTS & CATERING
+  {id:36, cat:'EVENTS', en:'Opening ceremony venue confirmed (walking buffet or snacks?)', pt:'Local cerimónia de abertura confirmado (buffet ou snacks?)', resp:'', notes:'Casa do Park (info no website)', status:'Done'},
+  {id:37, cat:'EVENTS', en:'Closing ceremony / dinner venue confirmed', pt:'Local cerimónia de encerramento / jantar confirmado', resp:'', notes:'Quinta D'Miranda (info no website)', status:'Done'},
+  {id:38, cat:'EVENTS', en:'Catering arranged for ±150 people during SWC', pt:'Catering organizado para ±150 pessoas durante o SWC', resp:'', notes:'', status:'InProgress'},
+  {id:39, cat:'EVENTS', en:'Large tent for teams in October (over river area as per last time)', pt:'Tenda grande para equipas em Outubro (zona do rio como da última vez)', resp:'', notes:'', status:'Pending'},
+  // SPONSORSHIP & BRANDING
+  {id:40, cat:'SPONSOR', en:'Player numbers available with gold sponsors on back (if possible)', pt:'Dorsais dos jogadores disponíveis com patrocinadores gold atrás (se possível)', resp:'', notes:'', status:'Pending'},
+  {id:41, cat:'SPONSOR', en:'Sponsor banner by WMF – outdoor: L=5×H (2.5×podium) – contact Pasi Aho', pt:'Banner patrocinador WMF – exterior: L=5×H (2.5×pódio) – contactar Pasi Aho', resp:'', notes:'', status:'Pending'},
+  {id:42, cat:'SPONSOR', en:'Sponsor banner by WMF – indoor: L=4×H – contact Pasi Aho', pt:'Banner patrocinador WMF – interior: L=4×H – contactar Pasi Aho', resp:'', notes:'', status:'Pending'},
+  {id:43, cat:'SPONSOR', en:'Sponsor wall / banner positioned behind podium for photos', pt:'Parede/banner de patrocinadores posicionado atrás do pódio para fotos', resp:'', notes:'', status:'Pending'},
+  {id:44, cat:'SPONSOR', en:'Sponsor wall available at both opening AND closing ceremony', pt:'Parede de patrocinadores disponível em ambas as cerimónias (abertura E encerramento)', resp:'', notes:'', status:'Pending'},
+  // HEALTH & SAFETY
+  {id:45, cat:'HEALTH', en:'First aid available on site', pt:'Primeiros socorros disponíveis no local', resp:'', notes:'', status:'Pending'},
+];
+
+const CHK_CATS = {
+  FACILITIES: {en:'Facilities & Infrastructure', pt:'Instalações & Infraestrutura', icon:'◫'},
+  COURSE:     {en:'Course Setup', pt:'Preparação do Percurso', icon:'◎'},
+  ADMIN:      {en:'Administration & Scoring', pt:'Administração & Pontuação', icon:'▤'},
+  AWARDS:     {en:'Awards & Ceremonies', pt:'Prémios & Cerimónias', icon:'✦'},
+  EVENTS:     {en:'Events & Catering', pt:'Eventos & Catering', icon:'◐'},
+  SPONSOR:    {en:'Sponsorship & Branding', pt:'Patrocínios & Branding', icon:'◆'},
+  HEALTH:     {en:'Health & Safety', pt:'Saúde & Segurança', icon:'◉'},
+};
+
+const STATUS_CFG = {
+  Done:       {en:'Done',        pt:'Concluído',  cls:'bg-ok', dot:'🟢'},
+  InProgress: {en:'In Progress', pt:'Em Curso',   cls:'bg-am', dot:'🟡'},
+  Pending:    {en:'Pending',     pt:'Pendente',   cls:'bg-er', dot:'🔴'},
+  Issue:      {en:'Issue',       pt:'Problema',   cls:'bg-er', dot:'⚠️'},
+};
+
+function renderChk(){
+  const L = chkLang;
+  // Contar por estado (merge Firebase + defaults)
+  let done=0, prog=0, pend=0;
+  CHK_ITEMS.forEach(it=>{
+    const st = (_chkData[it.id]||{}).status || it.status;
+    if(st==='Done') done++;
+    else if(st==='InProgress') prog++;
+    else pend++;
+  });
+  document.getElementById('chk-done').textContent = done;
+  document.getElementById('chk-prog').textContent = prog;
+  document.getElementById('chk-pend').textContent = pend;
+  const pct = Math.round(done/45*100);
+  document.getElementById('chk-pct').textContent = pct+'%';
+  document.getElementById('chk-bar').style.width = pct+'%';
+
+  // Dias até ao evento
+  const evento = new Date('2026-10-13');
+  const hoje = new Date();
+  const diasEvento = Math.ceil((evento-hoje)/86400000);
+
+  let html = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:12px 16px;background:rgba(201,168,76,.08);border:1px solid var(--bs);border-radius:10px;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--gl2);line-height:1;">${diasEvento}</div>
+    <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'dias para o evento':'days to event'}</div>
+    <div style="font-size:11px;color:var(--mu);">13 ${L==='PT'?'Outubro':'October'} 2026 · SWC Vizela</div></div>
+    <div style="margin-left:auto;text-align:right;">
+      <div style="font-size:10px;color:var(--mu);">${L==='PT'?'Progresso geral':'Overall progress'}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gl2);">${pct}%</div>
+    </div>
+  </div>`;
+
+  // Agrupar por categoria
+  const cats = [...new Set(CHK_ITEMS.map(i=>i.cat))];
+  cats.forEach(cat=>{
+    const items = CHK_ITEMS.filter(i=>i.cat===cat);
+    const catDone = items.filter(i=>((_chkData[i.id]||{}).status||i.status)==='Done').length;
+    const catCfg = CHK_CATS[cat];
+    html += `<div class="cd" style="margin-bottom:14px;">
+      <div class="cdh">
+        <div style="font-size:20px;opacity:.3;">${catCfg.icon}</div>
+        <div style="flex:1;"><div class="cdt">${L==='PT'?catCfg.pt:catCfg.en}</div>
+        <div class="cds">${catDone}/${items.length} ${L==='PT'?'concluídos':'completed'}</div></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:${catDone===items.length?'var(--ok)':'var(--gl2)'};">${Math.round(catDone/items.length*100)}%</div>
+      </div>
+      <div class="cdb" style="padding:8px 18px;">`;
+
+    items.forEach(it=>{
+      const saved = _chkData[it.id] || {};
+      const st = saved.status || it.status;
+      const scfg = STATUS_CFG[st] || STATUS_CFG.Pending;
+      const label = L==='PT' ? it.pt : it.en;
+      const notes = saved.notes !== undefined ? saved.notes : it.notes;
+      const resp = saved.resp !== undefined ? saved.resp : it.resp;
+
+      html += `<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gl);opacity:.3;min-width:26px;line-height:1.2;">${it.id}</div>
+        <div style="flex:1;">
+          <div style="font-size:12px;color:var(--wh);margin-bottom:${notes||resp?'4px':'0'};line-height:1.5;">${label}</div>
+          ${resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);">Resp: ${resp}</div>`:''}
+          ${notes?`<div style="font-size:10px;color:var(--mu);font-style:italic;margin-top:2px;">${notes}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:110px;">
+          <span class="bge ${scfg.cls}">${scfg.dot} ${L==='PT'?scfg.pt:scfg.en}</span>
+          ${isAdmin?`<select onchange="updateChkStatus(${it.id},this.value)" style="font-size:9px;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:4px;color:var(--wh);padding:2px 4px;cursor:pointer;">
+            <option value="Pending" ${st==='Pending'?'selected':''}>⚪ ${L==='PT'?'Pendente':'Pending'}</option>
+            <option value="InProgress" ${st==='InProgress'?'selected':''}>🟡 ${L==='PT'?'Em Curso':'In Progress'}</option>
+            <option value="Done" ${st==='Done'?'selected':''}>🟢 ${L==='PT'?'Concluído':'Done'}</option>
+            <option value="Issue" ${st==='Issue'?'selected':''}>⚠️ ${L==='PT'?'Problema':'Issue'}</option>
+          </select>`:''}
+        </div>
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  document.getElementById('chk-content').innerHTML = html;
+  document.getElementById('btn-chk-lang').textContent = L==='PT'?'EN':'PT';
+}
+
+async function updateChkStatus(id, status){
+  if(!isAdmin) return;
+  _chkData[id] = {...(_chkData[id]||{}), status};
+  await _add('checklist', {itemId: id, status, ts: Date.now()});
+  renderChk();
+  toast(chkLang==='PT'?'Estado actualizado':'Status updated');
+}
+
+// Carregar estados guardados do Firebase
+function loadChk(){
+  _snap('checklist',(docs)=>{
+    _chkData = {};
+    // Usar o mais recente por itemId
+    docs.forEach(d=>{ _chkData[d.itemId] = d; });
+    const pg = document.getElementById('pg-wmfcheck');
+    if(pg && pg.classList.contains('act')) renderChk();
+  });
+}
+
 // ═══ EXPOR FUNÇÕES AO HTML ═══
 window.doLogin=doLogin;
 window.doLogout=doLogout;
@@ -1067,4 +1267,6 @@ window.saveInv=saveInv;
 window.delInv=delInv;
 window.renderBal=renderBal;
 window.renderDR=renderDR;
+window.renderChk=renderChk;
+window.updateChkStatus=updateChkStatus;
 </script></body></html>

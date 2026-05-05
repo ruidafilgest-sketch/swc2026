@@ -1734,9 +1734,66 @@ async function savePrazo(){
 }
 function renderCron(){
   const el=document.getElementById('cron-list');
-  if(!_praz.length){el.innerHTML='<div class="em"><div class="emi"></div><div class="emt">Sem prazos registados</div><div style="font-size:11px;color:var(--mu);">Adicione os prazos do Acordo Tripartido WMF/EMF/FPM</div></div>';return;}
+  if(!_praz.length){
+    // Prazos contratuais WMF pre-carregados automaticamente
+    const PRAZOS_WMF = [
+      {data:'2026-01-14',titulo:'Website oficial EN activo e acessivel',resp:'Comunicacao',prioridade:'critico',estado:'pendente'},
+      {data:'2026-01-14',titulo:'Alojamento garantido — lista hoteis H1-H5 confirmada',resp:'Logistica',prioridade:'critico',estado:'pendente'},
+      {data:'2026-01-14',titulo:'Patrocinadores Gold — endereco espaco venda 8m2',resp:'COE',prioridade:'critico',estado:'pendente'},
+      {data:'2026-03-31',titulo:'Contacto tecnico + cronograma software torneio',resp:'Chefe Desportivo',prioridade:'critico',estado:'pendente'},
+      {data:'2026-05-31',titulo:'Material informativo publicado — lista alojamento online',resp:'Comunicacao',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-08-14',titulo:'Salas reuniao WMF/EMF confirmadas',resp:'Logistica',prioridade:'normal',estado:'pendente'},
+      {data:'2026-08-14',titulo:'Prazo final espaco venda Gold 8m2',resp:'COE',prioridade:'normal',estado:'pendente'},
+      {data:'2026-09-13',titulo:'Dados bancarios enviados a WMF para pagamento taxas',resp:'Financeiro',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-09-13',titulo:'Rooming lists enviadas a WMF/EMF',resp:'Logistica',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-09-13',titulo:'Guia do Atleta publicado e enviado a todas as delegacoes',resp:'Comunicacao',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-09-13',titulo:'Sinaletica do evento confirmada',resp:'Logistica',prioridade:'normal',estado:'pendente'},
+      {data:'2026-09-29',titulo:'Demonstracao financeira das taxas enviada a WMF (2 sem. antes)',resp:'Financeiro',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-13',titulo:'Treino oficial — campo disponivel todo o dia',resp:'Chefe Desportivo',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-13',titulo:'Cerimonia de Abertura — 19:30',resp:'COE',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-14',titulo:'Dia 1 competicao — Stroke Play Ronda 1',resp:'Chefe Desportivo',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-15',titulo:'Dia 2 competicao — Stroke Play Rondas 2 e 3',resp:'Chefe Desportivo',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-16',titulo:'Dia 3 competicao — Match Play',resp:'Chefe Desportivo',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-17',titulo:'Final e Cerimonia de Encerramento com Medalhas — 19:30',resp:'COE',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-31',titulo:'Lista oficial de resultados enviada a WMF',resp:'Chefe Desportivo',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-31',titulo:'Inventario WMF devolvido e confirmado',resp:'Logistica',prioridade:'critico',estado:'pendente'},
+      {data:'2026-11-30',titulo:'Relatorio final enviado a WMF para receber os 25% restantes',resp:'Financeiro',prioridade:'critico',estado:'pendente'},
+      {data:'2026-11-30',titulo:'2 Press Releases enviados a WMF (antes e apos evento)',resp:'Comunicacao',prioridade:'urgente',estado:'pendente'},
+      // Itens criticos da Checklist WMF com data natural
+      {data:'2026-07-31',titulo:'CHK#2 - Painel de informacao disponivel no campo',resp:'Vizelgolfe',prioridade:'normal',estado:'pendente'},
+      {data:'2026-07-31',titulo:'CHK#3 - Ecras TV para resultados confirmados',resp:'Vizelgolfe',prioridade:'normal',estado:'pendente'},
+      {data:'2026-08-31',titulo:'CHK#4 - Internet a funcionar em todas as areas do campo',resp:'Vizelgolfe',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-08-31',titulo:'CHK#6 - Instalacao de som confirmada',resp:'Vizelgolfe',prioridade:'normal',estado:'pendente'},
+      {data:'2026-09-13',titulo:'CHK#9 - Para-ventos disponiveis (confirmar quantidades com WMF)',resp:'Vizelgolfe',prioridade:'normal',estado:'pendente'},
+      {data:'2026-09-13',titulo:'CHK#24 - Staff treinado no software BA (Bahngolf Arena)',resp:'Chefe Desportivo',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-09-30',titulo:'CHK#16 - Cartoes de pontuacao em papel disponiveis (backup telemoveis)',resp:'Chefe Desportivo',prioridade:'normal',estado:'pendente'},
+      {data:'2026-09-30',titulo:'CHK#35 - Bandeiras EMF e paises participantes encomendadas',resp:'Logistica',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-10-01',titulo:'CHK#29 - Medalhas equipa 1-3 lugar confirmadas (6 Senhoras + 8 Homens)',resp:'COE',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-01',titulo:'CHK#30 - Trofeus (Bocals) 1-3 lugar Stroke Play confirmados',resp:'COE',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-01',titulo:'CHK#31 - Trofeus (Bocals) 1-3 lugar Match Play confirmados',resp:'COE',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-01',titulo:'CHK#34 - CD com hinos nacionais disponivel',resp:'Cerimonias',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-05',titulo:'CHK#38 - Catering confirmado para ~150 pessoas durante o SWC',resp:'Logistica',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-05',titulo:'CHK#39 - Tenda grande para equipas confirmada (zona rio)',resp:'Logistica',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-10-10',titulo:'CHK#40 - Dorsais jogadores com logotipos patrocinadores Gold disponiveis',resp:'Comunicacao',prioridade:'normal',estado:'pendente'},
+      {data:'2026-10-10',titulo:'CHK#41/42 - Banners WMF outdoor e indoor — contactar Pasi Aho',resp:'COE',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-10-10',titulo:'CHK#43/44 - Sponsor wall/banner posicionado atras do podio',resp:'Logistica',prioridade:'urgente',estado:'pendente'},
+      {data:'2026-10-12',titulo:'CHK#45 - Primeiros socorros confirmados no local',resp:'Seguranca',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-12',titulo:'CHK#15 - Voluntarios suficientes no campo confirmados',resp:'COE',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-12',titulo:'CHK#5 - Caixas de correio para distribuicao de informacao (Clubes/Arbitros)',resp:'Secretariado',prioridade:'normal',estado:'pendente'},
+    ];
+    const nPend=PRAZOS_WMF.filter(p=>p.estado==='pendente').length;
+    const avisoDiv='<div class="av" style="margin-bottom:12px;"><strong>'+PRAZOS_WMF.length+' prazos WMF/EMF pre-carregados automaticamente</strong> — '+nPend+' pendentes. Inclui Acordo Tripartido e Checklist oficial WMF. Podes adicionar mais e actualizar o estado.</div>';
+    el.innerHTML = avisoDiv +
+      renderPrazosHTML(PRAZOS_WMF, true);
+    return;
+  }
   const hoje=new Date();
-  el.innerHTML=_praz.map(p=>{
+  el.innerHTML=renderPrazosHTML(_praz, false);
+}
+
+function renderPrazosHTML(prazos, readOnly){
+  const hoje=new Date();
+  return prazos.map(p=>{
     const d=new Date(p.data);const diff=Math.ceil((d-hoje)/86400000);
     const badge=p.estado==='concluido'?'bg-ok':diff<0?'bg-er':diff<=7?'bg-er':diff<=30?'bg-am':'bg-mu';
     const label=p.estado==='concluido'?'Concluído':diff<0?`${Math.abs(diff)}d atraso`:diff===0?'Hoje':`${diff}d`;
@@ -4856,6 +4913,7 @@ window.exportPat=exportPat;
 window.exportChkPDF=exportChkPDF;
 window.exportOrgPDF=exportOrgPDF;
 window.exportCronPDF=exportCronPDF;
+window.renderPrazosHTML=renderPrazosHTML;
 window.exportSegPDF=exportSegPDF;
 window.closeSb=closeSb;
 window.updateChkStatus=updateChkStatus;

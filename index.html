@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- SWC2026 v20260505-0918 -->
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -244,16 +244,17 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="si" onclick="nav(this,'seguranca','Segurança &amp; Seguros')"><span class="sic">◆</span>Segurança &amp; Seguros</div>
     <div class="sbs">WMF</div>
     <div class="si" onclick="nav(this,'wmfcheck','Checklist WMF Oficial')"><span class="sic">☑</span>Checklist WMF Oficial</div>
+    <div class="si" onclick="nav(this,'consignacao','Consignacao & Merchandise')"><span class="sic">&#9723;</span>Consignacao & Merch</div>
     <div class="sbs">Financeiro SNC-ESNL</div>
-    <div class="si" onclick="nav(this,'diario','Diário de Caixa / Banco')"><span class="sic">▤</span>Diário Caixa / Banco</div>
+    <div class="si" onclick="nav(this,'diario','Diario de Caixa / Banco')"><span class="sic">▤</span>Diário Caixa / Banco</div>
     <div class="si" onclick="nav(this,'receitas','Receitas')"><span class="sic">▲</span>Receitas</div>
     <div class="si" onclick="nav(this,'despesas','Despesas')"><span class="sic">▼</span>Despesas</div>
     <div class="si" onclick="nav(this,'patrocinios','Patrocínios &amp; CRM')"><span class="sic">◐</span>Patrocínios &amp; CRM</div>
     <div class="sbs">Relatórios Financeiros</div>
     <div class="si" onclick="nav(this,'balancete','Balancete Mensal SNC-ESNL')"><span class="sic">▦</span>Balancete Mensal</div>
-    <div class="si" onclick="nav(this,'dr','Demonstração de Resultados')"><span class="sic">▧</span>Dem. de Resultados</div>
-    <div class="si" onclick="nav(this,'balanco','Balanço do Evento')"><span class="sic">▨</span>Balanço do Evento</div>
-    <div class="si" onclick="nav(this,'ipdj','Formulário Anexo B — IPDJ')"><span class="sic">▩</span>Anexo B — IPDJ</div>
+    <div class="si" onclick="nav(this,'dr','Demonstracao de Resultados')"><span class="sic">▧</span>Dem. de Resultados</div>
+    <div class="si" onclick="nav(this,'balanco','Balanco do Evento')"><span class="sic">▨</span>Balanço do Evento</div>
+    <div class="si" onclick="nav(this,'ipdj','Formulario Anexo B - IPDJ')"><span class="sic">▩</span>Anexo B — IPDJ</div>
     <div class="si" onclick="nav(this,'wmf','Relatório WMF / EMF')"><span class="sic">◑</span>Relatório WMF / EMF</div>
   </div>
   <div class="sbf">
@@ -359,7 +360,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-atletas">
 <div class="st"><span class="sn">ATL</span>Atletas &amp; Inscrições</div>
 <div class="sd">Registo por país/federação — taxas reais, estado, credenciação, alojamento atribuído</div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="window.print()">Exportar lista</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total inscritos</div><div class="smv" id="a-tot">0</div></div>
   <div class="sm"><div class="sml">Taxas pagas</div><div class="smv" id="a-pg" style="color:var(--ok)">0</div></div>
@@ -386,7 +387,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-cerimonias">
 <div class="st"><span class="sn">CER</span>Cerimónias &amp; Protocolo</div>
 <div class="sd">Abertura 13 out 19:30 · Encerramento 17 out 19:30 · Comissão de Honra · VIP</div>
-<div class="bb" id="bar-cer"><button class="btn bp" onclick="openM('m-conv')">+ Convidado VIP</button><button class="btn bo" onclick="window.print()">Exportar lista</button></div>
+<div class="bb" id="bar-cer"><button class="btn bp" onclick="openM('m-conv')">+ Convidado VIP</button><button class="btn bo" onclick="exportCerimoniasPDF()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total convidados</div><div class="smv" id="c-tot">0</div></div>
   <div class="sm"><div class="sml">Abertura</div><div class="smv" id="c-ab">0</div></div>
@@ -433,7 +434,7 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="cdb">
       <div class="fg"><div class="fl">1.º Comunicado — antes abertura (EN)</div><textarea class="fta" id="pr1" placeholder="Em inglês: participantes, esquema, cidade, patrocinadores..." style="min-height:90px;"></textarea></div>
       <div class="fg"><div class="fl">2.º Comunicado — após encerramento (EN)</div><textarea class="fta" id="pr2" placeholder="Em inglês: resultados desportivos, cerimónia..." style="min-height:90px;"></textarea></div>
-      <div class="bb"><button class="btn bp bsm" onclick="toast('Comunicados guardados')">Guardar</button><button class="btn bo bsm" onclick="window.print()">Exportar PDF</button></div>
+      <div class="bb"><button class="btn bp bsm" onclick="toast('Comunicados guardados')">Guardar</button><button class="btn bo bsm" onclick="exportComunicadosPDF()">Exportar PDF</button></div>
     </div>
   </div>
 </div>
@@ -631,6 +632,47 @@ td.mu{color:var(--mu);font-style:italic;}
 </div>
 </div>
 
+  <!-- CONSIGNACAO & MERCHANDISE -->
+<div class="pg" id="pg-consignacao">
+<div class="st"><span class="sn">CONS</span>Consignacao & Merchandise</div>
+<div class="sd">Stock em consignacao por marca · Entradas · Vendas · Devolucoes · Acerto de contas</div>
+<div class="bb" id="bar-consig">
+  <button class="btn bp" onclick="openM('m-marca')">+ Nova marca</button>
+  <button class="btn bo" onclick="openM('m-artigo')">+ Artigo / Referencia</button>
+  <button class="btn bo" onclick="openM('m-venda')">+ Registar venda</button>
+  <button class="btn bo" onclick="exportConsigPDF()">Exportar PDF acerto contas</button>
+</div>
+
+<!-- KPIs -->
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Marcas registadas</div><div class="smv" id="cs-marcas">0</div></div>
+  <div class="sm"><div class="sml">Total stock entrada</div><div class="smv" id="cs-stock">0 un.</div></div>
+  <div class="sm"><div class="sml">Total vendido</div><div class="smv" id="cs-vendido" style="color:var(--ok)">0 un.</div></div>
+  <div class="sm"><div class="sml">Receita gerada</div><div class="smv" id="cs-receita" style="color:var(--gl2)">0,00EUR</div></div>
+</div>
+
+<!-- TABELA MARCAS -->
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">MARCAS</span>Empresas & Acordos</div>
+<div class="tbl-wrap tw" style="margin-bottom:20px;"><table>
+  <thead><tr><th>Marca / Empresa</th><th>Contacto</th><th>Comissao (%)</th><th>Stock entrado</th><th>Vendido</th><th>A devolver</th><th>Receita nossa</th><th>Estado</th><th id="th-cs-marca">Acoes</th></tr></thead>
+  <tbody id="t-marcas"><tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem marcas registadas</td></tr></tbody>
+</table></div>
+
+<!-- TABELA ARTIGOS -->
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">ARTIGOS</span>Referencias & Stock</div>
+<div class="tbl-wrap tw" style="margin-bottom:20px;"><table>
+  <thead><tr><th>Marca</th><th>Referencia</th><th>Descricao</th><th>Preco unit. (EUR)</th><th>Qtd. entrou</th><th>Qtd. vendida</th><th>Stock actual</th><th>Valor vendas</th><th id="th-cs-art">Acoes</th></tr></thead>
+  <tbody id="t-artigos"><tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr></tbody>
+</table></div>
+
+<!-- TABELA VENDAS -->
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">VENDAS</span>Registo de Vendas Diario</div>
+<div class="tbl-wrap tw"><table>
+  <thead><tr><th>Data / Hora</th><th>Marca</th><th>Referencia</th><th>Qtd.</th><th>Preco unit.</th><th>Total venda</th><th>Comissao nossa</th><th id="th-cs-venda">Acoes</th></tr></thead>
+  <tbody id="t-vendas"><tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr></tbody>
+</table></div>
+</div>
+
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
 <div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026</div>
@@ -825,12 +867,73 @@ td.mu{color:var(--mu);font-style:italic;}
   <div class="mf"><button class="btn bo" onclick="closeM('m-prog-item')">Cancelar</button><button class="btn bp" onclick="saveProgItem()">Guardar</button></div>
 </div></div>
 
+<!-- MODAL MARCA -->
+<div class="mo" id="m-marca"><div class="mdl">
+  <div class="mh"><div class="mt2">Nova Marca / Empresa</div><button class="mc" onclick="closeM('m-marca')">X</button></div>
+  <div class="mb">
+    <div class="fg"><div class="fl">Nome da marca / empresa</div><input class="fi" id="mk-nome" placeholder="ex: Cobra, Argos, Arnold Palmer..."></div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Contacto (nome)</div><input class="fi" id="mk-ct" placeholder="Nome do responsavel"></div>
+      <div class="fg"><div class="fl">Email / Telemovel</div><input class="fi" id="mk-email" placeholder="email ou telemovel"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Comissao nossa (%)</div><input class="fi" type="number" step="0.1" min="0" max="100" id="mk-pct" placeholder="ex: 20 = 20% para nos"></div>
+      <div class="fg"><div class="fl">Data entrada stock</div><input class="fi" type="date" id="mk-data"></div>
+    </div>
+    <div class="fg"><div class="fl">Notas / Condicoes acordadas</div><textarea class="fta" id="mk-notas" placeholder="Condicoes especificas do acordo de consignacao..."></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-marca')">Cancelar</button><button class="btn bp" onclick="saveMarca()">Guardar marca</button></div>
+</div></div>
+
+<!-- MODAL ARTIGO -->
+<div class="mo" id="m-artigo"><div class="mdl">
+  <div class="mh"><div class="mt2">Novo Artigo / Referencia</div><button class="mc" onclick="closeM('m-artigo')">X</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Marca</div><select class="fse" id="art-marca" style="width:100%;"><option value="">-- Selecionar marca --</option></select></div>
+      <div class="fg"><div class="fl">Referencia</div><input class="fi" id="art-ref" placeholder="ex: COBRA-PRO-RED-48"></div>
+    </div>
+    <div class="fg"><div class="fl">Descricao do artigo</div><input class="fi" id="art-desc" placeholder="ex: Bola Cobra Pro Felt Vermelha - pack 6"></div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Preco de venda unitario (EUR)</div><input class="fi" type="number" step="0.01" min="0" id="art-preco" placeholder="0,00"></div>
+      <div class="fg"><div class="fl">Quantidade entrada (unidades)</div><input class="fi" type="number" min="0" id="art-qty" placeholder="0"></div>
+    </div>
+    <div class="fg"><div class="fl">Notas</div><input class="fi" id="art-notas" placeholder="Observacoes sobre o artigo..."></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-artigo')">Cancelar</button><button class="btn bp" onclick="saveArtigo()">Guardar artigo</button></div>
+</div></div>
+
+<!-- MODAL VENDA -->
+<div class="mo" id="m-venda"><div class="mdl">
+  <div class="mh"><div class="mt2">Registar Venda</div><button class="mc" onclick="closeM('m-venda')">X</button></div>
+  <div class="mb">
+    <div class="av"><strong>Atenção:</strong> Cada venda reduz o stock automaticamente. Verifique a referencia e quantidade antes de guardar.</div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Data e hora</div><input class="fi" type="datetime-local" id="vd-dt"></div>
+      <div class="fg"><div class="fl">Marca</div><select class="fse" id="vd-marca" onchange="fillArtigosVenda()"><option value="">-- Selecionar --</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Artigo / Referencia</div><select class="fse" id="vd-artigo"><option value="">-- Selecionar marca primeiro --</option></select></div>
+      <div class="fg"><div class="fl">Quantidade vendida</div><input class="fi" type="number" min="1" id="vd-qty" placeholder="1" oninput="calcVenda()"></div>
+    </div>
+    <div style="background:rgba(201,168,76,.08);border:1px solid var(--bds);border-radius:8px;padding:12px 14px;margin-top:8px;">
+      <div class="fr" style="margin-bottom:0;">
+        <div><div class="sml">Preco unitario</div><div class="smv" id="vd-preco-unit" style="font-size:16px;">0,00 EUR</div></div>
+        <div><div class="sml">Total venda</div><div class="smv" id="vd-total" style="font-size:16px;color:var(--ok)">0,00 EUR</div></div>
+        <div><div class="sml">Comissao nossa</div><div class="smv" id="vd-comissao" style="font-size:16px;color:var(--gl2)">0,00 EUR</div></div>
+      </div>
+    </div>
+    <div class="fg" style="margin-top:12px;"><div class="fl">Notas (opcional)</div><input class="fi" id="vd-notas" placeholder="Comprador, metodo pagamento, observacoes..."></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-venda')">Cancelar</button><button class="btn bp" onclick="saveVenda()">Confirmar venda</button></div>
+</div></div>
+
 <div class="tst" id="tst"></div>
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-// ═══ FIREBASE — substituir com credenciais reais do projeto 'swc2026' ═══
+//  FIREBASE - substituir com credenciais reais do projeto 'swc2026' 
 const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
 const _app=initializeApp(fbCfg);
 const db=getFirestore(_app);
@@ -841,7 +944,7 @@ const _del=(col,id)=>deleteDoc(doc(C(col),id));
 const _upd=(col,id,data)=>updateDoc(doc(C(col),id),data);
 const _snap=(col,cb,ord)=>{const q=ord?query(C(col),orderBy(ord)):C(col);return onSnapshot(q,s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))));};
 
-// ═══ AUTH ═══
+//  AUTH 
 let isAdmin=false;
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function doLogin(){
@@ -856,7 +959,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  loadAll();loadChk();initChecklist();startCountdown();startModeEvento();
+  loadAll();loadChk();loadConsig();initChecklist();startCountdown();startModeEvento();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -864,7 +967,7 @@ function setAdminBars(){
   ['th-atl','th-cer','th-di','th-rec','th-desp','th-pat'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isAdmin?'':'none';});
 }
 
-// ═══ NAV ═══
+//  NAV 
 function nav(el,id,title){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
   document.querySelectorAll('.si').forEach(s=>s.classList.remove('act'));
@@ -879,17 +982,18 @@ function nav(el,id,title){
   if(id==='wmf')renderWMF();
   if(id==='wmfcheck')renderChk();
   if(id==='programa')renderPrograma();
+  if(id==='consignacao'){renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();}
   if(id==='modo-evento')startModeEvento();
 }
 function tick(){const n=new Date();document.getElementById('clk').textContent=n.toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});}
 
-// ═══ UTILS ═══
+//  UTILS 
 const fmt=v=>Number(v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
 function openM(id){document.getElementById(id).classList.add('op');}
 function closeM(id){document.getElementById(id).classList.remove('op');}
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
-// ═══ DATA ═══
+//  DATA 
 let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();},'data');
@@ -907,7 +1011,7 @@ function loadAll(){
   _snap('inventario',(docs)=>{_inv=docs;renderInv();});
 }
 
-// ═══ DASHBOARD ═══
+//  DASHBOARD 
 function renderDash(){
   const totR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
   const totD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
@@ -938,7 +1042,7 @@ function renderDash(){
   renderAlertas();
 }
 
-// ═══ DIÁRIO ═══
+//  DIÁRIO 
 async function saveLan(){
   if(!isAdmin)return;
   const d={data:document.getElementById('ln-dt').value,dc:document.getElementById('ln-dc').value,cn:document.getElementById('ln-cn').value,cb:document.getElementById('ln-cb').value,ds:document.getElementById('ln-ds').value,tp:document.getElementById('ln-tp').value,vl:parseFloat(document.getElementById('ln-vl').value)||0,ts:Date.now()};
@@ -950,7 +1054,7 @@ function renderDi(){
     const v=Number(l.vl||0);
     if(l.cb==='Caixa')l.tp==='C'?cx+=v:cx-=v;else l.tp==='C'?bk+=v:bk-=v;
     l.tp==='C'?totC+=v:totD+=v;
-    return `<tr><td>${l.data||''}</td><td class="mu">${l.dc||''}</td><td><span class="sc">${l.cn||''}</span></td><td>${l.ds||''}</td><td><span class="bge ${l.tp==='C'?'bg-ok':'bg-er'}">${l.tp}</span></td><td class="mu">${l.cb||''}</td><td class="${l.tp==='C'?'tok':'tv'}">${l.tp==='C'?'+':'-'}${fmt(l.vl)}</td><td class="go">${fmt(cx+bk)}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delLan('${l.id}')">✕</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td>${l.data||''}</td><td class="mu">${l.dc||''}</td><td><span class="sc">${l.cn||''}</span></td><td>${l.ds||''}</td><td><span class="bge ${l.tp==='C'?'bg-ok':'bg-er'}">${l.tp}</span></td><td class="mu">${l.cb||''}</td><td class="${l.tp==='C'?'tok':'tv'}">${l.tp==='C'?'+':'-'}${fmt(l.vl)}</td><td class="go">${fmt(cx+bk)}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delLan('${l.id}')"></button></td>`:'<td></td>'}</tr>`;
   });
   document.getElementById('t-di').innerHTML=rows.length?rows.join(''):'<tr><td colspan="9" class="mu" style="text-align:center;padding:24px;">Sem lançamentos</td></tr>';
   document.getElementById('s-cx').textContent=fmt(cx);
@@ -960,7 +1064,7 @@ function renderDi(){
 }
 async function delLan(id){if(!isAdmin||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
 
-// ═══ RECEITAS ═══
+//  RECEITAS 
 async function saveRec(){
   if(!isAdmin)return;
   const d={data:document.getElementById('rc-dt').value,conta:document.getElementById('rc-cn').value,desc:document.getElementById('rc-ds').value,valor:parseFloat(document.getElementById('rc-vl').value)||0,estado:document.getElementById('rc-st').value,obs:document.getElementById('rc-ob').value,ts:Date.now()};
@@ -974,11 +1078,11 @@ function renderRec(){
   document.getElementById('r-pen').textContent=fmt(totP);
   document.getElementById('r-pub').textContent=fmt(pub);
   document.getElementById('r-prv').textContent=fmt(totR-pub);
-  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delRec('${r.id}')">✕</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
+  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delRec('${r.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
 }
 async function delRec(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
 
-// ═══ DESPESAS ═══
+//  DESPESAS 
 async function saveDesp(){
   if(!isAdmin)return;
   const d={data:document.getElementById('dp-dt').value,doc:document.getElementById('dp-dc').value,conta:document.getElementById('dp-cn').value,desc:document.getElementById('dp-ds').value,valor:parseFloat(document.getElementById('dp-vl').value)||0,estado:document.getElementById('dp-st').value,ts:Date.now()};
@@ -992,12 +1096,12 @@ function renderDesp(){
   document.getElementById('d-ndoc').textContent=_desp.length;
   const byR={};_desp.forEach(d=>{byR[d.conta]=(byR[d.conta]||0)+Number(d.valor||0);});
   const mr=Object.entries(byR).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('d-mrb').textContent=mr?mr[0]:'—';
-  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delDesp('${d.id}')">✕</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
+  document.getElementById('d-mrb').textContent=mr?mr[0]:'-';
+  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delDesp('${d.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
 }
 async function delDesp(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('despesas',id);toast('Eliminada','er');}
 
-// ═══ PATROCÍNIOS ═══
+//  PATROCÍNIOS 
 async function savePat(){
   if(!isAdmin)return;
   const d={empresa:document.getElementById('pt-emp').value,tipo:document.getElementById('pt-tp').value,contacto:document.getElementById('pt-ct').value,valor:parseFloat(document.getElementById('pt-vl').value)||0,contrapartidas:document.getElementById('pt-co').value,estado:document.getElementById('pt-st').value,ts:Date.now()};
@@ -1011,11 +1115,11 @@ function renderPat(){
   document.getElementById('p-gd').textContent=_pat.filter(p=>p.tipo==='Gold WMF').length;
   document.getElementById('p-lc').textContent=_pat.filter(p=>p.tipo!=='Gold WMF').length;
   document.getElementById('p-pct').textContent=cf>0?fmt(cf):'';
-  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delPat('${p.id}')">✕</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
+  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delPat('${p.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
 }
 async function delPat(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
 
-// ═══ ATLETAS ═══
+//  ATLETAS 
 async function saveAtl(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('at-nm').value,pais:document.getElementById('at-ps').value,federacao:document.getElementById('at-fd').value,categoria:document.getElementById('at-ct').value,taxa:parseFloat(document.getElementById('at-tx').value)||0,estado:document.getElementById('at-st').value,hotel:document.getElementById('at-ht').value,email:document.getElementById('at-em').value,ts:Date.now()};
@@ -1026,11 +1130,11 @@ function renderAtl(){
   document.getElementById('a-pg').textContent=_atl.filter(a=>a.estado==='Pago').length;
   document.getElementById('a-pn').textContent=_atl.filter(a=>a.estado==='Pendente').length;
   document.getElementById('a-ps').textContent=new Set(_atl.map(a=>a.pais)).size;
-  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'—'}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">✕</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
+  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delAtl('${a.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
 }
 async function delAtl(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
 
-// ═══ CONVITES ═══
+//  CONVITES 
 async function saveConv(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('cv-nm').value,entidade:document.getElementById('cv-en').value,categoria:document.getElementById('cv-ct').value,abertura:document.getElementById('cv-ab').value,encerramento:document.getElementById('cv-enc').value,ts:Date.now()};
@@ -1041,11 +1145,11 @@ function renderConv(){
   document.getElementById('c-ab').textContent=_conv.filter(c=>c.abertura==='S').length;
   document.getElementById('c-enc').textContent=_conv.filter(c=>c.encerramento==='S').length;
   document.getElementById('c-hon').textContent=_conv.filter(c=>c.categoria==='Comissão de Honra').length;
-  document.getElementById('t-conv').innerHTML=_conv.length?_conv.map(c=>`<tr><td class="vl">${c.nome||''}</td><td class="mu">${c.entidade||''}</td><td><span class="bge bg-g">${c.categoria||''}</span></td><td><span class="bge ${c.abertura==='S'?'bg-ok':'bg-er'}">${c.abertura==='S'?'Sim':'Não'}</span></td><td><span class="bge ${c.encerramento==='S'?'bg-ok':'bg-er'}">${c.encerramento==='S'?'Sim':'Não'}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delConv('${c.id}')">✕</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem convites</td></tr>';
+  document.getElementById('t-conv').innerHTML=_conv.length?_conv.map(c=>`<tr><td class="vl">${c.nome||''}</td><td class="mu">${c.entidade||''}</td><td><span class="bge bg-g">${c.categoria||''}</span></td><td><span class="bge ${c.abertura==='S'?'bg-ok':'bg-er'}">${c.abertura==='S'?'Sim':'Não'}</span></td><td><span class="bge ${c.encerramento==='S'?'bg-ok':'bg-er'}">${c.encerramento==='S'?'Sim':'Não'}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delConv('${c.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem convites</td></tr>';
 }
 async function delConv(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('convites',id);}
 
-// ═══ PRAZOS ═══
+//  PRAZOS 
 async function savePrazo(){
   if(!isAdmin)return;
   const d={data:document.getElementById('pz-dt').value,titulo:document.getElementById('pz-tt').value,desc:document.getElementById('pz-ds').value,resp:document.getElementById('pz-rp').value,prioridade:document.getElementById('pz-pr').value,estado:document.getElementById('pz-st').value,ts:Date.now()};
@@ -1053,18 +1157,18 @@ async function savePrazo(){
 }
 function renderCron(){
   const el=document.getElementById('cron-list');
-  if(!_praz.length){el.innerHTML='<div class="em"><div class="emi">◷</div><div class="emt">Sem prazos registados</div><div style="font-size:11px;color:var(--mu);">Adicione os prazos do Acordo Tripartido WMF/EMF/FPM</div></div>';return;}
+  if(!_praz.length){el.innerHTML='<div class="em"><div class="emi"></div><div class="emt">Sem prazos registados</div><div style="font-size:11px;color:var(--mu);">Adicione os prazos do Acordo Tripartido WMF/EMF/FPM</div></div>';return;}
   const hoje=new Date();
   el.innerHTML=_praz.map(p=>{
     const d=new Date(p.data);const diff=Math.ceil((d-hoje)/86400000);
     const badge=p.estado==='concluido'?'bg-ok':diff<0?'bg-er':diff<=7?'bg-er':diff<=30?'bg-am':'bg-mu';
     const label=p.estado==='concluido'?'Concluído':diff<0?`${Math.abs(diff)}d atraso`:diff===0?'Hoje':`${diff}d`;
-    return `<div class="cd" style="margin-bottom:10px;"><div class="cdb" style="display:flex;gap:16px;align-items:flex-start;"><div style="min-width:88px;font-size:11px;font-weight:700;color:var(--gl);">${p.data||''}</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--wh);margin-bottom:3px;">${p.titulo||''}</div><div style="font-size:11px;color:var(--mu);line-height:1.5;">${p.desc||''}</div>${p.resp?`<div style="font-size:10px;color:rgba(201,168,76,.45);margin-top:3px;">Resp: ${p.resp}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><span class="bge ${badge}">${label}</span><span class="bge bg-mu">${p.prioridade||''}</span>${isAdmin&&p.estado!=='concluido'?`<button class="btn bsu bsm" onclick="concPrazo('${p.id}')">✓</button>`:''}</div></div></div>`;
+    return `<div class="cd" style="margin-bottom:10px;"><div class="cdb" style="display:flex;gap:16px;align-items:flex-start;"><div style="min-width:88px;font-size:11px;font-weight:700;color:var(--gl);">${p.data||''}</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--wh);margin-bottom:3px;">${p.titulo||''}</div><div style="font-size:11px;color:var(--mu);line-height:1.5;">${p.desc||''}</div>${p.resp?`<div style="font-size:10px;color:rgba(201,168,76,.45);margin-top:3px;">Resp: ${p.resp}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><span class="bge ${badge}">${label}</span><span class="bge bg-mu">${p.prioridade||''}</span>${isAdmin&&p.estado!=='concluido'?`<button class="btn bsu bsm" onclick="concPrazo('${p.id}')"></button>`:''}</div></div></div>`;
   }).join('');
 }
 async function concPrazo(id){await _upd('prazos',id,{estado:'concluido'});toast('Prazo concluído');}
 
-// ═══ ORGANIZAÇÃO ═══
+//  ORGANIZAÇÃO 
 async function saveMbr(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('mb-nm').value,funcao:document.getElementById('mb-fn').value,email:document.getElementById('mb-em').value,tel:document.getElementById('mb-tl').value,resp:document.getElementById('mb-rp').value,ts:Date.now()};
@@ -1077,14 +1181,14 @@ async function saveVol(){
 }
 function renderOrg(){
   const coe=document.getElementById('org-coe');
-  coe.innerHTML=_mbr.length?_mbr.map(m=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);">${m.tel||''} ${m.email?'· '+m.email:''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delMbr('${m.id}')">✕</button>`:''}</div>`).join(''):'<div class="em"><div class="emi">◈</div><div class="emt">Sem membros COE</div></div>';
+  coe.innerHTML=_mbr.length?_mbr.map(m=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);">${m.tel||''} ${m.email?'- '+m.email:''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delMbr('${m.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem membros COE</div></div>';
   const vol=document.getElementById('org-vol');
-  vol.innerHTML=_vol.length?_vol.map(v=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid rgba(201,168,76,.07);"><div style="font-size:12px;color:var(--se);">${v.nome||''} <span style="color:var(--mu);font-size:10px;">· ${v.area||''} · ${v.periodo||''}</span></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delVol('${v.id}')">✕</button>`:''}</div>`).join(''):'<div class="em"><div class="emi">◉</div><div class="emt">Sem voluntários</div></div>';
+  vol.innerHTML=_vol.length?_vol.map(v=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid rgba(201,168,76,.07);"><div style="font-size:12px;color:var(--se);">${v.nome||''} <span style="color:var(--mu);font-size:10px;">- ${v.area||''} - ${v.periodo||''}</span></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delVol('${v.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem voluntários</div></div>';
 }
 async function delMbr(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('membros',id);}
 async function delVol(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('voluntarios',id);}
 
-// ═══ ALOJAMENTO ═══
+//  ALOJAMENTO 
 async function saveHot(){
   if(!isAdmin)return;
   const d={codigo:document.getElementById('ht-cd').value,nome:document.getElementById('ht-nm').value,dist:document.getElementById('ht-dist').value,tarifa:parseFloat(document.getElementById('ht-tar').value)||0,quartos:document.getElementById('ht-qts').value,contacto:document.getElementById('ht-ct').value,wmf:document.getElementById('ht-wmf').value,ts:Date.now()};
@@ -1097,14 +1201,14 @@ async function saveTrn(){
 }
 function renderAlo(){
   const lh=document.getElementById('lst-hot');
-  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} — ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'—'} · Tarifa: ${fmt(h.tarifa)}/noite · ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delHot('${h.id}')">✕</button>`:''}</div></div>`).join(''):'<div class="em"><div class="emi">◫</div><div class="emt">Sem hotéis</div></div>';
+  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delHot('${h.id}')"></button>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
   const lt=document.getElementById('lst-trn');
-  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} · ${t.pax||0} pax · ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delTrn('${t.id}')">✕</button>`:''}</div>`).join(''):'<div class="em"><div class="emi">◉</div><div class="emt">Sem transfers</div></div>';
+  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delTrn('${t.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
 }
 async function delHot(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('hoteis',id);}
 async function delTrn(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('transfers',id);}
 
-// ═══ ÁRBITROS ═══
+//  ÁRBITROS 
 async function saveArb(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('ar-nm').value,pais:document.getElementById('ar-ps').value,funcao:document.getElementById('ar-fn').value,valor:parseFloat(document.getElementById('ar-vl').value)||0,hotel:document.getElementById('ar-ht').value,ts:Date.now()};
@@ -1112,11 +1216,11 @@ async function saveArb(){
 }
 function renderArb(){
   const el=document.getElementById('lst-arb');
-  el.innerHTML=_arb.length?_arb.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${a.nome||''}</div><div style="font-size:11px;color:var(--mu);">${a.funcao||''} · ${a.pais||''} · Hotel: ${a.hotel||'—'}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delArb('${a.id}')">✕</button>`:''}</div>`).join(''):'<div class="em"><div class="emi">◎</div><div class="emt">Sem árbitros</div></div>';
+  el.innerHTML=_arb.length?_arb.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${a.nome||''}</div><div style="font-size:11px;color:var(--mu);">${a.funcao||''} - ${a.pais||''} - Hotel: ${a.hotel||'-'}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delArb('${a.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem árbitros</div></div>';
 }
 async function delArb(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('arbitros',id);}
 
-// ═══ INVENTÁRIO ═══
+//  INVENTÁRIO 
 async function saveInv(){
   if(!isAdmin)return;
   const d={desc:document.getElementById('iv-ds').value,qty:document.getElementById('iv-qt').value,data:document.getElementById('iv-dt').value,estado:document.getElementById('iv-st').value,obs:document.getElementById('iv-ob').value,ts:Date.now()};
@@ -1124,11 +1228,11 @@ async function saveInv(){
 }
 function renderInv(){
   const el=document.getElementById('lst-inv');
-  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} · ${i.data||''} · ${i.estado||''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delInv('${i.id}')">✕</button>`:''}</div>`).join(''):'<div class="em"><div class="emi">◆</div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
+  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} - ${i.data||''} - ${i.estado||''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delInv('${i.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
 }
 async function delInv(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('inventario',id);}
 
-// ═══ CHECKLIST COMUNICAÇÃO ═══
+//  CHECKLIST COMUNICAÇÃO 
 function initChecklist(){
   const items=[
     {l:'Website oficial em inglês ativo',p:'14 Abr 2026',ob:true},
@@ -1149,7 +1253,7 @@ function initChecklist(){
   el.innerHTML=items.map((it,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i>0?'border-top:1px solid rgba(201,168,76,.07)':''}"><input type="checkbox" id="ck${i}" style="accent-color:var(--gl);width:14px;height:14px;flex-shrink:0;"><label for="ck${i}" style="flex:1;font-size:12px;color:var(--se);cursor:pointer;">${it.l}</label><span style="font-size:10px;color:var(--mu);white-space:nowrap;">${it.p}</span><span class="bge ${it.ob?'bg-er':'bg-mu'}">${it.ob?'Obrig.':'Recom.'}</span></div>`).join('');
 }
 
-// ═══ BALANCETE ═══
+//  BALANCETE 
 const nomC={'6141':'Material desportivo','6143':'Repr./propaganda','6221':'Trabalhos especializados','6222':'Publicidade','6223':'Vigilância','6228':'Outros FSE','6231':'Ferramentas desgaste','6233':'Mat. escritório','6234':'Artigos oferta','6242':'Combustíveis','6251':'Deslocações/estadas','6261':'Rendas/alugueres','6262':'Comunicação','6266':'Desp. representação','6268':'Outros serviços','6888':'Taxas WMF/EMF','6899':'Prémios','7151':'Mat.desp.(venda)','7153':'Merchandising','724':'Patrocinadores','729':'Inscrições','751':'Subsídios públicos','781':'Rend.suplementares','788':'Outros rendimentos'};
 function renderBal(){
   const mes=document.getElementById('bal-mes').value;
@@ -1168,11 +1272,11 @@ function renderBal(){
   t.innerHTML=contas.map(c=>{
     const mv_=mv[c]||{d:0,c:0};const ac_=acum[c]||{d:0,c:0};
     const sm=mv_.c-mv_.d;const sa=ac_.c-ac_.d;
-    return `<tr><td><span class="sc">${c}</span></td><td>${nomC[c]||c}</td><td class="${mv_.d>0?'tv':'mu'}">${mv_.d>0?fmt(mv_.d):'—'}</td><td class="${mv_.c>0?'tok':'mu'}">${mv_.c>0?fmt(mv_.c):'—'}</td><td class="${sm>=0?'tok':'tv'}">${fmt(sm)}</td><td class="${ac_.d>0?'tv':'mu'}">${ac_.d>0?fmt(ac_.d):'—'}</td><td class="${ac_.c>0?'tok':'mu'}">${ac_.c>0?fmt(ac_.c):'—'}</td><td class="${sa>=0?'tok':'tv'}">${fmt(sa)}</td></tr>`;
+    return `<tr><td><span class="sc">${c}</span></td><td>${nomC[c]||c}</td><td class="${mv_.d>0?'tv':'mu'}">${mv_.d>0?fmt(mv_.d):'-'}</td><td class="${mv_.c>0?'tok':'mu'}">${mv_.c>0?fmt(mv_.c):'-'}</td><td class="${sm>=0?'tok':'tv'}">${fmt(sm)}</td><td class="${ac_.d>0?'tv':'mu'}">${ac_.d>0?fmt(ac_.d):'-'}</td><td class="${ac_.c>0?'tok':'mu'}">${ac_.c>0?fmt(ac_.c):'-'}</td><td class="${sa>=0?'tok':'tv'}">${fmt(sa)}</td></tr>`;
   }).join('');
 }
 
-// ═══ DR ═══
+//  DR 
 let drL='PT';
 function renderDR(){
   const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
@@ -1180,10 +1284,10 @@ function renderDR(){
   const res=tR-tD;const L=drL;
   const r7=['724','729','751','7151','7153','781','788'].map(c=>{const v=_rec.filter(r=>r.conta===c).reduce((a,r)=>a+Number(r.valor||0),0);if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--ok);font-weight:500;">${fmt(v)}</td></tr>`;}).join('');
   const r6=['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899'].map(c=>{const v=_desp.filter(d=>d.conta===c).reduce((a,d)=>a+Number(d.valor||0),0);if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--er);">${fmt(v)}</td></tr>`;}).join('');
-  document.getElementById('dr-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${L==='PT'?'Demonstração de Resultados':'Income Statement'}</div><div class="cds">SWC Vizela 2026 · ${L==='PT'?'Intercalar — valores reais':'Interim — actual values'}</div></div></div><div class="cdb"><table style="width:100%;border-collapse:collapse;"><thead><tr style="background:rgba(201,168,76,.06);"><th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Rubrica':'Item'}</th><th style="padding:10px 14px;text-align:right;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Valor real (€)':'Actual value (€)'}</th></tr></thead><tbody><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--ok);background:rgba(74,184,122,.04);">${L==='PT'?'RENDIMENTOS':'INCOME'}</td></tr>${r7}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Rendimentos':'Total Income'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--ok);">${fmt(tR)}</td></tr><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--er);background:rgba(224,82,82,.04);">${L==='PT'?'GASTOS':'EXPENSES'}</td></tr>${r6}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Gastos':'Total Expenses'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--er);">${fmt(tD)}</td></tr><tr style="background:rgba(201,168,76,.08);border-top:2px solid var(--gl);"><td style="padding:14px;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gl);">${L==='PT'?'Resultado do Evento':'Event Result'}</td><td style="padding:14px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:${res>=0?'var(--ok)':'var(--er)'};">${fmt(res)}</td></tr></tbody></table><div style="margin-top:14px;padding:10px 14px;border-top:1px solid var(--bd);font-size:11px;color:var(--mu);font-style:italic;">${L==='PT'?'Documento intercalar. Valores definitivos após encerramento total do evento.':'Interim document. Final values after complete event closure.'}</div></div></div>`;
+  document.getElementById('dr-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${L==='PT'?'Demonstracao de Resultados':'Income Statement'}</div><div class="cds">SWC Vizela 2026 - ${L==='PT'?'Intercalar - valores reais':'Interim - actual values'}</div></div></div><div class="cdb"><table style="width:100%;border-collapse:collapse;"><thead><tr style="background:rgba(201,168,76,.06);"><th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Rubrica':'Item'}</th><th style="padding:10px 14px;text-align:right;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Valor real (€)':'Actual value (€)'}</th></tr></thead><tbody><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--ok);background:rgba(74,184,122,.04);">${L==='PT'?'RENDIMENTOS':'INCOME'}</td></tr>${r7}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Rendimentos':'Total Income'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--ok);">${fmt(tR)}</td></tr><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--er);background:rgba(224,82,82,.04);">${L==='PT'?'GASTOS':'EXPENSES'}</td></tr>${r6}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Gastos':'Total Expenses'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--er);">${fmt(tD)}</td></tr><tr style="background:rgba(201,168,76,.08);border-top:2px solid var(--gl);"><td style="padding:14px;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gl);">${L==='PT'?'Resultado do Evento':'Event Result'}</td><td style="padding:14px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:${res>=0?'var(--ok)':'var(--er)'};">${fmt(res)}</td></tr></tbody></table><div style="margin-top:14px;padding:10px 14px;border-top:1px solid var(--bd);font-size:11px;color:var(--mu);font-style:italic;">${L==='PT'?'Documento intercalar. Valores definitivos após encerramento total do evento.':'Interim document. Final values after complete event closure.'}</div></div></div>`;
 }
 
-// ═══ BALANÇO ═══
+//  BALANÇO 
 function renderBalanco(){
   const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
   const tD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
@@ -1194,26 +1298,26 @@ function renderBalanco(){
   const ativo=cx+bk+cred;const passivo=forn;const res=tR-tD;
   const ajuste=ativo-passivo-res;const cp=res+ajuste;
   const eq=Math.abs(ativo-(passivo+cp))<0.01;
-  document.getElementById('bal-ct').innerHTML=`<div class="g2"><div class="cd"><div class="cdh"><div><div class="cdt">Ativo</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Caixa</span><span class="tok">${fmt(cx)}</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Banco</span><span class="tok">${fmt(bk)}</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">Créditos a receber</span><span class="go">${fmt(cred)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;font-weight:600;"><span style="color:var(--wh);">Total Ativo</span><span class="tok">${fmt(ativo)}</span></div></div></div><div class="cd"><div class="cdh"><div><div class="cdt">Passivo + Capital Próprio</div></div></div><div class="cdb"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--mu);margin-bottom:8px;">PASSIVO</div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">Fornecedores a pagar</span><span class="tv">${fmt(forn)}</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;"><span style="color:var(--wh);">Total Passivo</span><span class="tv">${fmt(passivo)}</span></div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--mu);margin:10px 0 8px;">CAPITAL PRÓPRIO</div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Resultado do evento</span><span class="${res>=0?'tok':'tv'}">${fmt(res)}</span></div>${ajuste!==0?`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--mu);font-style:italic;">Ajustamentos de encerramento</span><span class="mu">${fmt(ajuste)}</span></div>`:''}<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;"><span style="color:var(--wh);">Total Capital Próprio</span><span class="go">${fmt(cp)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--gl);font-size:14px;font-weight:700;"><span style="color:var(--wh);">Total P + CP</span><span style="color:var(--gl2);">${fmt(passivo+cp)}</span></div></div></div></div><div class="cd" style="margin-top:8px;"><div class="cdb" style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:12px;color:var(--se);">Verificação: Total Ativo = Total Passivo + Capital Próprio</div><div style="font-size:13px;font-weight:700;color:${eq?'var(--ok)':'var(--er)'};">${eq?'✓ Balanço equilibrado':'⚠ Diferença: '+fmt(ativo-(passivo+cp))}</div></div></div>`;
+  document.getElementById('bal-ct').innerHTML=`<div class="g2"><div class="cd"><div class="cdh"><div><div class="cdt">Ativo</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Caixa</span><span class="tok">${fmt(cx)}</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Banco</span><span class="tok">${fmt(bk)}</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">Créditos a receber</span><span class="go">${fmt(cred)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;font-weight:600;"><span style="color:var(--wh);">Total Ativo</span><span class="tok">${fmt(ativo)}</span></div></div></div><div class="cd"><div class="cdh"><div><div class="cdt">Passivo + Capital Próprio</div></div></div><div class="cdb"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--mu);margin-bottom:8px;">PASSIVO</div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">Fornecedores a pagar</span><span class="tv">${fmt(forn)}</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;"><span style="color:var(--wh);">Total Passivo</span><span class="tv">${fmt(passivo)}</span></div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--mu);margin:10px 0 8px;">CAPITAL PRÓPRIO</div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Resultado do evento</span><span class="${res>=0?'tok':'tv'}">${fmt(res)}</span></div>${ajuste!==0?`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--mu);font-style:italic;">Ajustamentos de encerramento</span><span class="mu">${fmt(ajuste)}</span></div>`:''}<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;"><span style="color:var(--wh);">Total Capital Próprio</span><span class="go">${fmt(cp)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--gl);font-size:14px;font-weight:700;"><span style="color:var(--wh);">Total P + CP</span><span style="color:var(--gl2);">${fmt(passivo+cp)}</span></div></div></div></div><div class="cd" style="margin-top:8px;"><div class="cdb" style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:12px;color:var(--se);">Verificação: Total Ativo = Total Passivo + Capital Próprio</div><div style="font-size:13px;font-weight:700;color:${eq?'var(--ok)':'var(--er)'};">${eq?' Balanço equilibrado':' Diferença: '+fmt(ativo-(passivo+cp))}</div></div></div>`;
 }
 
-// ═══ IPDJ ═══
+//  IPDJ 
 function renderIPDJ(){
   const tR=_rec.reduce((a,r)=>a+Number(r.valor||0),0);
   const tD=_desp.reduce((a,d)=>a+Number(d.valor||0),0);
   const pub=_rec.filter(r=>r.conta==='751').reduce((a,r)=>a+Number(r.valor||0),0);
   const prv=tR-pub;
-  document.getElementById('ipdj-ct').innerHTML=`<div class="av"><strong>Formulário Anexo B — IPDJ · Programa de Eventos Desportivos Internacionais</strong><br>Federação Portuguesa de Minigolfe · SWC Vizela 2026 · Gerado com valores reais registados no sistema.</div><div class="cd"><div class="cdh"><div><div class="cdt">Mapa Síntese</div><div class="cds">FPM · SWC Vizela 2026</div></div></div><div class="cdb"><div class="g4" style="margin-bottom:16px;"><div class="sm"><div class="sml">Total Gastos (cl. 6)</div><div class="smv tv">${fmt(tD)}</div></div><div class="sm"><div class="sml">Total Rendimentos (cl. 7)</div><div class="smv tok">${fmt(tR)}</div></div><div class="sm"><div class="sml">Rend. públicos (751)</div><div class="smv">${fmt(pub)}</div><div class="smn">${tR>0?(pub/tR*100).toFixed(1)+'%':'-'} do total</div></div><div class="sm"><div class="sml">Rend. privados</div><div class="smv">${fmt(prv)}</div><div class="smn">${tR>0?(prv/tR*100).toFixed(1)+'%':'-'} do total</div></div></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid var(--gl);font-size:15px;font-weight:600;"><span style="color:var(--gl);">Resultado Apurado</span><span style="color:${tR-tD>=0?'var(--ok)':'var(--er)'};">${fmt(tR-tD)}</span></div><div style="font-size:11px;color:var(--mu);margin-top:12px;font-style:italic;">Pronto para submissão ao IPDJ e arquivo com a FPM.</div></div></div>`;
+  document.getElementById('ipdj-ct').innerHTML=`<div class="av"><strong>Formulário Anexo B - IPDJ - Programa de Eventos Desportivos Internacionais</strong><br>Federação Portuguesa de Minigolfe - SWC Vizela 2026 - Gerado com valores reais registados no sistema.</div><div class="cd"><div class="cdh"><div><div class="cdt">Mapa Síntese</div><div class="cds">FPM - SWC Vizela 2026</div></div></div><div class="cdb"><div class="g4" style="margin-bottom:16px;"><div class="sm"><div class="sml">Total Gastos (cl. 6)</div><div class="smv tv">${fmt(tD)}</div></div><div class="sm"><div class="sml">Total Rendimentos (cl. 7)</div><div class="smv tok">${fmt(tR)}</div></div><div class="sm"><div class="sml">Rend. públicos (751)</div><div class="smv">${fmt(pub)}</div><div class="smn">${tR>0?(pub/tR*100).toFixed(1)+'%':'-'} do total</div></div><div class="sm"><div class="sml">Rend. privados</div><div class="smv">${fmt(prv)}</div><div class="smn">${tR>0?(prv/tR*100).toFixed(1)+'%':'-'} do total</div></div></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid var(--gl);font-size:15px;font-weight:600;"><span style="color:var(--gl);">Resultado Apurado</span><span style="color:${tR-tD>=0?'var(--ok)':'var(--er)'};">${fmt(tR-tD)}</span></div><div style="font-size:11px;color:var(--mu);margin-top:12px;font-style:italic;">Pronto para submissão ao IPDJ e arquivo com a FPM.</div></div></div>`;
 }
 
-// ═══ WMF ═══
+//  WMF 
 function renderWMF(){
   const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
   const c1=325,c2=2000,liq=taxas-c1-c2;
-  document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement — WMF/EMF</div><div class="cds">SWC Vizela 2026 · Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 — WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 — Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) — 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) — post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0045 1401 4037 3110 4744 6 · NIF 509 227 902<br>Vizelgolfe — Associação de Minigolfe de Vizela</div></div></div>`;
+  document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement - WMF/EMF</div><div class="cds">SWC Vizela 2026 - Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 - WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 - Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) - 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) - post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0045 1401 4037 3110 4744 6 - NIF 509 227 902<br>Vizelgolfe - Associação de Minigolfe de Vizela</div></div></div>`;
 }
 
-// ═══ CHECKLIST WMF OFICIAL ═══
+//  CHECKLIST WMF OFICIAL 
 let chkLang = 'PT';
 let _chkData = {};
 
@@ -1237,26 +1341,26 @@ const CHK_ITEMS = [
   {id:15, cat:'COURSE', en:'Sufficient volunteers available around the course', pt:'Voluntários suficientes em redor do percurso', resp:'', notes:'', status:'InProgress'},
   // ADMINISTRATION & SCORING
   {id:16, cat:'ADMIN', en:'Paper scorecards available for all players (backup for cell phones)', pt:'Cartões de pontuação em papel para todos os jogadores (backup telemóvel)', resp:'', notes:'', status:'Pending'},
-  {id:17, cat:'ADMIN', en:'Paper in greenhouse for players – results and score signing', pt:'Papel na casa verde para jogadores – resultados e assinatura pontuações', resp:'', notes:'', status:'Pending'},
+  {id:17, cat:'ADMIN', en:'Paper in greenhouse for players - results and score signing', pt:'Papel na casa verde para jogadores - resultados e assinatura pontuações', resp:'', notes:'', status:'Pending'},
   {id:18, cat:'ADMIN', en:'Starters assigned to call players to courses (one practice shot per player)', pt:'Starters atribuídos para chamar jogadores ao percurso (um tiro de prática por jogador)', resp:'', notes:'', status:'Pending'},
   {id:19, cat:'ADMIN', en:'Drawing schedule on computer displayable on screen during opening ceremony', pt:'Calendário do sorteio em computador exibível em ecrã durante cerimónia de abertura', resp:'', notes:'', status:'InProgress'},
-  {id:20, cat:'ADMIN', en:'Bowls (2) for drawing both groups – Women and Men', pt:'Taças (2) para sorteio de ambos os grupos – Senhoras e Homens', resp:'', notes:'', status:'Pending'},
+  {id:20, cat:'ADMIN', en:'Bowls (2) for drawing both groups - Women and Men', pt:'Taças (2) para sorteio de ambos os grupos - Senhoras e Homens', resp:'', notes:'', status:'Pending'},
   {id:21, cat:'ADMIN', en:'Lane playing order available on site for players', pt:'Ordem de jogo por pista disponível no local para jogadores', resp:'', notes:'', status:'Done'},
   {id:22, cat:'ADMIN', en:'ALL participants (including Referees) must sign WADA list', pt:'TODOS os participantes (incluindo Árbitros) devem assinar lista WADA', resp:'', notes:'O que é a lista WADA?', status:'Pending'},
-  {id:23, cat:'ADMIN', en:'Working with BA (Bahngolf Arena) – confirmed', pt:'A trabalhar com BA (Bahngolf Arena) – confirmado', resp:'', notes:'', status:'Done'},
+  {id:23, cat:'ADMIN', en:'Working with BA (Bahngolf Arena) - confirmed', pt:'A trabalhar com BA (Bahngolf Arena) - confirmado', resp:'', notes:'', status:'Done'},
   {id:24, cat:'ADMIN', en:'Staff trained and available to work with BA (Bahngolf Arena)', pt:'Staff treinado e disponível para trabalhar com BA (Bahngolf Arena)', resp:'', notes:'', status:'Pending'},
   {id:25, cat:'ADMIN', en:'Best Qualification round players positioned at front in Match Play rounds', pt:'Melhores jogadores da qualificação posicionados à frente nos jogos de Match Play', resp:'', notes:'', status:'Pending'},
   // AWARDS & CEREMONIES
-  {id:26, cat:'AWARDS', en:'Diplomas for first 8 players – Men & Women – Stroke Play (October)', pt:'Diplomas para os primeiros 8 jogadores – Homens e Senhoras – Stroke Play (Outubro)', resp:'', notes:'', status:'Pending'},
-  {id:27, cat:'AWARDS', en:'Diplomas for first 8 players – Men & Women – Match Play (October)', pt:'Diplomas para os primeiros 8 jogadores – Homens e Senhoras – Match Play (Outubro)', resp:'', notes:'', status:'Pending'},
+  {id:26, cat:'AWARDS', en:'Diplomas for first 8 players - Men & Women - Stroke Play (October)', pt:'Diplomas para os primeiros 8 jogadores - Homens e Senhoras - Stroke Play (Outubro)', resp:'', notes:'', status:'Pending'},
+  {id:27, cat:'AWARDS', en:'Diplomas for first 8 players - Men & Women - Match Play (October)', pt:'Diplomas para os primeiros 8 jogadores - Homens e Senhoras - Match Play (Outubro)', resp:'', notes:'', status:'Pending'},
   {id:28, cat:'AWARDS', en:'Diplomas / Certificates for all teams', pt:'Diplomas / Certificados para todas as equipas', resp:'', notes:'', status:'Pending'},
-  {id:29, cat:'AWARDS', en:'Team Medals 1st–3rd: 6 for Ladies (incl. 2 coaches), 8 for Men (incl. 2 coaches)', pt:'Medalhas por equipas 1.º–3.º: 6 para Senhoras (incl. 2 treinadores), 8 para Homens (incl. 2 treinadores)', resp:'', notes:'', status:'Pending'},
-  {id:30, cat:'AWARDS', en:'Bocals (trophies) for first 3 players – Women & Men – Stroke Play', pt:'Bocais (troféus) para os primeiros 3 jogadores – Senhoras e Homens – Stroke Play', resp:'', notes:'', status:'Pending'},
-  {id:31, cat:'AWARDS', en:'Bocals (trophies) for first 3 players – Women & Men – Match Play', pt:'Bocais (troféus) para os primeiros 3 jogadores – Senhoras e Homens – Match Play', resp:'', notes:'', status:'Pending'},
-  {id:32, cat:'AWARDS', en:'Medals for first 3 players – Women & Men – Stroke Play', pt:'Medalhas para os primeiros 3 jogadores – Senhoras e Homens – Stroke Play', resp:'', notes:'', status:'Pending'},
-  {id:33, cat:'AWARDS', en:'Medals for first 3 players – Women & Men – Match Play', pt:'Medalhas para os primeiros 3 jogadores – Senhoras e Homens – Match Play', resp:'', notes:'', status:'Pending'},
+  {id:29, cat:'AWARDS', en:'Team Medals 1st-3rd: 6 for Ladies (incl. 2 coaches), 8 for Men (incl. 2 coaches)', pt:'Medalhas por equipas 1.º-3.º: 6 para Senhoras (incl. 2 treinadores), 8 para Homens (incl. 2 treinadores)', resp:'', notes:'', status:'Pending'},
+  {id:30, cat:'AWARDS', en:'Bocals (trophies) for first 3 players - Women & Men - Stroke Play', pt:'Bocais (troféus) para os primeiros 3 jogadores - Senhoras e Homens - Stroke Play', resp:'', notes:'', status:'Pending'},
+  {id:31, cat:'AWARDS', en:'Bocals (trophies) for first 3 players - Women & Men - Match Play', pt:'Bocais (troféus) para os primeiros 3 jogadores - Senhoras e Homens - Match Play', resp:'', notes:'', status:'Pending'},
+  {id:32, cat:'AWARDS', en:'Medals for first 3 players - Women & Men - Stroke Play', pt:'Medalhas para os primeiros 3 jogadores - Senhoras e Homens - Stroke Play', resp:'', notes:'', status:'Pending'},
+  {id:33, cat:'AWARDS', en:'Medals for first 3 players - Women & Men - Match Play', pt:'Medalhas para os primeiros 3 jogadores - Senhoras e Homens - Match Play', resp:'', notes:'', status:'Pending'},
   {id:34, cat:'AWARDS', en:'CD with national anthems', pt:'CD com hinos nacionais', resp:'', notes:'', status:'Pending'},
-  {id:35, cat:'AWARDS', en:'Flags from EMF and countries (multiple copies – e.g. Sweden, Germany)', pt:'Bandeiras da EMF e países (múltiplas cópias – ex: Suécia, Alemanha)', resp:'', notes:'A EMF já tem todas essas bandeiras?', status:'Pending'},
+  {id:35, cat:'AWARDS', en:'Flags from EMF and countries (multiple copies - e.g. Sweden, Germany)', pt:'Bandeiras da EMF e países (múltiplas cópias - ex: Suécia, Alemanha)', resp:'', notes:'A EMF já tem todas essas bandeiras?', status:'Pending'},
   // EVENTS & CATERING
   {id:36, cat:'EVENTS', en:'Opening ceremony venue confirmed (walking buffet or snacks?)', pt:'Local cerimónia de abertura confirmado (buffet ou snacks?)', resp:'', notes:'Casa do Park (info no website)', status:'Done'},
   {id:37, cat:'EVENTS', en:'Closing ceremony / dinner venue confirmed', pt:'Local cerimónia de encerramento / jantar confirmado', resp:'', notes:'Quinta D\'Miranda (info no website)', status:'Done'},
@@ -1264,8 +1368,8 @@ const CHK_ITEMS = [
   {id:39, cat:'EVENTS', en:'Large tent for teams in October (over river area as per last time)', pt:'Tenda grande para equipas em Outubro (zona do rio como da última vez)', resp:'', notes:'', status:'Pending'},
   // SPONSORSHIP & BRANDING
   {id:40, cat:'SPONSOR', en:'Player numbers available with gold sponsors on back (if possible)', pt:'Dorsais dos jogadores disponíveis com patrocinadores gold atrás (se possível)', resp:'', notes:'', status:'Pending'},
-  {id:41, cat:'SPONSOR', en:'Sponsor banner by WMF – outdoor: L=5×H (2.5×podium) – contact Pasi Aho', pt:'Banner patrocinador WMF – exterior: L=5×H (2.5×pódio) – contactar Pasi Aho', resp:'', notes:'', status:'Pending'},
-  {id:42, cat:'SPONSOR', en:'Sponsor banner by WMF – indoor: L=4×H – contact Pasi Aho', pt:'Banner patrocinador WMF – interior: L=4×H – contactar Pasi Aho', resp:'', notes:'', status:'Pending'},
+  {id:41, cat:'SPONSOR', en:'Sponsor banner by WMF - outdoor: L=5×H (2.5×podium) - contact Pasi Aho', pt:'Banner patrocinador WMF - exterior: L=5×H (2.5×pódio) - contactar Pasi Aho', resp:'', notes:'', status:'Pending'},
+  {id:42, cat:'SPONSOR', en:'Sponsor banner by WMF - indoor: L=4×H - contact Pasi Aho', pt:'Banner patrocinador WMF - interior: L=4×H - contactar Pasi Aho', resp:'', notes:'', status:'Pending'},
   {id:43, cat:'SPONSOR', en:'Sponsor wall / banner positioned behind podium for photos', pt:'Parede/banner de patrocinadores posicionado atrás do pódio para fotos', resp:'', notes:'', status:'Pending'},
   {id:44, cat:'SPONSOR', en:'Sponsor wall available at both opening AND closing ceremony', pt:'Parede de patrocinadores disponível em ambas as cerimónias (abertura E encerramento)', resp:'', notes:'', status:'Pending'},
   // HEALTH & SAFETY
@@ -1273,20 +1377,20 @@ const CHK_ITEMS = [
 ];
 
 const CHK_CATS = {
-  FACILITIES: {en:'Facilities & Infrastructure', pt:'Instalações & Infraestrutura', icon:'◫'},
-  COURSE:     {en:'Course Setup', pt:'Preparação do Percurso', icon:'◎'},
-  ADMIN:      {en:'Administration & Scoring', pt:'Administração & Pontuação', icon:'▤'},
-  AWARDS:     {en:'Awards & Ceremonies', pt:'Prémios & Cerimónias', icon:'✦'},
-  EVENTS:     {en:'Events & Catering', pt:'Eventos & Catering', icon:'◐'},
-  SPONSOR:    {en:'Sponsorship & Branding', pt:'Patrocínios & Branding', icon:'◆'},
-  HEALTH:     {en:'Health & Safety', pt:'Saúde & Segurança', icon:'◉'},
+  FACILITIES: {en:'Facilities & Infrastructure', pt:'Instalações & Infraestrutura', icon:''},
+  COURSE:     {en:'Course Setup', pt:'Preparação do Percurso', icon:''},
+  ADMIN:      {en:'Administration & Scoring', pt:'Administração & Pontuação', icon:''},
+  AWARDS:     {en:'Awards & Ceremonies', pt:'Prémios & Cerimónias', icon:''},
+  EVENTS:     {en:'Events & Catering', pt:'Eventos & Catering', icon:''},
+  SPONSOR:    {en:'Sponsorship & Branding', pt:'Patrocínios & Branding', icon:''},
+  HEALTH:     {en:'Health & Safety', pt:'Saúde & Segurança', icon:''},
 };
 
 const STATUS_CFG = {
-  Done:       {en:'Done',        pt:'Concluído',  cls:'bg-ok', dot:'🟢'},
-  InProgress: {en:'In Progress', pt:'Em Curso',   cls:'bg-am', dot:'🟡'},
-  Pending:    {en:'Pending',     pt:'Pendente',   cls:'bg-er', dot:'🔴'},
-  Issue:      {en:'Issue',       pt:'Problema',   cls:'bg-er', dot:'⚠️'},
+  Done:       {en:'Done',        pt:'Concluído',  cls:'bg-ok', dot:''},
+  InProgress: {en:'In Progress', pt:'Em Curso',   cls:'bg-am', dot:''},
+  Pending:    {en:'Pending',     pt:'Pendente',   cls:'bg-er', dot:''},
+  Issue:      {en:'Issue',       pt:'Problema',   cls:'bg-er', dot:''},
 };
 
 function renderChk(){
@@ -1314,7 +1418,7 @@ function renderChk(){
   let html = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:12px 16px;background:rgba(201,168,76,.08);border:1px solid var(--bs);border-radius:10px;">
     <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--gl2);line-height:1;">${diasEvento}</div>
     <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'dias para o evento':'days to event'}</div>
-    <div style="font-size:11px;color:var(--mu);">13 ${L==='PT'?'Outubro':'October'} 2026 · SWC Vizela</div></div>
+    <div style="font-size:11px;color:var(--mu);">13 ${L==='PT'?'Outubro':'October'} 2026 - SWC Vizela</div></div>
     <div style="margin-left:auto;text-align:right;">
       <div style="font-size:10px;color:var(--mu);">${L==='PT'?'Progresso geral':'Overall progress'}</div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gl2);">${pct}%</div>
@@ -1352,12 +1456,12 @@ function renderChk(){
           ${notes?`<div style="font-size:10px;color:var(--mu);font-style:italic;margin-top:2px;">${notes}</div>`:''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:110px;">
-          <span class="bge ${scfg.cls}">${scfg.dot} ${L==='PT'?scfg.pt:scfg.en}</span>
+          <span class="bge ${scfg.cls}">${L==='PT'?scfg.pt:scfg.en}</span>
           ${isAdmin?`<select onchange="updateChkStatus(${it.id},this.value)" style="font-size:9px;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:4px;color:var(--wh);padding:2px 4px;cursor:pointer;">
-            <option value="Pending" ${st==='Pending'?'selected':''}>⚪ ${L==='PT'?'Pendente':'Pending'}</option>
-            <option value="InProgress" ${st==='InProgress'?'selected':''}>🟡 ${L==='PT'?'Em Curso':'In Progress'}</option>
-            <option value="Done" ${st==='Done'?'selected':''}>🟢 ${L==='PT'?'Concluído':'Done'}</option>
-            <option value="Issue" ${st==='Issue'?'selected':''}>⚠️ ${L==='PT'?'Problema':'Issue'}</option>
+            <option value="Pending" ${st==='Pending'?'selected':''}> ${L==='PT'?'Pendente':'Pending'}</option>
+            <option value="InProgress" ${st==='InProgress'?'selected':''}> ${L==='PT'?'Em Curso':'In Progress'}</option>
+            <option value="Done" ${st==='Done'?'selected':''}> ${L==='PT'?'Concluído':'Done'}</option>
+            <option value="Issue" ${st==='Issue'?'selected':''}> ${L==='PT'?'Problema':'Issue'}</option>
           </select>`:''}
         </div>
       </div>`;
@@ -1389,24 +1493,24 @@ function loadChk(){
   });
 }
 
-// ═══ PROGRAMA DO EVENTO ═══
+//  PROGRAMA DO EVENTO 
 let _prog = [];
 const DIAS_EVENTO = ['2026-10-13','2026-10-14','2026-10-15','2026-10-16','2026-10-17'];
 const DIAS_LABEL = {
-  '2026-10-13':'13 Out — Chegadas & Treino',
-  '2026-10-14':'14 Out — Dia 1 Competição',
-  '2026-10-15':'15 Out — Dia 2 Competição',
-  '2026-10-16':'16 Out — Dia 3 Competição',
-  '2026-10-17':'17 Out — Final & Encerramento'
+  '2026-10-13':'13 Out - Chegadas & Treino',
+  '2026-10-14':'14 Out - Dia 1 Competição',
+  '2026-10-15':'15 Out - Dia 2 Competição',
+  '2026-10-16':'16 Out - Dia 3 Competição',
+  '2026-10-17':'17 Out - Final & Encerramento'
 };
 const TIPO_CFG = {
-  competicao:{icon:'🏆', cor:'rgba(201,168,76,.15)', borda:'var(--gl)'},
-  cerimonia: {icon:'✦',  cor:'rgba(100,160,255,.1)', borda:'#90c0ff'},
-  treino:    {icon:'⛳', cor:'rgba(74,184,122,.1)',  borda:'var(--ok)'},
-  social:    {icon:'🍽', cor:'rgba(232,160,48,.1)',  borda:'var(--wr)'},
-  logistica: {icon:'🚌', cor:'rgba(150,150,200,.1)', borda:'#aaaadd'},
-  reuniao:   {icon:'📋', cor:'rgba(200,100,200,.1)', borda:'#dd88dd'},
-  outro:     {icon:'📌', cor:'rgba(255,255,255,.04)','borda':'var(--bdr)'},
+  competicao:{icon:'', cor:'rgba(201,168,76,.15)', borda:'var(--gl)'},
+  cerimonia: {icon:'',  cor:'rgba(100,160,255,.1)', borda:'#90c0ff'},
+  treino:    {icon:'', cor:'rgba(74,184,122,.1)',  borda:'var(--ok)'},
+  social:    {icon:'', cor:'rgba(232,160,48,.1)',  borda:'var(--wr)'},
+  logistica: {icon:'', cor:'rgba(150,150,200,.1)', borda:'#aaaadd'},
+  reuniao:   {icon:'', cor:'rgba(200,100,200,.1)', borda:'#dd88dd'},
+  outro:     {icon:'', cor:'rgba(255,255,255,.04)','borda':'var(--bdr)'},
 };
 
 async function saveProgItem(){
@@ -1440,7 +1544,7 @@ function renderPrograma(){
   if(!el) return;
 
   if(!_prog.length){
-    el.innerHTML = `<div class="em"><div class="emi">📅</div><div class="emt">Programa ainda vazio</div><div class="emd">Adicione os itens do programa dia a dia.<br>O programa base WMF inclui: chegadas 13 Out, treino oficial, 4 rondas Stroke Play, Match Play, cerimónias abertura e encerramento.</div></div>`;
+    el.innerHTML = `<div class="em"><div class="emi"></div><div class="emt">Programa ainda vazio</div><div class="emd">Adicione os itens do programa dia a dia.<br>O programa base WMF inclui: chegadas 13 Out, treino oficial, 4 rondas Stroke Play, Match Play, cerimónias abertura e encerramento.</div></div>`;
     return;
   }
 
@@ -1462,10 +1566,10 @@ function renderPrograma(){
         <div style="font-size:16px;min-width:20px;">${tc.icon}</div>
         <div style="flex:1;">
           <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:2px;">${it.titulo||''}</div>
-          ${it.desc?`<div style="font-size:11px;color:var(--mu);">📍 ${it.desc}</div>`:''}
+          ${it.desc?`<div style="font-size:11px;color:var(--mu);">${it.desc}</div>`:''}
           ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:3px;">Resp: ${it.resp}</div>`:''}
         </div>
-        ${isAdmin?`<button class="btn bd2 bsm" onclick="delProgItem('${it.id}')">✕</button>`:''}
+        ${isAdmin?`<button class="btn bd2 bsm" onclick="delProgItem('${it.id}')"></button>`:''}
       </div>`;
     });
     html += '</div>';
@@ -1479,7 +1583,7 @@ async function delProgItem(id){
   toast('Item eliminado','er');
 }
 
-// ═══ MODO EVENTO — RELÓGIO AO VIVO ═══
+//  MODO EVENTO - RELÓGIO AO VIVO 
 function startModeEvento(){
   function updateClock(){
     const now = new Date();
@@ -1555,7 +1659,7 @@ function toggleFullscreen(){
   }
 }
 
-// ═══ NOTIFICAÇÕES PRAZO — DASHBOARD ═══
+//  NOTIFICAÇÕES PRAZO - DASHBOARD 
 function renderAlertas(){
   const el = document.getElementById('dash-alertas');
   if(!el) return;
@@ -1577,8 +1681,8 @@ function renderAlertas(){
   if(urgentes.length){
     html += `<div style="background:linear-gradient(135deg,rgba(224,82,82,.15),rgba(224,82,82,.05));border:1px solid rgba(224,82,82,.4);border-radius:12px;padding:14px 18px;margin-bottom:12px;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-        <div style="font-size:18px;">🚨</div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--er);">ATENÇÃO — ${urgentes.length} prazo${urgentes.length>1?'s':''} a vencer em 7 dias</div>
+        <div style="font-size:18px;"></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--er);">ATENÇÃO - ${urgentes.length} prazo${urgentes.length>1?'s':''} a vencer em 7 dias</div>
       </div>
       ${urgentes.map(p=>{
         const d = new Date(p.data);
@@ -1594,7 +1698,7 @@ function renderAlertas(){
   if(proximos.length){
     html += `<div style="background:linear-gradient(135deg,rgba(232,160,48,.1),rgba(232,160,48,.03));border:1px solid rgba(232,160,48,.3);border-radius:12px;padding:12px 18px;margin-bottom:12px;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-        <div style="font-size:16px;">⚠️</div>
+        <div style="font-size:16px;"></div>
         <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--wr);">${proximos.length} prazo${proximos.length>1?'s':''} a vencer em 30 dias</div>
       </div>
       ${proximos.map(p=>{
@@ -1610,7 +1714,7 @@ function renderAlertas(){
   el.innerHTML = html;
 }
 
-// ═══ COUNTDOWN ═══
+//  COUNTDOWN 
 function startCountdown(){
   const target = new Date('2026-10-13T19:30:00').getTime();
   function update(){
@@ -1637,7 +1741,7 @@ function startCountdown(){
   setInterval(update,1000);
 }
 
-// ═══ SIDEBAR MOBILE ═══
+//  SIDEBAR MOBILE 
 function toggleSb(){
   const sb=document.querySelector('.sb');
   const ov=document.getElementById('sb-overlay');
@@ -1649,7 +1753,7 @@ function closeSb(){
   document.getElementById('sb-overlay').classList.remove('show');
 }
 
-// ═══ EXPORTAÇÃO PDF ═══
+//  EXPORTAÇÃO PDF 
 const {jsPDF} = window.jspdf;
 
 const _LOGO_B64 = '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8888888888888888888888888TOkAHQIYeFMeUd8/YCK61C8888888888888888888888888888888888888888888+NO+euOdu+tO8e+u+ueuO+P88888888888888888888888888888888888888888888888888888888v39xx2311z88888888888888888888888888888888888888888888888888888888/R61weTTJC888888888888888888888888888888888888888888888888888888888MMMMMMMMf8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888/8QAIxEBAAIBBAICAwEAAAAAAAAAAQARMRAhQWEgUDBRQHGBkP/aAAgBAwEBPxD/AFwFF8EW5ndLTsh9kIH3IJBHHtgMTKfHdQERn2R5RvwC4Qtj6/CMxV3YC4g3EHyyvLNso4nTK/Up9Sn1OqXcS2W4ZVww1k+x614K5nJiTCLxTlglRMgfAuBD7ocMTwR0nv0SQeSCc+p2A8kIXiXBSngC4gsu0/pFsbRVzoRSTYFRitQFnVOqUkwkFzBvHpCz+CcNxArVhCcxEmwinOt6uIrbmIqiEweYFg8UOSKY0YHZz6J7CKrb8IsIkfTEY8AtqH9ItO6ZSYT40OYFehq7oip8gvEV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';
@@ -1672,7 +1776,7 @@ function pdfHeader(doc, titulo, subtitulo, isLandscape){
   doc.setFillColor(201,168,76);
   doc.rect(0,0,W,1.2,'F');
 
-  // Logo SWC2026 — fundo branco arredondado
+  // Logo SWC2026 - fundo branco arredondado
   doc.setFillColor(255,255,255);
   doc.roundedRect(8,4,22,22,2,2,'F');
   try{
@@ -1708,7 +1812,7 @@ function pdfHeader(doc, titulo, subtitulo, isLandscape){
   doc.setFontSize(7);
   doc.setFont('helvetica','normal');
   doc.setTextColor(150,130,90);
-  doc.text('13–17 Outubro 2026', W-30, 18, {align:'center'});
+  doc.text('13-17 Outubro 2026', W-30, 18, {align:'center'});
 
   // Data geração
   const hoje = new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
@@ -1756,7 +1860,7 @@ function pdfFooter(doc, isLandscape){
     doc.text('\u00A9 Rui Gonçalves', 5, FY+19);
     doc.setFont('helvetica','normal');
     doc.setTextColor(120,100,70);
-    doc.text('SWC Vizela 2026 · Vizelgolfe — Associação de Minigolfe de Vizela · NIF 509 227 902', W/2, FY+19, {align:'center'});
+    doc.text('SWC Vizela 2026 - Vizelgolfe - Associacao de Minigolfe de Vizela - NIF 509 227 902', W/2, FY+19, {align:'center'});
     doc.setFont('helvetica','bold');
     doc.setTextColor(140,110,50);
     doc.text(i+' / '+pages, W-5, FY+19, {align:'right'});
@@ -1765,13 +1869,13 @@ function pdfFooter(doc, isLandscape){
 
 function fmtPDF(v){return Number(v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
 
-// ── DR PDF ──
+//  DR PDF 
 function exportDR(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const L = drL;
   pdfHeader(doc,
-    L==='PT'?'Demonstração de Resultados':'Income Statement',
-    'SWC Vizela 2026 · '+(L==='PT'?'Intercalar — valores reais registados':'Interim — actual registered values')
+    L==='PT'?'Demonstracao de Resultados':'Income Statement',
+    'SWC Vizela 2026 - '+(L==='PT'?'Intercalar - valores reais registados':'Interim - actual registered values')
   );
 
   const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
@@ -1860,10 +1964,10 @@ function exportDR(){
   toast('PDF gerado com sucesso');
 }
 
-// ── BALANÇO PDF ──
+//  BALANÇO PDF 
 function exportBalanco(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Balanço do Evento', 'SWC Vizela 2026 · Ativo · Passivo · Capital Próprio', false);
+  pdfHeader(doc, 'Balanco do Evento', 'SWC Vizela 2026 - Ativo - Passivo - Capital Próprio', false);
 
   const cx=_lan.filter(l=>l.cb==='Caixa').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
   const bk=_lan.filter(l=>l.cb==='Banco').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
@@ -1882,7 +1986,7 @@ function exportBalanco(){
     body:[
       ['Caixa', fmtPDF(cx)],
       ['Banco', fmtPDF(bk)],
-      ['Créditos a receber', fmtPDF(cred)],
+      ['Creditos a receber', fmtPDF(cred)],
     ],
     foot:[['Total Ativo', fmtPDF(ativo)]],
     theme:'plain',
@@ -1902,7 +2006,7 @@ function exportBalanco(){
       ['', ''],
       ['Resultado do evento', fmtPDF(res)],
       ajuste!==0?['Ajustamentos de encerramento', fmtPDF(ajuste)]:['',''],
-      ['Total Capital Próprio', fmtPDF(cp)],
+      ['Total Capital Proprio', fmtPDF(cp)],
     ],
     foot:[['Total Passivo + CP', fmtPDF(forn+cp)]],
     theme:'grid',
@@ -1921,19 +2025,19 @@ function exportBalanco(){
   doc.setFontSize(9);
   doc.setFont('helvetica','bold');
   doc.setTextColor(eq?[100,220,130]:[220,100,100]);
-  doc.text(eq?'✓ Balanço equilibrado — Total Ativo = Total Passivo + Capital Próprio':'⚠ Diferença: '+fmtPDF(ativo-(forn+cp)), 105, yq+6.5, {align:'center'});
+  doc.text(eq?' Balanço equilibrado - Total Ativo = Total Passivo + Capital Próprio':' Diferença: '+fmtPDF(ativo-(forn+cp)), 105, yq+6.5, {align:'center'});
 
   pdfFooter(doc,false);
   doc.save('SWC2026_Balanco.pdf');
   toast('PDF gerado com sucesso');
 }
 
-// ── BALANCETE PDF ──
+//  BALANCETE PDF 
 function exportBalancete(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const mes = document.getElementById('bal-mes').value;
   const meses = {'2025-12':'Dezembro 2025','2026-01':'Janeiro 2026','2026-02':'Fevereiro 2026','2026-03':'Março 2026','2026-04':'Abril 2026','2026-05':'Maio 2026','2026-06':'Junho 2026','2026-07':'Julho 2026','2026-08':'Agosto 2026','2026-09':'Setembro 2026','2026-10':'Outubro 2026','2026-11':'Novembro 2026'};
-  pdfHeader(doc, 'Balancete Mensal SNC-ESNL', 'SWC Vizela 2026 · '+meses[mes], true);
+  pdfHeader(doc, 'Balancete Mensal SNC-ESNL', 'SWC Vizela 2026 - '+meses[mes], true);
 
   const[ano,m]=mes.split('-').map(Number);
   const mv={},acum={};
@@ -1950,15 +2054,15 @@ function exportBalancete(){
     const mv_=mv[c]||{d:0,c:0};const ac_=acum[c]||{d:0,c:0};
     const sm=mv_.c-mv_.d;const sa=ac_.c-ac_.d;
     return[c, nomC[c]||c,
-      mv_.d>0?fmtPDF(mv_.d):'—', mv_.c>0?fmtPDF(mv_.c):'—', fmtPDF(sm),
-      ac_.d>0?fmtPDF(ac_.d):'—', ac_.c>0?fmtPDF(ac_.c):'—', fmtPDF(sa)
+      mv_.d>0?fmtPDF(mv_.d):'-', mv_.c>0?fmtPDF(mv_.c):'-', fmtPDF(sm),
+      ac_.d>0?fmtPDF(ac_.d):'-', ac_.c>0?fmtPDF(ac_.c):'-', fmtPDF(sa)
     ];
   });
 
   doc.autoTable({
     startY: 38,
     head:[['Conta','Descrição','Déb. Mês','Cré. Mês','Saldo Mês','Déb. Acum.','Cré. Acum.','Saldo Acum.']],
-    body: rows.length ? rows : [['—','Sem dados para o período','','','','','','']],
+    body: rows.length ? rows : [['-','Sem dados para o período','','','','','','']],
     theme:'striped',
     styles:{fontSize:8, textColor:[35,35,35], cellPadding:4, lineColor:[200,190,170], lineWidth:0.15},
     headStyles:{fillColor:[10,22,40], textColor:[201,168,76], fontStyle:'bold', fontSize:8, cellPadding:5},
@@ -1976,10 +2080,10 @@ function exportBalancete(){
   toast('PDF gerado com sucesso');
 }
 
-// ── IPDJ PDF ──
+//  IPDJ PDF 
 function exportIPDJ(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Formulário Anexo B — IPDJ', 'Programa de Eventos Desportivos Internacionais · SWC Vizela 2026', false);
+  pdfHeader(doc, 'Formulario Anexo B - IPDJ', 'Programa de Eventos Desportivos Internacionais - SWC Vizela 2026', false);
 
   const tR=_rec.reduce((a,r)=>a+Number(r.valor||0),0);
   const tD=_desp.reduce((a,d)=>a+Number(d.valor||0),0);
@@ -1991,8 +2095,8 @@ function exportIPDJ(){
   doc.setFontSize(9);
   doc.setTextColor(150,150,150);
   doc.setFont('helvetica','normal');
-  doc.text('Entidade organizadora: Vizelgolfe — Associação de Minigolfe de Vizela', 14, y);
-  doc.text('NIF: 509 227 902 | Evento: SWC Vizela 2026 | Data: 13–17 Outubro 2026', 14, y+5);
+  doc.text('Entidade organizadora: Vizelgolfe - Associação de Minigolfe de Vizela', 14, y);
+  doc.text('NIF: 509 227 902 | Evento: SWC Vizela 2026 | Data: 13-17 Outubro 2026', 14, y+5);
   y+=14;
 
   // Mapa síntese
@@ -2002,8 +2106,8 @@ function exportIPDJ(){
     body:[
       ['Total Gastos (Classe 6)', fmtPDF(tD)],
       ['Total Rendimentos (Classe 7)', fmtPDF(tR)],
-      ['  dos quais — Rendimentos públicos (751)', fmtPDF(pub)],
-      ['  dos quais — Rendimentos privados', fmtPDF(prv)],
+      ['  dos quais - Rendimentos públicos (751)', fmtPDF(pub)],
+      ['  dos quais - Rendimentos privados', fmtPDF(prv)],
     ],
     foot:[['Resultado Apurado (Rendimentos − Gastos)', fmtPDF(tR-tD)]],
     theme:'grid',
@@ -2064,10 +2168,10 @@ function exportIPDJ(){
   toast('PDF gerado com sucesso');
 }
 
-// ── WMF PDF ──
+//  WMF PDF 
 function exportWMF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Financial Statement — WMF/EMF', 'SWC Vizela 2026 · Participation Fees Statement', false);
+  pdfHeader(doc, 'Financial Statement - WMF/EMF', 'SWC Vizela 2026 - Participation Fees Statement', false);
 
   const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
   const c1=325,c2=2000,liq=taxas-c1-c2;
@@ -2075,7 +2179,7 @@ function exportWMF(){
   let y=42;
   doc.setFontSize(9);
   doc.setTextColor(150,150,150);
-  doc.text('Organising Association: Vizelgolfe — Associação de Minigolfe de Vizela', 14, y);
+  doc.text('Organising Association: Vizelgolfe - Associação de Minigolfe de Vizela', 14, y);
   doc.text('NIF: 509 227 902 | IBAN: PT50 0045 1401 4037 3110 4744 6', 14, y+5);
   y+=14;
 
@@ -2084,13 +2188,13 @@ function exportWMF(){
     head:[['Item','Amount (€)']],
     body:[
       ['Gross participation fees received (acct 729)', fmtPDF(taxas)],
-      ['C1 — WMF Championship fee (fixed contractual)', '- '+fmtPDF(c1)],
-      ['C2 — Sponsorship income share (fixed contractual)', '- '+fmtPDF(c2)],
+      ['C1 - WMF Championship fee (fixed contractual)', '- '+fmtPDF(c1)],
+      ['C2 - Sponsorship income share (fixed contractual)', '- '+fmtPDF(c2)],
       ['', ''],
       ['Net amount to organiser', fmtPDF(liq)],
       ['', ''],
-      ['Pre-payment (75%) — 4 weeks before event', fmtPDF(liq*0.75)],
-      ['Remaining (25%) — post-event inventory approval', fmtPDF(liq*0.25)],
+      ['Pre-payment (75%) - 4 weeks before event', fmtPDF(liq*0.75)],
+      ['Remaining (25%) - post-event inventory approval', fmtPDF(liq*0.25)],
     ],
     theme:'grid',
     styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,175],lineWidth:0.2},
@@ -2106,7 +2210,7 @@ function exportWMF(){
   doc.line(14,yf,100,yf);
   doc.setFontSize(8);
   doc.setTextColor(100,100,100);
-  doc.text('Vizelgolfe — Associação de Minigolfe de Vizela', 14, yf+5);
+  doc.text('Vizelgolfe - Associação de Minigolfe de Vizela', 14, yf+5);
   doc.text('Date: '+new Date().toLocaleDateString('pt-PT'), 14, yf+10);
 
   pdfFooter(doc,false);
@@ -2114,10 +2218,10 @@ function exportWMF(){
   toast('PDF gerado com sucesso');
 }
 
-// ── DIÁRIO PDF ──
+//  DIÁRIO PDF 
 function exportDiario(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc, 'Diário de Caixa / Banco', 'SWC Vizela 2026 · Valores reais registados', true);
+  pdfHeader(doc, 'Diario de Caixa / Banco', 'SWC Vizela 2026 - Valores reais registados', true);
 
   let cx=0,bk=0;
   const rows=_lan.map(l=>{
@@ -2146,37 +2250,132 @@ function exportDiario(){
   toast('PDF gerado com sucesso');
 }
 
-// ── RECEITAS PDF ──
+//  RECEITAS PDF 
 function exportReceitas(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Receitas','SWC Vizela 2026 · Valores reais registados',true);
+  pdfHeader(doc,'Receitas','SWC Vizela 2026 - Valores reais registados',true);
   const rows=_rec.map(r=>[r.data||'',r.conta||'',nomC[r.conta]||'',r.desc||'',fmtPDF(r.valor),r.estado||'',r.obs||'']);
   doc.autoTable({startY:38,head:[['Data','SNC','Rubrica','Descrição','Valor','Estado','Obs.']],body:rows.length?rows:[['','','','Sem receitas','','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{4:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:40},4:{cellWidth:28,halign:'right'},5:{cellWidth:25}},margin:{left:5,right:5,bottom:28}});
   pdfFooter(doc);doc.save('SWC2026_Receitas.pdf');toast('PDF gerado com sucesso');
 }
 
-// ── DESPESAS PDF ──
+//  DESPESAS PDF 
 function exportDespesas(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Despesas','SWC Vizela 2026 · Valores reais registados',true);
+  pdfHeader(doc,'Despesas','SWC Vizela 2026 - Valores reais registados',true);
   const rows=_desp.map(d=>[d.data||'',d.doc||'',d.conta||'',nomC[d.conta]||'',d.desc||'',fmtPDF(d.valor),d.estado||'']);
   doc.autoTable({startY:38,head:[['Data','Doc.','SNC','Rubrica','Descrição','Valor','Estado']],body:rows.length?rows:[['','','','','Sem despesas','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{5:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:15},3:{cellWidth:40},5:{cellWidth:28,halign:'right'},6:{cellWidth:22}},margin:{left:5,right:5,bottom:28}});
   pdfFooter(doc);doc.save('SWC2026_Despesas.pdf');toast('PDF gerado com sucesso');
 }
 
-// ── PATROCÍNIOS PDF ──
+//  PATROCÍNIOS PDF 
 function exportPat(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Patrocínios & CRM','SWC Vizela 2026 · Valores reais confirmados',true);
+  pdfHeader(doc,'Patrocinios & CRM','SWC Vizela 2026 - Valores reais confirmados',true);
   const rows=_pat.map(p=>[p.empresa||'',p.tipo||'',p.contacto||'',fmtPDF(p.valor),(p.contrapartidas||'').substring(0,40),p.estado||'']);
   doc.autoTable({startY:38,head:[['Empresa','Tipo','Contacto','Valor confirmado','Contrapartidas','Estado']],body:rows.length?rows:[['','','','','Sem patrocinadores','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{3:{halign:'right',cellWidth:35},1:{cellWidth:30},5:{cellWidth:28}},margin:{left:5,right:5,bottom:28}});
   pdfFooter(doc);doc.save('SWC2026_Patrocinios.pdf');toast('PDF gerado com sucesso');
 }
 
-// ── PROGRAMA DO EVENTO PDF ──
+//  ATLETAS PDF 
+function exportAtletasPDF(){
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Atletas & Inscricoes','SWC Vizela 2026 - Lista oficial de participantes',true);
+  const rows = _atl.map(a=>[a.nome||'',a.pais||'',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-',a.email||'']);
+  const totTaxas = _atl.reduce((s,a)=>s+Number(a.taxa||0),0);
+  doc.autoTable({
+    startY:38,
+    head:[['Nome','Pais','Federacao','Categoria','Taxa (EUR)','Estado','Hotel','Email']],
+    body:rows.length?rows:[['','','','','Sem atletas registados','','','']],
+    foot:[['Total: '+_atl.length+' atletas','','','',fmtPDF(totTaxas),'','','']],
+    theme:'striped',
+    styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[200,190,170],lineWidth:0.15},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,cellPadding:4},
+    footStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+    alternateRowStyles:{fillColor:[250,247,240]},
+    columnStyles:{4:{halign:'right'},5:{halign:'center'},6:{halign:'center'},0:{cellWidth:40},1:{cellWidth:28},2:{cellWidth:35},3:{cellWidth:25},4:{cellWidth:22},5:{cellWidth:20},6:{cellWidth:14},7:{cellWidth:45}},
+    margin:{left:5,right:5,bottom:28},
+  });
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Atletas_Inscricoes.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+//  CERIMONIAS PDF 
+function exportCerimoniasPDF(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Cerimonias & Protocolo','SWC Vizela 2026 - Lista de convidados e protocolo',false);
+  // Sumário
+  const nAb = _conv.filter(c=>c.abertura==='S').length;
+  const nEnc = _conv.filter(c=>c.encerramento==='S').length;
+  const nHon = _conv.filter(c=>c.categoria==='Comissao de Honra').length;
+  let y = 42;
+  doc.autoTable({
+    startY:y,
+    head:[['Cerimonia','Data','Local','Convidados confirmados']],
+    body:[
+      ['Abertura','13 Outubro 2026 - 19:30','Vizela',String(nAb)+' confirmados'],
+      ['Encerramento & Medalhas','17 Outubro 2026 - 19:30','Vizela',String(nEnc)+' confirmados'],
+    ],
+    theme:'grid',
+    styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+    margin:{left:14,right:14,bottom:28},
+  });
+  y = doc.lastAutoTable.finalY + 8;
+  const rows = _conv.map(c=>[c.nome||'',c.entidade||'',c.categoria||'',c.abertura==='S'?'Sim':'Nao',c.encerramento==='S'?'Sim':'Nao']);
+  doc.autoTable({
+    startY:y,
+    head:[['Nome','Entidade / Cargo','Categoria','Abertura','Encerramento']],
+    body:rows.length?rows:[['','','Sem convidados registados','','']],
+    foot:[['Total: '+_conv.length+' convidados','','','Ab:'+nAb,'Enc:'+nEnc]],
+    theme:'striped',
+    styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[200,190,170],lineWidth:0.15},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+    footStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+    alternateRowStyles:{fillColor:[250,247,240]},
+    columnStyles:{0:{cellWidth:50},1:{cellWidth:55},2:{cellWidth:40},3:{cellWidth:20,halign:'center'},4:{cellWidth:20,halign:'center'}},
+    margin:{left:14,right:14,bottom:28},
+  });
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Cerimonias_Protocolo.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+//  COMUNICADOS PDF 
+function exportComunicadosPDF(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Comunicados de Imprensa WMF','SWC Vizela 2026 - Press Releases oficiais (EN)',false);
+  let y = 42;
+  const pr1 = document.getElementById('pr1')?.value || '';
+  const pr2 = document.getElementById('pr2')?.value || '';
+  doc.setFillColor(10,22,40);
+  doc.roundedRect(14,y,182,8,2,2,'F');
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+  doc.text('1st Press Release - Before Opening Ceremony', 105, y+5.5, {align:'center'});
+  y += 11;
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+  const lines1 = doc.splitTextToSize(pr1||'(Not yet written)', 182);
+  doc.text(lines1, 14, y);
+  y += lines1.length * 5 + 10;
+  if(y > 240){doc.addPage();y=20;}
+  doc.setFillColor(10,22,40);
+  doc.roundedRect(14,y,182,8,2,2,'F');
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+  doc.text('2nd Press Release - After Closing Ceremony', 105, y+5.5, {align:'center'});
+  y += 11;
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+  const lines2 = doc.splitTextToSize(pr2||'(Not yet written)', 182);
+  doc.text(lines2, 14, y);
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Press_Releases.pdf');
+  toast('PDF gerado com sucesso');
+}
+
+//  PROGRAMA DO EVENTO PDF 
 function exportProgramaPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Programa Oficial do Evento','SWC Vizela 2026 · 13–17 Outubro · Vizela, Portugal',false);
+  pdfHeader(doc,'Programa Oficial do Evento','SWC Vizela 2026 - 13 a 17 Outubro - Vizela, Portugal',false);
 
   let y = 42;
 
@@ -2210,7 +2409,7 @@ function exportProgramaPDF(){
       treino:[220,245,230], social:[255,240,215],
       logistica:[235,235,250], reuniao:[245,225,245], outro:[245,245,245]
     };
-    const rows = items.map(it => [it.hora||'--:--', (TIPO_CFG[it.tipo]?.icon||'📌')+' '+it.titulo, it.desc||'', it.resp||'']);
+    const rows = items.map(it => [it.hora||'--:--', it.titulo, it.desc||'', it.resp||'']);
 
     doc.autoTable({
       startY: y,
@@ -2242,10 +2441,10 @@ function exportProgramaPDF(){
   toast('PDF gerado com sucesso');
 }
 
-// ── CRONOLOGIA PDF ──
+//  CRONOLOGIA PDF 
 function exportCronPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Cronologia & Prazos WMF','SWC Vizela 2026 · Acordo Tripartido WMF/EMF/FPM',false);
+  pdfHeader(doc,'Cronologia & Prazos WMF','SWC Vizela 2026 - Acordo Tripartido WMF/EMF/FPM',false);
 
   const hoje = new Date();
   const evento = new Date('2026-10-13');
@@ -2257,14 +2456,14 @@ function exportCronPDF(){
   doc.setDrawColor(201,168,76);
   doc.setLineWidth(0.4);
   doc.roundedRect(14,42,182,14,3,3,'S');
-  doc.setFontSize(9);
+  doc.setFontSize(14);
   doc.setFont('helvetica','bold');
   doc.setTextColor(201,168,76);
-  doc.text('⏱  ' + diasEvento + ' dias para o evento', 105, 49, {align:'center'});
-  doc.setFontSize(7.5);
+  doc.text(String(diasEvento) + ' dias para o evento', 105, 50, {align:'center'});
+  doc.setFontSize(8);
   doc.setFont('helvetica','normal');
   doc.setTextColor(160,140,90);
-  doc.text('Abertura oficial: 13 Outubro 2026 · Vizela, Portugal', 105, 54, {align:'center'});
+  doc.text('Abertura oficial: 13 Outubro 2026 - Vizela, Portugal', 105, 55, {align:'center'});
 
   // Aviso WMF
   doc.setFillColor(60,30,10);
@@ -2272,7 +2471,8 @@ function exportCronPDF(){
   doc.setFontSize(7.5);
   doc.setFont('helvetica','bold');
   doc.setTextColor(255,180,80);
-  doc.text('⚠  Incumprimento dos prazos WMF pode resultar no cancelamento do evento sem compensação.', 105, 64.5, {align:'center'});
+  const avisoText = 'AVISO: Incumprimento dos prazos WMF pode resultar no cancelamento do evento.';
+  doc.text(avisoText, 105, 64.5, {align:'center', maxWidth:170});
 
   let y = 72;
 
@@ -2280,13 +2480,13 @@ function exportCronPDF(){
     // Mostrar prazos contratuais WMF base
     const prazosBase = [
       {data:'31 Mar 2026', titulo:'Contacto técnico + cronograma software torneio', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
-      {data:'14 Abr 2026', titulo:'Website EN ativo · Alojamento garantido · Patrocínios Gold endereço', resp:'Comunicação + Finanças', prioridade:'critico', estado:'pendente'},
+      {data:'14 Abr 2026', titulo:'Website EN ativo - Alojamento garantido - Patrocínios Gold endereço', resp:'Comunicação + Finanças', prioridade:'critico', estado:'pendente'},
       {data:'31 Mai 2026', titulo:'Material informativo e lista de alojamento publicados', resp:'Chefe Comunicação', prioridade:'urgente', estado:'pendente'},
-      {data:'14 Ago 2026', titulo:'Salas reunião WMF · Prazo espaço venda Gold 8m²', resp:'Logística', prioridade:'normal', estado:'pendente'},
-      {data:'Set 2026',    titulo:'Dados bancários WMF · Rooming lists · Guia atleta · Sinalética', resp:'COE', prioridade:'normal', estado:'pendente'},
+      {data:'14 Ago 2026', titulo:'Salas reunião WMF - Prazo espaço venda Gold 8m²', resp:'Logística', prioridade:'normal', estado:'pendente'},
+      {data:'Set 2026',    titulo:'Dados bancários WMF - Rooming lists - Guia atleta - Sinalética', resp:'COE', prioridade:'normal', estado:'pendente'},
       {data:'2 sem. antes','titulo':'Demonstração financeira taxas à WMF', resp:'Finanças', prioridade:'urgente', estado:'pendente'},
       {data:'13 Out 2026', titulo:'Treino oficial + Cerimónia de Abertura 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
-      {data:'14-17 Out',   titulo:'Competição — 4 dias', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
+      {data:'14-17 Out',   titulo:'Competição - 4 dias', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
       {data:'17 Out 2026', titulo:'Cerimónia de Encerramento e Medalhas 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
       {data:'Pós-evento',  titulo:'Lista resultados + inventário WMF → receber 25%', resp:'Finanças', prioridade:'critico', estado:'pendente'},
     ];
@@ -2302,12 +2502,12 @@ function exportCronPDF(){
 
 function renderPrazosTable(doc, prazos, startY){
   const STATUS_COLORS = {
-    concluido:  {fill:[230,245,232], text:[20,120,40],  label:'✓ Concluído'},
-    em_curso:   {fill:[255,248,225], text:[140,100,10],  label:'⟳ Em curso'},
-    pendente:   {fill:[255,242,242], text:[180,30,30],   label:'○ Pendente'},
-    Done:       {fill:[230,245,232], text:[20,120,40],   label:'✓ Concluído'},
-    InProgress: {fill:[255,248,225], text:[140,100,10],  label:'⟳ Em curso'},
-    Pending:    {fill:[255,242,242], text:[180,30,30],   label:'○ Pendente'},
+    concluido:  {fill:[230,245,232], text:[20,120,40],  label:'Concluido'},
+    em_curso:   {fill:[255,248,225], text:[140,100,10],  label:'Em curso'},
+    pendente:   {fill:[255,242,242], text:[180,30,30],   label:'Pendente'},
+    Done:       {fill:[230,245,232], text:[20,120,40],   label:'Concluido'},
+    InProgress: {fill:[255,248,225], text:[140,100,10],  label:'Em curso'},
+    Pending:    {fill:[255,242,242], text:[180,30,30],   label:'Pendente'},
   };
   const PRIO_COLORS = {
     critico: {fill:[200,30,30],   text:[255,255,255]},
@@ -2348,34 +2548,34 @@ function renderPrazosTable(doc, prazos, startY){
   });
 }
 
-// ── ORGANIZAÇÃO PDF ──
+//  ORGANIZAÇÃO PDF 
 function exportOrgPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Organização & COE','SWC Vizela 2026 · Comité Organizador Executivo',false);
+  pdfHeader(doc,'Organizacao & COE','SWC Vizela 2026 - Comite Organizador Executivo',false);
   const rowsCOE = _mbr.map(m=>[m.nome||'',m.funcao||'',m.tel||'',m.email||'']);
   doc.autoTable({startY:42,head:[['Nome','Função COE','Telemóvel','Email']],body:rowsCOE.length?rowsCOE:[['','Sem membros COE registados','','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},margin:{left:14,right:14,bottom:28}});
   let y = doc.lastAutoTable.finalY + 8;
   doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
-  doc.text('Equipa de Apoio — Voluntários', 14, y); y+=4;
+  doc.text('Equipa de Apoio - Voluntários', 14, y); y+=4;
   const rowsVol = _vol.map(v=>[v.nome||'',v.area||'',v.periodo||'',v.tel||'']);
   doc.autoTable({startY:y,head:[['Nome','Área de actuação','Período','Telemóvel']],body:rowsVol.length?rowsVol:[['','Sem voluntários registados','','']],theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},margin:{left:14,right:14,bottom:28}});
   pdfFooter(doc,false);doc.save('SWC2026_Organizacao_COE.pdf');toast('PDF gerado com sucesso');
 }
 
-// ── SEGURANÇA PDF ──
+//  SEGURANÇA PDF 
 function exportSegPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Segurança & Inventário WMF','SWC Vizela 2026 · Equipamento e Seguros',false);
+  pdfHeader(doc,'Seguranca & Inventario WMF','SWC Vizela 2026 - Equipamento e Seguros',false);
   const rowsInv = _inv.map(i=>[i.desc||'',String(i.qty||1),i.data||'',i.estado||'',i.obs||'']);
   doc.autoTable({startY:42,head:[['Descrição','Qtd.','Data chegada','Estado','Obs.']],body:rowsInv.length?rowsInv:[['','','','Sem itens registados','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{1:{cellWidth:15,halign:'center'},2:{cellWidth:25},3:{cellWidth:40}},margin:{left:14,right:14,bottom:28}});
   pdfFooter(doc,false);doc.save('SWC2026_Inventario_WMF.pdf');toast('PDF gerado com sucesso');
 }
 
-// ── CHECKLIST WMF PDF ──
+//  CHECKLIST WMF PDF 
 function exportChkPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const L = chkLang;
-  pdfHeader(doc,L==='PT'?'Checklist WMF Oficial':'WMF Official Checklist','SWC Vizela 2026 · '+(L==='PT'?'45 itens · 6 categorias':'45 items · 6 categories'),false);
+  pdfHeader(doc,L==='PT'?'Checklist WMF Oficial':'WMF Official Checklist','SWC Vizela 2026 - '+(L==='PT'?'45 itens - 6 categorias':'45 items - 6 categories'),false);
   const rows=CHK_ITEMS.map(it=>{
     const st=(_chkData[it.id]||{}).status||it.status;
     const scfg=STATUS_CFG[st]||STATUS_CFG.Pending;
@@ -2385,7 +2585,197 @@ function exportChkPDF(){
   pdfFooter(doc);doc.save('SWC2026_Checklist_WMF.pdf');toast('PDF gerado com sucesso');
 }
 
-// ═══ EXPOR FUNÇÕES AO HTML ═══
+// === CONSIGNACAO & MERCHANDISE ===
+let _marcas=[], _artigos=[], _vendas_cs=[];
+
+function loadConsig(){
+  _snap('cs_marcas',(docs)=>{_marcas=docs;renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();});
+  _snap('cs_artigos',(docs)=>{_artigos=docs;renderArtigos();renderConsigKPIs();});
+  _snap('cs_vendas',(docs)=>{_vendas_cs=docs;renderVendas();renderConsigKPIs();});
+}
+
+function populateMarcaSelects(){
+  ['art-marca','vd-marca'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const val=el.value;
+    el.innerHTML='<option value="">-- Selecionar --</option>'+_marcas.map(m=>`<option value="${m.id}">${m.nome||''}</option>`).join('');
+    el.value=val;
+  });
+}
+
+async function saveMarca(){
+  if(!isAdmin)return;
+  const d={nome:document.getElementById('mk-nome').value,contacto:document.getElementById('mk-ct').value,email:document.getElementById('mk-email').value,pct:parseFloat(document.getElementById('mk-pct').value)||0,data:document.getElementById('mk-data').value,notas:document.getElementById('mk-notas').value,ts:Date.now()};
+  if(!d.nome){toast('Nome obrigatorio','er');return;}
+  await _add('cs_marcas',d);closeM('m-marca');toast('Marca registada');
+}
+
+async function saveArtigo(){
+  if(!isAdmin)return;
+  const marcaId=document.getElementById('art-marca').value;
+  const marca=_marcas.find(m=>m.id===marcaId);
+  const d={marcaId,marcaNome:marca?marca.nome:'',ref:document.getElementById('art-ref').value,desc:document.getElementById('art-desc').value,preco:parseFloat(document.getElementById('art-preco').value)||0,qtyEntrou:parseInt(document.getElementById('art-qty').value)||0,notas:document.getElementById('art-notas').value,ts:Date.now()};
+  if(!d.marcaId||!d.ref){toast('Marca e referencia obrigatorias','er');return;}
+  await _add('cs_artigos',d);closeM('m-artigo');toast('Artigo registado');
+}
+
+function fillArtigosVenda(){
+  const marcaId=document.getElementById('vd-marca').value;
+  const sel=document.getElementById('vd-artigo');
+  const arts=_artigos.filter(a=>a.marcaId===marcaId);
+  sel.innerHTML='<option value="">-- Selecionar artigo --</option>'+arts.map(a=>{
+    const vendido=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.qty||0),0);
+    const stock=Number(a.qtyEntrou||0)-vendido;
+    return `<option value="${a.id}">${a.ref} - ${a.desc} (stock: ${stock})</option>`;
+  }).join('');
+  calcVenda();
+}
+
+function calcVenda(){
+  const artigoId=document.getElementById('vd-artigo').value;
+  const qty=parseInt(document.getElementById('vd-qty').value)||0;
+  const artigo=_artigos.find(a=>a.id===artigoId);
+  const marca=artigo?_marcas.find(m=>m.id===artigo.marcaId):null;
+  const preco=artigo?Number(artigo.preco||0):0;
+  const total=preco*qty;
+  const pct=marca?Number(marca.pct||0):0;
+  document.getElementById('vd-preco-unit').textContent=fmt(preco);
+  document.getElementById('vd-total').textContent=fmt(total);
+  document.getElementById('vd-comissao').textContent=fmt(total*pct/100)+' ('+pct+'%)';
+}
+
+async function saveVenda(){
+  if(!isAdmin)return;
+  const artigoId=document.getElementById('vd-artigo').value;
+  const artigo=_artigos.find(a=>a.id===artigoId);
+  if(!artigo){toast('Selecionar artigo','er');return;}
+  const qty=parseInt(document.getElementById('vd-qty').value)||0;
+  if(qty<=0){toast('Quantidade invalida','er');return;}
+  const vendido=_vendas_cs.filter(v=>v.artigoId===artigoId).reduce((s,v)=>s+Number(v.qty||0),0);
+  const stock=Number(artigo.qtyEntrou||0)-vendido;
+  if(qty>stock){toast('Stock insuficiente: '+stock+' un. disponiveis','er');return;}
+  const marca=_marcas.find(m=>m.id===artigo.marcaId);
+  const preco=Number(artigo.preco||0);
+  const total=preco*qty;
+  const pct=marca?Number(marca.pct||0):0;
+  await _add('cs_vendas',{marcaId:artigo.marcaId,marcaNome:artigo.marcaNome||'',artigoId,ref:artigo.ref||'',desc:artigo.desc||'',qty,precoUnit:preco,total,pct,comissao:total*pct/100,dt:document.getElementById('vd-dt').value,notas:document.getElementById('vd-notas').value,ts:Date.now()});
+  closeM('m-venda');toast('Venda registada');
+}
+
+function renderConsigKPIs(){
+  const el_m=document.getElementById('cs-marcas');
+  const el_s=document.getElementById('cs-stock');
+  const el_v=document.getElementById('cs-vendido');
+  const el_r=document.getElementById('cs-receita');
+  if(el_m)el_m.textContent=_marcas.length;
+  if(el_s)el_s.textContent=_artigos.reduce((s,a)=>s+Number(a.qtyEntrou||0),0)+' un.';
+  if(el_v)el_v.textContent=_vendas_cs.reduce((s,v)=>s+Number(v.qty||0),0)+' un.';
+  if(el_r)el_r.textContent=fmt(_vendas_cs.reduce((s,v)=>s+Number(v.comissao||0),0));
+}
+
+function renderMarcas(){
+  const tbody=document.getElementById('t-marcas');
+  if(!tbody)return;
+  if(!_marcas.length){tbody.innerHTML='<tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem marcas registadas</td></tr>';return;}
+  tbody.innerHTML=_marcas.map(m=>{
+    const arts=_artigos.filter(a=>a.marcaId===m.id);
+    const totE=arts.reduce((s,a)=>s+Number(a.qtyEntrou||0),0);
+    const totV=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.qty||0),0);
+    const receita=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.comissao||0),0);
+    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${isAdmin?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">X</button></td>`:'<td></td>'}</tr>`;
+  }).join('');
+}
+
+function renderArtigos(){
+  const tbody=document.getElementById('t-artigos');
+  if(!tbody)return;
+  if(!_artigos.length){tbody.innerHTML='<tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr>';return;}
+  tbody.innerHTML=_artigos.map(a=>{
+    const vendido=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.qty||0),0);
+    const stock=Number(a.qtyEntrou||0)-vendido;
+    const totalVendas=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.total||0),0);
+    return `<tr><td class="go">${a.marcaNome||''}</td><td style="font-weight:600;font-family:monospace;font-size:11px;">${a.ref||''}</td><td>${a.desc||''}</td><td style="text-align:right;">${fmt(a.preco)}</td><td style="text-align:center;">${a.qtyEntrou||0}</td><td style="text-align:center;color:var(--ok);">${vendido}</td><td style="text-align:center;font-weight:700;color:${stock<=2?'var(--er)':stock<=5?'var(--wr)':'var(--wh)'};">${stock}</td><td class="tok">${fmt(totalVendas)}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delArtigo('${a.id}')">X</button></td>`:'<td></td>'}</tr>`;
+  }).join('');
+}
+
+function renderVendas(){
+  const tbody=document.getElementById('t-vendas');
+  if(!tbody)return;
+  const sorted=[..._vendas_cs].sort((a,b)=>b.ts-a.ts);
+  if(!sorted.length){tbody.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
+  tbody.innerHTML=sorted.map(v=>`<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delVendaCS('${v.id}')">X</button></td>`:'<td></td>'}</tr>`).join('');
+}
+
+async function delMarca(id){if(!isAdmin||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
+async function delArtigo(id){if(!isAdmin||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
+async function delVendaCS(id){if(!isAdmin||!confirm('Anular venda?'))return;await _del('cs_vendas',id);toast('Anulada','er');}
+
+function exportAcertoPDF(marcaId){
+  const marca=_marcas.find(m=>m.id===marcaId);
+  if(!marca){toast('Marca nao encontrada','er');return;}
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Acerto de Contas - Consignacao','SWC Vizela 2026 - '+marca.nome,false);
+  let y=42;
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+  doc.text('Marca: '+marca.nome, 14, y);
+  doc.text('Contacto: '+(marca.contacto||'-'), 14, y+5);
+  doc.text('Comissao Vizelgolfe: '+marca.pct+'%', 14, y+10);
+  y+=18;
+  const arts=_artigos.filter(a=>a.marcaId===marcaId);
+  const rows=arts.map(a=>{
+    const vendido=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.qty||0),0);
+    const stock=Number(a.qtyEntrou||0)-vendido;
+    const totalVenda=vendido*Number(a.preco||0);
+    return[a.ref||'',a.desc||'',String(a.qtyEntrou||0),String(vendido),String(stock),fmtPDF(a.preco),fmtPDF(totalVenda),fmtPDF(totalVenda*Number(marca.pct||0)/100)];
+  });
+  const totV=_vendas_cs.filter(v=>v.marcaId===marcaId).reduce((s,v)=>s+Number(v.qty||0),0);
+  const totRec=_vendas_cs.filter(v=>v.marcaId===marcaId).reduce((s,v)=>s+Number(v.comissao||0),0);
+  const totDev=arts.reduce((s,a)=>s+Number(a.qtyEntrou||0),0)-totV;
+  doc.autoTable({startY:y,head:[['Referencia','Descricao','Entrou','Vendido','A devolver','Preco','Total venda','Comissao']],body:rows.length?rows:[['','Sem artigos','','','','','','']],foot:[['TOTAIS','','',String(totV),String(totDev),'',fmtPDF(_vendas_cs.filter(v=>v.marcaId===marcaId).reduce((s,v)=>s+Number(v.total||0),0)),fmtPDF(totRec)]],theme:'grid',styles:{fontSize:8,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:30},2:{halign:'center',cellWidth:15},3:{halign:'center',cellWidth:15},4:{halign:'center',cellWidth:20},5:{halign:'right',cellWidth:22},6:{halign:'right',cellWidth:25},7:{halign:'right',cellWidth:25}},margin:{left:14,right:14,bottom:40}});
+  y=doc.lastAutoTable.finalY+10;
+  if(y<240){
+    doc.setFillColor(248,246,240);doc.roundedRect(14,y,182,28,3,3,'F');
+    doc.setDrawColor(201,168,76);doc.setLineWidth(0.3);doc.roundedRect(14,y,182,28,3,3,'S');
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(80,60,20);
+    doc.text('RESUMO', 105, y+7, {align:'center'});
+    doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+    doc.text('Total vendido: '+totV+' unidades', 20, y+13);
+    doc.setFont('helvetica','bold');doc.setTextColor(10,80,10);
+    doc.text('Comissao Vizelgolfe ('+marca.pct+'%): '+fmtPDF(totRec), 20, y+19);
+    doc.setTextColor(150,50,10);
+    doc.text('Unidades a devolver: '+totDev, 130, y+13);
+    y+=33;
+    doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+    doc.line(14,y+12,80,y+12);doc.line(120,y+12,196,y+12);
+    doc.text('Pela Vizelgolfe', 14, y+17);
+    doc.text('Pela '+marca.nome, 120, y+17);
+    doc.text('Data: ___/___/______', 14, y+23);
+    doc.text('Data: ___/___/______', 120, y+23);
+  }
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Acerto_'+marca.nome.replace(/ /g,'_')+'.pdf');
+  toast('PDF acerto de contas gerado');
+}
+
+function exportConsigPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Consignacao & Merchandise - Resumo Geral','SWC Vizela 2026 - Por marca',true);
+  const rows=_marcas.map(m=>{
+    const arts=_artigos.filter(a=>a.marcaId===m.id);
+    const totE=arts.reduce((s,a)=>s+Number(a.qtyEntrou||0),0);
+    const totV=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.qty||0),0);
+    const totRec=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.comissao||0),0);
+    return[m.nome||'',m.contacto||'',String(m.pct||0)+'%',String(arts.length),String(totE),String(totV),String(totE-totV),fmtPDF(totRec)];
+  });
+  doc.autoTable({startY:38,head:[['Marca','Contacto','Comissao','Artigos','Stock entrou','Vendido','A devolver','Receita Vizelgolfe']],body:rows.length?rows:[['','','','','Sem marcas','','','']],foot:[['TOTAL','','',String(_artigos.length),String(_artigos.reduce((s,a)=>s+Number(a.qtyEntrou||0),0)),String(_vendas_cs.reduce((s,v)=>s+Number(v.qty||0),0)),'',fmtPDF(_vendas_cs.reduce((s,v)=>s+Number(v.comissao||0),0))]],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Consignacao_Resumo.pdf');
+  toast('PDF resumo gerado');
+}
+
+
+//  EXPOR FUNÇÕES AO HTML 
 window.doLogin=doLogin;
 window.doLogout=doLogout;
 window.nav=nav;
@@ -2427,6 +2817,29 @@ window.saveProgItem=saveProgItem;
 window.delProgItem=delProgItem;
 window.toggleFullscreen=toggleFullscreen;
 window.exportProgramaPDF=exportProgramaPDF;
+window.exportAtletasPDF=exportAtletasPDF;
+window.exportCerimoniasPDF=exportCerimoniasPDF;
+window.exportComunicadosPDF=exportComunicadosPDF;
+window.saveMarca=saveMarca;
+window.saveArtigo=saveArtigo;
+window.saveVenda=saveVenda;
+window.fillArtigosVenda=fillArtigosVenda;
+window.calcVenda=calcVenda;
+window.delMarca=delMarca;
+window.delArtigo=delArtigo;
+window.delVendaCS=delVendaCS;
+window.exportAcertoPDF=exportAcertoPDF;
+window.exportConsigPDF=exportConsigPDF;
+window.saveMarca=saveMarca;
+window.saveArtigo=saveArtigo;
+window.saveVenda=saveVenda;
+window.fillArtigosVenda=fillArtigosVenda;
+window.calcVenda=calcVenda;
+window.delMarca=delMarca;
+window.delArtigo=delArtigo;
+window.delVendaCS=delVendaCS;
+window.exportAcertoPDF=exportAcertoPDF;
+window.exportConsigPDF=exportConsigPDF;
 window.exportDR=exportDR;
 window.exportBalanco=exportBalanco;
 window.exportBalancete=exportBalancete;

@@ -233,6 +233,8 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="si act" onclick="nav(this,'dashboard','Dashboard')"><span class="sic">⬡</span>Dashboard</div>
     <div class="si" onclick="nav(this,'cronologia','Cronologia &amp; Prazos')"><span class="sic">◷</span>Cronologia &amp; Prazos<span class="sbdg" id="bp">0</span></div>
     <div class="sbs">Gestão do Evento</div>
+    <div class="si" onclick="nav(this,'programa','Programa Oficial do Evento')"><span class="sic">📅</span>Programa do Evento</div>
+    <div class="si" onclick="nav(this,'modo-evento','Modo Evento — Ao Vivo')"><span class="sic">🔴</span>Modo Evento — Live</div>
     <div class="si" onclick="nav(this,'organizacao','Organização &amp; COE')"><span class="sic">◈</span>Organização &amp; COE</div>
     <div class="si" onclick="nav(this,'atletas','Atletas &amp; Inscrições')"><span class="sic">◉</span>Atletas &amp; Inscrições</div>
     <div class="si" onclick="nav(this,'alojamento','Alojamento &amp; Logística')"><span class="sic">◫</span>Alojamento &amp; Logística</div>
@@ -327,6 +329,8 @@ td.mu{color:var(--mu);font-style:italic;}
     </div>
   </div>
 </div>
+<!-- ALERTAS PRAZO -->
+<div id="dash-alertas"></div>
 <div class="cd"><div class="cdh"><div class="cdn">▤</div><div><div class="cdt">Últimos lançamentos</div><div class="cds">Diário Caixa/Banco</div></div></div>
   <div class="cdb"><div class="tw"><table><thead><tr><th>Data</th><th>SNC</th><th>Descrição</th><th>D/C</th><th>Montante</th><th>Conta</th></tr></thead>
   <tbody id="t-ult"><tr><td colspan="6" class="mu" style="text-align:center;padding:20px;">Sem lançamentos</td></tr></tbody></table></div></div>
@@ -572,6 +576,61 @@ td.mu{color:var(--mu);font-style:italic;}
 <div id="wmf-ct"></div>
 </div>
 
+  <!-- PROGRAMA DO EVENTO -->
+<div class="pg" id="pg-programa">
+<div class="st"><span class="sn">PROG</span>Programa Oficial — SWC Vizela 2026</div>
+<div class="sd">13–17 Outubro 2026 · Hora a hora · Editável · Exportação PDF</div>
+<div class="bb" id="bar-programa"><button class="btn bp" onclick="openM('m-prog-item')">+ Adicionar item</button><button class="btn bo" onclick="exportProgramaPDF()">Exportar PDF oficial</button></div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">13 Out — Chegadas</div><div class="smv" id="prog-13">—</div></div>
+  <div class="sm"><div class="sml">14 Out — Dia 1</div><div class="smv" id="prog-14">—</div></div>
+  <div class="sm"><div class="sml">15 Out — Dia 2</div><div class="smv" id="prog-15">—</div></div>
+  <div class="sm"><div class="sml">16–17 Out — Final</div><div class="smv" id="prog-1617">—</div></div>
+</div>
+<div id="prog-content"></div>
+</div>
+
+  <!-- MODO EVENTO AO VIVO -->
+<div class="pg" id="pg-modo-evento">
+<div style="position:relative;background:linear-gradient(135deg,rgba(8,16,32,.98),rgba(15,30,60,.95));border:1px solid var(--bs);border-radius:16px;padding:24px;margin-bottom:14px;overflow:hidden;">
+  <div style="position:absolute;top:12px;right:16px;display:flex;align-items:center;gap:8px;">
+    <div style="width:10px;height:10px;border-radius:50%;background:var(--er);animation:blink 1.5s infinite;"></div>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.15em;color:var(--er);text-transform:uppercase;">AO VIVO</span>
+  </div>
+  <style>@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}</style>
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:.08em;color:var(--gl2);line-height:1;" id="me-clock">--:--:--</div>
+  <div style="font-size:12px;color:var(--mu);margin-top:4px;" id="me-date">--</div>
+</div>
+<div class="g2" style="margin-bottom:14px;">
+  <div class="cd"><div class="cdh"><div><div class="cdt">Sessão actual</div><div class="cds">Em curso agora</div></div></div>
+    <div class="cdb">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--wh);margin-bottom:8px;" id="me-sessao-atual">A aguardar início do evento</div>
+      <div style="font-size:11px;color:var(--mu);" id="me-sessao-desc">13 Outubro 2026 · Vizela</div>
+      <div style="margin-top:12px;padding:10px 14px;background:rgba(201,168,76,.08);border-radius:8px;border-left:3px solid var(--gl);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gl);text-transform:uppercase;margin-bottom:4px;">Próxima sessão</div>
+        <div style="font-size:13px;color:var(--wh);" id="me-proxima">—</div>
+        <div style="font-size:10px;color:var(--mu);" id="me-proxima-hora">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="cd"><div class="cdh"><div><div class="cdt">Estado do evento</div><div class="cds">Progresso dia a dia</div></div></div>
+    <div class="cdb">
+      <div class="pw"><div class="pl"><span>Dias decorridos</span><span id="me-dias-dec">0 / 5</span></div><div class="pt"><div class="pf" id="me-dias-bar" style="width:0%"></div></div></div>
+      <div class="pw"><div class="pl"><span>Atletas presentes</span><span id="me-atl-label">0</span></div><div class="pt"><div class="pf ok" id="me-atl-bar" style="width:0%"></div></div></div>
+      <div style="margin-top:10px;" id="me-dia-programa"></div>
+    </div>
+  </div>
+</div>
+<div class="g3">
+  <div class="cd"><div class="cdh"><div><div class="cdt">Atletas inscritos</div></div></div><div class="cdb"><div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--gl2);text-align:center;" id="me-atletas-n">0</div><div style="font-size:10px;color:var(--mu);text-align:center;">participantes confirmados</div></div></div>
+  <div class="cd"><div class="cdh"><div><div class="cdt">Países representados</div></div></div><div class="cdb"><div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--gl2);text-align:center;" id="me-paises-n">0</div><div style="font-size:10px;color:var(--mu);text-align:center;">nações participantes</div></div></div>
+  <div class="cd"><div class="cdh"><div><div class="cdt">Prazos WMF urgentes</div></div></div><div class="cdb"><div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--er);text-align:center;" id="me-prazos-urg">0</div><div style="font-size:10px;color:var(--mu);text-align:center;">a vencer em 30 dias</div></div></div>
+</div>
+<div style="margin-top:14px;text-align:center;">
+  <button class="btn bo" onclick="toggleFullscreen()" style="font-size:12px;padding:10px 28px;letter-spacing:.08em;">⛶ &nbsp;Modo ecrã inteiro — para projetar</button>
+</div>
+</div>
+
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
 <div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026</div>
@@ -738,6 +797,34 @@ td.mu{color:var(--mu);font-style:italic;}
   <div class="mf"><button class="btn bo" onclick="closeM('m-inv')">Cancelar</button><button class="btn bp" onclick="saveInv()">Guardar</button></div>
 </div></div>
 
+<!-- MODAL PROGRAMA -->
+<div class="mo" id="m-prog-item"><div class="mdl">
+  <div class="mh"><div class="mt2">Adicionar item ao programa</div><button class="mc" onclick="closeM('m-prog-item')">✕</button></div>
+  <div class="mb">
+    <div class="fr"><div class="fg"><div class="fl">Dia</div><select class="fse" id="pi-dia">
+      <option value="2026-10-13">13 Out — Chegadas &amp; Treino</option>
+      <option value="2026-10-14">14 Out — Dia 1 competição</option>
+      <option value="2026-10-15">15 Out — Dia 2 competição</option>
+      <option value="2026-10-16">16 Out — Dia 3 competição</option>
+      <option value="2026-10-17">17 Out — Final &amp; Encerramento</option>
+    </select></div>
+    <div class="fg"><div class="fl">Hora</div><input class="fi" type="time" id="pi-hora" value="09:00"></div></div>
+    <div class="fg"><div class="fl">Título do item</div><input class="fi" id="pi-titulo" placeholder="ex: Treino oficial · Cerimónia de Abertura · Stroke Play Ronda 1..."></div>
+    <div class="fg"><div class="fl">Descrição / Local</div><input class="fi" id="pi-desc" placeholder="ex: Campo de Minigolfe · Casa do Park · Hotel..."></div>
+    <div class="fg"><div class="fl">Tipo</div><select class="fse" id="pi-tipo">
+      <option value="competicao">🏆 Competição</option>
+      <option value="cerimonia">✦ Cerimónia</option>
+      <option value="treino">⛳ Treino</option>
+      <option value="social">🍽 Social / Refeição</option>
+      <option value="logistica">🚌 Logística / Transfer</option>
+      <option value="reuniao">📋 Reunião</option>
+      <option value="outro">📌 Outro</option>
+    </select></div>
+    <div class="fg"><div class="fl">Responsável</div><input class="fi" id="pi-resp" placeholder="COE · Chefe Desportivo · Logística..."></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-prog-item')">Cancelar</button><button class="btn bp" onclick="saveProgItem()">Guardar</button></div>
+</div></div>
+
 <div class="tst" id="tst"></div>
 
 <script type="module">
@@ -769,7 +856,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  loadAll();loadChk();initChecklist();startCountdown();
+  loadAll();loadChk();initChecklist();startCountdown();startModeEvento();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -791,6 +878,8 @@ function nav(el,id,title){
   if(id==='ipdj')renderIPDJ();
   if(id==='wmf')renderWMF();
   if(id==='wmfcheck')renderChk();
+  if(id==='programa')renderPrograma();
+  if(id==='modo-evento')startModeEvento();
 }
 function tick(){const n=new Date();document.getElementById('clk').textContent=n.toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});}
 
@@ -846,6 +935,7 @@ function renderDash(){
   ul.innerHTML=last.length?last.map(l=>`<tr><td>${l.data||''}</td><td><span class="sc">${l.cn||''}</span></td><td>${l.ds||''}</td><td><span class="bge ${l.tp==='C'?'bg-ok':'bg-er'}">${l.tp==='C'?'C':'D'}</span></td><td class="${l.tp==='C'?'tok':'tv'}">${l.tp==='C'?'+':'-'}${fmt(l.vl)}</td><td class="mu">${l.cb||''}</td></tr>`).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:20px;">Sem lançamentos</td></tr>';
   const urg=_praz.filter(p=>{const d=new Date(p.data);return(d-new Date())/86400000<=30&&p.estado!=='concluido';});
   document.getElementById('bp').textContent=urg.length;
+  renderAlertas();
 }
 
 // ═══ DIÁRIO ═══
@@ -1297,6 +1387,227 @@ function loadChk(){
     const pg = document.getElementById('pg-wmfcheck');
     if(pg && pg.classList.contains('act')) renderChk();
   });
+}
+
+// ═══ PROGRAMA DO EVENTO ═══
+let _prog = [];
+const DIAS_EVENTO = ['2026-10-13','2026-10-14','2026-10-15','2026-10-16','2026-10-17'];
+const DIAS_LABEL = {
+  '2026-10-13':'13 Out — Chegadas & Treino',
+  '2026-10-14':'14 Out — Dia 1 Competição',
+  '2026-10-15':'15 Out — Dia 2 Competição',
+  '2026-10-16':'16 Out — Dia 3 Competição',
+  '2026-10-17':'17 Out — Final & Encerramento'
+};
+const TIPO_CFG = {
+  competicao:{icon:'🏆', cor:'rgba(201,168,76,.15)', borda:'var(--gl)'},
+  cerimonia: {icon:'✦',  cor:'rgba(100,160,255,.1)', borda:'#90c0ff'},
+  treino:    {icon:'⛳', cor:'rgba(74,184,122,.1)',  borda:'var(--ok)'},
+  social:    {icon:'🍽', cor:'rgba(232,160,48,.1)',  borda:'var(--wr)'},
+  logistica: {icon:'🚌', cor:'rgba(150,150,200,.1)', borda:'#aaaadd'},
+  reuniao:   {icon:'📋', cor:'rgba(200,100,200,.1)', borda:'#dd88dd'},
+  outro:     {icon:'📌', cor:'rgba(255,255,255,.04)','borda':'var(--bdr)'},
+};
+
+async function saveProgItem(){
+  if(!isAdmin) return;
+  const d = {
+    dia:    document.getElementById('pi-dia').value,
+    hora:   document.getElementById('pi-hora').value,
+    titulo: document.getElementById('pi-titulo').value,
+    desc:   document.getElementById('pi-desc').value,
+    tipo:   document.getElementById('pi-tipo').value,
+    resp:   document.getElementById('pi-resp').value,
+    ts: Date.now()
+  };
+  if(!d.titulo){toast('Título obrigatório','er'); return;}
+  await _add('programa', d);
+  closeM('m-prog-item');
+  toast('Item adicionado ao programa');
+}
+
+function renderPrograma(){
+  // Contar por dia
+  DIAS_EVENTO.forEach((dia, i) => {
+    const ids = ['prog-13','prog-14','prog-15','prog-1617'];
+    const count = _prog.filter(p=>p.dia===dia).length;
+    const elId = i < 3 ? ids[i] : ids[3];
+    const el = document.getElementById(elId);
+    if(el) el.textContent = count + ' itens';
+  });
+
+  const el = document.getElementById('prog-content');
+  if(!el) return;
+
+  if(!_prog.length){
+    el.innerHTML = `<div class="em"><div class="emi">📅</div><div class="emt">Programa ainda vazio</div><div class="emd">Adicione os itens do programa dia a dia.<br>O programa base WMF inclui: chegadas 13 Out, treino oficial, 4 rondas Stroke Play, Match Play, cerimónias abertura e encerramento.</div></div>`;
+    return;
+  }
+
+  // Agrupar por dia e ordenar por hora
+  let html = '';
+  DIAS_EVENTO.forEach(dia => {
+    const items = _prog.filter(p=>p.dia===dia).sort((a,b)=>a.hora.localeCompare(b.hora));
+    if(!items.length) return;
+    html += `<div style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.15em;color:var(--gl);background:rgba(201,168,76,.1);border:1px solid var(--bdr);padding:4px 12px;border-radius:4px;">${DIAS_LABEL[dia]||dia}</div>
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--bds),transparent);"></div>
+        <div style="font-size:11px;color:var(--mu);">${items.length} itens</div>
+      </div>`;
+    items.forEach(it => {
+      const tc = TIPO_CFG[it.tipo] || TIPO_CFG.outro;
+      html += `<div style="display:flex;gap:14px;align-items:flex-start;padding:12px 14px;margin-bottom:8px;background:${tc.cor};border:1px solid ${tc.borda};border-radius:10px;border-left:3px solid ${tc.borda};">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gl);min-width:48px;line-height:1.2;">${it.hora||'--:--'}</div>
+        <div style="font-size:16px;min-width:20px;">${tc.icon}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:2px;">${it.titulo||''}</div>
+          ${it.desc?`<div style="font-size:11px;color:var(--mu);">📍 ${it.desc}</div>`:''}
+          ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:3px;">Resp: ${it.resp}</div>`:''}
+        </div>
+        ${isAdmin?`<button class="btn bd2 bsm" onclick="delProgItem('${it.id}')">✕</button>`:''}
+      </div>`;
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+async function delProgItem(id){
+  if(!isAdmin||!confirm('Eliminar?')) return;
+  await _del('programa',id);
+  toast('Item eliminado','er');
+}
+
+// ═══ MODO EVENTO — RELÓGIO AO VIVO ═══
+function startModeEvento(){
+  function updateClock(){
+    const now = new Date();
+    const el = document.getElementById('me-clock');
+    const elD = document.getElementById('me-date');
+    if(el) el.textContent = now.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    if(elD) elD.textContent = now.toLocaleDateString('pt-PT',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+
+    // Determinar sessão actual baseada no programa
+    const hoje = now.toISOString().split('T')[0];
+    const horaAtual = now.toTimeString().slice(0,5);
+    const itemsHoje = _prog.filter(p=>p.dia===hoje).sort((a,b)=>a.hora.localeCompare(b.hora));
+    const itemActual = [...itemsHoje].reverse().find(p=>p.hora<=horaAtual);
+    const itemProximo = itemsHoje.find(p=>p.hora>horaAtual);
+
+    const elSA = document.getElementById('me-sessao-atual');
+    const elSD = document.getElementById('me-sessao-desc');
+    const elP = document.getElementById('me-proxima');
+    const elPH = document.getElementById('me-proxima-hora');
+    if(elSA) elSA.textContent = itemActual ? itemActual.titulo : (DIAS_LABEL[hoje]||'Fora do período do evento');
+    if(elSD) elSD.textContent = itemActual ? (itemActual.desc||itemActual.hora) : '';
+    if(elP) elP.textContent = itemProximo ? itemProximo.titulo : 'Sem mais itens hoje';
+    if(elPH) elPH.textContent = itemProximo ? itemProximo.hora : '';
+
+    // Dias decorridos
+    const inicio = new Date('2026-10-13');
+    const fim = new Date('2026-10-17');
+    const diff = Math.floor((now - inicio) / 86400000);
+    const diasDec = Math.max(0, Math.min(5, diff+1));
+    const elDD = document.getElementById('me-dias-dec');
+    const elDB = document.getElementById('me-dias-bar');
+    if(elDD) elDD.textContent = diasDec + ' / 5';
+    if(elDB) elDB.style.width = (diasDec/5*100) + '%';
+
+    // Atletas e países
+    const elAN = document.getElementById('me-atletas-n');
+    const elPN = document.getElementById('me-paises-n');
+    const elAtlL = document.getElementById('me-atl-label');
+    const elAtlB = document.getElementById('me-atl-bar');
+    if(elAN) elAN.textContent = _atl.length;
+    if(elPN) elPN.textContent = new Set(_atl.map(a=>a.pais)).size;
+    if(elAtlL) elAtlL.textContent = _atl.length;
+    if(elAtlB) elAtlB.style.width = Math.min(100,_atl.length/150*100)+'%';
+
+    // Prazos urgentes
+    const urg = _praz.filter(p=>{
+      const d = new Date(p.data);
+      return (d-now)/86400000 <= 30 && p.estado !== 'concluido';
+    });
+    const elPU = document.getElementById('me-prazos-urg');
+    if(elPU) elPU.textContent = urg.length;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+
+function renderModoEvento(){
+  // actualiza contadores do modo evento a partir dos dados Firebase
+  const elAN = document.getElementById('me-atletas-n');
+  const elPN = document.getElementById('me-paises-n');
+  const elPU = document.getElementById('me-prazos-urg');
+  if(elAN) elAN.textContent = _atl.length;
+  if(elPN) elPN.textContent = new Set(_atl.map(a=>a.pais)).size;
+  if(elPU){ const urg=_praz.filter(p=>{const d=new Date(p.data);return(d-new Date())/86400000<=30&&p.estado!=='concluido';});elPU.textContent=urg.length;}
+}
+
+function toggleFullscreen(){
+  const pg = document.getElementById('pg-modo-evento');
+  if(!document.fullscreenElement){
+    pg.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// ═══ NOTIFICAÇÕES PRAZO — DASHBOARD ═══
+function renderAlertas(){
+  const el = document.getElementById('dash-alertas');
+  if(!el) return;
+  const hoje = new Date();
+  const urgentes = _praz.filter(p => {
+    const d = new Date(p.data);
+    const diff = (d - hoje) / 86400000;
+    return diff >= 0 && diff <= 7 && p.estado !== 'concluido';
+  });
+  const proximos = _praz.filter(p => {
+    const d = new Date(p.data);
+    const diff = (d - hoje) / 86400000;
+    return diff > 7 && diff <= 30 && p.estado !== 'concluido';
+  });
+
+  if(!urgentes.length && !proximos.length){ el.innerHTML = ''; return; }
+
+  let html = '';
+  if(urgentes.length){
+    html += `<div style="background:linear-gradient(135deg,rgba(224,82,82,.15),rgba(224,82,82,.05));border:1px solid rgba(224,82,82,.4);border-radius:12px;padding:14px 18px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="font-size:18px;">🚨</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--er);">ATENÇÃO — ${urgentes.length} prazo${urgentes.length>1?'s':''} a vencer em 7 dias</div>
+      </div>
+      ${urgentes.map(p=>{
+        const d = new Date(p.data);
+        const diff = Math.ceil((d-hoje)/86400000);
+        return `<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(224,82,82,.08);border-radius:7px;margin-bottom:5px;">
+          <span style="font-size:10px;font-weight:700;color:var(--er);min-width:60px;">${p.data}</span>
+          <span style="flex:1;font-size:12px;color:var(--wh);">${p.titulo}</span>
+          <span style="font-size:10px;font-weight:700;color:var(--er);">${diff===0?'HOJE':diff+'d'}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  if(proximos.length){
+    html += `<div style="background:linear-gradient(135deg,rgba(232,160,48,.1),rgba(232,160,48,.03));border:1px solid rgba(232,160,48,.3);border-radius:12px;padding:12px 18px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="font-size:16px;">⚠️</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--wr);">${proximos.length} prazo${proximos.length>1?'s':''} a vencer em 30 dias</div>
+      </div>
+      ${proximos.map(p=>{
+        const diff = Math.ceil((new Date(p.data)-hoje)/86400000);
+        return `<div style="display:flex;align-items:center;gap:10px;padding:5px 8px;margin-bottom:3px;">
+          <span style="font-size:10px;font-weight:700;color:var(--wr);min-width:60px;">${p.data}</span>
+          <span style="flex:1;font-size:11px;color:var(--se);">${p.titulo}</span>
+          <span style="font-size:10px;color:var(--wr);">${diff}d</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  el.innerHTML = html;
 }
 
 // ═══ COUNTDOWN ═══
@@ -1862,6 +2173,75 @@ function exportPat(){
   pdfFooter(doc);doc.save('SWC2026_Patrocinios.pdf');toast('PDF gerado com sucesso');
 }
 
+// ── PROGRAMA DO EVENTO PDF ──
+function exportProgramaPDF(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Programa Oficial do Evento','SWC Vizela 2026 · 13–17 Outubro · Vizela, Portugal',false);
+
+  let y = 42;
+
+  if(_prog.length === 0){
+    doc.setFontSize(10); doc.setTextColor(120,120,120);
+    doc.text('Programa ainda não introduzido no sistema.', 105, 80, {align:'center'});
+    pdfFooter(doc,false);
+    doc.save('SWC2026_Programa_Oficial.pdf');
+    return;
+  }
+
+  DIAS_EVENTO.forEach(dia => {
+    const items = _prog.filter(p=>p.dia===dia).sort((a,b)=>a.hora.localeCompare(b.hora));
+    if(!items.length) return;
+
+    // Cabeçalho do dia
+    if(y > 240){ doc.addPage(); y = 20; }
+    doc.setFillColor(10,22,40);
+    doc.roundedRect(14,y,182,9,2,2,'F');
+    doc.setDrawColor(201,168,76);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(14,y,182,9,2,2,'S');
+    doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.setTextColor(201,168,76);
+    doc.text(DIAS_LABEL[dia]||dia, 105, y+6, {align:'center'});
+    y += 12;
+
+    // Itens do dia
+    const TIPO_CORES = {
+      competicao:[255,248,220], cerimonia:[220,230,255],
+      treino:[220,245,230], social:[255,240,215],
+      logistica:[235,235,250], reuniao:[245,225,245], outro:[245,245,245]
+    };
+    const rows = items.map(it => [it.hora||'--:--', (TIPO_CFG[it.tipo]?.icon||'📌')+' '+it.titulo, it.desc||'', it.resp||'']);
+
+    doc.autoTable({
+      startY: y,
+      head:[['Hora','Actividade','Local / Descrição','Responsável']],
+      body: rows,
+      theme:'grid',
+      styles:{fontSize:8.5, textColor:[35,35,35], cellPadding:4, lineColor:[210,200,180], lineWidth:0.2},
+      headStyles:{fillColor:[25,45,80], textColor:[201,168,76], fontStyle:'bold', fontSize:8},
+      columnStyles:{
+        0:{cellWidth:18, fontStyle:'bold', textColor:[100,70,20], halign:'center'},
+        1:{cellWidth:85},
+        2:{cellWidth:50, fontSize:8, textColor:[80,80,80]},
+        3:{cellWidth:30, fontSize:7.5, textColor:[100,80,40]},
+      },
+      didDrawCell: function(data){
+        if(data.section === 'body'){
+          const tipo = items[data.row.index]?.tipo || 'outro';
+          const cor = TIPO_CORES[tipo] || [245,245,245];
+          // já tratado pelo autoTable
+        }
+      },
+      margin:{left:14, right:14, bottom:28},
+    });
+    y = doc.lastAutoTable.finalY + 6;
+  });
+
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Programa_Oficial.pdf');
+  toast('PDF gerado com sucesso');
+}
+
 // ── CRONOLOGIA PDF ──
 function exportCronPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -2043,6 +2423,10 @@ window.renderDR=renderDR;
 window.renderChk=renderChk;
 window.toggleSb=toggleSb;
 window.startCountdown=startCountdown;
+window.saveProgItem=saveProgItem;
+window.delProgItem=delProgItem;
+window.toggleFullscreen=toggleFullscreen;
+window.exportProgramaPDF=exportProgramaPDF;
 window.exportDR=exportDR;
 window.exportBalanco=exportBalanco;
 window.exportBalancete=exportBalancete;

@@ -229,48 +229,58 @@ td.mu{color:var(--mu);font-style:italic;}
     <div id="role" class="sbrole admin">Admin</div>
   </div>
   <div class="sbn">
-    <div class="sbs">Principal</div>
-    <div class="si act" onclick="nav(this,'dashboard','Dashboard')"><span class="sic">⬡</span>Dashboard</div>
-    <div class="si" onclick="nav(this,'cronologia','Cronologia &amp; Prazos')"><span class="sic">◷</span>Cronologia &amp; Prazos<span class="sbdg" id="bp">0</span></div>
-    <div class="sbs">Gestão do Evento</div>
-    <div class="si" onclick="nav(this,'programa','Programa Oficial do Evento')"><span class="sic">📅</span>Programa do Evento</div>
-    <div class="si" onclick="nav(this,'modo-evento','Modo Evento — Ao Vivo')"><span class="sic">🔴</span>Modo Evento — Live</div>
-    <div class="si" onclick="nav(this,'organizacao','Organização &amp; COE')"><span class="sic">◈</span>Organização &amp; COE</div>
-    <div class="si" onclick="nav(this,'atletas','Atletas &amp; Inscrições')"><span class="sic">◉</span>Atletas &amp; Inscrições</div>
-    <div class="si" onclick="nav(this,'alojamento','Alojamento &amp; Logística')"><span class="sic">◫</span>Alojamento &amp; Logística</div>
-    <div class="si" onclick="nav(this,'cerimonias','Cerimónias &amp; Protocolo')"><span class="sic">✦</span>Cerimónias &amp; Protocolo</div>
-    <div class="si" onclick="nav(this,'desportivo','Desportivo &amp; Árbitros')"><span class="sic">◎</span>Desportivo &amp; Árbitros</div>
-    <div class="si" onclick="nav(this,'comunicacao','Comunicação &amp; Branding')"><span class="sic">◬</span>Comunicação</div>
-    <div class="si" onclick="nav(this,'seguranca','Segurança &amp; Seguros')"><span class="sic">◆</span>Segurança &amp; Seguros</div>
-    <div class="sbs">WMF</div>
-    <div class="si" onclick="nav(this,'wmfcheck','Checklist WMF Oficial')"><span class="sic">☑</span>Checklist WMF Oficial</div>
-    <div class="si" onclick="nav(this,'consignacao','Consignacao & Merchandise')"><span class="sic">&#9723;</span>Consignacao & Merch</div>
-    <div class="si" onclick="nav(this,'acreditacoes','Acreditacoes & QR Code')"><span class="sic">&#9646;</span>Acreditacoes & QR</div>
-    <div class="si" onclick="nav(this,'rooming','Rooming List Oficial WMF')"><span class="sic">&#9647;</span>Rooming List WMF</div>
-    <div class="si" onclick="nav(this,'chegadas','Checklist Chegadas por Pais')"><span class="sic">&#9632;</span>Checklist Chegadas</div>
+    <div class="sbs">&#9650; Dashboard</div>
+    <div class="si act" onclick="nav(this,'dashboard','Dashboard')"><span class="sic">&#9632;</span>Dashboard</div>
+    <div class="si" onclick="nav(this,'cronologia','Cronologia &amp; Prazos WMF')"><span class="sic">&#9719;</span>Cronologia &amp; Prazos<span class="sbdg" id="bp">0</span></div>
+    <div class="si" onclick="nav(this,'programa','Programa Oficial do Evento')"><span class="sic">&#9783;</span>Programa do Evento</div>
+    <div class="si" onclick="nav(this,'modo-evento','Modo Evento ao Vivo')"><span class="sic">&#9679;</span>Modo Evento — Live</div>
+
+    <div class="sbs">&#9670; Pre-Evento</div>
+    <div class="si" onclick="nav(this,'atletas','Atletas &amp; Inscricoes')"><span class="sic">&#9675;</span>Atletas &amp; Inscricoes</div>
+    <div class="si" onclick="nav(this,'alojamento','Alojamento &amp; Logistica')"><span class="sic">&#9744;</span>Alojamento &amp; Logistica</div>
+    <div class="si" onclick="nav(this,'cerimonias','Cerimonias &amp; Protocolo')"><span class="sic">&#9733;</span>Cerimonias &amp; Protocolo</div>
+    <div class="si" onclick="nav(this,'seguranca','Seguranca &amp; Seguros')"><span class="sic">&#9632;</span>Seguranca &amp; Seguros</div>
+    <div class="si" onclick="nav(this,'consignacao','Consignacao &amp; Merchandise')"><span class="sic">&#9723;</span>Consignacao &amp; Merch</div>
+
+    <div class="sbs">&#9672; Equipa &amp; Acreditacoes</div>
+    <div class="si" onclick="nav(this,'organizacao','Organizacao &amp; COE')"><span class="sic">&#9670;</span>Organizacao &amp; COE</div>
+    <div class="si" onclick="nav(this,'desportivo','Desportivo &amp; Arbitros')"><span class="sic">&#9671;</span>Desportivo &amp; Arbitros</div>
+    <div class="si" onclick="nav(this,'acreditacoes','Acreditacoes &amp; QR Code')"><span class="sic">&#9646;</span>Acreditacoes &amp; QR</div>
     <div class="si" onclick="nav(this,'guia','Guia do Atleta')"><span class="sic">&#9633;</span>Guia do Atleta</div>
+
+    <div class="sbs">&#9992; Operacional — Chegadas</div>
+    <div class="si" onclick="nav(this,'rooming','Rooming List Oficial WMF')"><span class="sic">&#9647;</span>Rooming List WMF</div>
+    <div class="si" onclick="nav(this,'chegadas','Checklist de Chegadas por Pais')"><span class="sic">&#9745;</span>Checklist Chegadas</div>
+    <div class="si" onclick="nav(this,'comunicacao','Comunicacao &amp; Branding')"><span class="sic">&#9741;</span>Comunicacao &amp; Branding</div>
+
+    <div class="sbs">&#9968; Competicao</div>
     <div class="si" onclick="nav(this,'resultados','Resultados Desportivos')"><span class="sic">&#9654;</span>Resultados Desportivos</div>
-    <div class="si" onclick="nav(this,'diariobordo','Diario de Bordo')"><span class="sic">&#9999;</span>Diario de Bordo</div>
+    <div class="si" onclick="nav(this,'diariobordo','Diario de Bordo do Evento')"><span class="sic">&#9999;</span>Diario de Bordo</div>
+    <div class="si" onclick="nav(this,'wmfcheck','Checklist WMF Oficial')"><span class="sic">&#9745;</span>Checklist WMF 45 itens</div>
+
+    <div class="sbs">&#9783; Administrativo</div>
+    <div class="si" onclick="nav(this,'actas','Actas &amp; Convocatorias COE')"><span class="sic">&#9638;</span>Actas COE</div>
+    <div class="si" onclick="nav(this,'comunicacoes','Comunicacoes Delegacoes')"><span class="sic">&#9993;</span>Comunicacoes Delegacoes</div>
+    <div class="si" onclick="nav(this,'presskit','Press Kit Digital')"><span class="sic">&#9741;</span>Press Kit Digital</div>
+    <div class="si" onclick="nav(this,'posevento','Relatorios Pos-Evento')"><span class="sic">&#9635;</span>Relatorios Pos-Evento</div>
+    <div class="si" onclick="nav(this,'backup','Backup &amp; Exportacao Total')"><span class="sic">&#9729;</span>Backup Total</div>
+
+    <div class="sbs">&#9775; Financeiro SNC-ESNL</div>
+    <div class="si" onclick="nav(this,'diario','Diario de Caixa / Banco')"><span class="sic">&#9654;</span>Diario Caixa / Banco</div>
+    <div class="si" onclick="nav(this,'receitas','Receitas')"><span class="sic">&#9650;</span>Receitas</div>
+    <div class="si" onclick="nav(this,'despesas','Despesas')"><span class="sic">&#9660;</span>Despesas</div>
+    <div class="si" onclick="nav(this,'patrocinios','Patrocinios &amp; CRM')"><span class="sic">&#9734;</span>Patrocinios &amp; CRM</div>
     <div class="si" onclick="nav(this,'orcamento','Orcamento vs Real')"><span class="sic">&#9651;</span>Orcamento vs Real</div>
-    <div class="si" onclick="nav(this,'faturas','Gestao de Faturas')"><span class="sic">&#9650;</span>Gestao de Faturas</div>
-    <div class="si" onclick="nav(this,'fluxo','Fluxo de Caixa')"><span class="sic">&#9636;</span>Fluxo de Caixa</div>
+    <div class="si" onclick="nav(this,'faturas','Gestao de Faturas')"><span class="sic">&#9636;</span>Gestao de Faturas</div>
+    <div class="si" onclick="nav(this,'fluxo','Fluxo de Caixa Previsto')"><span class="sic">&#9654;</span>Fluxo de Caixa</div>
+
+    <div class="sbs">&#9783; Relatorios Financeiros</div>
+    <div class="si" onclick="nav(this,'balancete','Balancete Mensal SNC-ESNL')"><span class="sic">&#9646;</span>Balancete Mensal</div>
+    <div class="si" onclick="nav(this,'dr','Demonstracao de Resultados')"><span class="sic">&#9647;</span>Dem. de Resultados</div>
+    <div class="si" onclick="nav(this,'balanco','Balanco do Evento')"><span class="sic">&#9648;</span>Balanco do Evento</div>
+    <div class="si" onclick="nav(this,'ipdj','Formulario Anexo B - IPDJ')"><span class="sic">&#9649;</span>Anexo B IPDJ</div>
+    <div class="si" onclick="nav(this,'wmf','Relatorio WMF / EMF')"><span class="sic">&#9650;</span>Relatorio WMF / EMF</div>
     <div class="si" onclick="nav(this,'relpatr','Relatorio Patrocinadores')"><span class="sic">&#9734;</span>Rel. Patrocinadores</div>
-    <div class="si" onclick="nav(this,'actas','Actas & Convocatorias COE')"><span class="sic">&#9654;</span>Actas COE</div>
-    <div class="si" onclick="nav(this,'comunicacoes','Comunicacoes Delegacoes')"><span class="sic">&#9993;</span>Comunicacoes</div>
-    <div class="si" onclick="nav(this,'presskit','Press Kit')"><span class="sic">&#9741;</span>Press Kit</div>
-    <div class="si" onclick="nav(this,'posevento','Relatorios Pos-Evento')"><span class="sic">&#9635;</span>Pos-Evento</div>
-    <div class="si" onclick="nav(this,'backup','Backup & Exportacao Total')"><span class="sic">&#9729;</span>Backup Total</div>
-    <div class="sbs">Financeiro SNC-ESNL</div>
-    <div class="si" onclick="nav(this,'diario','Diario de Caixa / Banco')"><span class="sic">▤</span>Diário Caixa / Banco</div>
-    <div class="si" onclick="nav(this,'receitas','Receitas')"><span class="sic">▲</span>Receitas</div>
-    <div class="si" onclick="nav(this,'despesas','Despesas')"><span class="sic">▼</span>Despesas</div>
-    <div class="si" onclick="nav(this,'patrocinios','Patrocínios &amp; CRM')"><span class="sic">◐</span>Patrocínios &amp; CRM</div>
-    <div class="sbs">Relatórios Financeiros</div>
-    <div class="si" onclick="nav(this,'balancete','Balancete Mensal SNC-ESNL')"><span class="sic">▦</span>Balancete Mensal</div>
-    <div class="si" onclick="nav(this,'dr','Demonstracao de Resultados')"><span class="sic">▧</span>Dem. de Resultados</div>
-    <div class="si" onclick="nav(this,'balanco','Balanco do Evento')"><span class="sic">▨</span>Balanço do Evento</div>
-    <div class="si" onclick="nav(this,'ipdj','Formulario Anexo B - IPDJ')"><span class="sic">▩</span>Anexo B — IPDJ</div>
-    <div class="si" onclick="nav(this,'wmf','Relatório WMF / EMF')"><span class="sic">◑</span>Relatório WMF / EMF</div>
   </div>
   <div class="sbf">
     <div class="sbfs">© Rui Gonçalves</div>

@@ -1512,7 +1512,7 @@ async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEn
 async function doLogin(){
   const pw=document.getElementById('pw').value;
   if(pw==='SWC2026***'){isAdmin=true;startApp('Admin');}
-  else if(pw==='Vizela2026*'){isAdmin=false;startApp('Leitura');}
+  else if(pw==='VIZELGOLFE2026***'){isAdmin=false;startApp('Leitura');}
   else{document.getElementById('lerr').textContent='Password incorreta.';}
 }
 function startApp(role){

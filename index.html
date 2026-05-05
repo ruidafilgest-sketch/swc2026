@@ -245,6 +245,10 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="sbs">WMF</div>
     <div class="si" onclick="nav(this,'wmfcheck','Checklist WMF Oficial')"><span class="sic">☑</span>Checklist WMF Oficial</div>
     <div class="si" onclick="nav(this,'consignacao','Consignacao & Merchandise')"><span class="sic">&#9723;</span>Consignacao & Merch</div>
+    <div class="si" onclick="nav(this,'acreditacoes','Acreditacoes & QR Code')"><span class="sic">&#9646;</span>Acreditacoes & QR</div>
+    <div class="si" onclick="nav(this,'rooming','Rooming List Oficial WMF')"><span class="sic">&#9647;</span>Rooming List WMF</div>
+    <div class="si" onclick="nav(this,'chegadas','Checklist Chegadas por Pais')"><span class="sic">&#9632;</span>Checklist Chegadas</div>
+    <div class="si" onclick="nav(this,'guia','Guia do Atleta')"><span class="sic">&#9633;</span>Guia do Atleta</div>
     <div class="sbs">Financeiro SNC-ESNL</div>
     <div class="si" onclick="nav(this,'diario','Diario de Caixa / Banco')"><span class="sic">▤</span>Diário Caixa / Banco</div>
     <div class="si" onclick="nav(this,'receitas','Receitas')"><span class="sic">▲</span>Receitas</div>
@@ -673,6 +677,89 @@ td.mu{color:var(--mu);font-style:italic;}
 </table></div>
 </div>
 
+  <!-- ACREDITACOES -->
+<div class="pg" id="pg-acreditacoes">
+<div class="st"><span class="sn">ACCRED</span>Acreditacoes & QR Code</div>
+<div class="sd">Cartao digital por atleta / arbitro / voluntario - QR unico - Imprimivel A6</div>
+<div class="bb" id="bar-accred">
+  <button class="btn bp" onclick="gerarTodasAccred()">Gerar acreditacoes em falta</button>
+  <button class="btn bo" onclick="exportAccredPDF()">Exportar PDF lista completa</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Atletas</div><div class="smv" id="acc-atl">0</div></div>
+  <div class="sm"><div class="sml">Arbitros</div><div class="smv" id="acc-arb">0</div></div>
+  <div class="sm"><div class="sml">COE / Staff</div><div class="smv" id="acc-coe">0</div></div>
+  <div class="sm"><div class="sml">Voluntarios</div><div class="smv" id="acc-vol">0</div></div>
+</div>
+<!-- Preview cartoes -->
+<div id="accred-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;"></div>
+</div>
+
+  <!-- ROOMING LIST -->
+<div class="pg" id="pg-rooming">
+<div class="st"><span class="sn">ROOM</span>Rooming List Oficial WMF</div>
+<div class="sd">Nome - Pais - Hotel - Quarto - Check-in/out - Documento oficial WMF</div>
+<div class="bb" id="bar-rooming">
+  <button class="btn bp" onclick="openM('m-quarto')">+ Atribuir quarto</button>
+  <button class="btn bo" onclick="exportRoomingPDF()">Exportar PDF oficial WMF</button>
+  <button class="btn bo" onclick="exportRoomingExcel()">Exportar por hotel</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total hospedes</div><div class="smv" id="rm-total">0</div></div>
+  <div class="sm"><div class="sml">Quartos atribuidos</div><div class="smv" id="rm-quartos">0</div></div>
+  <div class="sm"><div class="sml">Check-in 13 Out</div><div class="smv" id="rm-checkin">0</div></div>
+  <div class="sm"><div class="sml">Check-out 18 Out</div><div class="smv" id="rm-checkout">0</div></div>
+</div>
+<!-- Filtro por hotel -->
+<div class="bb" style="margin-bottom:12px;">
+  <select class="fse" id="rm-filtro-hotel" style="width:180px;" onchange="renderRooming()">
+    <option value="">Todos os hoteis</option>
+    <option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option>
+  </select>
+  <select class="fse" id="rm-filtro-tipo" style="width:160px;" onchange="renderRooming()">
+    <option value="">Todos os tipos</option>
+    <option value="Atleta">Atletas</option>
+    <option value="Arbitro">Arbitros</option>
+    <option value="Staff">Staff / COE</option>
+  </select>
+</div>
+<div class="tw"><table><thead><tr><th>Nome</th><th>Pais / Funcao</th><th>Tipo</th><th>Hotel</th><th>Quarto</th><th>Check-in</th><th>Check-out</th><th>Obs.</th><th id="th-rm">Acoes</th></tr></thead>
+<tbody id="t-rooming"><tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem registos de alojamento</td></tr></tbody></table></div>
+</div>
+
+  <!-- CHECKLIST CHEGADAS -->
+<div class="pg" id="pg-chegadas">
+<div class="st"><span class="sn">ARR</span>Checklist de Chegadas por Pais</div>
+<div class="sd">Estado por delegacao - Voo - Hotel - Transfer - Credencial - Kit - Pagamento</div>
+<div class="bb" id="bar-chegadas">
+  <button class="btn bp" onclick="openM('m-delegacao')">+ Adicionar delegacao</button>
+  <button class="btn bo" onclick="exportChegadasPDF()">Exportar PDF</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Delegacoes</div><div class="smv" id="del-total">0</div></div>
+  <div class="sm"><div class="sml">Voos confirmados</div><div class="smv" id="del-voos" style="color:var(--ok)">0</div></div>
+  <div class="sm"><div class="sml">Kits entregues</div><div class="smv" id="del-kits" style="color:var(--ok)">0</div></div>
+  <div class="sm"><div class="sml">Pagamentos OK</div><div class="smv" id="del-pag" style="color:var(--ok)">0</div></div>
+</div>
+<div id="del-grid"></div>
+</div>
+
+  <!-- GUIA DO ATLETA -->
+<div class="pg" id="pg-guia">
+<div class="st"><span class="sn">GUIDE</span>Guia do Atleta</div>
+<div class="sd">Documento oficial WMF - EN / PT / DE / ES - Exportacao PDF para enviar as delegacoes</div>
+<div class="bb">
+  <select class="fse" id="guia-lang" style="width:120px;" onchange="renderGuia()">
+    <option value="EN">English</option>
+    <option value="PT">Portugues</option>
+    <option value="DE">Deutsch</option>
+    <option value="ES">Espanol</option>
+  </select>
+  <button class="btn bp" onclick="exportGuiaPDF()">Exportar PDF</button>
+</div>
+<div id="guia-content"></div>
+</div>
+
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
 <div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026</div>
@@ -928,6 +1015,53 @@ td.mu{color:var(--mu);font-style:italic;}
   <div class="mf"><button class="btn bo" onclick="closeM('m-venda')">Cancelar</button><button class="btn bp" onclick="saveVenda()">Confirmar venda</button></div>
 </div></div>
 
+<!-- MODAL QUARTO ROOMING -->
+<div class="mo" id="m-quarto"><div class="mdl">
+  <div class="mh"><div class="mt2">Atribuir Quarto</div><button class="mc" onclick="closeM('m-quarto')">X</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Nome completo</div><input class="fi" id="rm-nome" placeholder="Nome do hospede"></div>
+      <div class="fg"><div class="fl">Pais / Funcao</div><input class="fi" id="rm-pais" placeholder="ex: Portugal / Chefe Delegacao"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Tipo</div><select class="fse" id="rm-tipo"><option value="Atleta">Atleta</option><option value="Arbitro">Arbitro</option><option value="Staff">Staff / COE</option></select></div>
+      <div class="fg"><div class="fl">Hotel</div><select class="fse" id="rm-hotel"><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Numero do quarto</div><input class="fi" id="rm-quarto" placeholder="ex: 101, 202A..."></div>
+      <div class="fg"><div class="fl">Tipo quarto</div><select class="fse" id="rm-tquarto"><option>Single</option><option>Double</option><option>Twin</option><option>Suite</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Check-in</div><input class="fi" type="date" id="rm-ci" value="2026-10-13"></div>
+      <div class="fg"><div class="fl">Check-out</div><input class="fi" type="date" id="rm-co" value="2026-10-18"></div>
+    </div>
+    <div class="fg"><div class="fl">Observacoes</div><input class="fi" id="rm-obs" placeholder="Necessidades especiais, dieta, acessibilidade..."></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-quarto')">Cancelar</button><button class="btn bp" onclick="saveQuarto()">Guardar</button></div>
+</div></div>
+
+<!-- MODAL DELEGACAO -->
+<div class="mo" id="m-delegacao"><div class="mdl">
+  <div class="mh"><div class="mt2">Adicionar Delegacao</div><button class="mc" onclick="closeM('m-delegacao')">X</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Pais / Nacao</div><input class="fi" id="del-pais" placeholder="ex: Portugal"></div>
+      <div class="fg"><div class="fl">Federacao</div><input class="fi" id="del-fed" placeholder="ex: FPM"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Chefe de delegacao</div><input class="fi" id="del-chefe" placeholder="Nome do chefe"></div>
+      <div class="fg"><div class="fl">Email / Telemovel</div><input class="fi" id="del-email" placeholder="contacto directo"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Nr. atletas</div><input class="fi" type="number" id="del-natl" placeholder="0"></div>
+      <div class="fg"><div class="fl">Hotel atribuido</div><select class="fse" id="del-hotel"><option value="">-- A definir --</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div>
+    </div>
+    <div class="fg"><div class="fl">Voo chegada (info)</div><input class="fi" id="del-voo" placeholder="ex: TP1234 - 13 Out 14:30 OPO"></div>
+    <div class="fg"><div class="fl">Voo partida (info)</div><input class="fi" id="del-voosai" placeholder="ex: FR5678 - 18 Out 09:00 OPO"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-delegacao')">Cancelar</button><button class="btn bp" onclick="saveDelegacao()">Guardar</button></div>
+</div></div>
+
 <div class="tst" id="tst"></div>
 
 <script type="module">
@@ -959,7 +1093,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  loadAll();loadChk();loadConsig();initChecklist();startCountdown();startModeEvento();
+  loadAll();loadChk();loadConsig();loadBlocoB();initChecklist();startCountdown();startModeEvento();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -982,6 +1116,10 @@ function nav(el,id,title){
   if(id==='wmf')renderWMF();
   if(id==='wmfcheck')renderChk();
   if(id==='programa')renderPrograma();
+  if(id==='acreditacoes'){renderAccred();}
+  if(id==='rooming'){renderRooming();}
+  if(id==='chegadas'){renderDelegacoes();}
+  if(id==='guia'){renderGuia();}
   if(id==='consignacao'){renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();}
   if(id==='modo-evento')startModeEvento();
 }
@@ -1752,6 +1890,417 @@ function closeSb(){
   document.querySelector('.sb').classList.remove('open');
   document.getElementById('sb-overlay').classList.remove('show');
 }
+
+// ========== BLOCO B — ACREDITACOES, ROOMING, CHEGADAS, GUIA ==========
+
+// --- ACREDITACOES ---
+let _rooming=[], _delegacoes=[];
+
+function loadBlocoB(){
+  _snap('rooming',(docs)=>{_rooming=docs;renderRooming();renderAccred();});
+  _snap('delegacoes',(docs)=>{_delegacoes=docs;renderDelegacoes();});
+}
+
+function renderAccred(){
+  const elAtl=document.getElementById('acc-atl');
+  const elArb=document.getElementById('acc-arb');
+  const elCoe=document.getElementById('acc-coe');
+  const elVol=document.getElementById('acc-vol');
+  if(elAtl)elAtl.textContent=_atl.length;
+  if(elArb)elArb.textContent=_arb.length;
+  if(elCoe)elCoe.textContent=_mbr.length;
+  if(elVol)elVol.textContent=_vol.length;
+
+  const grid=document.getElementById('accred-grid');
+  if(!grid)return;
+
+  const todos=[
+    ..._atl.map(a=>({nome:a.nome||'',pais:a.pais||'',tipo:'ATLETA',categoria:a.categoria||'',cor:'#1a3461',id:a.id})),
+    ..._arb.map(a=>({nome:a.nome||'',pais:a.pais||'',tipo:'ARBITRO',categoria:a.funcao||'',cor:'#2d1a4a',id:a.id})),
+    ..._mbr.map(m=>({nome:m.nome||'',pais:'Portugal',tipo:'COE',categoria:m.funcao||'',cor:'#1a3a2a',id:m.id})),
+    ..._vol.map(v=>({nome:v.nome||'',pais:'Portugal',tipo:'VOLUNTARIO',categoria:v.area||'',cor:'#3a2a1a',id:v.id})),
+  ];
+
+  if(!todos.length){
+    grid.innerHTML='<div class="em"><div class="emi">&#9646;</div><div class="emt">Sem acreditacoes para gerar</div><div class="emd">Adicione atletas, arbitros, COE e voluntarios primeiro</div></div>';
+    return;
+  }
+
+  grid.innerHTML=todos.map(p=>{
+    const qrData=`SWC2026|${p.tipo}|${p.nome}|${p.pais}|${p.id}`;
+    const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(qrData)}&bgcolor=ffffff&color=0a1628`;
+    return `<div style="background:linear-gradient(135deg,${p.cor},rgba(10,22,40,.95));border:1px solid var(--bds);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:flex-start;">
+      <img src="${qrUrl}" alt="QR" style="width:80px;height:80px;border-radius:6px;flex-shrink:0;background:#fff;padding:4px;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.15em;color:var(--gl);text-transform:uppercase;margin-bottom:3px;">${p.tipo}</div>
+        <div style="font-size:14px;font-weight:600;color:var(--wh);line-height:1.2;margin-bottom:4px;">${p.nome}</div>
+        <div style="font-size:11px;color:var(--mu);">${p.pais}</div>
+        <div style="font-size:10px;color:rgba(201,168,76,.6);margin-top:2px;">${p.categoria}</div>
+        <div style="margin-top:8px;font-size:8px;color:rgba(255,255,255,.2);font-family:monospace;">${p.id.substring(0,12).toUpperCase()}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function gerarTodasAccred(){toast('Acreditacoes geradas para todos os participantes registados');}
+
+// --- ROOMING LIST ---
+async function saveQuarto(){
+  if(!isAdmin)return;
+  const d={
+    nome:document.getElementById('rm-nome').value,
+    pais:document.getElementById('rm-pais').value,
+    tipo:document.getElementById('rm-tipo').value,
+    hotel:document.getElementById('rm-hotel').value,
+    quarto:document.getElementById('rm-quarto').value,
+    tquarto:document.getElementById('rm-tquarto').value,
+    checkin:document.getElementById('rm-ci').value,
+    checkout:document.getElementById('rm-co').value,
+    obs:document.getElementById('rm-obs').value,
+    ts:Date.now()
+  };
+  if(!d.nome){toast('Nome obrigatorio','er');return;}
+  await _add('rooming',d);
+  closeM('m-quarto');toast('Quarto atribuido');
+}
+
+function renderRooming(){
+  const filtroH=document.getElementById('rm-filtro-hotel')?.value||'';
+  const filtroT=document.getElementById('rm-filtro-tipo')?.value||'';
+  const data=_rooming.filter(r=>(filtroH?r.hotel===filtroH:true)&&(filtroT?r.tipo===filtroT:true));
+  const elTot=document.getElementById('rm-total');
+  const elQ=document.getElementById('rm-quartos');
+  const elCI=document.getElementById('rm-checkin');
+  const elCO=document.getElementById('rm-checkout');
+  if(elTot)elTot.textContent=_rooming.length;
+  if(elQ)elQ.textContent=new Set(_rooming.map(r=>r.hotel+r.quarto)).size;
+  if(elCI)elCI.textContent=_rooming.filter(r=>r.checkin==='2026-10-13').length;
+  if(elCO)elCO.textContent=_rooming.filter(r=>r.checkout==='2026-10-18').length;
+  const tbody=document.getElementById('t-rooming');
+  if(!tbody)return;
+  if(!data.length){tbody.innerHTML='<tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem registos</td></tr>';return;}
+  tbody.innerHTML=data.sort((a,b)=>a.hotel.localeCompare(b.hotel)).map(r=>`<tr>
+    <td class="vl">${r.nome||''}</td>
+    <td class="mu">${r.pais||''}</td>
+    <td><span class="bge ${r.tipo==='Atleta'?'bg-g':r.tipo==='Arbitro'?'bg-bl':'bg-mu'}">${r.tipo||''}</span></td>
+    <td style="font-weight:700;color:var(--gl2);">${r.hotel||''}</td>
+    <td style="font-weight:600;">${r.quarto||'-'}</td>
+    <td class="mu">${r.checkin||''}</td>
+    <td class="mu">${r.checkout||''}</td>
+    <td class="mu" style="font-size:11px;">${r.obs||''}</td>
+    ${isAdmin?`<td><button class="btn bd2 bsm" onclick="delQuarto('${r.id}')">X</button></td>`:'<td></td>'}
+  </tr>`).join('');
+}
+
+async function delQuarto(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('rooming',id);toast('Eliminado','er');}
+
+// --- DELEGACOES / CHEGADAS ---
+async function saveDelegacao(){
+  if(!isAdmin)return;
+  const d={
+    pais:document.getElementById('del-pais').value,
+    federacao:document.getElementById('del-fed').value,
+    chefe:document.getElementById('del-chefe').value,
+    email:document.getElementById('del-email').value,
+    nAtletas:parseInt(document.getElementById('del-natl').value)||0,
+    hotel:document.getElementById('del-hotel').value,
+    vooChegada:document.getElementById('del-voo').value,
+    vooPartida:document.getElementById('del-voosai').value,
+    // Checklist inicial
+    vooConf:false,hotelConf:false,transferConf:false,
+    credencial:false,kit:false,pagamento:false,
+    ts:Date.now()
+  };
+  if(!d.pais){toast('Pais obrigatorio','er');return;}
+  await _add('delegacoes',d);
+  closeM('m-delegacao');toast('Delegacao adicionada');
+}
+
+async function toggleCheck(id,campo,valor){
+  if(!isAdmin)return;
+  await _upd('delegacoes',id,{[campo]:valor});
+}
+
+function renderDelegacoes(){
+  const elT=document.getElementById('del-total');
+  const elV=document.getElementById('del-voos');
+  const elK=document.getElementById('del-kits');
+  const elP=document.getElementById('del-pag');
+  if(elT)elT.textContent=_delegacoes.length;
+  if(elV)elV.textContent=_delegacoes.filter(d=>d.vooConf).length;
+  if(elK)elK.textContent=_delegacoes.filter(d=>d.kit).length;
+  if(elP)elP.textContent=_delegacoes.filter(d=>d.pagamento).length;
+
+  const grid=document.getElementById('del-grid');
+  if(!grid)return;
+  if(!_delegacoes.length){
+    grid.innerHTML='<div class="em"><div class="emi">&#9632;</div><div class="emt">Sem delegacoes registadas</div><div class="emd">Adicione as delegacoes participantes</div></div>';
+    return;
+  }
+
+  const checks=[
+    {key:'vooConf',  label:'Voo confirmado'},
+    {key:'hotelConf',label:'Hotel confirmado'},
+    {key:'transferConf',label:'Transfer reservado'},
+    {key:'credencial',label:'Credencial emitida'},
+    {key:'kit',      label:'Kit entregue'},
+    {key:'pagamento',label:'Pagamento recebido'},
+  ];
+
+  grid.innerHTML=_delegacoes.map(del=>{
+    const done=checks.filter(c=>del[c.key]).length;
+    const pct=Math.round(done/checks.length*100);
+    const cor=pct===100?'var(--ok)':pct>=50?'var(--wr)':'var(--er)';
+    return `<div class="cd" style="margin-bottom:12px;">
+      <div class="cdh">
+        <div style="flex:1;">
+          <div class="cdt">${del.pais||''} <span style="font-size:11px;color:var(--mu);">- ${del.federacao||''}</span></div>
+          <div class="cds">Chefe: ${del.chefe||'-'} | ${del.nAtletas||0} atletas | ${del.hotel||'Hotel a definir'}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${cor};">${pct}%</div>
+          <div style="font-size:9px;color:var(--mu);">${done}/${checks.length} itens</div>
+        </div>
+        ${isAdmin?`<button class="btn bd2 bsm" onclick="delDelegacao('${del.id}')">X</button>`:''}
+      </div>
+      <div class="cdb">
+        ${del.vooChegada?`<div style="font-size:11px;color:var(--mu);margin-bottom:8px;">Chegada: ${del.vooChegada} | Partida: ${del.vooPartida||'-'}</div>`:''}
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          ${checks.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:${del[c.key]?'rgba(74,184,122,.08)':'rgba(255,255,255,.03)'};border:1px solid ${del[c.key]?'rgba(74,184,122,.2)':'var(--bdr)'};border-radius:7px;cursor:${isAdmin?'pointer':'default'};" onclick="${isAdmin?`"toggleCheck('${del.id}','${c.key}',${!del[c.key]})"`:'"'}>
+            <div style="width:14px;height:14px;border-radius:3px;border:1.5px solid ${del[c.key]?'var(--ok)':'var(--mu)'};background:${del[c.key]?'var(--ok)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              ${del[c.key]?'<span style="color:#fff;font-size:10px;font-weight:700;">v</span>':''}
+            </div>
+            <span style="font-size:10px;color:${del[c.key]?'var(--wh)':'var(--mu)'};">${c.label}</span>
+          </div>`).join('')}
+        </div>
+        ${del.email?`<div style="font-size:10px;color:rgba(201,168,76,.4);margin-top:8px;">${del.email}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function delDelegacao(id){if(!isAdmin||!confirm('Eliminar delegacao?'))return;await _del('delegacoes',id);toast('Eliminada','er');}
+
+// --- GUIA DO ATLETA ---
+function renderGuia(){
+  const L=document.getElementById('guia-lang')?.value||'EN';
+  const el=document.getElementById('guia-content');
+  if(!el)return;
+
+  const T={
+    EN:{
+      titulo:'Athlete Guide - SWC Vizela 2026',
+      subtitulo:'Seniors World Minigolf Championship',
+      bv:'Welcome to Vizela, Portugal!',
+      bvtxt:'We are delighted to welcome you to the SWC Vizela 2026. This guide contains all essential information for your stay.',
+      evento:'Event Details',
+      datas:'Dates: 13-17 October 2026',
+      local:'Venue: Minigolf Course - Vizela, Portugal',
+      prog:'Programme',
+      p13:'13 Oct - Arrival & Official Training',
+      p14:'14 Oct - Competition Day 1 (Stroke Play)',
+      p15:'15 Oct - Competition Day 2 (Stroke Play)',
+      p16:'16 Oct - Competition Day 3 (Match Play)',
+      p17:'17 Oct - Finals & Closing Ceremony',
+      aloj:'Accommodation',
+      aloftxt:'Hotels H1-H5 in Vizela area. Max 50 EUR/night (double, breakfast included). All hotels within short distance of the course.',
+      trans:'Transport',
+      transtxt:'Airport transfers: Porto Airport (OPO) <-> Vizela. Daily shuttle service between hotels and course.',
+      cont:'Emergency Contacts',
+      org:'Organisation:',
+      med:'Medical:',
+      pol:'Police: 112',
+    },
+    PT:{
+      titulo:'Guia do Atleta - SWC Vizela 2026',
+      subtitulo:'Campeonato Mundial de Minigolfe Seniors',
+      bv:'Bem-vindo a Vizela, Portugal!',
+      bvtxt:'Temos o prazer de receber no SWC Vizela 2026. Este guia contem todas as informacoes essenciais para a sua estadia.',
+      evento:'Detalhes do Evento',
+      datas:'Datas: 13-17 Outubro 2026',
+      local:'Local: Campo de Minigolfe - Vizela, Portugal',
+      prog:'Programa',
+      p13:'13 Out - Chegadas & Treino Oficial',
+      p14:'14 Out - Dia 1 Competicao (Stroke Play)',
+      p15:'15 Out - Dia 2 Competicao (Stroke Play)',
+      p16:'16 Out - Dia 3 Competicao (Match Play)',
+      p17:'17 Out - Finais & Cerimonia de Encerramento',
+      aloj:'Alojamento',
+      aloftxt:'Hoteis H1-H5 na area de Vizela. Max 50 EUR/noite (duplo, pequeno-almoco incluido). Todos os hoteis a curta distancia do campo.',
+      trans:'Transportes',
+      transtxt:'Transfers aeroporto: Aeroporto do Porto (OPO) <-> Vizela. Shuttle diario entre hoteis e campo.',
+      cont:'Contactos de Emergencia',
+      org:'Organizacao:',
+      med:'Medico:',
+      pol:'Policia: 112',
+    },
+    DE:{
+      titulo:'Athleten-Leitfaden - SWC Vizela 2026',
+      subtitulo:'Senioren Minigolf Weltmeisterschaft',
+      bv:'Willkommen in Vizela, Portugal!',
+      bvtxt:'Wir freuen uns, Sie zur SWC Vizela 2026 begruessen zu duerfen. Dieser Leitfaden enthaelt alle wichtigen Informationen fuer Ihren Aufenthalt.',
+      evento:'Veranstaltungsdetails',
+      datas:'Datum: 13.-17. Oktober 2026',
+      local:'Veranstaltungsort: Minigolfanlage - Vizela, Portugal',
+      prog:'Programm',
+      p13:'13. Okt. - Ankunft & Offizielles Training',
+      p14:'14. Okt. - Wettkampftag 1 (Stroke Play)',
+      p15:'15. Okt. - Wettkampftag 2 (Stroke Play)',
+      p16:'16. Okt. - Wettkampftag 3 (Match Play)',
+      p17:'17. Okt. - Finale & Schlussfeier',
+      aloj:'Unterkunft',
+      aloftxt:'Hotels H1-H5 in der Region Vizela. Max. 50 EUR/Nacht (Doppelzimmer, Fruehstueck inklusive).',
+      trans:'Transport',
+      transtxt:'Flughafentransfers: Porto Flughafen (OPO) <-> Vizela. Taeglicher Shuttle zwischen Hotels und Anlage.',
+      cont:'Notfallkontakte',
+      org:'Organisation:',
+      med:'Medizin:',
+      pol:'Polizei: 112',
+    },
+    ES:{
+      titulo:'Guia del Atleta - SWC Vizela 2026',
+      subtitulo:'Campeonato Mundial de Minigolf Seniors',
+      bv:'Bienvenido a Vizela, Portugal!',
+      bvtxt:'Nos complace darle la bienvenida al SWC Vizela 2026. Esta guia contiene toda la informacion esencial para su estancia.',
+      evento:'Detalles del Evento',
+      datas:'Fechas: 13-17 Octubre 2026',
+      local:'Sede: Campo de Minigolf - Vizela, Portugal',
+      prog:'Programa',
+      p13:'13 Oct - Llegadas & Entrenamiento Oficial',
+      p14:'14 Oct - Dia 1 Competicion (Stroke Play)',
+      p15:'15 Oct - Dia 2 Competicion (Stroke Play)',
+      p16:'16 Oct - Dia 3 Competicion (Match Play)',
+      p17:'17 Oct - Finales & Ceremonia de Clausura',
+      aloj:'Alojamiento',
+      aloftxt:'Hoteles H1-H5 en la zona de Vizela. Max. 50 EUR/noche (doble, desayuno incluido).',
+      trans:'Transporte',
+      transtxt:'Traslados aeropuerto: Aeropuerto de Porto (OPO) <-> Vizela. Shuttle diario entre hoteles y campo.',
+      cont:'Contactos de Emergencia',
+      org:'Organizacion:',
+      med:'Medico:',
+      pol:'Policia: 112',
+    }
+  };
+
+  const t=T[L]||T.EN;
+  const hoteis=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="font-weight:600;color:var(--wh);">${h.codigo} - ${h.nome}</span><span style="color:var(--mu);">${h.dist||'-'} | ${h.tarifa?h.tarifa+'EUR/nt':'-'}</span></div>`).join(''):'<div style="font-size:12px;color:var(--mu);">Hoteis a definir</div>';
+
+  el.innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${t.titulo}</div><div class="cds">${t.subtitulo}</div></div></div><div class="cdb">
+    <div style="background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid var(--bds);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:15px;font-weight:600;color:var(--wh);margin-bottom:6px;">${t.bv}</div>
+      <div style="font-size:12px;color:var(--se);">${t.bvtxt}</div>
+    </div>
+    <div class="g2" style="gap:14px;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.evento}</div>
+        <div style="font-size:12px;color:var(--se);margin-bottom:4px;">${t.datas}</div>
+        <div style="font-size:12px;color:var(--se);margin-bottom:12px;">${t.local}</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.prog}</div>
+        ${[t.p13,t.p14,t.p15,t.p16,t.p17].map(p=>`<div style="font-size:12px;color:var(--se);padding:5px 0;border-bottom:1px solid rgba(201,168,76,.06);">${p}</div>`).join('')}
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.aloj}</div>
+        <div style="font-size:12px;color:var(--se);margin-bottom:8px;">${t.aloftxt}</div>
+        ${hoteis}
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin:12px 0 8px;">${t.trans}</div>
+        <div style="font-size:12px;color:var(--se);">${t.transtxt}</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin:12px 0 8px;">${t.cont}</div>
+        <div style="font-size:12px;color:var(--se);">${t.org} vizelgolfe@vizelgolfe.net</div>
+        <div style="font-size:12px;color:var(--se);">${t.pol}</div>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+// ========== PDFs BLOCO B ==========
+
+function exportAccredPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Lista de Acreditacoes','SWC Vizela 2026 - Todos os participantes',true);
+  const todos=[
+    ..._atl.map(a=>['ATLETA',a.nome||'',a.pais||'',a.categoria||'',a.hotel||'-']),
+    ..._arb.map(a=>['ARBITRO',a.nome||'',a.pais||'',a.funcao||'',a.hotel||'-']),
+    ..._mbr.map(m=>['COE',m.nome||'','Portugal',m.funcao||'','-']),
+    ..._vol.map(v=>['VOLUNTARIO',v.nome||'','Portugal',v.area||'','-']),
+  ];
+  doc.autoTable({startY:38,head:[['Tipo','Nome','Pais','Funcao/Categoria','Hotel']],body:todos.length?todos:[['','Sem participantes','','','']],theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:[250,247,240]},columnStyles:{0:{cellWidth:25,fontStyle:'bold'},1:{cellWidth:70},2:{cellWidth:35},3:{cellWidth:80},4:{cellWidth:20,halign:'center'}},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Lista_Acreditacoes.pdf');
+  toast('PDF acreditacoes gerado');
+}
+
+function exportRoomingPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Rooming List Oficial WMF','SWC Vizela 2026 - Lista oficial de alojamento',true);
+  const sorted=[..._rooming].sort((a,b)=>a.hotel.localeCompare(b.hotel)||a.quarto.localeCompare(b.quarto));
+  const rows=sorted.map(r=>[r.nome||'',r.pais||'',r.tipo||'',r.hotel||'',r.quarto||'-',r.tquarto||'',r.checkin||'',r.checkout||'',r.obs||'']);
+  doc.autoTable({startY:38,head:[['Nome','Pais/Funcao','Tipo','Hotel','Quarto','Tipo qt.','Check-in','Check-out','Obs.']],body:rows.length?rows:[['','','','','Sem registos','','','','']],theme:'striped',styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:[250,247,240]},columnStyles:{0:{cellWidth:45},1:{cellWidth:35},2:{cellWidth:22},3:{cellWidth:14,halign:'center',fontStyle:'bold'},4:{cellWidth:18,halign:'center'},5:{cellWidth:18},6:{cellWidth:22},7:{cellWidth:22},8:{cellWidth:35}},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Rooming_List_WMF.pdf');
+  toast('PDF Rooming List gerado');
+}
+
+function exportRoomingExcel(){toast('Exportacao Excel - em desenvolvimento','er');}
+
+function exportChegadasPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Checklist de Chegadas por Pais','SWC Vizela 2026 - Estado das delegacoes',true);
+  const rows=_delegacoes.map(d=>[
+    d.pais||'',d.chefe||'',String(d.nAtletas||0),d.hotel||'-',
+    d.vooConf?'OK':'-',d.hotelConf?'OK':'-',d.transferConf?'OK':'-',
+    d.credencial?'OK':'-',d.kit?'OK':'-',d.pagamento?'OK':'-'
+  ]);
+  doc.autoTable({startY:38,head:[['Pais','Chefe Delegacao','Atletas','Hotel','Voo','Hotel','Transfer','Credencial','Kit','Pagamento']],body:rows.length?rows:[['','','','','Sem delegacoes','','','','','']],theme:'grid',styles:{fontSize:8,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:7.5},columnStyles:{0:{cellWidth:30},1:{cellWidth:35},2:{cellWidth:15,halign:'center'},3:{cellWidth:14,halign:'center'},4:{cellWidth:14,halign:'center'},5:{cellWidth:14,halign:'center'},6:{cellWidth:18,halign:'center'},7:{cellWidth:20,halign:'center'},8:{cellWidth:12,halign:'center'},9:{cellWidth:18,halign:'center'}},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Checklist_Chegadas.pdf');
+  toast('PDF gerado');
+}
+
+function exportGuiaPDF(){
+  const L=document.getElementById('guia-lang')?.value||'EN';
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const tit={'EN':'Athlete Guide','PT':'Guia do Atleta','DE':'Athleten-Leitfaden','ES':'Guia del Atleta'};
+  pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 13-17 October 2026',false);
+  let y=42;
+  const blocos=[
+    {titulo:{'EN':'Event Details','PT':'Detalhes do Evento','DE':'Veranstaltungsdetails','ES':'Detalles del Evento'},
+     corpo:{'EN':'Dates: 13-17 October 2026 | Venue: Minigolf Course, Vizela, Portugal | Opening Ceremony: 13 Oct 19:30 | Closing Ceremony: 17 Oct 19:30',
+            'PT':'Datas: 13-17 Outubro 2026 | Local: Campo de Minigolfe, Vizela, Portugal | Cerimonia de Abertura: 13 Out 19:30 | Cerimonia de Encerramento: 17 Out 19:30',
+            'DE':'Datum: 13.-17. Oktober 2026 | Ort: Minigolfanlage, Vizela | Eroeffnungsfeier: 13. Okt. 19:30 | Schlussfeier: 17. Okt. 19:30',
+            'ES':'Fechas: 13-17 Octubre 2026 | Sede: Campo de Minigolf, Vizela | Ceremonia Apertura: 13 Oct 19:30 | Ceremonia Clausura: 17 Oct 19:30'}},
+    {titulo:{'EN':'Accommodation','PT':'Alojamento','DE':'Unterkunft','ES':'Alojamiento'},
+     corpo:{'EN':'Hotels H1-H5 in Vizela area. Max 50 EUR/night (double room, breakfast included). All hotels within short distance of the course.',
+            'PT':'Hoteis H1-H5 na area de Vizela. Max 50 EUR/noite (quarto duplo, pequeno-almoco incluido). Todos os hoteis a curta distancia do campo.',
+            'DE':'Hotels H1-H5 in der Region Vizela. Max. 50 EUR pro Nacht (Doppelzimmer, Fruehstueck inklusive).',
+            'ES':'Hoteles H1-H5 en la zona de Vizela. Max. 50 EUR/noche (doble, desayuno incluido).'}},
+    {titulo:{'EN':'Transport','PT':'Transportes','DE':'Transport','ES':'Transporte'},
+     corpo:{'EN':'Airport transfers: Porto Airport (OPO) - Vizela. Daily shuttle service between hotels and course. Please confirm arrival/departure details with organisation.',
+            'PT':'Transfers aeroporto: Aeroporto do Porto (OPO) - Vizela. Servico de shuttle diario entre hoteis e campo. Confirme horarios com a organizacao.',
+            'DE':'Flughafentransfers: Porto Flughafen (OPO) - Vizela. Taeglicher Shuttle zwischen Hotels und Anlage.',
+            'ES':'Traslados aeropuerto: Aeropuerto de Porto (OPO) - Vizela. Shuttle diario entre hoteles y campo.'}},
+    {titulo:{'EN':'Emergency Contacts','PT':'Contactos Emergencia','DE':'Notfallkontakte','ES':'Contactos Emergencia'},
+     corpo:{'EN':'Organisation: vizelgolfe@vizelgolfe.net | Police/Emergency: 112 | Medical: available on site during competition days',
+            'PT':'Organizacao: vizelgolfe@vizelgolfe.net | Policia/Emergencia: 112 | Servico medico disponivel no local',
+            'DE':'Organisation: vizelgolfe@vizelgolfe.net | Polizei/Notfall: 112',
+            'ES':'Organizacion: vizelgolfe@vizelgolfe.net | Policia/Emergencia: 112'}},
+  ];
+  blocos.forEach(b=>{
+    if(y>240){doc.addPage();y=20;}
+    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    doc.text(b.titulo[L]||b.titulo.EN, 105, y+5.5, {align:'center'});
+    y+=11;
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+    const txt=b.corpo[L]||b.corpo.EN;
+    const lines=doc.splitTextToSize(txt,182);
+    doc.text(lines,14,y);
+    y+=lines.length*5+8;
+  });
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Athlete_Guide_'+L+'.pdf');
+  toast('Guia do Atleta PDF gerado ('+L+')');
+}
+
 
 //  EXPORTAÇÃO PDF 
 const {jsPDF} = window.jspdf;
@@ -2830,6 +3379,18 @@ window.delArtigo=delArtigo;
 window.delVendaCS=delVendaCS;
 window.exportAcertoPDF=exportAcertoPDF;
 window.exportConsigPDF=exportConsigPDF;
+window.saveQuarto=saveQuarto;
+window.delQuarto=delQuarto;
+window.saveDelegacao=saveDelegacao;
+window.delDelegacao=delDelegacao;
+window.toggleCheck=toggleCheck;
+window.gerarTodasAccred=gerarTodasAccred;
+window.exportAccredPDF=exportAccredPDF;
+window.exportRoomingPDF=exportRoomingPDF;
+window.exportRoomingExcel=exportRoomingExcel;
+window.exportChegadasPDF=exportChegadasPDF;
+window.renderGuia=renderGuia;
+window.exportGuiaPDF=exportGuiaPDF;
 window.saveMarca=saveMarca;
 window.saveArtigo=saveArtigo;
 window.saveVenda=saveVenda;
@@ -2840,6 +3401,18 @@ window.delArtigo=delArtigo;
 window.delVendaCS=delVendaCS;
 window.exportAcertoPDF=exportAcertoPDF;
 window.exportConsigPDF=exportConsigPDF;
+window.saveQuarto=saveQuarto;
+window.delQuarto=delQuarto;
+window.saveDelegacao=saveDelegacao;
+window.delDelegacao=delDelegacao;
+window.toggleCheck=toggleCheck;
+window.gerarTodasAccred=gerarTodasAccred;
+window.exportAccredPDF=exportAccredPDF;
+window.exportRoomingPDF=exportRoomingPDF;
+window.exportRoomingExcel=exportRoomingExcel;
+window.exportChegadasPDF=exportChegadasPDF;
+window.renderGuia=renderGuia;
+window.exportGuiaPDF=exportGuiaPDF;
 window.exportDR=exportDR;
 window.exportBalanco=exportBalanco;
 window.exportBalancete=exportBalancete;

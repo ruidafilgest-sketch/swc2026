@@ -353,7 +353,14 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-organizacao">
 <div class="st"><span class="sn">COE</span>Comité Organizador Executivo</div>
 <div class="sd">Estrutura de liderança, delegação de tarefas e equipa de apoio</div>
-<div class="bb" id="bar-org"><button class="btn bp" onclick="openM('m-mbr')">+ Membro COE</button><button class="btn bo" onclick="openM('m-vol')">+ Voluntário</button><button class="btn bo" onclick="exportOrgPDF()">Exportar PDF</button></div>
+<div class="bb" id="bar-org">
+  <button class="btn bp" onclick="openM('m-mbr')">+ Membro COE</button>
+  <button class="btn bo" onclick="openM('m-vol')">+ Voluntario</button>
+  <label class="btn bo" style="cursor:pointer;">&#8679; Importar Excel
+    <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="importVolExcel(this)">
+  </label>
+  <button class="btn bo" onclick="exportOrgPDF()">Exportar PDF</button>
+</div>
 <div class="g2">
   <div class="cd"><div class="cdh"><div><div class="cdt">Liderança — COE</div><div class="cds">6 funções principais</div></div></div><div class="cdb" id="org-coe"><div class="em"><div class="emi">◈</div><div class="emt">Sem membros COE</div></div></div></div>
   <div class="cd"><div class="cdh"><div><div class="cdt">Equipa de Apoio</div><div class="cds">21 voluntários confirmados</div></div></div><div class="cdb" id="org-vol"><div class="em"><div class="emi">◉</div><div class="emt">Sem voluntários</div></div></div></div>
@@ -875,10 +882,14 @@ td.mu{color:var(--mu);font-style:italic;}
 </div></div>
 
 <div class="mo" id="m-vol"><div class="mdl">
-  <div class="mh"><div class="mt2">Voluntário — Equipa de Apoio</div><button class="mc" onclick="closeM('m-vol')">✕</button></div>
+  <div class="mh"><div class="mt2" id="vol-modal-title">Novo Voluntario</div><button class="mc" onclick="closeM('m-vol')">&#10005;</button></div>
   <div class="mb">
-    <div class="fr"><div class="fg"><div class="fl">Nome</div><input class="fi" id="vl-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">Telemóvel</div><input class="fi" id="vl-tl" placeholder="9xx xxx xxx"></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Área de actuação</div><input class="fi" id="vl-ar" placeholder="Campo, Receção, OPO, Cerimónias..."></div><div class="fg"><div class="fl">Período</div><input class="fi" id="vl-pr" placeholder="ex: 13–18 Out"></div></div>
+    <input type="hidden" id="vl-id">
+    <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="vl-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">Telemovel</div><input class="fi" id="vl-tl" placeholder="9xx xxx xxx"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Nr. Socio</div><input class="fi" id="vl-ns" placeholder="ex: 208"></div><div class="fg"><div class="fl">Email</div><input class="fi" id="vl-em" placeholder="email@..."></div></div>
+    <div class="fg"><div class="fl">Funcao no evento</div><select class="fse" id="vl-fn"><option value="">-- A definir pelo responsavel --</option><option>Recepcao / Acreditacao</option><option>Campo - Pista 1</option><option>Campo - Pista 2</option><option>Cronometragem / Pontuacao</option><option>Transfers OPO</option><option>Shuttle local</option><option>Cerimonia de Abertura</option><option>Cerimonia de Encerramento</option><option>Apoio tecnico</option><option>Comunicacao / Fotografia</option><option>Secretariado</option><option>Logistica geral</option><option>Outro</option></select></div>
+    <div class="fr"><div class="fg"><div class="fl">Seccao / Area</div><input class="fi" id="vl-ar" placeholder="Campo, Recepcao, Cerimonias..."></div><div class="fg"><div class="fl">Periodo de presenca</div><input class="fi" id="vl-pr" placeholder="ex: 13-18 Out"></div></div>
+    <div class="fg"><div class="fl">Observacoes</div><input class="fi" id="vl-ob" placeholder="Notas, necessidades especiais..."></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-vol')">Cancelar</button><button class="btn bp" onclick="saveVol()">Guardar</button></div>
 </div></div>
@@ -1314,15 +1325,85 @@ async function saveMbr(){
 }
 async function saveVol(){
   if(!isAdmin)return;
-  const d={nome:document.getElementById('vl-nm').value,tel:document.getElementById('vl-tl').value,area:document.getElementById('vl-ar').value,periodo:document.getElementById('vl-pr').value,ts:Date.now()};
-  await _add('voluntarios',d);closeM('m-vol');toast('Voluntário registado');
+  const id=document.getElementById('vl-id').value;
+  const d={nome:document.getElementById('vl-nm').value,tel:document.getElementById('vl-tl').value,numSocio:document.getElementById('vl-ns').value,email:document.getElementById('vl-em').value,funcao:document.getElementById('vl-fn').value,ar:document.getElementById('vl-ar').value,periodo:document.getElementById('vl-pr').value,ob:document.getElementById('vl-ob').value,ts:Date.now()};
+  if(!d.nome){toast('Nome obrigatorio','er');return;}
+  if(id){await _upd('voluntarios',id,d);toast('Voluntario actualizado');}
+  else{await _add('voluntarios',d);toast('Voluntario registado');}
+  document.getElementById('vl-id').value='';
+  document.getElementById('vol-modal-title').textContent='Novo Voluntario';
+  closeM('m-vol');
+}
+
+function editVol(id){
+  const v=_vol.find(x=>x.id===id);if(!v)return;
+  document.getElementById('vl-id').value=id;
+  document.getElementById('vol-modal-title').textContent='Editar Voluntario';
+  document.getElementById('vl-nm').value=v.nome||'';
+  document.getElementById('vl-tl').value=v.tel||'';
+  document.getElementById('vl-ns').value=v.numSocio||'';
+  document.getElementById('vl-em').value=v.email||'';
+  document.getElementById('vl-fn').value=v.funcao||'';
+  document.getElementById('vl-ar').value=v.ar||v.area||'';
+  document.getElementById('vl-pr').value=v.periodo||'';
+  document.getElementById('vl-ob').value=v.ob||v.obs||'';
+  openM('m-vol');
+}
+
+function editMbr(id){
+  const m=_mbr.find(x=>x.id===id);if(!m)return;
+  document.getElementById('mb-nm').value=m.nome||'';
+  document.getElementById('mb-fn').value=m.funcao||'';
+  document.getElementById('mb-em').value=m.email||'';
+  document.getElementById('mb-tl').value=m.tel||'';
+  document.getElementById('mb-rp').value=m.resp||'';
+  openM('m-mbr');
 }
 function renderOrg(){
   const coe=document.getElementById('org-coe');
-  coe.innerHTML=_mbr.length?_mbr.map(m=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);">${m.tel||''} ${m.email?'- '+m.email:''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delMbr('${m.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem membros COE</div></div>';
+  if(coe){
+    if(!_mbr.length){coe.innerHTML='<div class="em"><div class="emi">&#9670;</div><div class="emt">Sem membros COE</div></div>';}
+    else{
+      coe.innerHTML='';
+      _mbr.forEach(m=>{
+        const d=document.createElement('div');
+        d.style.cssText='padding:10px 0;border-top:1px solid rgba(201,168,76,.07);';
+        const inner=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);margin-top:2px;">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);">${m.tel||''} ${m.email?('&middot; '+m.email):''}</div>${m.resp?('<div style="font-size:10px;color:var(--mu);font-style:italic;">'+m.resp+'</div>'):''}</div>${isAdmin?('<div style="display:flex;gap:4px;"><button class="btn bo bsm" id="ebtn'+m.id+'">Editar</button><button class="btn bd2 bsm" id="dbtn'+m.id+'">X</button></div>'):''}</div>`;
+        d.innerHTML=inner;
+        if(isAdmin){
+          d.querySelector('#ebtn'+m.id).onclick=()=>editMbr(m.id);
+          d.querySelector('#dbtn'+m.id).onclick=()=>delMbr(m.id);
+        }
+        coe.appendChild(d);
+      });
+    }
+  }
   const vol=document.getElementById('org-vol');
-  vol.innerHTML=_vol.length?_vol.map(v=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid rgba(201,168,76,.07);"><div style="font-size:12px;color:var(--se);">${v.nome||''} <span style="color:var(--mu);font-size:10px;">- ${v.area||''} - ${v.periodo||''}</span></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delVol('${v.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem voluntários</div></div>';
+  if(!vol)return;
+  if(!_vol.length){vol.innerHTML='<div class="em"><div class="emi">&#9711;</div><div class="emt">Sem voluntarios</div></div>';return;}
+  vol.innerHTML='';
+  const header=document.createElement('div');
+  header.style.cssText='margin-bottom:10px;font-size:11px;color:var(--mu);';
+  header.textContent=_vol.length+' voluntarios registados';
+  vol.appendChild(header);
+  _vol.forEach(v=>{
+    const d=document.createElement('div');
+    d.style.cssText='padding:8px 0;border-top:1px solid rgba(201,168,76,.07);';
+    const fn=v.funcao||'';
+    const ar=v.ar||v.area||'';
+    const badges=(fn?`<span class="bge bg-g" style="font-size:9px;">${fn}</span> `:'')+( ar?`<span class="bge bg-mu" style="font-size:9px;">${ar}</span>`:'');
+    const extra=(v.tel?`<div style="font-size:10px;color:var(--mu);">${v.tel}</div>`:'')+
+                (v.periodo?`<div style="font-size:10px;color:var(--mu);">${v.periodo}</div>`:'')+
+                (v.ob||v.obs?`<div style="font-size:10px;color:var(--mu);font-style:italic;">${v.ob||v.obs}</div>`:'');
+    d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;font-weight:500;color:var(--wh);">${v.nome||''} ${v.numSocio?('<span style="font-size:10px;color:var(--mu);">nr.'+v.numSocio+'</span>'):''}</div><div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap;">${badges}</div>${extra}</div>${isAdmin?`<div style="display:flex;gap:4px;flex-shrink:0;"><button class="btn bo bsm" id="evbtn${v.id}">Editar</button><button class="btn bd2 bsm" id="dvbtn${v.id}">X</button></div>`:''}</div>`;
+    if(isAdmin){
+      d.querySelector('#evbtn'+v.id).onclick=()=>editVol(v.id);
+      d.querySelector('#dvbtn'+v.id).onclick=()=>delVol(v.id);
+    }
+    vol.appendChild(d);
+  });
 }
+
 async function delMbr(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('membros',id);}
 async function delVol(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('voluntarios',id);}
 
@@ -1889,6 +1970,79 @@ function toggleSb(){
 function closeSb(){
   document.querySelector('.sb').classList.remove('open');
   document.getElementById('sb-overlay').classList.remove('show');
+}
+
+// ========== IMPORTAÇÃO EXCEL VOLUNTÁRIOS ==========
+function importVolExcel(input){
+  if(!isAdmin){toast('Apenas admin pode importar','er');return;}
+  const file = input.files[0];
+  if(!file){return;}
+  const reader = new FileReader();
+  reader.onload = async function(e){
+    try{
+      const data = new Uint8Array(e.target.result);
+      // Usar SheetJS se disponível, senão parsear CSV básico
+      if(typeof XLSX !== 'undefined'){
+        const wb = XLSX.read(data, {type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1});
+        await processVolRows(rows);
+      } else {
+        // Fallback — tentar parsear como texto
+        toast('A carregar SheetJS...','ok');
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        script.onload = async function(){
+          const wb = XLSX.read(data, {type:'array'});
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(ws, {header:1});
+          await processVolRows(rows);
+        };
+        document.head.appendChild(script);
+      }
+    }catch(err){
+      toast('Erro ao ler ficheiro: '+err.message,'er');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  input.value = '';
+}
+
+async function processVolRows(rows){
+  if(!rows||!rows.length){toast('Ficheiro vazio','er');return;}
+  // Detectar colunas — procurar coluna Nome
+  const header = rows[0];
+  let colNome = -1, colNum = -1, colArea = -1, colTel = -1;
+  header.forEach((h,i)=>{
+    const hl = String(h||'').toLowerCase();
+    if(hl.includes('nome')) colNome = i;
+    if(hl.includes('socio')||hl.includes('numero')||hl.includes('num')) colNum = i;
+    if(hl.includes('area')||hl.includes('funcao')) colArea = i;
+    if(hl.includes('tel')||hl.includes('phone')) colTel = i;
+  });
+  // Se não encontrou Nome, assumir coluna 1 (como no ficheiro actual)
+  if(colNome < 0) colNome = 1;
+  if(colNum < 0) colNum = 0;
+
+  let count = 0;
+  const promises = [];
+  for(let i=1;i<rows.length;i++){
+    const row = rows[i];
+    const nome = String(row[colNome]||'').trim();
+    if(!nome) continue;
+    const d = {
+      nome,
+      numSocio: String(row[colNum]||'').trim(),
+      area: colArea>=0 ? String(row[colArea]||'Equipa de Apoio').trim() : 'Equipa de Apoio',
+      tel: colTel>=0 ? String(row[colTel]||'').trim() : '',
+      periodo: '13-17 Out 2026',
+      ts: Date.now()+i
+    };
+    promises.push(_add('voluntarios', d));
+    count++;
+  }
+  await Promise.all(promises);
+  toast(count+' voluntarios importados com sucesso!');
 }
 
 // ========== BLOCO B — ACREDITACOES, ROOMING, CHEGADAS, GUIA ==========
@@ -3379,6 +3533,9 @@ window.delArtigo=delArtigo;
 window.delVendaCS=delVendaCS;
 window.exportAcertoPDF=exportAcertoPDF;
 window.exportConsigPDF=exportConsigPDF;
+window.importVolExcel=importVolExcel;
+window.editVol=editVol;
+window.editMbr=editMbr;
 window.saveQuarto=saveQuarto;
 window.delQuarto=delQuarto;
 window.saveDelegacao=saveDelegacao;
@@ -3401,6 +3558,9 @@ window.delArtigo=delArtigo;
 window.delVendaCS=delVendaCS;
 window.exportAcertoPDF=exportAcertoPDF;
 window.exportConsigPDF=exportConsigPDF;
+window.importVolExcel=importVolExcel;
+window.editVol=editVol;
+window.editMbr=editMbr;
 window.saveQuarto=saveQuarto;
 window.delQuarto=delQuarto;
 window.saveDelegacao=saveDelegacao;

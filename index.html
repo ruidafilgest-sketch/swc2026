@@ -249,6 +249,17 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="si" onclick="nav(this,'rooming','Rooming List Oficial WMF')"><span class="sic">&#9647;</span>Rooming List WMF</div>
     <div class="si" onclick="nav(this,'chegadas','Checklist Chegadas por Pais')"><span class="sic">&#9632;</span>Checklist Chegadas</div>
     <div class="si" onclick="nav(this,'guia','Guia do Atleta')"><span class="sic">&#9633;</span>Guia do Atleta</div>
+    <div class="si" onclick="nav(this,'resultados','Resultados Desportivos')"><span class="sic">&#9654;</span>Resultados Desportivos</div>
+    <div class="si" onclick="nav(this,'diariobordo','Diario de Bordo')"><span class="sic">&#9999;</span>Diario de Bordo</div>
+    <div class="si" onclick="nav(this,'orcamento','Orcamento vs Real')"><span class="sic">&#9651;</span>Orcamento vs Real</div>
+    <div class="si" onclick="nav(this,'faturas','Gestao de Faturas')"><span class="sic">&#9650;</span>Gestao de Faturas</div>
+    <div class="si" onclick="nav(this,'fluxo','Fluxo de Caixa')"><span class="sic">&#9636;</span>Fluxo de Caixa</div>
+    <div class="si" onclick="nav(this,'relpatr','Relatorio Patrocinadores')"><span class="sic">&#9734;</span>Rel. Patrocinadores</div>
+    <div class="si" onclick="nav(this,'actas','Actas & Convocatorias COE')"><span class="sic">&#9654;</span>Actas COE</div>
+    <div class="si" onclick="nav(this,'comunicacoes','Comunicacoes Delegacoes')"><span class="sic">&#9993;</span>Comunicacoes</div>
+    <div class="si" onclick="nav(this,'presskit','Press Kit')"><span class="sic">&#9741;</span>Press Kit</div>
+    <div class="si" onclick="nav(this,'posevento','Relatorios Pos-Evento')"><span class="sic">&#9635;</span>Pos-Evento</div>
+    <div class="si" onclick="nav(this,'backup','Backup & Exportacao Total')"><span class="sic">&#9729;</span>Backup Total</div>
     <div class="sbs">Financeiro SNC-ESNL</div>
     <div class="si" onclick="nav(this,'diario','Diario de Caixa / Banco')"><span class="sic">▤</span>Diário Caixa / Banco</div>
     <div class="si" onclick="nav(this,'receitas','Receitas')"><span class="sic">▲</span>Receitas</div>
@@ -767,6 +778,226 @@ td.mu{color:var(--mu);font-style:italic;}
 <div id="guia-content"></div>
 </div>
 
+  <!-- RESULTADOS DESPORTIVOS -->
+<div class="pg" id="pg-resultados">
+<div class="st"><span class="sn">RES</span>Resultados Desportivos</div>
+<div class="sd">Classificacoes por categoria - Stroke Play - Match Play - Registo manual - Exportacao oficial WMF</div>
+<div class="bb" id="bar-resultados">
+  <button class="btn bp" onclick="openM('m-resultado')">+ Registar resultado</button>
+  <button class="btn bo" onclick="exportResultadosPDF()">Exportar PDF oficial WMF</button>
+</div>
+<!-- Tabs por modalidade -->
+<div style="display:flex;gap:8px;margin-bottom:16px;">
+  <button class="btn" id="tab-stroke" onclick="switchTab('stroke')" style="background:rgba(201,168,76,.15);color:var(--gl);border:1px solid var(--bds);">Stroke Play</button>
+  <button class="btn bo" id="tab-match" onclick="switchTab('match')">Match Play</button>
+</div>
+<div id="res-stroke">
+  <div class="g4" style="margin-bottom:14px;">
+    <div class="sm"><div class="sml">Homens</div><div class="smv" id="res-h">0</div><div class="smn">classificados</div></div>
+    <div class="sm"><div class="sml">Senhoras</div><div class="smv" id="res-s">0</div><div class="smn">classificadas</div></div>
+    <div class="sm"><div class="sml">Melhor resultado H</div><div class="smv" id="res-bh" style="font-size:16px;">-</div></div>
+    <div class="sm"><div class="sml">Melhor resultado S</div><div class="smv" id="res-bs" style="font-size:16px;">-</div></div>
+  </div>
+  <div class="tw"><table><thead><tr><th>Pos.</th><th>Nome</th><th>Pais</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th><th>Categoria</th><th id="th-res">Acoes</th></tr></thead>
+  <tbody id="t-resultados"><tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem resultados registados</td></tr></tbody></table></div>
+</div>
+<div id="res-match" style="display:none;">
+  <div class="av">Resultados Match Play registados apos conclusao do Stroke Play. Formato eliminatorio WMF.</div>
+  <div class="tw"><table><thead><tr><th>Ronda</th><th>Jogador A</th><th>Pais A</th><th>Score A</th><th>Score B</th><th>Jogador B</th><th>Pais B</th><th>Vencedor</th><th id="th-match">Acoes</th></tr></thead>
+  <tbody id="t-match"><tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem jogos registados</td></tr></tbody></table></div>
+</div>
+</div>
+
+  <!-- DIARIO DE BORDO -->
+<div class="pg" id="pg-diariobordo">
+<div class="st"><span class="sn">DB</span>Diario de Bordo</div>
+<div class="sd">Registo cronologico durante os 5 dias do evento - Incidentes - Decisoes - Memoria historica</div>
+<div class="bb" id="bar-diariobordo">
+  <button class="btn bp" onclick="openM('m-entrada-db')">+ Nova entrada</button>
+  <button class="btn bo" onclick="exportDiarioBordoPDF()">Exportar PDF</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total entradas</div><div class="smv" id="db-total">0</div></div>
+  <div class="sm"><div class="sml">Incidentes</div><div class="smv" id="db-incid" style="color:var(--er)">0</div></div>
+  <div class="sm"><div class="sml">Decisoes</div><div class="smv" id="db-dec" style="color:var(--gl2)">0</div></div>
+  <div class="sm"><div class="sml">Dias registados</div><div class="smv" id="db-dias">0</div></div>
+</div>
+<!-- Filtro por dia -->
+<div class="bb" style="margin-bottom:12px;">
+  <select class="fse" id="db-filtro" style="width:200px;" onchange="renderDiarioBordo()">
+    <option value="">Todos os dias</option>
+    <option value="2026-10-13">13 Out - Chegadas</option>
+    <option value="2026-10-14">14 Out - Dia 1</option>
+    <option value="2026-10-15">15 Out - Dia 2</option>
+    <option value="2026-10-16">16 Out - Dia 3</option>
+    <option value="2026-10-17">17 Out - Final</option>
+  </select>
+  <select class="fse" id="db-filtro-tipo" style="width:160px;" onchange="renderDiarioBordo()">
+    <option value="">Todos os tipos</option>
+    <option value="normal">Normal</option>
+    <option value="incidente">Incidente</option>
+    <option value="decisao">Decisao</option>
+    <option value="wmf">Comunicacao WMF</option>
+  </select>
+</div>
+<div id="db-lista"></div>
+</div>
+
+  <!-- ORCAMENTO VS REAL -->
+<div class="pg" id="pg-orcamento">
+<div class="st"><span class="sn">ORC</span>Orcamento vs Real</div>
+<div class="sd">Comparacao rubrica a rubrica - Semaforo verde/amarelo/vermelho - Desvios - PDF para FPM e IPDJ</div>
+<div class="bb">
+  <button class="btn bp" onclick="openM('m-orc-rubrica')">+ Definir rubrica orcamental</button>
+  <button class="btn bo" onclick="exportOrcamentoPDF()">Exportar PDF</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total orcamentado</div><div class="smv" id="orc-tot" style="color:var(--gl2)">0,00EUR</div></div>
+  <div class="sm"><div class="sml">Total executado</div><div class="smv" id="orc-exec">0,00EUR</div></div>
+  <div class="sm"><div class="sml">Desvio global</div><div class="smv" id="orc-desv">0,00EUR</div></div>
+  <div class="sm"><div class="sml">Execucao</div><div class="smv" id="orc-pct">0%</div></div>
+</div>
+<div class="tw"><table><thead><tr><th>Conta SNC</th><th>Rubrica</th><th>Orcamentado (EUR)</th><th>Executado real (EUR)</th><th>Desvio (EUR)</th><th>Exec. %</th><th>Semaforo</th><th id="th-orc">Acoes</th></tr></thead>
+<tbody id="t-orcamento"><tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem rubricas orcamentais definidas</td></tr></tbody></table></div>
+<div class="av" style="margin-top:14px;"><strong>Nota:</strong> Os valores executados sao calculados automaticamente a partir dos lancamentos reais introduzidos nos modulos Receitas e Despesas.</div>
+</div>
+
+  <!-- FATURAS -->
+<div class="pg" id="pg-faturas">
+<div class="st"><span class="sn">FAT</span>Gestao de Faturas</div>
+<div class="sd">Registo de faturas - Alertas de vencimento - Estado de pagamento - Controlo documental</div>
+<div class="bb" id="bar-faturas">
+  <button class="btn bp" onclick="openM('m-fatura')">+ Nova fatura</button>
+  <button class="btn bo" onclick="exportFaturasPDF()">Exportar PDF</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total faturas</div><div class="smv" id="fat-tot">0</div></div>
+  <div class="sm"><div class="sml">Por pagar</div><div class="smv" id="fat-pp" style="color:var(--wr)">0,00EUR</div></div>
+  <div class="sm"><div class="sml">Vence em 7 dias</div><div class="smv" id="fat-urg" style="color:var(--er)">0</div></div>
+  <div class="sm"><div class="sml">Pagas</div><div class="smv" id="fat-pg" style="color:var(--ok)">0</div></div>
+</div>
+<div id="fat-alertas" style="margin-bottom:12px;"></div>
+<div class="tw"><table><thead><tr><th>Nr. Doc.</th><th>Fornecedor</th><th>Conta SNC</th><th>Valor (EUR)</th><th>Data fatura</th><th>Vencimento</th><th>Estado</th><th id="th-fat">Acoes</th></tr></thead>
+<tbody id="t-faturas"><tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem faturas registadas</td></tr></tbody></table></div>
+</div>
+
+  <!-- FLUXO DE CAIXA -->
+<div class="pg" id="pg-fluxo">
+<div class="st"><span class="sn">FC</span>Fluxo de Caixa Previsto</div>
+<div class="sd">Calendario mensal de entradas e saidas previstas - Saldo previsto - Visual por mes</div>
+<div class="bb">
+  <button class="btn bp" onclick="openM('m-fluxo-item')">+ Adicionar previsao</button>
+  <button class="btn bo" onclick="exportFluxoPDF()">Exportar PDF</button>
+</div>
+<div class="g3" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total entradas previstas</div><div class="smv" id="fc-ent" style="color:var(--ok)">0,00EUR</div></div>
+  <div class="sm"><div class="sml">Total saidas previstas</div><div class="smv" id="fc-sai" style="color:var(--er)">0,00EUR</div></div>
+  <div class="sm"><div class="sml">Saldo previsto final</div><div class="smv" id="fc-sal">0,00EUR</div></div>
+</div>
+<div id="fluxo-grid"></div>
+</div>
+
+  <!-- RELATORIO PATROCINADORES -->
+<div class="pg" id="pg-relpatr">
+<div class="st"><span class="sn">PATR</span>Relatorio para Patrocinadores</div>
+<div class="sd">PDF elegante por patrocinador - Logo - Impacto do evento - Agradecimento - Pos-evento</div>
+<div class="bb">
+  <button class="btn bp" onclick="exportRelPatrPDF()">Gerar PDF por patrocinador</button>
+</div>
+<div class="av"><strong>Este relatorio e gerado automaticamente</strong> com os dados reais do evento — atletas, paises, resultados e financeiro. Enviado a cada patrocinador apos o evento para justificar o investimento e abrir portas a futuras colaboracoes.</div>
+<div id="relpatr-preview"></div>
+</div>
+
+  <!-- ACTAS COE -->
+<div class="pg" id="pg-actas">
+<div class="st"><span class="sn">ACTAS</span>Actas & Convocatorias COE</div>
+<div class="sd">Registo formal das reunioes do COE - Convocatorias - Actas - Decisoes - Arquivo</div>
+<div class="bb" id="bar-actas">
+  <button class="btn bp" onclick="openM('m-acta')">+ Nova acta / reuniao</button>
+  <button class="btn bo" onclick="exportActasPDF()">Exportar todas as actas</button>
+</div>
+<div class="g3" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total reunioes</div><div class="smv" id="acta-tot">0</div></div>
+  <div class="sm"><div class="sml">Decisoes tomadas</div><div class="smv" id="acta-dec">0</div></div>
+  <div class="sm"><div class="sml">Ultima reuniao</div><div class="smv" id="acta-ult" style="font-size:14px;">-</div></div>
+</div>
+<div id="actas-lista"></div>
+</div>
+
+  <!-- COMUNICACOES -->
+<div class="pg" id="pg-comunicacoes">
+<div class="st"><span class="sn">COM</span>Comunicacoes as Delegacoes</div>
+<div class="sd">Templates oficiais em EN - Confirmacao inscricao - Info chegada - Programa - Resultados</div>
+<div class="bb" id="bar-comunicacoes">
+  <button class="btn bp" onclick="openM('m-comunicado')">+ Novo comunicado</button>
+  <button class="btn bo" onclick="exportComunicadoListaPDF()">Exportar lista</button>
+</div>
+<div class="g3" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Comunicados criados</div><div class="smv" id="com-tot">0</div></div>
+  <div class="sm"><div class="sml">Enviados</div><div class="smv" id="com-env" style="color:var(--ok)">0</div></div>
+  <div class="sm"><div class="sml">Pendentes</div><div class="smv" id="com-pend" style="color:var(--wr)">0</div></div>
+</div>
+<div id="comunicados-lista"></div>
+</div>
+
+  <!-- PRESS KIT -->
+<div class="pg" id="pg-presskit">
+<div class="st"><span class="sn">PK</span>Press Kit Digital</div>
+<div class="sd">Pasta de imprensa para jornalistas e comunicacao social - Logo - Factos - Bio - Contactos</div>
+<div class="bb">
+  <button class="btn bp" onclick="exportPressKitPDF()">Exportar Press Kit PDF</button>
+</div>
+<div class="g2" style="margin-bottom:14px;">
+  <div class="cd"><div class="cdh"><div><div class="cdt">Factos do Evento</div><div class="cds">SWC Vizela 2026</div></div></div>
+    <div class="cdb" id="pk-factos"></div>
+  </div>
+  <div class="cd"><div class="cdh"><div><div class="cdt">Contacto de Imprensa</div><div class="cds">Media & Communications</div></div></div>
+    <div class="cdb">
+      <div class="fg"><div class="fl">Responsavel de imprensa</div><input class="fi" id="pk-nome" placeholder="Nome do responsavel"></div>
+      <div class="fg"><div class="fl">Email imprensa</div><input class="fi" id="pk-email" placeholder="press@vizelgolfe.net"></div>
+      <div class="fg"><div class="fl">Telemovel imprensa</div><input class="fi" id="pk-tel" placeholder="9xx xxx xxx"></div>
+      <div class="fg"><div class="fl">Website oficial</div><input class="fi" id="pk-web" placeholder="swc.vizelgolfe.net"></div>
+      <button class="btn bp bsm" onclick="toast('Contacto de imprensa guardado')">Guardar</button>
+    </div>
+  </div>
+</div>
+</div>
+
+  <!-- POS-EVENTO -->
+<div class="pg" id="pg-posevento">
+<div class="st"><span class="sn">POST</span>Relatorios Pos-Evento</div>
+<div class="sd">Relatorio WMF final - Relatorio AG Vizelgolfe - Relatorio impacto CMV - Fecho do evento</div>
+<div class="bb">
+  <button class="btn bp" onclick="exportRelWMFFinal()">Rel. Final WMF</button>
+  <button class="btn bo" onclick="exportRelAG()">Rel. AG Vizelgolfe</button>
+  <button class="btn bo" onclick="exportRelCMV()">Rel. Impacto CMV</button>
+</div>
+<div class="av"><strong>Estes relatorios so devem ser gerados apos o encerramento total do evento.</strong> Os valores sao calculados automaticamente a partir de todos os dados reais introduzidos no sistema.</div>
+<div class="g3" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Relatorio WMF</div><div class="smv">PDF</div><div class="smn">Para receber 25% final</div></div>
+  <div class="sm"><div class="sml">Relatorio AG</div><div class="smv">PDF</div><div class="smn">Assembleia Geral Vizelgolfe</div></div>
+  <div class="sm"><div class="sml">Relatorio CMV</div><div class="smv">PDF</div><div class="smn">Impacto economico local</div></div>
+</div>
+</div>
+
+  <!-- BACKUP -->
+<div class="pg" id="pg-backup">
+<div class="st"><span class="sn">BCK</span>Backup & Exportacao Total</div>
+<div class="sd">Exportar todos os dados do sistema - Arquivo offline - Enviar a FPM/WMF</div>
+<div class="av"><strong>Backup completo:</strong> Exporta todos os dados do Firebase num unico ficheiro JSON organizado por modulo. Guarda offline e envia a quem precisar.</div>
+<div class="g4" style="margin-bottom:20px;">
+  <div class="sm"><div class="sml">Atletas</div><div class="smv" id="bk-atl">0</div></div>
+  <div class="sm"><div class="sml">Lancamentos</div><div class="smv" id="bk-lan">0</div></div>
+  <div class="sm"><div class="sml">Prazos</div><div class="smv" id="bk-praz">0</div></div>
+  <div class="sm"><div class="sml">Voluntarios</div><div class="smv" id="bk-vol">0</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;max-width:400px;">
+  <button class="btn bp" style="justify-content:center;padding:14px;" onclick="exportBackupJSON()">&#8681; Exportar backup completo (JSON)</button>
+  <button class="btn bo" style="justify-content:center;padding:14px;" onclick="exportBackupPDF()">&#8681; Exportar resumo executivo (PDF)</button>
+  <button class="btn bo" style="justify-content:center;padding:14px;" onclick="exportTodosRelatorios()">&#8681; Exportar todos os relatorios PDF</button>
+</div>
+</div>
+
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
 <div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026</div>
@@ -1073,6 +1304,192 @@ td.mu{color:var(--mu);font-style:italic;}
   <div class="mf"><button class="btn bo" onclick="closeM('m-delegacao')">Cancelar</button><button class="btn bp" onclick="saveDelegacao()">Guardar</button></div>
 </div></div>
 
+<!-- MODAL RESULTADO -->
+<div class="mo" id="m-resultado"><div class="mdl">
+  <div class="mh"><div class="mt2">Registar Resultado</div><button class="mc" onclick="closeM('m-resultado')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Modalidade</div><select class="fse" id="rs-mod" onchange="toggleMatchFields()"><option value="stroke">Stroke Play</option><option value="match">Match Play</option></select></div>
+      <div class="fg"><div class="fl">Categoria</div><select class="fse" id="rs-cat"><option value="H">Homens</option><option value="S">Senhoras</option></select></div>
+    </div>
+    <!-- Stroke Play -->
+    <div id="stroke-fields">
+      <div class="fr"><div class="fg"><div class="fl">Nome do atleta</div><input class="fi" id="rs-nome" placeholder="Nome completo"></div><div class="fg"><div class="fl">Pais</div><input class="fi" id="rs-pais" placeholder="Pais"></div></div>
+      <div class="fr g3c">
+        <div class="fg"><div class="fl">Ronda 1</div><input class="fi" type="number" id="rs-r1" placeholder="0"></div>
+        <div class="fg"><div class="fl">Ronda 2</div><input class="fi" type="number" id="rs-r2" placeholder="0"></div>
+        <div class="fg"><div class="fl">Ronda 3</div><input class="fi" type="number" id="rs-r3" placeholder="0"></div>
+      </div>
+      <div class="fg"><div class="fl">Ronda 4 (se aplicavel)</div><input class="fi" type="number" id="rs-r4" placeholder="0"></div>
+    </div>
+    <!-- Match Play -->
+    <div id="match-fields" style="display:none;">
+      <div class="fg"><div class="fl">Ronda</div><select class="fse" id="mp-ronda"><option>Oitavos</option><option>Quartos-de-final</option><option>Meias-finais</option><option>Final 3/4 lugar</option><option>Final</option></select></div>
+      <div class="fr"><div class="fg"><div class="fl">Jogador A</div><input class="fi" id="mp-a" placeholder="Nome"></div><div class="fg"><div class="fl">Pais A</div><input class="fi" id="mp-pa" placeholder="Pais"></div></div>
+      <div class="fr"><div class="fg"><div class="fl">Score A</div><input class="fi" type="number" id="mp-sa" placeholder="0"></div><div class="fg"><div class="fl">Score B</div><input class="fi" type="number" id="mp-sb" placeholder="0"></div></div>
+      <div class="fr"><div class="fg"><div class="fl">Jogador B</div><input class="fi" id="mp-b" placeholder="Nome"></div><div class="fg"><div class="fl">Pais B</div><input class="fi" id="mp-pb" placeholder="Pais"></div></div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-resultado')">Cancelar</button><button class="btn bp" onclick="saveResultado()">Guardar resultado</button></div>
+</div></div>
+
+<!-- MODAL DIARIO BORDO -->
+<div class="mo" id="m-entrada-db"><div class="mdl">
+  <div class="mh"><div class="mt2">Nova Entrada — Diario de Bordo</div><button class="mc" onclick="closeM('m-entrada-db')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Dia</div><select class="fse" id="db-dia">
+        <option value="2026-10-13">13 Out - Chegadas</option>
+        <option value="2026-10-14">14 Out - Dia 1</option>
+        <option value="2026-10-15">15 Out - Dia 2</option>
+        <option value="2026-10-16">16 Out - Dia 3</option>
+        <option value="2026-10-17">17 Out - Final</option>
+      </select></div>
+      <div class="fg"><div class="fl">Hora</div><input class="fi" type="time" id="db-hora"></div>
+    </div>
+    <div class="fg"><div class="fl">Tipo</div><select class="fse" id="db-tipo">
+      <option value="normal">Normal - Registo geral</option>
+      <option value="incidente">Incidente - Problema ou ocorrencia</option>
+      <option value="decisao">Decisao - COE ou WMF</option>
+      <option value="wmf">Comunicacao WMF/EMF</option>
+    </select></div>
+    <div class="fg"><div class="fl">Titulo / Resumo</div><input class="fi" id="db-titulo" placeholder="Titulo breve da entrada"></div>
+    <div class="fg"><div class="fl">Descricao detalhada</div><textarea class="fta" id="db-desc" placeholder="Detalhe completo do que aconteceu, decisoes tomadas, quem esteve envolvido..." style="min-height:100px;"></textarea></div>
+    <div class="fg"><div class="fl">Responsavel / Autor</div><input class="fi" id="db-resp" placeholder="Nome de quem regista"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-entrada-db')">Cancelar</button><button class="btn bp" onclick="saveEntradaDB()">Guardar entrada</button></div>
+</div></div>
+
+<!-- MODAL RUBRICA ORCAMENTAL -->
+<div class="mo" id="m-orc-rubrica"><div class="mdl">
+  <div class="mh"><div class="mt2">Definir Rubrica Orcamental</div><button class="mc" onclick="closeM('m-orc-rubrica')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Conta SNC</div><select class="fse" id="or-conta">
+        <option value="6141">6141 - Material desportivo</option>
+        <option value="6143">6143 - Representacao</option>
+        <option value="6221">6221 - Trabalhos especializados</option>
+        <option value="6222">6222 - Publicidade</option>
+        <option value="6223">6223 - Vigilancia</option>
+        <option value="6228">6228 - Outros FSE</option>
+        <option value="6251">6251 - Deslocacoes</option>
+        <option value="6261">6261 - Rendas</option>
+        <option value="6888">6888 - Taxas WMF/EMF</option>
+        <option value="6899">6899 - Premios</option>
+        <option value="724">724 - Patrocinadores</option>
+        <option value="729">729 - Inscricoes atletas</option>
+        <option value="751">751 - Subsidios publicos</option>
+      </select></div>
+      <div class="fg"><div class="fl">Valor orcamentado (EUR)</div><input class="fi" type="number" step="0.01" id="or-valor" placeholder="0,00"></div>
+    </div>
+    <div class="fg"><div class="fl">Descricao / Nota</div><input class="fi" id="or-desc" placeholder="Descricao da rubrica orcamental..."></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-orc-rubrica')">Cancelar</button><button class="btn bp" onclick="saveOrcRubrica()">Guardar</button></div>
+</div></div>
+
+<!-- MODAL FATURA -->
+<div class="mo" id="m-fatura"><div class="mdl">
+  <div class="mh"><div class="mt2">Nova Fatura</div><button class="mc" onclick="closeM('m-fatura')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Nr. Documento</div><input class="fi" id="fat-nr" placeholder="FT/2026/001"></div>
+      <div class="fg"><div class="fl">Fornecedor</div><input class="fi" id="fat-forn" placeholder="Nome do fornecedor"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Conta SNC</div><select class="fse" id="fat-conta">
+        <option value="6141">6141 - Material desportivo</option>
+        <option value="6221">6221 - Trabalhos especializados</option>
+        <option value="6222">6222 - Publicidade</option>
+        <option value="6223">6223 - Vigilancia</option>
+        <option value="6228">6228 - Outros FSE</option>
+        <option value="6251">6251 - Deslocacoes</option>
+        <option value="6261">6261 - Rendas</option>
+        <option value="6888">6888 - Taxas WMF/EMF</option>
+        <option value="6899">6899 - Premios</option>
+      </select></div>
+      <div class="fg"><div class="fl">Valor (EUR)</div><input class="fi" type="number" step="0.01" id="fat-valor" placeholder="0,00"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Data da fatura</div><input class="fi" type="date" id="fat-data"></div>
+      <div class="fg"><div class="fl">Data de vencimento</div><input class="fi" type="date" id="fat-venc"></div>
+    </div>
+    <div class="fg"><div class="fl">Estado</div><select class="fse" id="fat-estado"><option value="Pendente">Pendente</option><option value="Paga">Paga</option><option value="Em disputa">Em disputa</option></select></div>
+    <div class="fg"><div class="fl">Notas</div><input class="fi" id="fat-notas" placeholder="Observacoes..."></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-fatura')">Cancelar</button><button class="btn bp" onclick="saveFatura()">Guardar fatura</button></div>
+</div></div>
+
+<!-- MODAL FLUXO ITEM -->
+<div class="mo" id="m-fluxo-item"><div class="mdl">
+  <div class="mh"><div class="mt2">Previsao de Fluxo de Caixa</div><button class="mc" onclick="closeM('m-fluxo-item')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Mes</div><select class="fse" id="fc-mes">
+        <option value="2025-12">Dezembro 2025</option>
+        <option value="2026-01">Janeiro 2026</option>
+        <option value="2026-02">Fevereiro 2026</option>
+        <option value="2026-03">Marco 2026</option>
+        <option value="2026-04">Abril 2026</option>
+        <option value="2026-05">Maio 2026</option>
+        <option value="2026-06">Junho 2026</option>
+        <option value="2026-07">Julho 2026</option>
+        <option value="2026-08">Agosto 2026</option>
+        <option value="2026-09">Setembro 2026</option>
+        <option value="2026-10">Outubro 2026</option>
+        <option value="2026-11">Novembro 2026</option>
+      </select></div>
+      <div class="fg"><div class="fl">Tipo</div><select class="fse" id="fc-tipo"><option value="entrada">Entrada (receita prevista)</option><option value="saida">Saida (despesa prevista)</option></select></div>
+    </div>
+    <div class="fg"><div class="fl">Descricao</div><input class="fi" id="fc-desc" placeholder="ex: Subsidio CMV, Catering, Taxas atletas..."></div>
+    <div class="fg"><div class="fl">Valor previsto (EUR)</div><input class="fi" type="number" step="0.01" id="fc-valor" placeholder="0,00"></div>
+    <div class="fg"><div class="fl">Probabilidade</div><select class="fse" id="fc-prob"><option value="alta">Alta - Confirmado ou muito provavel</option><option value="media">Media - Em negociacao</option><option value="baixa">Baixa - Estimativa</option></select></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-fluxo-item')">Cancelar</button><button class="btn bp" onclick="saveFluxoItem()">Guardar previsao</button></div>
+</div></div>
+
+<!-- MODAL ACTA -->
+<div class="mo" id="m-acta"><div class="mdl" style="width:620px;">
+  <div class="mh"><div class="mt2">Nova Acta / Reuniao COE</div><button class="mc" onclick="closeM('m-acta')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Data da reuniao</div><input class="fi" type="date" id="ac-data"></div>
+      <div class="fg"><div class="fl">Hora</div><input class="fi" type="time" id="ac-hora"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Local / Modalidade</div><input class="fi" id="ac-local" placeholder="ex: Sede Vizelgolfe / Videoconferencia"></div>
+      <div class="fg"><div class="fl">Presidente da mesa</div><input class="fi" id="ac-pres" placeholder="Nome"></div>
+    </div>
+    <div class="fg"><div class="fl">Participantes presentes</div><input class="fi" id="ac-part" placeholder="Lista de nomes separados por virgula"></div>
+    <div class="fg"><div class="fl">Ordem do dia</div><textarea class="fta" id="ac-ordem" placeholder="1. Ponto A | 2. Ponto B | 3. Outros assuntos"></textarea></div>
+    <div class="fg"><div class="fl">Deliberacoes / Decisoes tomadas</div><textarea class="fta" id="ac-dec" placeholder="Registar todas as decisoes e votacoes..."></textarea></div>
+    <div class="fg"><div class="fl">Proxima reuniao prevista</div><input class="fi" type="date" id="ac-prox"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-acta')">Cancelar</button><button class="btn bp" onclick="saveActa()">Guardar acta</button></div>
+</div></div>
+
+<!-- MODAL COMUNICADO -->
+<div class="mo" id="m-comunicado"><div class="mdl">
+  <div class="mh"><div class="mt2">Novo Comunicado</div><button class="mc" onclick="closeM('m-comunicado')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Destinatarios</div><select class="fse" id="cm-dest"><option value="todas">Todas as delegacoes</option><option value="atletas">So atletas</option><option value="arbitros">So arbitros</option><option value="especifico">Pais especifico</option></select></div>
+      <div class="fg"><div class="fl">Lingua</div><select class="fse" id="cm-lang"><option value="EN">English (EN)</option><option value="PT">Portugues (PT)</option><option value="DE">Deutsch (DE)</option><option value="ES">Espanol (ES)</option></select></div>
+    </div>
+    <div class="fg"><div class="fl">Tipo / Assunto</div><select class="fse" id="cm-tipo">
+      <option>Confirmacao de inscricao</option>
+      <option>Informacao de chegada e transfer</option>
+      <option>Programa oficial do evento</option>
+      <option>Informacao de alojamento</option>
+      <option>Resultado final e agradecimento</option>
+      <option>Outro</option>
+    </select></div>
+    <div class="fg"><div class="fl">Assunto do email</div><input class="fi" id="cm-assunto" placeholder="Subject: SWC Vizela 2026 - ..."></div>
+    <div class="fg"><div class="fl">Corpo do comunicado</div><textarea class="fta" id="cm-corpo" placeholder="Texto do comunicado..." style="min-height:120px;"></textarea></div>
+    <div class="fg"><div class="fl">Estado</div><select class="fse" id="cm-estado"><option value="Rascunho">Rascunho</option><option value="Enviado">Enviado</option></select></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-comunicado')">Cancelar</button><button class="btn bp" onclick="saveComunicado()">Guardar</button></div>
+</div></div>
+
 <div class="tst" id="tst"></div>
 
 <script type="module">
@@ -1104,7 +1521,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  loadAll();loadChk();loadConsig();loadBlocoB();initChecklist();startCountdown();startModeEvento();
+  loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();initChecklist();startCountdown();startModeEvento();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -1127,6 +1544,17 @@ function nav(el,id,title){
   if(id==='wmf')renderWMF();
   if(id==='wmfcheck')renderChk();
   if(id==='programa')renderPrograma();
+  if(id==='actas'){renderActas();}
+  if(id==='comunicacoes'){renderComunicados();}
+  if(id==='presskit'){renderPressKit();}
+  if(id==='posevento'){}
+  if(id==='backup'){renderBackup();}
+  if(id==='orcamento'){renderOrcamento();}
+  if(id==='faturas'){renderFaturas();}
+  if(id==='fluxo'){renderFluxo();}
+  if(id==='relpatr'){renderRelPatr();}
+  if(id==='resultados'){renderResultados();renderMatch();}
+  if(id==='diariobordo'){renderDiarioBordo();}
   if(id==='acreditacoes'){renderAccred();}
   if(id==='rooming'){renderRooming();}
   if(id==='chegadas'){renderDelegacoes();}
@@ -2456,6 +2884,777 @@ function exportGuiaPDF(){
 }
 
 
+// ========== BLOCO C — RESULTADOS E DIARIO DE BORDO ==========
+
+let _resultados=[], _matchplay=[], _diariodb=[];
+
+function loadBlocoC(){
+  _snap('resultados',(docs)=>{_resultados=docs;renderResultados();});
+  _snap('matchplay',(docs)=>{_matchplay=docs;renderMatch();});
+  _snap('diariodb',(docs)=>{_diariodb=docs.sort((a,b)=>b.ts-a.ts);renderDiarioBordo();});
+}
+
+// --- RESULTADOS STROKE PLAY ---
+function switchTab(tab){
+  document.getElementById('res-stroke').style.display=tab==='stroke'?'block':'none';
+  document.getElementById('res-match').style.display=tab==='match'?'block':'none';
+  document.getElementById('tab-stroke').style.background=tab==='stroke'?'rgba(201,168,76,.15)':'transparent';
+  document.getElementById('tab-match').style.background=tab==='match'?'rgba(201,168,76,.15)':'transparent';
+}
+
+function toggleMatchFields(){
+  const mod=document.getElementById('rs-mod').value;
+  document.getElementById('stroke-fields').style.display=mod==='stroke'?'block':'none';
+  document.getElementById('match-fields').style.display=mod==='match'?'block':'none';
+}
+
+async function saveResultado(){
+  if(!isAdmin)return;
+  const mod=document.getElementById('rs-mod').value;
+  if(mod==='stroke'){
+    const r1=parseInt(document.getElementById('rs-r1').value)||0;
+    const r2=parseInt(document.getElementById('rs-r2').value)||0;
+    const r3=parseInt(document.getElementById('rs-r3').value)||0;
+    const r4=parseInt(document.getElementById('rs-r4').value)||0;
+    const total=r1+r2+r3+(r4>0?r4:0);
+    const d={nome:document.getElementById('rs-nome').value,pais:document.getElementById('rs-pais').value,categoria:document.getElementById('rs-cat').value,r1,r2,r3,r4,total,ts:Date.now()};
+    if(!d.nome){toast('Nome obrigatorio','er');return;}
+    await _add('resultados',d);
+  } else {
+    const d={ronda:document.getElementById('mp-ronda').value,categoria:document.getElementById('rs-cat').value,jogA:document.getElementById('mp-a').value,paisA:document.getElementById('mp-pa').value,scoreA:parseInt(document.getElementById('mp-sa').value)||0,scoreB:parseInt(document.getElementById('mp-sb').value)||0,jogB:document.getElementById('mp-b').value,paisB:document.getElementById('mp-pb').value,ts:Date.now()};
+    d.vencedor=d.scoreA<d.scoreB?d.jogA:d.scoreB<d.scoreA?d.jogB:'Empate';
+    await _add('matchplay',d);
+  }
+  closeM('m-resultado');toast('Resultado registado');
+}
+
+function renderResultados(){
+  const homens=_resultados.filter(r=>r.categoria==='H').sort((a,b)=>a.total-b.total);
+  const senhoras=_resultados.filter(r=>r.categoria==='S').sort((a,b)=>a.total-b.total);
+  const el_h=document.getElementById('res-h');
+  const el_s=document.getElementById('res-s');
+  const el_bh=document.getElementById('res-bh');
+  const el_bs=document.getElementById('res-bs');
+  if(el_h)el_h.textContent=homens.length;
+  if(el_s)el_s.textContent=senhoras.length;
+  if(el_bh)el_bh.textContent=homens.length?homens[0].nome.split(' ')[0]+' - '+homens[0].total:'-';
+  if(el_bs)el_bs.textContent=senhoras.length?senhoras[0].nome.split(' ')[0]+' - '+senhoras[0].total:'-';
+  const todos=[...homens,...senhoras].sort((a,b)=>a.total-b.total);
+  const tbody=document.getElementById('t-resultados');
+  if(!tbody)return;
+  if(!todos.length){tbody.innerHTML='<tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem resultados</td></tr>';return;}
+  tbody.innerHTML=todos.map((r,i)=>`<tr>
+    <td style="font-weight:700;color:${i===0?'#ffd700':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--se)'};text-align:center;font-size:14px;">${i+1}</td>
+    <td class="vl">${r.nome||''}</td>
+    <td>${r.pais||''}</td>
+    <td style="text-align:center;">${r.r1||'-'}</td>
+    <td style="text-align:center;">${r.r2||'-'}</td>
+    <td style="text-align:center;">${r.r3||'-'}</td>
+    <td style="text-align:center;">${r.r4||'-'}</td>
+    <td style="text-align:center;font-weight:700;font-size:14px;color:var(--gl2);">${r.total||0}</td>
+    <td><span class="bge ${r.categoria==='H'?'bg-bl':'bg-am'}">${r.categoria==='H'?'Homens':'Senhoras'}</span></td>
+    ${isAdmin?`<td><button class="btn bd2 bsm" onclick="delRes('${r.id}')">X</button></td>`:'<td></td>'}
+  </tr>`).join('');
+}
+
+function renderMatch(){
+  const tbody=document.getElementById('t-match');
+  if(!tbody)return;
+  if(!_matchplay.length){tbody.innerHTML='<tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem jogos</td></tr>';return;}
+  tbody.innerHTML=_matchplay.map(m=>`<tr>
+    <td><span class="bge bg-g">${m.ronda||''}</span></td>
+    <td class="vl">${m.jogA||''}</td><td class="mu">${m.paisA||''}</td>
+    <td style="text-align:center;font-weight:700;font-size:14px;color:${m.scoreA<m.scoreB?'var(--ok)':'var(--er)'};">${m.scoreA}</td>
+    <td style="text-align:center;font-weight:700;font-size:14px;color:${m.scoreB<m.scoreA?'var(--ok)':'var(--er)'};">${m.scoreB}</td>
+    <td class="vl">${m.jogB||''}</td><td class="mu">${m.paisB||''}</td>
+    <td style="font-weight:700;color:var(--gl2);">${m.vencedor||''}</td>
+    ${isAdmin?`<td><button class="btn bd2 bsm" onclick="delMatch('${m.id}')">X</button></td>`:'<td></td>'}
+  </tr>`).join('');
+}
+
+async function delRes(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('resultados',id);}
+async function delMatch(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('matchplay',id);}
+
+// --- DIARIO DE BORDO ---
+async function saveEntradaDB(){
+  if(!isAdmin)return;
+  const d={dia:document.getElementById('db-dia').value,hora:document.getElementById('db-hora').value,tipo:document.getElementById('db-tipo').value,titulo:document.getElementById('db-titulo').value,desc:document.getElementById('db-desc').value,resp:document.getElementById('db-resp').value,ts:Date.now()};
+  if(!d.titulo){toast('Titulo obrigatorio','er');return;}
+  await _add('diariodb',d);closeM('m-entrada-db');toast('Entrada registada no Diario de Bordo');
+}
+
+function renderDiarioBordo(){
+  const filtroD=document.getElementById('db-filtro')?.value||'';
+  const filtroT=document.getElementById('db-filtro-tipo')?.value||'';
+  const data=_diariodb.filter(e=>(filtroD?e.dia===filtroD:true)&&(filtroT?e.tipo===filtroT:true));
+  const elT=document.getElementById('db-total');
+  const elI=document.getElementById('db-incid');
+  const elD=document.getElementById('db-dec');
+  const elDias=document.getElementById('db-dias');
+  if(elT)elT.textContent=_diariodb.length;
+  if(elI)elI.textContent=_diariodb.filter(e=>e.tipo==='incidente').length;
+  if(elD)elD.textContent=_diariodb.filter(e=>e.tipo==='decisao').length;
+  if(elDias)elDias.textContent=new Set(_diariodb.map(e=>e.dia)).size;
+  const lista=document.getElementById('db-lista');
+  if(!lista)return;
+  if(!data.length){lista.innerHTML='<div class="em"><div class="emi">&#9999;</div><div class="emt">Sem entradas</div><div class="emd">Registe aqui tudo o que acontece durante os 5 dias do evento</div></div>';return;}
+  const TIPO_CFG={
+    normal:{cor:'rgba(255,255,255,.04)',borda:'var(--bdr)',label:'Normal'},
+    incidente:{cor:'rgba(224,82,82,.08)',borda:'rgba(224,82,82,.3)',label:'Incidente'},
+    decisao:{cor:'rgba(201,168,76,.08)',borda:'rgba(201,168,76,.3)',label:'Decisao'},
+    wmf:{cor:'rgba(100,160,255,.08)',borda:'rgba(100,160,255,.3)',label:'WMF/EMF'},
+  };
+  const DIAS_LABEL={'2026-10-13':'13 Out','2026-10-14':'14 Out','2026-10-15':'15 Out','2026-10-16':'16 Out','2026-10-17':'17 Out'};
+  lista.innerHTML=data.map(e=>{
+    const tc=TIPO_CFG[e.tipo]||TIPO_CFG.normal;
+    return `<div style="background:${tc.cor};border:1px solid ${tc.borda};border-radius:10px;padding:14px 16px;margin-bottom:10px;border-left:3px solid ${tc.borda};">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:10px;font-weight:700;color:var(--gl);">${DIAS_LABEL[e.dia]||e.dia} ${e.hora?'· '+e.hora:''}</span>
+          <span class="bge ${e.tipo==='incidente'?'bg-er':e.tipo==='decisao'?'bg-g':e.tipo==='wmf'?'bg-bl':'bg-mu'}">${tc.label}</span>
+        </div>
+        ${isAdmin?`<button class="btn bd2 bsm" onclick="delEntradaDB('${e.id}')">X</button>`:''}
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:6px;">${e.titulo||''}</div>
+      <div style="font-size:12px;color:var(--se);line-height:1.6;">${e.desc||''}</div>
+      ${e.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:6px;">Registado por: ${e.resp}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function delEntradaDB(id){if(!isAdmin||!confirm('Eliminar entrada?'))return;await _del('diariodb',id);toast('Eliminada','er');}
+
+// --- PDFs BLOCO C ---
+function exportResultadosPDF(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Resultados Desportivos Oficiais','SWC Vizela 2026 - Stroke Play & Match Play',false);
+  let y=42;
+  // Stroke Play Homens
+  const homens=_resultados.filter(r=>r.categoria==='H').sort((a,b)=>a.total-b.total);
+  const senhoras=_resultados.filter(r=>r.categoria==='S').sort((a,b)=>a.total-b.total);
+  [['STROKE PLAY - HOMENS / MEN',homens],['STROKE PLAY - SENHORAS / LADIES',senhoras]].forEach(([titulo,dados])=>{
+    if(y>220){doc.addPage();y=20;}
+    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    doc.text(titulo,105,y+5.5,{align:'center'});y+=11;
+    const rows=dados.map((r,i)=>[String(i+1),r.nome||'',r.pais||'',r.r1?String(r.r1):'-',r.r2?String(r.r2):'-',r.r3?String(r.r3):'-',r.r4?String(r.r4):'-',String(r.total||0)]);
+    doc.autoTable({startY:y,head:[['Pos.','Nome','Pais','R1','R2','R3','R4','Total']],body:rows.length?rows:[['','Sem resultados','','','','','','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:3,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[25,45,80],textColor:[201,168,76],fontStyle:'bold',fontSize:8},columnStyles:{0:{cellWidth:12,halign:'center',fontStyle:'bold'},2:{cellWidth:30},3:{cellWidth:15,halign:'center'},4:{cellWidth:15,halign:'center'},5:{cellWidth:15,halign:'center'},6:{cellWidth:15,halign:'center'},7:{cellWidth:18,halign:'center',fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
+    y=doc.lastAutoTable.finalY+8;
+  });
+  // Match Play
+  if(_matchplay.length&&y<220){
+    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    doc.text('MATCH PLAY - RESULTADOS',105,y+5.5,{align:'center'});y+=11;
+    const rowsM=_matchplay.map(m=>[m.ronda||'',m.jogA||'',m.paisA||'',String(m.scoreA),String(m.scoreB),m.jogB||'',m.paisB||'',m.vencedor||'']);
+    doc.autoTable({startY:y,head:[['Ronda','Jogador A','Pais','Score A','Score B','Jogador B','Pais','Vencedor']],body:rowsM,theme:'grid',styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[25,45,80],textColor:[201,168,76],fontStyle:'bold',fontSize:8},columnStyles:{3:{halign:'center'},4:{halign:'center'},7:{fontStyle:'bold',textColor:[10,80,10]}},margin:{left:14,right:14,bottom:28}});
+  }
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Resultados_Oficiais.pdf');
+  toast('PDF resultados gerado');
+}
+
+function exportDiarioBordoPDF(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Diario de Bordo','SWC Vizela 2026 - Registo cronologico do evento',false);
+  const sorted=[..._diariodb].sort((a,b)=>a.ts-b.ts);
+  const DIAS={'2026-10-13':'13 Out - Chegadas','2026-10-14':'14 Out - Dia 1','2026-10-15':'15 Out - Dia 2','2026-10-16':'16 Out - Dia 3','2026-10-17':'17 Out - Final'};
+  let y=42;
+  if(!sorted.length){
+    doc.setFontSize(10);doc.setTextColor(120,120,120);
+    doc.text('Sem entradas no Diario de Bordo.',105,80,{align:'center'});
+  } else {
+    const rows=sorted.map(e=>[DIAS[e.dia]||e.dia,e.hora||'',e.tipo||'normal',e.titulo||'',e.desc||'',e.resp||'']);
+    doc.autoTable({startY:y,head:[['Dia','Hora','Tipo','Titulo','Descricao','Registado por']],body:rows,theme:'striped',styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:[250,247,240]},columnStyles:{0:{cellWidth:28},1:{cellWidth:12,halign:'center'},2:{cellWidth:20},3:{cellWidth:40,fontStyle:'bold'},4:{cellWidth:60},5:{cellWidth:28,fontSize:7}},margin:{left:5,right:5,bottom:28}});
+  }
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Diario_de_Bordo.pdf');
+  toast('PDF Diario de Bordo gerado');
+}
+
+
+// ========== BLOCO D — ORCAMENTO, FATURAS, FLUXO, REL.PATROCINADORES ==========
+
+let _orcamento=[], _faturas=[], _fluxo=[];
+
+function loadBlocoD(){
+  _snap('orcamento',(docs)=>{_orcamento=docs;renderOrcamento();});
+  _snap('faturas',(docs)=>{_faturas=docs.sort((a,b)=>a.venc?.localeCompare(b.venc||'')||0);renderFaturas();});
+  _snap('fluxo',(docs)=>{_fluxo=docs.sort((a,b)=>a.mes?.localeCompare(b.mes||'')||0);renderFluxo();});
+}
+
+// --- ORCAMENTO VS REAL ---
+async function saveOrcRubrica(){
+  if(!isAdmin)return;
+  const d={conta:document.getElementById('or-conta').value,valor:parseFloat(document.getElementById('or-valor').value)||0,desc:document.getElementById('or-desc').value,ts:Date.now()};
+  await _add('orcamento',d);closeM('m-orc-rubrica');toast('Rubrica orcamental guardada');
+}
+
+function renderOrcamento(){
+  let totOrc=0,totExec=0;
+  const tbody=document.getElementById('t-orcamento');
+  if(!tbody)return;
+  if(!_orcamento.length){tbody.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem rubricas definidas</td></tr>';return;}
+  tbody.innerHTML=_orcamento.map(o=>{
+    const orc=Number(o.valor||0);
+    // Calcular executado real a partir de receitas/despesas
+    const exec=o.conta.startsWith('6')?
+      _desp.filter(d=>d.conta===o.conta).reduce((s,d)=>s+Number(d.valor||0),0):
+      _rec.filter(r=>r.conta===o.conta).reduce((s,r)=>s+Number(r.valor||0),0);
+    const desv=exec-orc;
+    const pct=orc>0?Math.round(exec/orc*100):0;
+    totOrc+=orc;totExec+=exec;
+    const sem=pct<=80?'bg-ok':pct<=110?'bg-am':'bg-er';
+    const semLabel=pct<=80?'OK':pct<=110?'Atencao':'Desvio';
+    return `<tr>
+      <td><span class="sc">${o.conta}</span></td>
+      <td>${nomC[o.conta]||o.desc||o.conta}</td>
+      <td style="text-align:right;color:var(--gl2);font-weight:600;">${fmt(orc)}</td>
+      <td style="text-align:right;font-weight:600;">${fmt(exec)}</td>
+      <td style="text-align:right;color:${desv>0?'var(--er)':'var(--ok)'};">${desv>=0?'+':''}${fmt(desv)}</td>
+      <td style="text-align:center;font-weight:700;color:${pct>110?'var(--er)':pct>80?'var(--wr)':'var(--ok)'};">${pct}%</td>
+      <td><span class="bge ${sem}">${semLabel}</span></td>
+      ${isAdmin?`<td><button class="btn bd2 bsm" onclick="delOrc('${o.id}')">X</button></td>`:'<td></td>'}
+    </tr>`;
+  }).join('');
+  const elT=document.getElementById('orc-tot');
+  const elE=document.getElementById('orc-exec');
+  const elD=document.getElementById('orc-desv');
+  const elP=document.getElementById('orc-pct');
+  if(elT)elT.textContent=fmt(totOrc);
+  if(elE)elE.textContent=fmt(totExec);
+  if(elD){elD.textContent=fmt(totExec-totOrc);elD.style.color=totExec>totOrc?'var(--er)':'var(--ok)';}
+  if(elP)elP.textContent=(totOrc>0?Math.round(totExec/totOrc*100):0)+'%';
+}
+
+async function delOrc(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('orcamento',id);}
+
+// --- FATURAS ---
+async function saveFatura(){
+  if(!isAdmin)return;
+  const d={nr:document.getElementById('fat-nr').value,forn:document.getElementById('fat-forn').value,conta:document.getElementById('fat-conta').value,valor:parseFloat(document.getElementById('fat-valor').value)||0,data:document.getElementById('fat-data').value,venc:document.getElementById('fat-venc').value,estado:document.getElementById('fat-estado').value,notas:document.getElementById('fat-notas').value,ts:Date.now()};
+  if(!d.forn){toast('Fornecedor obrigatorio','er');return;}
+  await _add('faturas',d);closeM('m-fatura');toast('Fatura registada');
+}
+
+function renderFaturas(){
+  const hoje=new Date();
+  const pp=_faturas.filter(f=>f.estado==='Pendente').reduce((s,f)=>s+Number(f.valor||0),0);
+  const urg=_faturas.filter(f=>{if(f.estado!=='Pendente')return false;const d=new Date(f.venc);return(d-hoje)/86400000<=7;}).length;
+  const pg=_faturas.filter(f=>f.estado==='Paga').length;
+  const elT=document.getElementById('fat-tot');
+  const elPP=document.getElementById('fat-pp');
+  const elU=document.getElementById('fat-urg');
+  const elPG=document.getElementById('fat-pg');
+  if(elT)elT.textContent=_faturas.length;
+  if(elPP)elPP.textContent=fmt(pp);
+  if(elU)elU.textContent=urg;
+  if(elPG)elPG.textContent=pg;
+  // Alertas
+  const alertDiv=document.getElementById('fat-alertas');
+  if(alertDiv){
+    const urgFat=_faturas.filter(f=>{if(f.estado!=='Pendente')return false;const d=new Date(f.venc);const diff=(d-hoje)/86400000;return diff>=0&&diff<=7;});
+    alertDiv.innerHTML=urgFat.length?`<div style="background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.3);border-radius:10px;padding:12px 16px;margin-bottom:12px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--er);margin-bottom:8px;">Faturas a vencer em 7 dias</div>${urgFat.map(f=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(224,82,82,.1);"><span>${f.forn} - ${f.nr||''}</span><span style="font-weight:700;color:var(--er);">${fmt(f.valor)} - vence ${f.venc}</span></div>`).join('')}</div>`:'';
+  }
+  const tbody=document.getElementById('t-faturas');
+  if(!tbody)return;
+  tbody.innerHTML=_faturas.length?_faturas.map(f=>{
+    const d=new Date(f.venc||'2099-01-01');
+    const diff=Math.ceil((d-hoje)/86400000);
+    const urgente=f.estado==='Pendente'&&diff<=7;
+    return `<tr style="${urgente?'background:rgba(224,82,82,.05);':''}">
+      <td style="font-family:monospace;font-size:11px;">${f.nr||'-'}</td>
+      <td class="vl">${f.forn||''}</td>
+      <td><span class="sc">${f.conta||''}</span></td>
+      <td style="text-align:right;font-weight:600;">${fmt(f.valor)}</td>
+      <td class="mu">${f.data||''}</td>
+      <td style="font-weight:${urgente?700:400};color:${urgente?'var(--er)':'var(--se)'};">${f.venc||''}</td>
+      <td><span class="bge ${f.estado==='Paga'?'bg-ok':f.estado==='Pendente'?'bg-am':'bg-er'}">${f.estado}</span></td>
+      ${isAdmin?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''}<button class="btn bd2 bsm" onclick="delFatura('${f.id}')">X</button></td>`:'<td></td>'}
+    </tr>`;
+  }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem faturas</td></tr>';
+}
+
+async function marcarPaga(id){if(!isAdmin)return;await _upd('faturas',id,{estado:'Paga'});toast('Fatura marcada como paga');}
+async function delFatura(id){if(!isAdmin||!confirm('Eliminar fatura?'))return;await _del('faturas',id);toast('Eliminada','er');}
+
+// --- FLUXO DE CAIXA ---
+async function saveFluxoItem(){
+  if(!isAdmin)return;
+  const d={mes:document.getElementById('fc-mes').value,tipo:document.getElementById('fc-tipo').value,desc:document.getElementById('fc-desc').value,valor:parseFloat(document.getElementById('fc-valor').value)||0,prob:document.getElementById('fc-prob').value,ts:Date.now()};
+  await _add('fluxo',d);closeM('m-fluxo-item');toast('Previsao adicionada');
+}
+
+function renderFluxo(){
+  const totEnt=_fluxo.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+Number(f.valor||0),0);
+  const totSai=_fluxo.filter(f=>f.tipo==='saida').reduce((s,f)=>s+Number(f.valor||0),0);
+  const elE=document.getElementById('fc-ent');
+  const elS=document.getElementById('fc-sai');
+  const elSal=document.getElementById('fc-sal');
+  if(elE)elE.textContent=fmt(totEnt);
+  if(elS)elS.textContent=fmt(totSai);
+  if(elSal){elSal.textContent=fmt(totEnt-totSai);elSal.style.color=totEnt>=totSai?'var(--ok)':'var(--er)';}
+  const grid=document.getElementById('fluxo-grid');
+  if(!grid)return;
+  if(!_fluxo.length){grid.innerHTML='<div class="em"><div class="emi">&#9636;</div><div class="emt">Sem previsoes de fluxo</div><div class="emd">Adicione as entradas e saidas previstas mes a mes</div></div>';return;}
+  // Agrupar por mes
+  const meses={};
+  _fluxo.forEach(f=>{if(!meses[f.mes])meses[f.mes]={entradas:[],saidas:[]};meses[f.mes][f.tipo==='entrada'?'entradas':'saidas'].push(f);});
+  const MESES_LABEL={'2025-12':'Dezembro 2025','2026-01':'Janeiro 2026','2026-02':'Fevereiro 2026','2026-03':'Marco 2026','2026-04':'Abril 2026','2026-05':'Maio 2026','2026-06':'Junho 2026','2026-07':'Julho 2026','2026-08':'Agosto 2026','2026-09':'Setembro 2026','2026-10':'Outubro 2026','2026-11':'Novembro 2026'};
+  const PROB_CORES={alta:'bg-ok',media:'bg-am',baixa:'bg-er'};
+  grid.innerHTML=Object.keys(meses).sort().map(mes=>{
+    const m=meses[mes];
+    const totE=m.entradas.reduce((s,f)=>s+Number(f.valor||0),0);
+    const totS=m.saidas.reduce((s,f)=>s+Number(f.valor||0),0);
+    const saldo=totE-totS;
+    return `<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${MESES_LABEL[mes]||mes}</div><div class="cds">Entradas: ${fmt(totE)} | Saidas: ${fmt(totS)} | Saldo: ${fmt(saldo)}</div></div><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:${saldo>=0?'var(--ok)':'var(--er)'};">${fmt(saldo)}</div></div>
+    <div class="cdb"><div class="g2" style="gap:10px;">
+      <div>${m.entradas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(74,184,122,.1);font-size:12px;"><span style="color:var(--ok);">+ ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--ok);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">X</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem entradas</div>'}</div>
+      <div>${m.saidas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(224,82,82,.1);font-size:12px;"><span style="color:var(--er);">- ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--er);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">X</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem saidas</div>'}</div>
+    </div></div></div>`;
+  }).join('');
+}
+
+async function delFluxo(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('fluxo',id);}
+
+// --- RELATORIO PATROCINADORES ---
+function renderRelPatr(){
+  const el=document.getElementById('relpatr-preview');
+  if(!el)return;
+  if(!_pat.length){el.innerHTML='<div class="em"><div class="emi">&#9734;</div><div class="emt">Sem patrocinadores registados</div><div class="emd">Adicione os patrocinadores no modulo Patrocinios para gerar os relatorios</div></div>';return;}
+  el.innerHTML='<div style="font-size:12px;color:var(--se);margin-bottom:12px;">Serao gerados '+_pat.length+' relatorios — um por patrocinador.</div>'+_pat.map(p=>`<div class="cd" style="margin-bottom:10px;"><div class="cdb" style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:14px;font-weight:600;color:var(--wh);">${p.empresa||''}</div><div style="font-size:11px;color:var(--mu);">${p.tipo||''} · ${fmt(p.valor)} · ${p.estado||''}</div></div><button class="btn bo bsm" onclick="exportRelPatrSingle('${p.id}')">PDF individual</button></div></div>`).join('');
+}
+
+function exportRelPatrPDF(){_pat.forEach(p=>exportRelPatrSingle(p.id));}
+
+function exportRelPatrSingle(patId){
+  const p=_pat.find(x=>x.id===patId);
+  if(!p)return;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Relatorio de Impacto - Patrocinador','SWC Vizela 2026 - Obrigado pelo seu apoio!',false);
+  let y=42;
+  // Cabecalho empresa
+  doc.setFillColor(240,235,210);doc.roundedRect(14,y,182,20,3,3,'F');
+  doc.setDrawColor(201,168,76);doc.setLineWidth(0.3);doc.roundedRect(14,y,182,20,3,3,'S');
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
+  doc.text(p.empresa||'Patrocinador', 105, y+9, {align:'center'});
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(80,60,20);
+  doc.text(p.tipo+' | Contribuicao confirmada: '+fmt(p.valor), 105, y+16, {align:'center'});
+  y+=26;
+  // Impacto do evento
+  const nAtl=_atl.length;
+  const nPaises=new Set(_atl.map(a=>a.pais)).size;
+  const nPaises2=nPaises||'a confirmar';
+  doc.autoTable({startY:y,head:[['Indicador de Impacto','Valor']],body:[
+    ['Atletas participantes',String(nAtl)+' atletas'],
+    ['Paises representados',String(nPaises2)+' nacoes'],
+    ['Dias de competicao','4 dias (14-17 Outubro 2026)'],
+    ['Local','Vizela, Portugal'],
+    ['Modalidade','Seniors World Minigolf Championship'],
+    ['Organizacao','Vizelgolfe - Associacao de Minigolfe de Vizela'],
+  ],theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:100,fontStyle:'bold'},1:{fontStyle:'bold',textColor:[10,80,10]}},margin:{left:14,right:14,bottom:28}});
+  y=doc.lastAutoTable.finalY+10;
+  // Contrapartidas
+  if(p.contrapartidas&&y<220){
+    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    doc.text('Contrapartidas acordadas',105,y+5.5,{align:'center'});y+=11;
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+    const lines=doc.splitTextToSize(p.contrapartidas,182);
+    doc.text(lines,14,y);y+=lines.length*5+8;
+  }
+  // Agradecimento
+  if(y<240){
+    doc.setFillColor(248,246,240);doc.roundedRect(14,y,182,18,3,3,'F');
+    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
+    doc.text('Muito obrigado pelo seu apoio ao SWC Vizela 2026!',105,y+7,{align:'center'});
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(80,80,80);
+    doc.text('O seu contributo foi essencial para a realizacao deste evento mundial em Vizela.',105,y+13,{align:'center'});
+  }
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Relatorio_'+p.empresa.replace(/ /g,'_')+'.pdf');
+  toast('Relatorio de '+p.empresa+' gerado');
+}
+
+// --- PDFs BLOCO D ---
+function exportOrcamentoPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Orcamento vs Execucao Real','SWC Vizela 2026 - Comparacao rubrica a rubrica',true);
+  const rows=_orcamento.map(o=>{
+    const orc=Number(o.valor||0);
+    const exec=o.conta.startsWith('6')?_desp.filter(d=>d.conta===o.conta).reduce((s,d)=>s+Number(d.valor||0),0):_rec.filter(r=>r.conta===o.conta).reduce((s,r)=>s+Number(r.valor||0),0);
+    const desv=exec-orc;
+    const pct=orc>0?Math.round(exec/orc*100):0;
+    return[o.conta,nomC[o.conta]||o.conta,fmtPDF(orc),fmtPDF(exec),(desv>=0?'+':'')+fmtPDF(desv),pct+'%',pct<=80?'OK':pct<=110?'Atencao':'Desvio'];
+  });
+  const totOrc=_orcamento.reduce((s,o)=>s+Number(o.valor||0),0);
+  const totExec=_orcamento.reduce((s,o)=>{const exec=o.conta.startsWith('6')?_desp.filter(d=>d.conta===o.conta).reduce((a,d)=>a+Number(d.valor||0),0):_rec.filter(r=>r.conta===o.conta).reduce((a,r)=>a+Number(r.valor||0),0);return s+exec;},0);
+  doc.autoTable({startY:38,head:[['Conta','Rubrica','Orcamentado','Executado','Desvio','Exec%','Estado']],body:rows.length?rows:[['','Sem rubricas definidas','','','','','']],foot:[['TOTAL','',fmtPDF(totOrc),fmtPDF(totExec),(totExec-totOrc>=0?'+':'')+fmtPDF(totExec-totOrc),(totOrc>0?Math.round(totExec/totOrc*100):0)+'%','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:18,fontStyle:'bold'},1:{cellWidth:60},2:{cellWidth:30,halign:'right'},3:{cellWidth:30,halign:'right'},4:{cellWidth:28,halign:'right'},5:{cellWidth:18,halign:'center',fontStyle:'bold'},6:{cellWidth:22,halign:'center'}},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);doc.save('SWC2026_Orcamento_vs_Real.pdf');toast('PDF orcamento gerado');
+}
+
+function exportFaturasPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Gestao de Faturas','SWC Vizela 2026 - Registo documental completo',true);
+  const rows=_faturas.map(f=>[f.nr||'-',f.forn||'',nomC[f.conta]||f.conta||'',fmtPDF(f.valor),f.data||'',f.venc||'',f.estado||'']);
+  const totPend=_faturas.filter(f=>f.estado==='Pendente').reduce((s,f)=>s+Number(f.valor||0),0);
+  const totPag=_faturas.filter(f=>f.estado==='Paga').reduce((s,f)=>s+Number(f.valor||0),0);
+  doc.autoTable({startY:38,head:[['Nr. Doc.','Fornecedor','Rubrica SNC','Valor','Data Fat.','Vencimento','Estado']],body:rows.length?rows:[['','Sem faturas','','','','','']],foot:[['','Pendentes: '+fmtPDF(totPend),'','Pagas: '+fmtPDF(totPag),'','','']],theme:'striped',styles:{fontSize:8,textColor:[35,35,35],cellPadding:4,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:[250,247,240]},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:25,fontStyle:'bold'},1:{cellWidth:60},2:{cellWidth:45},3:{cellWidth:28,halign:'right'},4:{cellWidth:22},5:{cellWidth:22},6:{cellWidth:22,halign:'center'}},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);doc.save('SWC2026_Faturas.pdf');toast('PDF faturas gerado');
+}
+
+function exportFluxoPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Fluxo de Caixa Previsto','SWC Vizela 2026 - Entradas e saidas mensais',true);
+  const MESES={'2025-12':'Dez 25','2026-01':'Jan 26','2026-02':'Fev 26','2026-03':'Mar 26','2026-04':'Abr 26','2026-05':'Mai 26','2026-06':'Jun 26','2026-07':'Jul 26','2026-08':'Ago 26','2026-09':'Set 26','2026-10':'Out 26','2026-11':'Nov 26'};
+  const rows=_fluxo.map(f=>[MESES[f.mes]||f.mes,f.tipo==='entrada'?'Entrada':'Saida',f.desc||'',f.prob||'',fmtPDF(f.valor)]);
+  const totEnt=_fluxo.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+Number(f.valor||0),0);
+  const totSai=_fluxo.filter(f=>f.tipo==='saida').reduce((s,f)=>s+Number(f.valor||0),0);
+  doc.autoTable({startY:38,head:[['Mes','Tipo','Descricao','Prob.','Valor Previsto']],body:rows.length?rows:[['','','Sem previsoes','','']],foot:[['','Entradas prev.:','',fmtPDF(totEnt),'Saidas prev.: '+fmtPDF(totSai)+' | Saldo: '+fmtPDF(totEnt-totSai)]],theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:20},1:{cellWidth:22,halign:'center'},2:{cellWidth:120},3:{cellWidth:20,halign:'center'},4:{cellWidth:35,halign:'right',fontStyle:'bold'}},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);doc.save('SWC2026_Fluxo_Caixa.pdf');toast('PDF fluxo de caixa gerado');
+}
+
+
+// ========== BLOCO E — ACTAS, COMUNICACOES, PRESS KIT, POS-EVENTO, BACKUP ==========
+
+let _actas=[], _comunicados=[];
+
+function loadBlocoE(){
+  _snap('actas',(docs)=>{_actas=docs.sort((a,b)=>b.ts-a.ts);renderActas();});
+  _snap('comunicados',(docs)=>{_comunicados=docs.sort((a,b)=>b.ts-a.ts);renderComunicados();});
+}
+
+// --- ACTAS COE ---
+async function saveActa(){
+  if(!isAdmin)return;
+  const d={data:document.getElementById('ac-data').value,hora:document.getElementById('ac-hora').value,local:document.getElementById('ac-local').value,pres:document.getElementById('ac-pres').value,part:document.getElementById('ac-part').value,ordem:document.getElementById('ac-ordem').value,dec:document.getElementById('ac-dec').value,prox:document.getElementById('ac-prox').value,ts:Date.now()};
+  if(!d.data){toast('Data obrigatoria','er');return;}
+  await _add('actas',d);closeM('m-acta');toast('Acta registada');
+}
+
+function renderActas(){
+  const elT=document.getElementById('acta-tot');
+  const elD=document.getElementById('acta-dec');
+  const elU=document.getElementById('acta-ult');
+  if(elT)elT.textContent=_actas.length;
+  if(elD)elD.textContent=_actas.reduce((s,a)=>{const lines=(a.dec||'').split(String.fromCharCode(10)).filter(l=>l.trim());return s+lines.length;},0);
+  if(elU)elU.textContent=_actas.length?_actas[0].data:'-';
+  const lista=document.getElementById('actas-lista');
+  if(!lista)return;
+  if(!_actas.length){lista.innerHTML='<div class="em"><div class="emi">&#9654;</div><div class="emt">Sem actas registadas</div></div>';return;}
+  lista.innerHTML=_actas.map(a=>`<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${a.data||''} ${a.hora?'- '+a.hora:''}</div><div class="cds">${a.local||''} | Presidente: ${a.pres||'-'}</div></div>${isAdmin?`<div style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportActaPDF('${a.id}')">PDF</button><button class="btn bd2 bsm" onclick="delActa('${a.id}')">X</button></div>`:''}</div>
+    <div class="cdb">
+      ${a.part?`<div style="font-size:11px;color:var(--mu);margin-bottom:8px;">Presentes: ${a.part}</div>`:''}
+      ${a.ordem?`<div style="margin-bottom:8px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:4px;">Ordem do dia</div><div style="font-size:12px;color:var(--se);white-space:pre-line;">${a.ordem}</div></div>`:''}
+      ${a.dec?`<div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:4px;">Decisoes tomadas</div><div style="font-size:12px;color:var(--wh);white-space:pre-line;background:rgba(201,168,76,.05);padding:10px;border-radius:8px;border-left:3px solid var(--gl);">${a.dec}</div></div>`:''}
+      ${a.prox?`<div style="font-size:11px;color:rgba(201,168,76,.5);margin-top:8px;">Proxima reuniao: ${a.prox}</div>`:''}
+    </div></div>`).join('');
+}
+
+async function delActa(id){if(!isAdmin||!confirm('Eliminar acta?'))return;await _del('actas',id);}
+
+function exportActaPDF(id){
+  const a=_actas.find(x=>x.id===id);
+  if(!a)return;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Acta de Reuniao - COE SWC Vizela 2026','Comite Organizador Executivo',false);
+  let y=42;
+  doc.setFillColor(248,246,240);doc.roundedRect(14,y,182,22,3,3,'F');
+  doc.setDrawColor(201,168,76);doc.setLineWidth(0.3);doc.roundedRect(14,y,182,22,3,3,'S');
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
+  doc.text('Data: '+a.data+' - '+a.hora, 20, y+8);
+  doc.text('Local: '+(a.local||'-'), 20, y+15);
+  doc.text('Presidente: '+(a.pres||'-'), 120, y+8);
+  doc.text('Proxima: '+(a.prox||'-'), 120, y+15);
+  y+=28;
+  if(a.part){doc.setFontSize(8);doc.setFont('helvetica','italic');doc.setTextColor(80,80,80);const lines=doc.splitTextToSize('Participantes: '+a.part,182);doc.text(lines,14,y);y+=lines.length*4+6;}
+  const blocos=[{titulo:'Ordem do Dia',texto:a.ordem},{titulo:'Deliberacoes e Decisoes Tomadas',texto:a.dec}];
+  blocos.forEach(b=>{
+    if(!b.texto)return;
+    if(y>230){doc.addPage();y=20;}
+    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    doc.text(b.titulo,105,y+5.5,{align:'center'});y+=11;
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+    const lines=doc.splitTextToSize(b.texto,182);
+    doc.text(lines,14,y);y+=lines.length*5+8;
+  });
+  if(y<250){
+    doc.line(14,y+15,80,y+15);doc.line(130,y+15,196,y+15);
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+    doc.text('Secretario/a', 47, y+20, {align:'center'});
+    doc.text('Presidente da Mesa', 163, y+20, {align:'center'});
+  }
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Acta_'+a.data+'.pdf');
+  toast('PDF acta gerado');
+}
+
+function exportActasPDF(){_actas.forEach(a=>exportActaPDF(a.id));}
+
+// --- COMUNICADOS ---
+async function saveComunicado(){
+  if(!isAdmin)return;
+  const d={dest:document.getElementById('cm-dest').value,lang:document.getElementById('cm-lang').value,tipo:document.getElementById('cm-tipo').value,assunto:document.getElementById('cm-assunto').value,corpo:document.getElementById('cm-corpo').value,estado:document.getElementById('cm-estado').value,ts:Date.now()};
+  await _add('comunicados',d);closeM('m-comunicado');toast('Comunicado guardado');
+}
+
+function renderComunicados(){
+  const elT=document.getElementById('com-tot');
+  const elE=document.getElementById('com-env');
+  const elP=document.getElementById('com-pend');
+  if(elT)elT.textContent=_comunicados.length;
+  if(elE)elE.textContent=_comunicados.filter(c=>c.estado==='Enviado').length;
+  if(elP)elP.textContent=_comunicados.filter(c=>c.estado==='Rascunho').length;
+  const lista=document.getElementById('comunicados-lista');
+  if(!lista)return;
+  if(!_comunicados.length){lista.innerHTML='<div class="em"><div class="emi">&#9993;</div><div class="emt">Sem comunicados criados</div></div>';return;}
+  lista.innerHTML=_comunicados.map(c=>`<div class="cd" style="margin-bottom:10px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${c.tipo||''}</div><div class="cds">${c.dest||''} | ${c.lang||'EN'} | ${c.assunto||''}</div></div><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${c.estado==='Enviado'?'bg-ok':'bg-am'}">${c.estado}</span>${isAdmin?`<button class="btn bo bsm" onclick="exportComunicadoPDF('${c.id}')">PDF</button><button class="btn bd2 bsm" onclick="delComunicado('${c.id}')">X</button>`:''}</div></div>
+    <div class="cdb"><div style="font-size:12px;color:var(--se);white-space:pre-line;max-height:80px;overflow:hidden;">${(c.corpo||'').substring(0,200)}${(c.corpo||'').length>200?'...':''}</div></div></div>`).join('');
+}
+
+async function delComunicado(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('comunicados',id);}
+
+function exportComunicadoPDF(id){
+  const c=_comunicados.find(x=>x.id===id);if(!c)return;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Comunicado Oficial','SWC Vizela 2026 - '+c.tipo,false);
+  let y=42;
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(80,60,20);
+  doc.text('Para: '+c.dest+' | Lingua: '+c.lang+' | Estado: '+c.estado,14,y);y+=8;
+  doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
+  doc.text(c.assunto||'',14,y);y+=10;
+  doc.setFillColor(10,22,40);doc.rect(14,y,182,0.5,'F');y+=6;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+  const lines=doc.splitTextToSize(c.corpo||'',182);
+  doc.text(lines,14,y);
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Comunicado_'+c.tipo.replace(/ /g,'_').substring(0,20)+'.pdf');
+  toast('PDF comunicado gerado');
+}
+
+function exportComunicadoListaPDF(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Lista de Comunicados','SWC Vizela 2026',true);
+  const rows=_comunicados.map(c=>[c.tipo||'',c.dest||'',c.lang||'',c.assunto||'',c.estado||'']);
+  doc.autoTable({startY:38,head:[['Tipo','Destinatarios','Lingua','Assunto','Estado']],body:rows.length?rows:[['','','','Sem comunicados','']],theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},columnStyles:{0:{cellWidth:50},1:{cellWidth:35},2:{cellWidth:18,halign:'center'},3:{cellWidth:120},4:{cellWidth:25,halign:'center'}},margin:{left:5,right:5,bottom:28}});
+  pdfFooter(doc,true);doc.save('SWC2026_Comunicados_Lista.pdf');toast('PDF lista comunicados gerado');
+}
+
+// --- PRESS KIT ---
+function renderPressKit(){
+  const el=document.getElementById('pk-factos');
+  if(!el)return;
+  const nAtl=_atl.length;
+  const nPaises=new Set(_atl.map(a=>a.pais)).size;
+  const totRec=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
+  el.innerHTML=[
+    {label:'Evento',val:'SWC Vizela 2026 - Seniors World Minigolf Championship'},
+    {label:'Data',val:'13-17 Outubro 2026'},
+    {label:'Local',val:'Vizela, Portugal'},
+    {label:'Organizacao',val:'Vizelgolfe - Associacao de Minigolfe de Vizela'},
+    {label:'Atletas inscritos',val:nAtl+' participantes'},
+    {label:'Paises representados',val:nPaises+' nacoes'},
+    {label:'Modalidades',val:'Stroke Play e Match Play'},
+    {label:'Cerimonias',val:'Abertura 13 Out 19:30 | Encerramento 17 Out 19:30'},
+    {label:'Website',val:'swc.vizelgolfe.net'},
+    {label:'Email',val:'vizelgolfe@vizelgolfe.net'},
+  ].map(f=>`<div style="display:flex;padding:7px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="font-weight:600;color:var(--gl);min-width:120px;">${f.label}</span><span style="color:var(--se);">${f.val}</span></div>`).join('');
+}
+
+function exportPressKitPDF(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Press Kit - Media Information','SWC Vizela 2026 - Seniors World Minigolf Championship',false);
+  let y=42;
+  const nAtl=_atl.length;
+  const nPaises=new Set(_atl.map(a=>a.pais)).size;
+  const factos=[
+    ['Event','SWC Vizela 2026 - Seniors World Minigolf Championship'],
+    ['Dates','13-17 October 2026'],
+    ['Venue','Vizela, Portugal'],
+    ['Organiser','Vizelgolfe - Associacao de Minigolfe de Vizela'],
+    ['Athletes',''+nAtl+' participants from '+nPaises+' nations'],
+    ['Disciplines','Stroke Play and Match Play'],
+    ['Opening Ceremony','13 October 2026, 19:30'],
+    ['Closing Ceremony','17 October 2026, 19:30'],
+    ['Website','swc.vizelgolfe.net'],
+    ['Media Contact',document.getElementById('pk-email')?.value||'vizelgolfe@vizelgolfe.net'],
+  ];
+  doc.autoTable({startY:y,head:[['Information','Details']],body:factos,theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:55,fontStyle:'bold',textColor:[100,70,20]},1:{cellWidth:125}},margin:{left:14,right:14,bottom:28}});
+  y=doc.lastAutoTable.finalY+10;
+  doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+  doc.text('About Vizelgolfe',105,y+5.5,{align:'center'});y+=11;
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+  const bio='Vizelgolfe - Associacao de Minigolfe de Vizela was founded in 2009 and has been one of the most active minigolf clubs in Portugal. Having previously organised international events, SWC Vizela 2026 represents the pinnacle of the clubs ambition - bringing the World Championship to Vizela for the first time.';
+  const bioLines=doc.splitTextToSize(bio,182);
+  doc.text(bioLines,14,y);
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Press_Kit.pdf');
+  toast('Press Kit PDF gerado');
+}
+
+// --- POS-EVENTO ---
+function exportRelWMFFinal(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Final Report - WMF','SWC Vizela 2026 - Post-Event Official Report',false);
+  let y=42;
+  const nAtl=_atl.length;
+  const nPaises=new Set(_atl.map(a=>a.pais)).size;
+  const taxas=_rec.filter(r=>r.conta==='729').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
+  const homens=_resultados.filter(r=>r.categoria==='H').sort((a,b)=>a.total-b.total).slice(0,3);
+  const senhoras=_resultados.filter(r=>r.categoria==='S').sort((a,b)=>a.total-b.total).slice(0,3);
+  doc.autoTable({startY:y,head:[['Section','Data']],body:[
+    ['Event','SWC Vizela 2026 - Seniors World Minigolf Championship'],
+    ['Dates','13-17 October 2026, Vizela, Portugal'],
+    ['Total participants',''+nAtl+' athletes from '+nPaises+' nations'],
+    ['Total income (actual)',''+fmtPDF(totR)],
+    ['Total expenses (actual)',''+fmtPDF(totD)],
+    ['Net result',''+fmtPDF(totR-totD)],
+    ['Participation fees received',''+fmtPDF(taxas)],
+    ['WMF C1+C2 deducted',''+fmtPDF(325+2000)],
+    ['Net to organiser',''+fmtPDF(Math.max(0,taxas-325-2000))],
+  ],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:80,fontStyle:'bold'},1:{fontStyle:'bold',textColor:[10,80,10]}},margin:{left:14,right:14,bottom:28}});
+  y=doc.lastAutoTable.finalY+8;
+  if(homens.length||senhoras.length){
+    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    doc.text('Final Results - Stroke Play',105,y+5.5,{align:'center'});y+=11;
+    const rowsR=[...homens.map((r,i)=>['H - '+(i+1)+'.st',r.nome,r.pais,String(r.total)]),...senhoras.map((r,i)=>['L - '+(i+1)+'.st',r.nome,r.pais,String(r.total)])];
+    doc.autoTable({startY:y,head:[['Position','Name','Country','Total']],body:rowsR.length?rowsR:[['','No results registered','','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[25,45,80],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:25},2:{cellWidth:35},3:{cellWidth:20,halign:'center',fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
+  }
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Relatorio_Final_WMF.pdf');
+  toast('Relatorio Final WMF gerado');
+}
+
+function exportRelAG(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Relatorio para Assembleia Geral','Vizelgolfe - Associacao de Minigolfe de Vizela - SWC 2026',false);
+  const nAtl=_atl.length;const nPaises=new Set(_atl.map(a=>a.pais)).size;
+  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
+  let y=42;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
+  doc.text('A Assembleia Geral da Vizelgolfe apresenta o relatorio do evento SWC Vizela 2026.',14,y);y+=12;
+  doc.autoTable({startY:y,head:[['Indicador','Resultado']],body:[
+    ['Atletas participantes',nAtl+' de '+nPaises+' paises'],
+    ['Dias de evento','5 dias (13 a 17 Outubro 2026)'],
+    ['Voluntarios envolvidos',''+_vol.length],
+    ['Total receitas reais',fmtPDF(totR)],
+    ['Total despesas reais',fmtPDF(totD)],
+    ['Resultado liquido do evento',fmtPDF(totR-totD)],
+    ['Patrocinadores confirmados',''+_pat.filter(p=>p.estado==='Confirmado'||p.estado==='Recebido').length],
+  ],theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:80,fontStyle:'bold'},1:{fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Relatorio_AG_Vizelgolfe.pdf');
+  toast('Relatorio AG gerado');
+}
+
+function exportRelCMV(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Relatorio de Impacto Economico Local','SWC Vizela 2026 - Camara Municipal de Vizela',false);
+  const nAtl=_atl.length;const nPaises=new Set(_atl.map(a=>a.pais)).size;
+  const nNoites=_rooming.reduce((s,r)=>{const ci=new Date(r.checkin||'2026-10-13');const co=new Date(r.checkout||'2026-10-18');return s+Math.ceil((co-ci)/86400000);},0);
+  let y=42;
+  doc.autoTable({startY:y,head:[['Impacto','Estimativa']],body:[
+    ['Atletas e acompanhantes',nAtl+' pessoas de '+nPaises+' paises'],
+    ['Noites de hotel geradas',''+nNoites+' noites (estimativa)'],
+    ['Dias de presenca na cidade','5 dias (13-17 Outubro 2026)'],
+    ['Refeicoes consumidas localmente',nAtl*5*3+' refeicoes (estimativa)'],
+    ['Visibilidade internacional',nPaises+' paises representados'],
+    ['Impacto mediatico','Comunicados WMF - media internacional de minigolfe'],
+    ['Organizacao local','Vizelgolfe - Associacao de Minigolfe de Vizela'],
+  ],theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:80,fontStyle:'bold'},1:{fontStyle:'bold',textColor:[10,80,10]}},margin:{left:14,right:14,bottom:28}});
+  let yf=doc.lastAutoTable.finalY+10;
+  doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(80,80,80);
+  doc.text('A Vizelgolfe agradece o apoio da Camara Municipal de Vizela que foi essencial para a realizacao deste evento mundial.',14,yf,{maxWidth:182});
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Relatorio_Impacto_CMV.pdf');
+  toast('Relatorio CMV gerado');
+}
+
+// --- BACKUP ---
+function renderBackup(){
+  const el_a=document.getElementById('bk-atl');
+  const el_l=document.getElementById('bk-lan');
+  const el_p=document.getElementById('bk-praz');
+  const el_v=document.getElementById('bk-vol');
+  if(el_a)el_a.textContent=_atl.length;
+  if(el_l)el_l.textContent=_lan.length;
+  if(el_p)el_p.textContent=_praz.length;
+  if(el_v)el_v.textContent=_vol.length;
+}
+
+function exportBackupJSON(){
+  const backup={
+    exportDate:new Date().toISOString(),
+    evento:'SWC Vizela 2026',
+    dados:{
+      atletas:_atl,arbitros:_arb,voluntarios:_vol,membros:_mbr,
+      hoteis:_hot,transfers:_trn,rooming:_rooming,delegacoes:_delegacoes,
+      convites:_conv,prazos:_praz,
+      lancamentos:_lan,receitas:_rec,despesas:_desp,patrocinios:_pat,
+      programa:_prog,resultados:_resultados,matchplay:_matchplay,
+      diariodb:_diariodb,actas:_actas,comunicados:_comunicados,
+      orcamento:_orcamento,faturas:_faturas,fluxo:_fluxo,
+      cs_marcas:_marcas,cs_artigos:_artigos,cs_vendas:_vendas_cs,
+    }
+  };
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='SWC2026_Backup_'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();URL.revokeObjectURL(url);
+  toast('Backup JSON exportado com sucesso');
+}
+
+function exportBackupPDF(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Resumo Executivo - Estado do Sistema','SWC Vizela 2026 - Backup '+new Date().toLocaleDateString('pt-PT'),false);
+  const rows=[
+    ['Atletas inscritos',String(_atl.length)],
+    ['Arbitros registados',String(_arb.length)],
+    ['Voluntarios',String(_vol.length)],
+    ['Membros COE',String(_mbr.length)],
+    ['Hoteis H1-H5',String(_hot.length)],
+    ['Rooming list',String(_rooming.length)+' quartos atribuidos'],
+    ['Delegacoes',String(_delegacoes.length)],
+    ['Prazos WMF',String(_praz.length)+' ('+_praz.filter(p=>p.estado==='concluido').length+' concluidos)'],
+    ['Lancamentos caixa/banco',String(_lan.length)],
+    ['Receitas registadas',String(_rec.length)],
+    ['Despesas registadas',String(_desp.length)],
+    ['Patrocinios',String(_pat.length)],
+    ['Faturas',String(_faturas.length)],
+    ['Items programa',String(_prog.length)],
+    ['Resultados stroke play',String(_resultados.length)],
+    ['Entradas diario bordo',String(_diariodb.length)],
+    ['Actas COE',String(_actas.length)],
+    ['Comunicados',String(_comunicados.length)],
+    ['Marcas consignacao',String(_marcas.length)],
+    ['Checklist WMF',String(_praz.length)+' itens'],
+  ];
+  doc.autoTable({startY:42,head:[['Modulo / Dado','Registos']],body:rows,theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},columnStyles:{0:{fontStyle:'bold'},1:{halign:'right',fontStyle:'bold',textColor:[10,80,10]}},margin:{left:14,right:14,bottom:28}});
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Resumo_Executivo.pdf');
+  toast('Resumo executivo gerado');
+}
+
+function exportTodosRelatorios(){
+  toast('A gerar todos os relatorios...');
+  setTimeout(()=>{exportDR();},500);
+  setTimeout(()=>{exportBalancete();},1000);
+  setTimeout(()=>{exportBalanco();},1500);
+  setTimeout(()=>{exportIPDJ();},2000);
+  setTimeout(()=>{exportWMF();},2500);
+  setTimeout(()=>{exportResultadosPDF();},3000);
+  setTimeout(()=>{exportPressKitPDF();},3500);
+  setTimeout(()=>{toast('Todos os relatorios exportados!');},4000);
+}
+
+
 //  EXPORTAÇÃO PDF 
 const {jsPDF} = window.jspdf;
 
@@ -3535,6 +4734,42 @@ window.exportAcertoPDF=exportAcertoPDF;
 window.exportConsigPDF=exportConsigPDF;
 window.importVolExcel=importVolExcel;
 window.editVol=editVol;
+window.switchTab=switchTab;
+window.toggleMatchFields=toggleMatchFields;
+window.saveResultado=saveResultado;
+window.delRes=delRes;
+window.delMatch=delMatch;
+window.saveEntradaDB=saveEntradaDB;
+window.delEntradaDB=delEntradaDB;
+window.exportResultadosPDF=exportResultadosPDF;
+window.exportDiarioBordoPDF=exportDiarioBordoPDF;
+window.saveOrcRubrica=saveOrcRubrica;
+window.delOrc=delOrc;
+window.saveFatura=saveFatura;
+window.marcarPaga=marcarPaga;
+window.delFatura=delFatura;
+window.saveFluxoItem=saveFluxoItem;
+window.delFluxo=delFluxo;
+window.exportRelPatrPDF=exportRelPatrPDF;
+window.exportRelPatrSingle=exportRelPatrSingle;
+window.exportOrcamentoPDF=exportOrcamentoPDF;
+window.exportFaturasPDF=exportFaturasPDF;
+window.exportFluxoPDF=exportFluxoPDF;
+window.saveActa=saveActa;
+window.delActa=delActa;
+window.exportActaPDF=exportActaPDF;
+window.exportActasPDF=exportActasPDF;
+window.saveComunicado=saveComunicado;
+window.delComunicado=delComunicado;
+window.exportComunicadoPDF=exportComunicadoPDF;
+window.exportComunicadoListaPDF=exportComunicadoListaPDF;
+window.exportPressKitPDF=exportPressKitPDF;
+window.exportRelWMFFinal=exportRelWMFFinal;
+window.exportRelAG=exportRelAG;
+window.exportRelCMV=exportRelCMV;
+window.exportBackupJSON=exportBackupJSON;
+window.exportBackupPDF=exportBackupPDF;
+window.exportTodosRelatorios=exportTodosRelatorios;
 window.editMbr=editMbr;
 window.saveQuarto=saveQuarto;
 window.delQuarto=delQuarto;
@@ -3560,6 +4795,42 @@ window.exportAcertoPDF=exportAcertoPDF;
 window.exportConsigPDF=exportConsigPDF;
 window.importVolExcel=importVolExcel;
 window.editVol=editVol;
+window.switchTab=switchTab;
+window.toggleMatchFields=toggleMatchFields;
+window.saveResultado=saveResultado;
+window.delRes=delRes;
+window.delMatch=delMatch;
+window.saveEntradaDB=saveEntradaDB;
+window.delEntradaDB=delEntradaDB;
+window.exportResultadosPDF=exportResultadosPDF;
+window.exportDiarioBordoPDF=exportDiarioBordoPDF;
+window.saveOrcRubrica=saveOrcRubrica;
+window.delOrc=delOrc;
+window.saveFatura=saveFatura;
+window.marcarPaga=marcarPaga;
+window.delFatura=delFatura;
+window.saveFluxoItem=saveFluxoItem;
+window.delFluxo=delFluxo;
+window.exportRelPatrPDF=exportRelPatrPDF;
+window.exportRelPatrSingle=exportRelPatrSingle;
+window.exportOrcamentoPDF=exportOrcamentoPDF;
+window.exportFaturasPDF=exportFaturasPDF;
+window.exportFluxoPDF=exportFluxoPDF;
+window.saveActa=saveActa;
+window.delActa=delActa;
+window.exportActaPDF=exportActaPDF;
+window.exportActasPDF=exportActasPDF;
+window.saveComunicado=saveComunicado;
+window.delComunicado=delComunicado;
+window.exportComunicadoPDF=exportComunicadoPDF;
+window.exportComunicadoListaPDF=exportComunicadoListaPDF;
+window.exportPressKitPDF=exportPressKitPDF;
+window.exportRelWMFFinal=exportRelWMFFinal;
+window.exportRelAG=exportRelAG;
+window.exportRelCMV=exportRelCMV;
+window.exportBackupJSON=exportBackupJSON;
+window.exportBackupPDF=exportBackupPDF;
+window.exportTodosRelatorios=exportTodosRelatorios;
 window.editMbr=editMbr;
 window.saveQuarto=saveQuarto;
 window.delQuarto=delQuarto;

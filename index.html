@@ -1525,8 +1525,34 @@ function startApp(role){
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
-  ['bar-cron','bar-org','bar-atl','bar-alo','bar-cer','bar-dsp','bar-di','bar-rec','bar-desp','bar-pat','bar-inv'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isAdmin?'flex':'none';});
-  ['th-atl','th-cer','th-di','th-rec','th-desp','th-pat'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isAdmin?'':'none';});
+  // Barras de accao — so visiveis para admin
+  [
+    'bar-cron','bar-org','bar-atl','bar-alo','bar-cer','bar-dsp',
+    'bar-di','bar-rec','bar-desp','bar-pat','bar-inv',
+    'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
+    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas',
+    'bar-consig'
+  ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=isAdmin?'flex':'none';
+  });
+  // Colunas de acoes nas tabelas — so visiveis para admin
+  [
+    'th-atl','th-cer','th-di','th-rec','th-desp','th-pat',
+    'th-cs-marca','th-cs-art','th-cs-venda',
+    'th-rm','th-match','th-res','th-orc','th-fat',
+  ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=isAdmin?'':'none';
+  });
+  // Botoes de edicao inline — so visiveis para admin
+  document.querySelectorAll('.btn.bd2, .btn.bo.bsm').forEach(btn=>{
+    if(!isAdmin)btn.style.display='none';
+  });
+  // Checklist WMF — selector de estado so para admin
+  if(!isAdmin){
+    document.querySelectorAll('.chk-sel').forEach(s=>s.style.display='none');
+  }
 }
 
 //  NAV 
@@ -1560,6 +1586,8 @@ function nav(el,id,title){
   if(id==='chegadas'){renderDelegacoes();}
   if(id==='guia'){renderGuia();}
   if(id==='consignacao'){renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();}
+  // Re-aplicar permissoes apos navegacao
+  setTimeout(setAdminBars, 50);
   if(id==='modo-evento')startModeEvento();
 }
 function tick(){const n=new Date();document.getElementById('clk').textContent=n.toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});}

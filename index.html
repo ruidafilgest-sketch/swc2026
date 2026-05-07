@@ -205,6 +205,45 @@ td.mu{color:var(--mu);font-style:italic;}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* AJUDA CONTEXTUAL */
+#help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:8000;backdrop-filter:blur(3px);}
+#help-overlay.on{display:block;}
+#help-panel{
+  display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(520px,94vw);max-height:80vh;overflow-y:auto;
+  background:linear-gradient(160deg,#0D1A38,#080F20);
+  border:1px solid rgba(201,168,76,.3);border-radius:16px;
+  padding:28px 28px 24px;z-index:8001;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+#help-panel.on{display:block;animation:hpop .2s ease;}
+@keyframes hpop{from{opacity:0;transform:translate(-50%,-48%);}to{opacity:1;transform:translate(-50%,-50%);}}
+.help-close{position:absolute;top:16px;right:18px;background:rgba(255,255,255,.08);border:none;color:#fff;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:'Outfit',sans-serif;}
+.help-icon-big{font-size:28px;margin-bottom:10px;}
+.help-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:4px;}
+.help-subtitle{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(201,168,76,.6);margin-bottom:16px;}
+.help-sep{height:1px;background:rgba(201,168,76,.15);margin:16px 0;}
+.help-section{margin-bottom:14px;}
+.help-section-title{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(201,168,76,.8);margin-bottom:8px;}
+.help-body{font-size:13px;color:rgba(200,192,180,.9);line-height:1.7;}
+.help-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:8px;}
+.help-step-n{min-width:22px;height:22px;border-radius:50%;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.3);color:var(--gl);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.help-step-t{font-size:12px;color:rgba(200,192,180,.9);line-height:1.6;}
+.help-warn{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:rgba(232,160,48,.08);border:1px solid rgba(232,160,48,.2);border-radius:8px;margin-top:10px;}
+.help-warn-t{font-size:12px;color:rgba(232,160,48,.9);line-height:1.6;}
+/* Botão de ajuda inline */
+.hbtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);
+  color:rgba(201,168,76,.7);font-size:11px;font-weight:700;
+  cursor:pointer;margin-left:6px;vertical-align:middle;
+  transition:all .15s;flex-shrink:0;font-family:'Outfit',sans-serif;
+  line-height:1;
+}
+.hbtn:hover{background:rgba(201,168,76,.25);border-color:rgba(201,168,76,.5);color:var(--gl);}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head><body>
@@ -502,7 +541,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- ATLETAS -->
 <div class="pg" id="pg-atletas">
-<div class="st"><span class="sn">ATL</span>Atletas &amp; Inscrições</div>
+<div class="st"><span class="sn">ATL</span>Atletas &amp; Inscricoes<button class="hbtn" onclick="openHelp('atletas')">i</button></div>
 <div class="sd">Registo por país/federação — taxas reais, estado, credenciação, alojamento atribuído</div>
 <div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -517,7 +556,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- ALOJAMENTO -->
 <div class="pg" id="pg-alojamento">
-<div class="st"><span class="sn">ALO</span>Alojamento &amp; Logística</div>
+<div class="st"><span class="sn">ALO</span>Alojamento &amp; Logistica<button class="hbtn" onclick="openHelp('alojamento')">i</button></div>
 <div class="sd">5 hotéis · Rooming lists · Transfers OPO ↔ Vizela · Shuttle local diário</div>
 <div class="av"><strong>Requisito WMF obrigatório:</strong> máx. 50€/noite duplo (incl. pequeno-almoço) · mín. 15m² · chuveiro privativo. Incumprimento = perda das taxas de participação.</div>
 <div class="bb" id="bar-alo"><button class="btn bp" onclick="openM('m-hot')">+ Registar hotel</button><button class="btn bo" onclick="openM('m-trn')">+ Transfer / Shuttle</button></div>
@@ -529,7 +568,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- CERIMÓNIAS -->
 <div class="pg" id="pg-cerimonias">
-<div class="st"><span class="sn">CER</span>Cerimónias &amp; Protocolo</div>
+<div class="st"><span class="sn">CER</span>Cerimonias &amp; Protocolo<button class="hbtn" onclick="openHelp('cerimonias')">i</button></div>
 <div class="sd">Abertura 13 out 19:30 · Encerramento 17 out 19:30 · Comissão de Honra · VIP</div>
 <div class="bb" id="bar-cer"><button class="btn bp" onclick="openM('m-conv')">+ Convidado VIP</button><button class="btn bo" onclick="exportCerimoniasPDF()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -609,7 +648,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- DIÁRIO -->
 <div class="pg" id="pg-diario">
-<div class="st"><span class="sn">DI</span>Diário de Caixa / Banco</div>
+<div class="st"><span class="sn">DI</span>Diario de Caixa / Banco<button class="hbtn" onclick="openHelp('diario')">i</button></div>
 <div class="sd">Lançamento a lançamento · Caixa e Banco separados · Saldo corrente · Apenas valores reais com confirmação documental</div>
 <div class="av"><strong>Rigor contabilístico absoluto:</strong> Cada lançamento requer confirmação documental (fatura, recibo, transferência). Nunca são inseridos valores estimados.</div>
 <div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button></div>
@@ -625,7 +664,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- RECEITAS -->
 <div class="pg" id="pg-receitas">
-<div class="st"><span class="sn">REC</span>Receitas</div>
+<div class="st"><span class="sn">REC</span>Receitas<button class="hbtn" onclick="openHelp('receitas')">i</button></div>
 <div class="sd">Classe 7 SNC-ESNL · Valores reais confirmados — nunca estimados ou assumidos</div>
 <div class="bb" id="bar-rec"><button class="btn bp" onclick="openM('m-rec')">+ Nova receita</button><button class="btn bo" onclick="exportReceitas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -640,7 +679,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- DESPESAS -->
 <div class="pg" id="pg-despesas">
-<div class="st"><span class="sn">DESP</span>Despesas</div>
+<div class="st"><span class="sn">DESP</span>Despesas<button class="hbtn" onclick="openHelp('despesas')">i</button></div>
 <div class="sd">Classe 6 SNC-ESNL · 17 rubricas · Valores reais por documento fiscal confirmado</div>
 <div class="bb" id="bar-desp"><button class="btn bp" onclick="openM('m-desp')">+ Nova despesa</button><button class="btn bo" onclick="exportDespesas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -655,7 +694,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- PATROCÍNIOS -->
 <div class="pg" id="pg-patrocinios">
-<div class="st"><span class="sn">PAT</span>Patrocínios &amp; CRM</div>
+<div class="st"><span class="sn">PAT</span>Patrocinios &amp; CRM<button class="hbtn" onclick="openHelp('patrocinios')">i</button></div>
 <div class="sd">Angariação · Gold WMF (direitos especiais) · Patrocinadores locais · Estado do processo</div>
 <div class="bb" id="bar-pat"><button class="btn bp" onclick="openM('m-pat')">+ Novo patrocinador</button><button class="btn bo" onclick="exportPat()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -723,7 +762,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- PROGRAMA DO EVENTO -->
 <div class="pg" id="pg-programa">
-<div class="st"><span class="sn">PROG</span>Programa Oficial — SWC Vizela 2026</div>
+<div class="st"><span class="sn">PROG</span>Programa Oficial — SWC Vizela 2026<button class="hbtn" onclick="openHelp('programa')">i</button></div>
 <div class="sd">13–17 Outubro 2026 · Hora a hora · Editável · Exportação PDF</div>
 <div class="bb" id="bar-programa"><button class="btn bp" onclick="openM('m-prog-item')">+ Adicionar item</button><button class="btn bo" onclick="exportProgramaPDF()">Exportar PDF oficial</button></div>
 <div class="g4" style="margin-bottom:16px;">
@@ -837,7 +876,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- ROOMING LIST -->
 <div class="pg" id="pg-rooming">
-<div class="st"><span class="sn">ROOM</span>Rooming List Oficial WMF</div>
+<div class="st"><span class="sn">ROOM</span>Rooming List Oficial WMF<button class="hbtn" onclick="openHelp('rooming')">i</button></div>
 <div class="sd">Nome - Pais - Hotel - Quarto - Check-in/out - Documento oficial WMF</div>
 <div class="bb" id="bar-rooming">
   <button class="btn bp" onclick="openM('m-quarto')">+ Atribuir quarto</button>
@@ -869,7 +908,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- CHECKLIST CHEGADAS -->
 <div class="pg" id="pg-chegadas">
-<div class="st"><span class="sn">ARR</span>Checklist de Chegadas por Pais</div>
+<div class="st"><span class="sn">ARR</span>Checklist de Chegadas por Pais<button class="hbtn" onclick="openHelp('chegadas')">i</button></div>
 <div class="sd">Estado por delegacao - Voo - Hotel - Transfer - Credencial - Kit - Pagamento</div>
 <div class="bb" id="bar-chegadas">
   <button class="btn bp" onclick="openM('m-delegacao')">+ Adicionar delegacao</button>
@@ -902,7 +941,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- RESULTADOS DESPORTIVOS -->
 <div class="pg" id="pg-resultados">
-<div class="st"><span class="sn">RES</span>Resultados Desportivos</div>
+<div class="st"><span class="sn">RES</span>Resultados Desportivos<button class="hbtn" onclick="openHelp('resultados')">i</button></div>
 <div class="sd">Classificacoes por categoria - Stroke Play - Match Play - Registo manual - Exportacao oficial WMF</div>
 <div class="bb" id="bar-resultados">
   <button class="btn bp" onclick="openM('m-resultado')">+ Registar resultado</button>
@@ -932,7 +971,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- DIARIO DE BORDO -->
 <div class="pg" id="pg-diariobordo">
-<div class="st"><span class="sn">DB</span>Diario de Bordo</div>
+<div class="st"><span class="sn">DB</span>Diario de Bordo<button class="hbtn" onclick="openHelp('diariobordo')">i</button></div>
 <div class="sd">Registo cronologico durante os 5 dias do evento - Incidentes - Decisoes - Memoria historica</div>
 <div class="bb" id="bar-diariobordo">
   <button class="btn bp" onclick="openM('m-entrada-db')">+ Nova entrada</button>
@@ -967,7 +1006,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- ORCAMENTO VS REAL -->
 <div class="pg" id="pg-orcamento">
-<div class="st"><span class="sn">ORC</span>Orcamento vs Real</div>
+<div class="st"><span class="sn">ORC</span>Orcamento vs Real<button class="hbtn" onclick="openHelp('orcamento')">i</button></div>
 <div class="sd">Comparacao rubrica a rubrica - Semaforo verde/amarelo/vermelho - Desvios - PDF para FPM e IPDJ</div>
 <div class="bb">
   <button class="btn bp" onclick="openM('m-orc-rubrica')">+ Definir rubrica orcamental</button>
@@ -986,7 +1025,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- FATURAS -->
 <div class="pg" id="pg-faturas">
-<div class="st"><span class="sn">FAT</span>Gestao de Faturas</div>
+<div class="st"><span class="sn">FAT</span>Gestao de Faturas<button class="hbtn" onclick="openHelp('faturas')">i</button></div>
 <div class="sd">Registo de faturas - Alertas de vencimento - Estado de pagamento - Controlo documental</div>
 <div class="bb" id="bar-faturas">
   <button class="btn bp" onclick="openM('m-fatura')">+ Nova fatura</button>
@@ -1005,7 +1044,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- FLUXO DE CAIXA -->
 <div class="pg" id="pg-fluxo">
-<div class="st"><span class="sn">FC</span>Fluxo de Caixa Previsto</div>
+<div class="st"><span class="sn">FC</span>Fluxo de Caixa Previsto<button class="hbtn" onclick="openHelp('fluxo')">i</button></div>
 <div class="sd">Calendario mensal de entradas e saidas previstas - Saldo previsto - Visual por mes</div>
 <div class="bb">
   <button class="btn bp" onclick="openM('m-fluxo-item')">+ Adicionar previsao</button>
@@ -1048,7 +1087,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- COMUNICACOES -->
 <div class="pg" id="pg-comunicacoes">
-<div class="st"><span class="sn">COM</span>Comunicacoes as Delegacoes</div>
+<div class="st"><span class="sn">COM</span>Comunicacoes as Delegacoes<button class="hbtn" onclick="openHelp('comunicacoes')">i</button></div>
 <div class="sd">Templates oficiais em EN - Confirmacao inscricao - Info chegada - Programa - Resultados</div>
 <div class="bb" id="bar-comunicacoes">
   <button class="btn bp" onclick="openM('m-comunicado')">+ Novo comunicado</button>
@@ -1064,7 +1103,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- PRESS KIT -->
 <div class="pg" id="pg-presskit">
-<div class="st"><span class="sn">PK</span>Press Kit Digital</div>
+<div class="st"><span class="sn">PK</span>Press Kit Digital<button class="hbtn" onclick="openHelp('presskit')">i</button></div>
 <div class="sd">Pasta de imprensa para jornalistas e comunicacao social - Logo - Factos - Bio - Contactos</div>
 <div class="bb">
   <button class="btn bp" onclick="exportPressKitPDF()">Exportar Press Kit PDF</button>
@@ -1187,7 +1226,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
-<div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026</div>
+<div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026<button class="hbtn" onclick="openHelp('wmfcheck')">i</button></div>
 <div class="sd">45 itens · 6 categorias · EN / PT · Contador de dias · Estado cirúrgico</div>
 <div class="bb">
   <button class="btn bo" onclick="chkLang=chkLang==='EN'?'PT':'EN';renderChk()" id="btn-chk-lang">PT ↔ EN</button>
@@ -1702,6 +1741,17 @@ td.mu{color:var(--mu);font-style:italic;}
     <button class="btn" onclick="saveIncidenteRapido()" style="background:var(--er);color:#fff;font-weight:700;">&#9888; Guardar incidente</button>
   </div>
 </div></div>
+
+<!-- PAINEL DE AJUDA CONTEXTUAL -->
+<div id="help-overlay" onclick="closeHelp()"></div>
+<div id="help-panel">
+  <button class="help-close" onclick="closeHelp()">✕ fechar</button>
+  <div class="help-icon-big" id="help-icon">ⓘ</div>
+  <div class="help-title" id="help-title">—</div>
+  <div class="help-subtitle" id="help-subtitle">—</div>
+  <div class="help-sep"></div>
+  <div id="help-content"></div>
+</div>
 
 <div class="tst" id="tst"></div>
 
@@ -4529,6 +4579,142 @@ function exportTodosCertificados(){
   _atl.forEach((a,i)=>setTimeout(()=>exportCertificado(a.id),i*600));
 }
 
+
+
+// ══ SISTEMA DE AJUDA CONTEXTUAL ══
+const HELP = {
+  dashboard:{icon:'&#9632;',title:'Dashboard',sub:'Visao geral do evento',
+    o:'O Dashboard e o ecra inicial apos login. Mostra em tempo real o estado de todos os modulos — financeiro, atletas, prazos e checklist WMF.',
+    steps:['O countdown mostra os dias/horas/minutos/segundos ate 13 Outubro 2026 19:30.','Os 5 KPIs (receitas, despesas, saldo, atletas, patrocinios) actualizam automaticamente.','Os alertas a vermelho sao prazos WMF urgentes — a vencer em 7 dias.','Os alertas a amarelo sao prazos a vencer em 30 dias.'],
+    warn:'Os valores do dashboard sao apenas os reais registados. Previsoes e estimativas nao aparecem aqui.'},
+  cronologia:{icon:'&#9719;',title:'Cronologia & Prazos WMF',sub:'Acordo Tripartido WMF/EMF/FPM',
+    o:'Contem os 41 prazos contratuais do Acordo Tripartido WMF/EMF/FPM pre-carregados automaticamente. Inclui prazos do Acordo e itens criticos da Checklist oficial WMF.',
+    steps:['Os prazos sao pre-carregados — nao precisas de introduzir nada.','Clica em "Alterar estado" para marcar como Em curso ou Concluido.','Usa "+ Novo prazo" para adicionar prazos internos da Vizelgolfe.','O semaforo actualiza automaticamente: verde (30+ dias), amarelo (7-30 dias), vermelho (menos de 7 dias).'],
+    warn:'Os prazos Criticos (a vermelho) sao obrigacoes contratuais com a WMF. O incumprimento pode resultar no cancelamento do evento sem compensacao.'},
+  programa:{icon:'&#9783;',title:'Programa Oficial do Evento',sub:'13 a 17 Outubro 2026',
+    o:'Registo hora a hora dos 5 dias do evento. Cada item tem dia, hora, titulo, local/descricao, tipo de actividade e responsavel.',
+    steps:['Clica "+ Adicionar item" para criar um novo item no programa.','Escolhe o dia, hora e tipo de actividade (Competicao, Cerimonia, Treino, etc.).','Os itens aparecem automaticamente ordenados por hora em cada dia.','O PDF oficial inclui todos os dias com cabecalho e 5 logos institucionais.'],
+    warn:'O Programa e usado pelo Modo Evento para determinar a sessao actual. Introduz as horas com precisao.'},
+  atletas:{icon:'&#9675;',title:'Atletas & Inscricoes',sub:'Gestao de participantes',
+    o:'Registo completo de todos os atletas inscritos no SWC Vizela 2026 — dados pessoais, categoria, taxa de inscricao, hotel e estado de confirmacao.',
+    steps:['Clica "+ Novo atleta" para adicionar um participante.','Campos obrigatorios: Nome, Pais, Categoria (Homens/Senhoras).','O campo Taxa de inscricao (conta SNC 729) alimenta automaticamente o Relatorio WMF/EMF.','Para que os dados aparecam no Relatorio WMF, a taxa deve ser tambem lancada nas Receitas com conta 729.'],
+    warn:'Nunca usar "FP Minigolfe" — usar sempre "FPM". O sistema de resultados usa o nome exacto do atleta para cruzar dados.'},
+  organizacao:{icon:'&#9670;',title:'Organizacao & COE',sub:'Comite Organizador Executivo e voluntarios',
+    o:'Gestao dos membros do COE e da equipa de voluntarios de apoio ao evento.',
+    steps:['Adiciona os membros do COE com nome, funcao, contacto e responsabilidade.','Para voluntarios: usa "Importar Excel" para carregar o ficheiro da equipa de apoio de uma vez.','Apos importacao, clica "Editar" em cada voluntario para atribuir a funcao no evento e seccao.','O responsavel maximo decide e atribui as funcoes — o sistema guarda tudo em tempo real.'],
+    warn:'A funcao no evento (Campo Pista 1, Recepcao, Transfers, etc.) so deve ser preenchida pelo responsavel maximo apos decisao oficial.'},
+  alojamento:{icon:'&#9744;',title:'Alojamento & Logistica',sub:'Hoteis H1-H5 e transfers',
+    o:'Gestao dos hoteis parceiros e dos transfers entre o Aeroporto do Porto e Vizela.',
+    steps:['Adiciona cada hotel com codigo (H1-H5), nome, distancia ao campo, tarifa e capacidade.','Os transfers registam cada viagem — tipo, data, hora, numero de passageiros e valor.','Os valores dos transfers entram nas Despesas com conta SNC 6251 (Deslocacoes).','A Rooming List cruza com os hoteis aqui registados.'],
+    warn:'A WMF exige que os hoteis sejam confirmados antes de 14 de Janeiro 2026 (prazo contratual).'},
+  cerimonias:{icon:'&#9733;',title:'Cerimonias & Protocolo',sub:'Abertura e Encerramento',
+    o:'Lista de convidados VIP para as duas cerimonias: Abertura (13 Out 19:30) e Encerramento com Medalhas (17 Out 19:30).',
+    steps:['Adiciona cada convidado com nome, entidade, categoria e confirmacao para cada cerimonia.','Categorias disponiveis: Comissao de Honra, Entidade Publica, Parceiro/Patrocinador, Media, WMF/EMF/FPM.','O PDF exporta uma lista de protocolo oficial separada por cerimonia.','Usa os filtros para verificar rapidamente quem confirmou presenca em cada cerimonia.'],
+    warn:'Confirmar as presenças com antecedencia minima de 2 semanas. A lista final deve ser enviada ao responsavel de protocolo.'},
+  desportivo:{icon:'&#9671;',title:'Desportivo & Arbitros',sub:'Equipa de arbitragem',
+    o:'Registo e gestao da equipa de arbitragem do evento — arbitros nacionais e internacionais.',
+    steps:['Adiciona cada arbitro com nome, pais, federacao, funcao e hotel atribuido.','Funcoes disponiveis: Arbitro Principal, Arbitro de Campo, Auxiliar, Observador WMF/EMF.','O PDF exporta a lista completa para entregar a WMF/EMF no inicio do evento.'],
+    warn:''},
+  rooming:{icon:'&#9647;',title:'Rooming List Oficial WMF',sub:'Documento exigido pela WMF',
+    o:'Lista oficial de alojamento exigida pela WMF. Cada hospede tem hotel, quarto, datas de check-in e check-out registados.',
+    steps:['Adiciona cada hospede com nome, pais, tipo (Atleta/Arbitro/Staff), hotel e numero de quarto.','Usa os filtros para ver por hotel ou por tipo de participante.','O PDF e o documento oficial WMF — ordenado por hotel e quarto.','A WMF exige este documento em Setembro 2026 (prazo contratual).'],
+    warn:'Este documento e exigido pela WMF. A sua ausencia pode bloquear o pagamento dos 75% das taxas.'},
+  chegadas:{icon:'&#9745;',title:'Checklist de Chegadas por Pais',sub:'Controlo operacional das delegacoes',
+    o:'Estado de chegada de cada delegacao — 6 checkboxes por pais. Actualiza em tempo real no Firebase.',
+    steps:['Adiciona cada delegacao com pais, chefe, numero de atletas e hotel.','Clica directamente em cada checkbox para marcar/desmarcar: Voo, Hotel, Transfer, Credencial, Kit, Pagamento.','A barra de progresso por pais actualiza instantaneamente (0% a 100%).','O PDF exporta o estado completo de todas as delegacoes.'],
+    warn:'Este modulo e para uso durante as chegadas (dia 13 Outubro). Manter actualizado em tempo real facilita a gestao da equipa.'},
+  resultados:{icon:'&#9654;',title:'Resultados Desportivos',sub:'Stroke Play e Match Play',
+    o:'Registo manual dos resultados oficiais da competicao. Stroke Play (4 rondas) e Match Play (eliminatorio).',
+    steps:['Para Stroke Play: adiciona nome, pais, categoria e resultados de cada ronda.','O total e calculado automaticamente. O podio com ouro/prata/bronze aparece nas primeiras 3 posicoes.','Para Match Play: regista cada jogo com os dois jogadores e scores. O vencedor e calculado automaticamente.','O PDF e o documento oficial WMF com classificacao completa.'],
+    warn:'Confirma cada resultado com o arbitro antes de introduzir. Um erro de resultado pode afectar toda a classificacao.'},
+  diariobordo:{icon:'&#9999;',title:'Diario de Bordo',sub:'Registo cronologico do evento',
+    o:'Registo de tudo o que acontece durante os 5 dias. Memoria historica, base para o relatorio final e auditoria.',
+    steps:['Usa o botao vermelho "Incidente" no topo para registar situacoes urgentes rapidamente.','Para registos normais: clica "+ Nova entrada" com dia, hora, tipo e descricao.','Tipos: Normal, Incidente, Decisao COE, Comunicacao WMF/EMF.','Filtra por dia ou tipo para encontrar qualquer registo rapidamente.'],
+    warn:'Regista TUDO — mesmo o que parece pouco importante. O diario de bordo e a base do Relatorio Final para a WMF.'},
+  wmfcheck:{icon:'&#9745;',title:'Checklist WMF Oficial — 45 Itens',sub:'6 categorias de obrigacoes contratuais',
+    o:'Os 45 itens obrigatorios definidos pela WMF para a organizacao do SWC Vizela 2026. Disponivel em PT e EN.',
+    steps:['Clica no selector de estado junto a cada item: Pending, In Progress, Done, Issue.','O contador no topo actualiza automaticamente (concluidos / em curso / pendentes).','O botao PT|EN no topo muda a lingua de apresentacao.','O PDF e o documento oficial para enviar a WMF como prova de cumprimento.'],
+    warn:'Itens com estado "Issue" indicam problemas — devem ser resolvidos urgentemente e comunicados ao COE.'},
+  consignacao:{icon:'&#9723;',title:'Consignacao & Merchandise',sub:'Stock, vendas e acerto de contas',
+    o:'Gestao de artigos em consignacao por marcas parceiras. Controlo de entradas, vendas, devolucoes e comissoes.',
+    steps:['1. Adiciona a marca com nome, contacto e percentagem de comissao.','2. Adiciona os artigos/referencias da marca com preco unitario e quantidade entregue.','3. Regista cada venda — o stock actualiza automaticamente e a comissao e calculada.','4. No final do evento, clica "PDF" na marca para gerar o acerto de contas com campo de assinatura.'],
+    warn:'O sistema nao deixa vender mais do que o stock disponivel. Qualquer tentativa de oversell e bloqueada automaticamente.'},
+  diario:{icon:'&#9654;',title:'Diario de Caixa e Banco',sub:'Movimentos financeiros reais',
+    o:'Registo de todos os movimentos de dinheiro — entradas (Credito) e saidas (Debito) — separados por Caixa e Banco.',
+    steps:['Usa C (Credito) para entradas de dinheiro e D (Debito) para saidas.','Indica sempre a conta SNC correcta para que o lancamento aparea nos relatorios.','O saldo e calculado automaticamente pela soma de todos os movimentos.','O PDF exporta o diario completo com saldo acumulado por linha.'],
+    warn:'Regista apenas valores REAIS — dinheiro efectivamente recebido ou pago. Previsoes vao para o Fluxo de Caixa.'},
+  receitas:{icon:'&#9650;',title:'Receitas',sub:'Rendimentos reais do evento — SNC-ESNL',
+    o:'Registo de todas as receitas do evento. O estado "Recebido" faz o valor entrar nos relatorios financeiros.',
+    steps:['Adiciona cada receita com data, conta SNC, descricao e valor.','Estado "Recebido" = valor entra no DR, Balanco e IPDJ.','Estado "Pendente" = aparece nos creditos a receber no Balanco.','As taxas de atletas devem usar conta 729 — alimentam o Relatorio WMF automaticamente.'],
+    warn:'Nunca registar receitas previstas como "Recebido". Aguarda sempre a confirmacao efectiva do pagamento.'},
+  despesas:{icon:'&#9660;',title:'Despesas',sub:'Gastos reais do evento — SNC-ESNL',
+    o:'Registo de todas as despesas do evento. Cada despesa deve ter o numero do documento e a conta SNC correcta.',
+    steps:['Adiciona cada despesa com data, numero do documento, conta SNC e valor.','Estado "Pago" = valor entra nos relatorios financeiros.','Estado "Pendente" = aparece nos fornecedores a pagar no Balanco.','Guarda sempre o documento fisico (fatura, recibo) que suporta cada lancamento.'],
+    warn:'Nunca registar uma despesa sem ter o documento de suporte. O IPDJ pode solicitar comprovativos de todas as despesas.'},
+  patrocinios:{icon:'&#9734;',title:'Patrocinios & CRM',sub:'Gestao comercial de patrocinadores',
+    o:'Modulo de CRM para acompanhar o estado comercial de cada patrocinador. O valor aqui NAO entra directamente nos relatorios financeiros.',
+    steps:['Adiciona cada patrocinador com empresa, tipo, contacto, valor acordado e contrapartidas.','Estados disponiveis: Proposta, Negociacao, Confirmado, Recebido.','Quando o patrocinio e efectivamente recebido, lanca tambem nas Receitas com conta 724.','O PDF de Relatorio por Patrocinador e gerado no modulo "Rel. Patrocinadores".'],
+    warn:'O valor neste modulo e apenas para CRM. Para entrar nos relatorios financeiros OBRIGATORIAMENTE deve ser lancado tambem nas Receitas com conta SNC 724.'},
+  orcamento:{icon:'&#9651;',title:'Orcamento vs Real',sub:'Comparacao rubrica a rubrica',
+    o:'Comparacao entre o orcamento aprovado e os valores reais executados. O semaforo actualiza automaticamente.',
+    steps:['Define cada rubrica com conta SNC e valor orcamentado.','O executado e calculado automaticamente das Receitas e Despesas reais.','Semaforo: Verde (execucao ate 80% do orcado), Amarelo (80-110%), Vermelho (mais de 110%).','O PDF e o documento para apresentar a FPM e ao IPDJ.'],
+    warn:'Este modulo so faz sentido se as Receitas e Despesas estiverem actualizadas com os valores reais.'},
+  faturas:{icon:'&#9636;',title:'Gestao de Faturas',sub:'Controlo documental e vencimentos',
+    o:'Registo e controlo de todas as faturas recebidas de fornecedores. Alertas automaticos de vencimento.',
+    steps:['Adiciona cada fatura com numero, fornecedor, conta SNC, valor e data de vencimento.','Faturas a vencer em 7 dias aparecem com alerta vermelho no topo do modulo e no Dashboard.','Clica "Pagar" para marcar a fatura como paga instantaneamente.','O PDF exporta a lista completa para controlo documental.'],
+    warn:'Uma fatura nao paga na data de vencimento pode gerar juros de mora e problemas com fornecedores.'},
+  fluxo:{icon:'&#9654;',title:'Fluxo de Caixa Previsto',sub:'Previsao de entradas e saidas mensais',
+    o:'Previsao mensal de entradas e saidas futuras — para planear a liquidez do evento mes a mes.',
+    steps:['Adiciona cada previsao com mes, tipo (entrada/saida), descricao e valor previsto.','Indica a probabilidade: Alta (confirmado), Media (em negociacao), Baixa (estimativa).','O grafico mensal mostra entradas a verde, saidas a vermelho e saldo previsto.','Este modulo e para PREVISOES — os valores reais ficam no Diario de Caixa.'],
+    warn:'Nunca confundir Fluxo de Caixa (previsao) com o Diario de Caixa (real). Sao dois modulos distintos.'},
+  actas:{icon:'&#9638;',title:'Actas & Convocatorias COE',sub:'Arquivo formal das reunioes',
+    o:'Registo formal de todas as reunioes do Comite Organizador Executivo. Arquivo historico e juridicamente relevante.',
+    steps:['Adiciona cada reuniao com data, hora, local, presidente, participantes e ordem do dia.','Regista todas as deliberacoes e decisoes tomadas — com o maximo de detalhe possivel.','O PDF individual por acta tem campos de assinatura para o secretario e presidente da mesa.'],
+    warn:'As actas do COE sao documentos formais. Devem ser aprovadas na reuniao seguinte e guardadas em arquivo fisico.'},
+  comunicacoes:{icon:'&#9993;',title:'Comunicacoes as Delegacoes',sub:'Templates oficiais EN/PT/DE/ES',
+    o:'Templates de comunicados oficiais para enviar as federacoes e delegacoes participantes.',
+    steps:['Cria o comunicado com tipo, lingua, destinatarios e corpo do texto.','Estado "Rascunho" = em preparacao. Estado "Enviado" = comunicado ja enviado.','O PDF gera o comunicado formatado para imprimir ou enviar como anexo.','O envio por email NAO e automatico — usa o PDF gerado para enviar manualmente.'],
+    warn:'Os comunicados oficiais devem ser sempre em Ingles (EN) para as delegacoes internacionais. Usa PT apenas para comunicacoes internas ou com FPM.'},
+  presskit:{icon:'&#9741;',title:'Press Kit Digital',sub:'Pasta de imprensa para media',
+    o:'Documento de imprensa para jornalistas e comunicacao social. Gerado automaticamente com dados reais.',
+    steps:['Preenche o nome, email e telemovel do responsavel de imprensa.','Os factos do evento (atletas, paises, datas) actualizam automaticamente dos dados do sistema.','O PDF e em Ingles — formato padrao de press kit internacional.','Distribui a jornalistas antes do evento e durante as cerimonias.'],
+    warn:'O Press Kit deve ser aprovado pelo COE antes de distribuir. Nao inclui resultados — para isso usa o Diario de Bordo.'},
+  backup:{icon:'&#9729;',title:'Backup & Exportacao Total',sub:'Seguranca dos dados do evento',
+    o:'Exporta todos os dados do sistema num unico ficheiro JSON ou PDF resumo. Para guardar offline e enviar a FPM/WMF.',
+    steps:['Clica "Exportar backup completo (JSON)" para descarregar todos os dados.','O ficheiro JSON pode ser reimportado noutro sistema ou guardado como arquivo.','O "Resumo executivo (PDF)" mostra a contagem de registos por modulo.','Faz backup diario durante os 5 dias do evento — guarda numa pasta partilhada do COE.'],
+    warn:'O backup NAO substitui o Firebase — e apenas uma copia de seguranca adicional. Os dados ficam sempre no Firebase.'},
+};
+
+function openHelp(key){
+  const d=HELP[key];
+  if(!d)return;
+  document.getElementById('help-icon').innerHTML=d.icon||'&#9432;';
+  document.getElementById('help-title').textContent=d.title||key;
+  document.getElementById('help-subtitle').textContent=d.sub||'';
+  let html='';
+  if(d.o){
+    html+=`<div class="help-section"><div class="help-section-title">O que e</div><div class="help-body">${d.o}</div></div>`;
+  }
+  if(d.steps&&d.steps.length){
+    html+=`<div class="help-sep"></div><div class="help-section"><div class="help-section-title">Como usar</div>`;
+    d.steps.forEach((s,i)=>{
+      html+=`<div class="help-step"><div class="help-step-n">${i+1}</div><div class="help-step-t">${s}</div></div>`;
+    });
+    html+='</div>';
+  }
+  if(d.warn){
+    html+=`<div class="help-warn"><span style="font-size:16px;flex-shrink:0;">&#9888;</span><div class="help-warn-t">${d.warn}</div></div>`;
+  }
+  document.getElementById('help-content').innerHTML=html;
+  document.getElementById('help-panel').classList.add('on');
+  document.getElementById('help-overlay').classList.add('on');
+}
+
+function closeHelp(){
+  document.getElementById('help-panel').classList.remove('on');
+  document.getElementById('help-overlay').classList.remove('on');
+}
+window.openHelp=openHelp;window.closeHelp=closeHelp;
 
 //  EXPORTAÇÃO PDF 
 const {jsPDF} = window.jspdf;

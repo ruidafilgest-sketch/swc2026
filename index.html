@@ -206,6 +206,57 @@ td.mu{color:var(--mu);font-style:italic;}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* MODO FOCO */
+#foco-btn{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.5);border-radius:7px;padding:5px 12px;
+  font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;
+  transition:all .2s;margin-left:8px;
+}
+#foco-btn:hover{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.3);color:var(--gl);}
+.modo-foco #sb{display:none!important;}
+.modo-foco #pgt-wrap{display:none!important;}
+.modo-foco .pg.active{padding:20px 24px;}
+.modo-foco #foco-btn{background:rgba(201,168,76,.15);border-color:rgba(201,168,76,.4);color:var(--gl);}
+
+/* MODO IMPRESSAO */
+@media print{
+  #sb,#topbar,#foco-btn,.bb,.btn,.hbtn,#help-overlay,#help-panel,
+  #detalhe-overlay,#detalhe-sheet,#slideshow-overlay,
+  #ds-ov,#ds-sh,.btn-ver,.search-results,#global-search{display:none!important;}
+  body{background:#fff!important;color:#000!important;}
+  .pg.active{display:block!important;padding:20px!important;}
+  .cd,.sm{border:1px solid #ddd!important;background:#fff!important;}
+  .cdt,.st,.sn{color:#000!important;}
+  .smv,.cdt{color:#000!important;}
+  table th{background:#f0f0f0!important;color:#000!important;}
+  table td{color:#000!important;}
+  .go,.vl,.tok{color:#000!important;}
+  @page{margin:1.5cm;}
+}
+
+/* NOTIFICACOES */
+#notif-container{
+  position:fixed;top:68px;right:16px;z-index:7000;
+  display:flex;flex-direction:column;gap:8px;
+  pointer-events:none;
+}
+.notif-item{
+  background:linear-gradient(135deg,#0D1A38,#080F20);
+  border:1px solid rgba(201,168,76,.3);border-radius:10px;
+  padding:12px 16px;min-width:260px;max-width:340px;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  pointer-events:all;
+  animation:nslide .3s ease;
+}
+@keyframes nslide{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+.notif-item.fade{animation:nfade .3s ease forwards;}
+@keyframes nfade{to{opacity:0;transform:translateX(20px);}}
+.notif-tipo{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;}
+.notif-msg{font-size:12px;color:rgba(200,192,180,.9);line-height:1.5;}
+
+/* AJUDA CONTEXTUAL */
 /* AJUDA CONTEXTUAL */
 #help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:8000;backdrop-filter:blur(3px);}
 #help-overlay.on{display:block;}
@@ -244,6 +295,7 @@ td.mu{color:var(--mu);font-style:italic;}
 }
 .hbtn:hover{background:rgba(201,168,76,.25);border-color:rgba(201,168,76,.5);color:var(--gl);}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head><body>
@@ -367,6 +419,7 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="sbs">&#9670; Pre-Evento</div>
     <div class="si" onclick="nav(this,'atletas','Atletas &amp; Inscricoes')"><span class="sic">&#9675;</span>Atletas &amp; Inscricoes</div>
     <div class="si" onclick="nav(this,'mapapaises','Mapa de Paises Participantes')"><span class="sic">&#9758;</span>Mapa de Paises</div>
+    <div class="si" onclick="nav(this,'estatisticas','Estatisticas do Evento')"><span class="sic">&#9636;</span>Estatisticas</div>
     <div class="si" onclick="nav(this,'alojamento','Alojamento &amp; Logistica')"><span class="sic">&#9744;</span>Alojamento &amp; Logistica</div>
     <div class="si" onclick="nav(this,'cerimonias','Cerimonias &amp; Protocolo')"><span class="sic">&#9733;</span>Cerimonias &amp; Protocolo</div>
     <div class="si" onclick="nav(this,'seguranca','Seguranca &amp; Seguros')"><span class="sic">&#9632;</span>Seguranca &amp; Seguros</div>
@@ -1224,6 +1277,69 @@ td.mu{color:var(--mu);font-style:italic;}
   <div style="position:absolute;bottom:24px;display:flex;gap:8px;" id="slide-dots"></div>
 </div>
 
+  <!-- ESTATISTICAS -->
+<div class="pg" id="pg-estatisticas">
+<div class="st"><span class="sn">STAT</span>Estatisticas do Evento<button class="hbtn" onclick="openHelp('estatisticas')">i</button></div>
+<div class="sd">Graficos em tempo real — atletas, financeiro, paises, checklist WMF</div>
+<div class="bb"><button class="btn bo" onclick="renderEstatisticas()">Actualizar graficos</button></div>
+
+<!-- KPI row -->
+<div class="g4" style="margin-bottom:20px;">
+  <div class="sm"><div class="sml">Total atletas</div><div class="smv" id="est-atl" style="color:var(--gl2)">0</div></div>
+  <div class="sm"><div class="sml">Paises</div><div class="smv" id="est-pais">0</div></div>
+  <div class="sm"><div class="sml">Saldo actual</div><div class="smv" id="est-saldo">0</div></div>
+  <div class="sm"><div class="sml">Checklist WMF</div><div class="smv" id="est-chk">0%</div></div>
+</div>
+
+<!-- Graficos - linha 1 -->
+<div class="g2" style="margin-bottom:20px;">
+  <div class="cd">
+    <div class="cdh"><div><div class="cdt">Distribuicao por Categoria</div><div class="cds">Homens vs Senhoras</div></div></div>
+    <div class="cdb" style="height:220px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="chart-cat" style="max-height:200px;"></canvas>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cdh"><div><div class="cdt">Top 10 Paises</div><div class="cds">Atletas por nacao</div></div></div>
+    <div class="cdb" style="height:220px;">
+      <canvas id="chart-paises" style="max-height:200px;"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Graficos - linha 2 -->
+<div class="g2" style="margin-bottom:20px;">
+  <div class="cd">
+    <div class="cdh"><div><div class="cdt">Execucao Financeira</div><div class="cds">Receitas vs Despesas vs Orcamento</div></div></div>
+    <div class="cdb" style="height:220px;">
+      <canvas id="chart-fin" style="max-height:200px;"></canvas>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cdh"><div><div class="cdt">Checklist WMF — Estado</div><div class="cds">45 itens por estado</div></div></div>
+    <div class="cdb" style="height:220px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="chart-chk" style="max-height:200px;"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Graficos - linha 3 -->
+<div class="g2">
+  <div class="cd">
+    <div class="cdh"><div><div class="cdt">Prazos WMF por Estado</div><div class="cds">Concluidos vs Pendentes vs Urgentes</div></div></div>
+    <div class="cdb" style="height:220px;display:flex;align-items:center;justify-content:center;">
+      <canvas id="chart-prazos" style="max-height:200px;"></canvas>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cdh"><div><div class="cdt">Patrocinios por Tipo</div><div class="cds">Valor confirmado por categoria</div></div></div>
+    <div class="cdb" style="height:220px;">
+      <canvas id="chart-pat" style="max-height:200px;"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
 <div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026<button class="hbtn" onclick="openHelp('wmfcheck')">i</button></div>
@@ -1742,6 +1858,7 @@ td.mu{color:var(--mu);font-style:italic;}
   </div>
 </div></div>
 
+<div id="notif-container"></div>
 <!-- PAINEL DE AJUDA CONTEXTUAL -->
 <div id="help-overlay" onclick="closeHelp()"></div>
 <div id="help-panel">
@@ -1843,6 +1960,7 @@ function nav(el,id,title){
   if(id==='fluxo'){renderFluxo();}
   if(id==='relpatr'){renderRelPatr();}
   if(id==='mapapaises'){renderMapaPaises();}
+  if(id==='estatisticas'){renderEstatisticas();}
   if(id==='certificados'){renderCertificados();}
   if(id==='posts'){renderPost();}
   if(id==='resultados'){renderResultados();renderMatch();}
@@ -4716,6 +4834,190 @@ function closeHelp(){
 }
 window.openHelp=openHelp;window.closeHelp=closeHelp;
 
+// ══ ESTATISTICAS ══
+let _charts = {};
+
+function renderEstatisticas(){
+  if(typeof Chart === 'undefined'){
+    setTimeout(renderEstatisticas, 500);
+    return;
+  }
+
+  const GOLD='rgba(201,168,76,1)', GOLD2='rgba(201,168,76,.6)', GOLD3='rgba(201,168,76,.25)';
+  const OK='rgba(74,184,122,1)', ER='rgba(224,82,82,1)', WR='rgba(232,160,48,1)', BL='rgba(90,138,204,1)';
+  const GRID='rgba(255,255,255,.06)', TICK='rgba(255,255,255,.4)';
+
+  const opts = {
+    responsive:true, maintainAspectRatio:true,
+    plugins:{legend:{labels:{color:TICK, font:{size:11}, boxWidth:12}}},
+  };
+
+  // Destruir charts anteriores
+  Object.values(_charts).forEach(c=>{try{c.destroy();}catch(e){}});
+  _charts={};
+
+  // ── KPIs ──
+  const nAtl=_atl.length;
+  const nPaises=new Set(_atl.map(a=>a.pais).filter(Boolean)).size;
+  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
+  const saldo=_lan.reduce((s,l)=>l.tp==='C'?s+Number(l.vl||0):s-Number(l.vl||0),0);
+  const done=_chkData?Object.values(_chkData).filter(v=>v.status==='Done').length:0;
+  const pctChk=Math.round(done/45*100);
+
+  const elA=document.getElementById('est-atl');
+  const elP=document.getElementById('est-pais');
+  const elS=document.getElementById('est-saldo');
+  const elC=document.getElementById('est-chk');
+  if(elA)elA.textContent=nAtl;
+  if(elP)elP.textContent=nPaises;
+  if(elS){elS.textContent=fmt(saldo);elS.style.color=saldo>=0?OK:ER;}
+  if(elC)elC.textContent=pctChk+'%';
+
+  // ── GRAFICO 1 — Distribuicao por categoria (doughnut) ──
+  const homens=_atl.filter(a=>a.categoria==='H').length;
+  const senhoras=_atl.filter(a=>a.categoria==='S').length;
+  const ctx1=document.getElementById('chart-cat');
+  if(ctx1){
+    _charts.cat=new Chart(ctx1,{type:'doughnut',data:{
+      labels:['Homens','Senhoras'],
+      datasets:[{data:[homens,senhoras],backgroundColor:[BL,GOLD],borderColor:'rgba(0,0,0,0)',borderWidth:0}]
+    },options:{...opts,cutout:'65%',plugins:{...opts.plugins,
+      title:{display:true,text:nAtl+' atletas total',color:TICK,font:{size:12}},
+    }}});
+  }
+
+  // ── GRAFICO 2 — Top 10 paises (bar horizontal) ──
+  const paisesCount={};
+  _atl.forEach(a=>{if(a.pais)paisesCount[a.pais]=(paisesCount[a.pais]||0)+1;});
+  const top10=Object.entries(paisesCount).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const ctx2=document.getElementById('chart-paises');
+  if(ctx2){
+    _charts.paises=new Chart(ctx2,{type:'bar',data:{
+      labels:top10.map(x=>x[0]),
+      datasets:[{label:'Atletas',data:top10.map(x=>x[1]),backgroundColor:GOLD3,borderColor:GOLD,borderWidth:1,borderRadius:4}]
+    },options:{...opts,indexAxis:'y',scales:{
+      x:{ticks:{color:TICK,font:{size:10}},grid:{color:GRID}},
+      y:{ticks:{color:TICK,font:{size:10}},grid:{color:'transparent'}}
+    },plugins:{...opts.plugins,legend:{display:false}}}});
+  }
+
+  // ── GRAFICO 3 — Financeiro (bar grouped) ──
+  const cats6=['6141','6221','6222','6228','6251','6888','6899'];
+  const cats7=['724','729','751','781'];
+  const orcItems=_orcamento;
+  const labels3=['Receitas reais','Despesas reais','Orcado receitas','Orcado despesas'];
+  const orcR=orcItems.filter(o=>cats7.includes(o.conta)).reduce((s,o)=>s+Number(o.valor||0),0);
+  const orcD=orcItems.filter(o=>cats6.includes(o.conta)).reduce((s,o)=>s+Number(o.valor||0),0);
+  const ctx3=document.getElementById('chart-fin');
+  if(ctx3){
+    _charts.fin=new Chart(ctx3,{type:'bar',data:{
+      labels:['Receitas','Despesas'],
+      datasets:[
+        {label:'Real',data:[totR,totD],backgroundColor:[OK+'99',ER+'99'],borderColor:[OK,ER],borderWidth:1.5,borderRadius:5},
+        {label:'Orcado',data:[orcR,orcD],backgroundColor:[OK+'33',ER+'33'],borderColor:[OK+'66',ER+'66'],borderWidth:1,borderRadius:5,borderDash:[4,2]},
+      ]
+    },options:{...opts,scales:{
+      x:{ticks:{color:TICK,font:{size:10}},grid:{color:GRID}},
+      y:{ticks:{color:TICK,font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'k':v},grid:{color:GRID}}
+    }}});
+  }
+
+  // ── GRAFICO 4 — Checklist WMF (doughnut) ──
+  const inProg=_chkData?Object.values(_chkData).filter(v=>v.status==='InProgress').length:0;
+  const issues=_chkData?Object.values(_chkData).filter(v=>v.status==='Issue').length:0;
+  const pending=45-done-inProg-issues;
+  const ctx4=document.getElementById('chart-chk');
+  if(ctx4){
+    _charts.chk=new Chart(ctx4,{type:'doughnut',data:{
+      labels:['Concluido','Em curso','Problema','Pendente'],
+      datasets:[{data:[done,inProg,issues,pending],
+        backgroundColor:[OK+'CC',WR+'CC',ER+'CC',GOLD3],
+        borderColor:'rgba(0,0,0,0)',borderWidth:0}]
+    },options:{...opts,cutout:'60%',plugins:{...opts.plugins,
+      title:{display:true,text:pctChk+'% concluido',color:TICK,font:{size:12}},
+    }}});
+  }
+
+  // ── GRAFICO 5 — Prazos por estado (doughnut) ──
+  const hoje=new Date();
+  const pConc=_praz.filter(p=>p.estado==='concluido').length;
+  const pUrg=_praz.filter(p=>{const d=new Date(p.data);return p.estado!=='concluido'&&(d-hoje)/86400000<=7;}).length;
+  const pPend=_praz.filter(p=>p.estado!=='concluido'&&p.estado!=='em_curso').length-pUrg;
+  const pCurso=_praz.filter(p=>p.estado==='em_curso').length;
+  const ctx5=document.getElementById('chart-prazos');
+  if(ctx5){
+    _charts.prazos=new Chart(ctx5,{type:'doughnut',data:{
+      labels:['Concluido','Em curso','Urgente','Pendente'],
+      datasets:[{data:[pConc,pCurso,pUrg,Math.max(0,pPend)],
+        backgroundColor:[OK+'CC',WR+'CC',ER+'CC',GOLD3],
+        borderColor:'rgba(0,0,0,0)',borderWidth:0}]
+    },options:{...opts,cutout:'60%',plugins:{...opts.plugins,
+      title:{display:true,text:_praz.length+' prazos total',color:TICK,font:{size:12}},
+    }}});
+  }
+
+  // ── GRAFICO 6 — Patrocinios por tipo (bar) ──
+  const patTipos={};
+  _pat.forEach(p=>{
+    const t=p.tipo||'Outro';
+    patTipos[t]=(patTipos[t]||0)+Number(p.valor||0);
+  });
+  const patLabels=Object.keys(patTipos);
+  const patVals=Object.values(patTipos);
+  const ctx6=document.getElementById('chart-pat');
+  if(ctx6){
+    _charts.pat=new Chart(ctx6,{type:'bar',data:{
+      labels:patLabels.length?patLabels:['Sem dados'],
+      datasets:[{label:'Valor (EUR)',data:patVals.length?patVals:[0],
+        backgroundColor:GOLD3,borderColor:GOLD,borderWidth:1.5,borderRadius:5}]
+    },options:{...opts,scales:{
+      x:{ticks:{color:TICK,font:{size:10}},grid:{color:GRID}},
+      y:{ticks:{color:TICK,font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'k EUR':v+'EUR'},grid:{color:GRID}}
+    },plugins:{...opts.plugins,legend:{display:false}}}});
+  }
+}
+
+
+// ══ MODO FOCO ══
+let _focoOn=false;
+function toggleFoco(){
+  _focoOn=!_focoOn;
+  document.body.classList.toggle('modo-foco',_focoOn);
+  const btn=document.getElementById('foco-btn');
+  if(btn)btn.innerHTML=_focoOn?'&#9635; Sair foco':'&#9633; Foco';
+}
+
+// ══ NOTIFICACOES INTERNAS ══
+function notif(msg, tipo='info', duracao=5000){
+  const container=document.getElementById('notif-container');
+  if(!container)return;
+  const cores={info:'rgba(201,168,76,.8)',ok:'rgba(74,184,122,.8)',er:'rgba(224,82,82,.8)',wr:'rgba(232,160,48,.8)'};
+  const labels={info:'Informacao',ok:'Guardado',er:'Erro',wr:'Atencao'};
+  const el=document.createElement('div');
+  el.className='notif-item';
+  el.innerHTML=`<div class="notif-tipo" style="color:${cores[tipo]||cores.info};">${labels[tipo]||tipo}</div><div class="notif-msg">${msg}</div>`;
+  el.onclick=()=>el.remove();
+  container.appendChild(el);
+  setTimeout(()=>{
+    el.classList.add('fade');
+    setTimeout(()=>el.remove(),300);
+  },duracao);
+}
+
+// Integrar notificacoes no toast existente — sem redeclarar
+window.addEventListener('load',()=>{
+  const _toastOrig=window.toast;
+  if(_toastOrig){
+    window.toast=function(msg,tipo){
+      _toastOrig(msg,tipo);
+      if(tipo==='er')notif(msg,'er',4000);
+      else if(msg&&msg.length>20)notif(msg,'ok',3500);
+    };
+  }
+});
+
+
 //  EXPORTAÇÃO PDF 
 const {jsPDF} = window.jspdf;
 
@@ -5744,7 +6046,6 @@ window.doLogout=doLogout;
 window.nav=nav;
 window.openM=openM;
 window.closeM=closeM;
-window.toast=toast;
 window.saveLan=saveLan;
 window.delLan=delLan;
 window.saveRec=saveRec;
@@ -5780,6 +6081,9 @@ window.startWelcomeCountdown=startWelcomeCountdown;
 window.doGlobalSearch=doGlobalSearch;
 window.clearSearch=clearSearch;
 window.renderMapaPaises=renderMapaPaises;
+window.renderEstatisticas=renderEstatisticas;
+window.toggleFoco=toggleFoco;
+window.notif=notif;
 window.renderPost=renderPost;
 window.copyPost=copyPost;
 window.openIncidenteRapido=openIncidenteRapido;

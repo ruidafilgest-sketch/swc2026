@@ -323,6 +323,7 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="si" onclick="nav(this,'cronologia','Cronologia &amp; Prazos WMF')"><span class="sic">&#9719;</span>Cronologia &amp; Prazos<span class="sbdg" id="bp">0</span></div>
     <div class="si" onclick="nav(this,'programa','Programa Oficial do Evento')"><span class="sic">&#9783;</span>Programa do Evento</div>
     <div class="si" onclick="nav(this,'modo-evento','Modo Evento ao Vivo')"><span class="sic">&#9679;</span>Modo Evento — Live</div>
+    <div class="si" onclick="startSlideshow()" style="cursor:pointer;"><span class="sic">&#9654;</span>Slideshow Projecao</div>
 
     <div class="sbs">&#9670; Pre-Evento</div>
     <div class="si" onclick="nav(this,'atletas','Atletas &amp; Inscricoes')"><span class="sic">&#9675;</span>Atletas &amp; Inscricoes</div>
@@ -353,6 +354,7 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="si" onclick="nav(this,'comunicacoes','Comunicacoes Delegacoes')"><span class="sic">&#9993;</span>Comunicacoes Delegacoes</div>
     <div class="si" onclick="nav(this,'presskit','Press Kit Digital')"><span class="sic">&#9741;</span>Press Kit Digital</div>
     <div class="si" onclick="nav(this,'posevento','Relatorios Pos-Evento')"><span class="sic">&#9635;</span>Relatorios Pos-Evento</div>
+    <div class="si" onclick="nav(this,'certificados','Certificados de Participacao')"><span class="sic">&#9733;</span>Certificados</div>
     <div class="si" onclick="nav(this,'backup','Backup &amp; Exportacao Total')"><span class="sic">&#9729;</span>Backup Total</div>
     <div class="si" onclick="nav(this,'posts','Gerador Posts Redes Sociais')"><span class="sic">&#9741;</span>Posts Redes Sociais</div>
 
@@ -413,6 +415,25 @@ td.mu{color:var(--mu);font-style:italic;}
     <div style="font-size:10px;color:var(--gl);margin-top:4px;">Vizela, Portugal</div>
   </div>
 </div>
+<!-- CLIMA + INCIDENTE STRIP -->
+<div style="display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:200px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+    <div style="font-size:28px;" id="clima-icon">&#9729;</div>
+    <div>
+      <div style="font-size:10px;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;">Vizela agora</div>
+      <div style="font-size:18px;font-weight:600;color:var(--wh);" id="clima-temp">--°C</div>
+      <div style="font-size:11px;color:var(--mu);" id="clima-desc">a carregar...</div>
+    </div>
+  </div>
+  <div style="flex:2;min-width:260px;background:rgba(224,82,82,.06);border:1px solid rgba(224,82,82,.2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div>
+      <div style="font-size:10px;color:var(--er);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;">Incidente urgente</div>
+      <div style="font-size:12px;color:var(--mu);">Regista um incidente imediatamente no Diario de Bordo</div>
+    </div>
+    <button onclick="openIncidenteRapido()" style="background:var(--er);border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;font-family:'Outfit',sans-serif;color:#fff;cursor:pointer;white-space:nowrap;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">&#9888; Registar</button>
+  </div>
+</div>
+
 <!-- KPIs -->
 <div class="ks">
   <div class="kp"><div class="kpv" id="k-rec">0,00€</div><div class="kpl">Receitas reais</div><div class="kpn">registadas no sistema</div></div>
@@ -1140,6 +1161,30 @@ td.mu{color:var(--mu);font-style:italic;}
 <div id="post-preview" style="margin-top:16px;"></div>
 </div>
 
+  <!-- CERTIFICADOS -->
+<div class="pg" id="pg-certificados">
+<div class="st"><span class="sn">CERT</span>Certificados de Participacao</div>
+<div class="sd">PDF individual por atleta com nome, pais, categoria e resultado — SWC Vizela 2026</div>
+<div class="bb">
+  <button class="btn bp" onclick="exportTodosCertificados()">Gerar todos os certificados</button>
+  <button class="btn bo" onclick="exportCertificadoExemplo()">Ver exemplo PDF</button>
+</div>
+<div class="av"><strong>Gera um PDF por cada atleta inscrito.</strong> Ideal para entregar na cerimonia de encerramento ou enviar por email apos o evento. Inclui nome, pais, categoria, resultado e mensagem de agradecimento da organizacao.</div>
+<div class="g3" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Atletas para certificar</div><div class="smv" id="cert-natl">0</div></div>
+  <div class="sm"><div class="sml">Com resultado registado</div><div class="smv" id="cert-nres" style="color:var(--ok)">0</div></div>
+  <div class="sm"><div class="sml">Estado</div><div class="smv" id="cert-estado" style="font-size:13px;">Pronto a gerar</div></div>
+</div>
+<div id="cert-lista" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;"></div>
+</div>
+
+  <!-- SLIDESHOW (fullscreen overlay) -->
+<div id="slideshow-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--navy);flex-direction:column;align-items:center;justify-content:center;">
+  <button onclick="stopSlideshow()" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,.1);border:none;color:#fff;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-family:'Outfit',sans-serif;">&#10005; Fechar</button>
+  <div id="slide-content" style="width:100%;max-width:1200px;padding:40px;"></div>
+  <div style="position:absolute;bottom:24px;display:flex;gap:8px;" id="slide-dots"></div>
+</div>
+
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
 <div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026</div>
@@ -1632,6 +1677,32 @@ td.mu{color:var(--mu);font-style:italic;}
   <div class="mf"><button class="btn bo" onclick="closeM('m-comunicado')">Cancelar</button><button class="btn bp" onclick="saveComunicado()">Guardar</button></div>
 </div></div>
 
+<!-- MODAL INCIDENTE RÁPIDO -->
+<div class="mo" id="m-incidente-rapido"><div class="mdl" style="border:1px solid rgba(224,82,82,.3);">
+  <div class="mh" style="background:rgba(224,82,82,.1);">
+    <div class="mt2" style="color:var(--er);">&#9888; Registar Incidente Urgente</div>
+    <button class="mc" onclick="closeM('m-incidente-rapido')">&#10005;</button>
+  </div>
+  <div class="mb">
+    <div class="av" style="border-color:rgba(224,82,82,.3);background:rgba(224,82,82,.06);">Registo rapido para o Diario de Bordo. Preenche e guarda — vai directo para o modulo Diario de Bordo com tipo "Incidente".</div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Dia</div><select class="fse" id="inc-dia">
+        <option value="2026-10-13">13 Out</option><option value="2026-10-14">14 Out</option>
+        <option value="2026-10-15">15 Out</option><option value="2026-10-16">16 Out</option>
+        <option value="2026-10-17">17 Out</option>
+      </select></div>
+      <div class="fg"><div class="fl">Hora</div><input class="fi" type="time" id="inc-hora"></div>
+    </div>
+    <div class="fg"><div class="fl">Titulo / Resumo do incidente</div><input class="fi" id="inc-titulo" placeholder="Descreve brevemente o incidente..."></div>
+    <div class="fg"><div class="fl">Descricao detalhada</div><textarea class="fta" id="inc-desc" placeholder="O que aconteceu? Quem esta envolvido? Que medidas foram tomadas?"></textarea></div>
+    <div class="fg"><div class="fl">Responsavel</div><input class="fi" id="inc-resp" placeholder="Quem esta a registar?"></div>
+  </div>
+  <div class="mf">
+    <button class="btn bo" onclick="closeM('m-incidente-rapido')">Cancelar</button>
+    <button class="btn" onclick="saveIncidenteRapido()" style="background:var(--er);color:#fff;font-weight:700;">&#9888; Guardar incidente</button>
+  </div>
+</div></div>
+
 <div class="tst" id="tst"></div>
 
 <script type="module">
@@ -1663,7 +1734,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();initChecklist();startCountdown();startModeEvento();startWelcomeCountdown();
+  loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();initChecklist();startCountdown();startModeEvento();loadClima();setInterval(loadClima,600000);startWelcomeCountdown();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -1722,6 +1793,7 @@ function nav(el,id,title){
   if(id==='fluxo'){renderFluxo();}
   if(id==='relpatr'){renderRelPatr();}
   if(id==='mapapaises'){renderMapaPaises();}
+  if(id==='certificados'){renderCertificados();}
   if(id==='posts'){renderPost();}
   if(id==='resultados'){renderResultados();renderMatch();}
   if(id==='diariobordo'){renderDiarioBordo();}
@@ -4181,6 +4253,283 @@ function clearSearch(){
 }
 
 
+// ═══ INCIDENTE RAPIDO ═══
+function openIncidenteRapido(){
+  const now=new Date();
+  const h2=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const el=document.getElementById('inc-hora');
+  if(el)el.value=h2;
+  openM('m-incidente-rapido');
+}
+
+async function saveIncidenteRapido(){
+  if(!isAdmin)return;
+  const titulo=document.getElementById('inc-titulo').value;
+  if(!titulo){toast('Titulo obrigatorio','er');return;}
+  await _add('diariodb',{
+    dia:document.getElementById('inc-dia').value,
+    hora:document.getElementById('inc-hora').value,
+    tipo:'incidente',
+    titulo,
+    desc:document.getElementById('inc-desc').value,
+    resp:document.getElementById('inc-resp').value,
+    ts:Date.now()
+  });
+  closeM('m-incidente-rapido');
+  document.getElementById('inc-titulo').value='';
+  document.getElementById('inc-desc').value='';
+  toast('Incidente registado no Diario de Bordo','er');
+}
+
+// ═══ CLIMA DE VIZELA ═══
+async function loadClima(){
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.3819&longitude=-8.3082&current=temperature_2m,weathercode&timezone=Europe/Lisbon');
+    const d=await r.json();
+    const temp=Math.round(d.current.temperature_2m);
+    const code=d.current.weathercode;
+    const icons={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'❄️',73:'❄️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+    const descs={0:'Limpo',1:'Maioria limpo',2:'Parcialmente nublado',3:'Nublado',45:'Nevoeiro',51:'Chuviscos',61:'Chuva fraca',63:'Chuva',65:'Chuva forte',71:'Neve',80:'Aguaceiros',95:'Trovoada'};
+    const elT=document.getElementById('clima-temp');
+    const elI=document.getElementById('clima-icon');
+    const elD=document.getElementById('clima-desc');
+    if(elT)elT.textContent=temp+'°C';
+    if(elI)elI.textContent=icons[code]||'🌡️';
+    if(elD)elD.textContent=(descs[code]||'Vizela')+'';
+  }catch(e){
+    const el=document.getElementById('clima-desc');
+    if(el)el.textContent='Vizela, Portugal';
+  }
+}
+
+// ═══ SLIDESHOW DE PROJECAO ═══
+let _slideIdx=0, _slideTimer=null;
+
+const SLIDES=[
+  ()=>renderSlideCountdown(),
+  ()=>renderSlidePaises(),
+  ()=>renderSlidePrograma(),
+  ()=>renderSlideChecklist(),
+  ()=>renderSlideKPIs(),
+];
+
+function startSlideshow(){
+  const ov=document.getElementById('slideshow-overlay');
+  if(!ov)return;
+  ov.style.display='flex';
+  _slideIdx=0;
+  showSlide(0);
+  _slideTimer=setInterval(()=>{
+    _slideIdx=(_slideIdx+1)%SLIDES.length;
+    showSlide(_slideIdx);
+  },8000);
+}
+
+function stopSlideshow(){
+  const ov=document.getElementById('slideshow-overlay');
+  if(ov)ov.style.display='none';
+  if(_slideTimer){clearInterval(_slideTimer);_slideTimer=null;}
+}
+
+function showSlide(idx){
+  const el=document.getElementById('slide-content');
+  if(!el)return;
+  el.style.opacity='0';
+  setTimeout(()=>{
+    SLIDES[idx]&&SLIDES[idx]();
+    el.style.opacity='1';
+    el.style.transition='opacity .5s';
+  },300);
+  const dots=document.getElementById('slide-dots');
+  if(dots) dots.innerHTML=SLIDES.map((_,i)=>`<div style="width:${i===idx?24:8}px;height:8px;border-radius:4px;background:${i===idx?'var(--gl)':'rgba(255,255,255,.2)'};transition:all .3s;"></div>`).join('');
+}
+
+function renderSlideCountdown(){
+  const el=document.getElementById('slide-content');
+  if(!el)return;
+  const target=new Date('2026-10-13T19:30:00').getTime();
+  const diff=target-Date.now();
+  const dias=Math.floor(diff/86400000);
+  const horas=Math.floor((diff%86400000)/3600000);
+  el.innerHTML=`<div style="text-align:center;">
+    <div style="font-size:14px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gl);margin-bottom:24px;">SWC VIZELA 2026 — CONTAGEM REGRESSIVA</div>
+    <div style="display:flex;gap:32px;justify-content:center;align-items:flex-end;margin-bottom:32px;">
+      <div><div style="font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:1;color:#fff;text-shadow:0 0 40px rgba(201,168,76,.5);">${String(dias).padStart(3,'0')}</div><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--mu);">DIAS</div></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(201,168,76,.3);padding-bottom:20px;">:</div>
+      <div><div style="font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:1;color:#fff;text-shadow:0 0 40px rgba(201,168,76,.5);">${String(horas).padStart(2,'0')}</div><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--mu);">HORAS</div></div>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--se);">13 — 17 Outubro 2026 · Vizela, Portugal</div>
+    <div style="margin-top:20px;font-size:16px;color:var(--mu);">${_atl.length} atletas de ${new Set(_atl.map(a=>a.pais).filter(Boolean)).size} paises</div>
+  </div>`;
+}
+
+function renderSlidePaises(){
+  const el=document.getElementById('slide-content');
+  if(!el)return;
+  const paises=[...new Set(_atl.map(a=>a.pais).filter(Boolean))].sort();
+  el.innerHTML=`<div style="text-align:center;margin-bottom:28px;">
+    <div style="font-size:14px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">PAISES PARTICIPANTES</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;">${paises.length}</div>
+    <div style="font-size:16px;color:var(--mu);">nacoes representadas</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">${paises.map(p=>`<div style="padding:10px 20px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);border-radius:8px;font-size:16px;color:var(--wh);">&#127757; ${p}</div>`).join('')}</div>`;
+}
+
+function renderSlidePrograma(){
+  const el=document.getElementById('slide-content');
+  if(!el)return;
+  const hoje=new Date().toISOString().split('T')[0];
+  const horaAtual=new Date().toTimeString().slice(0,5);
+  const itemsHoje=_prog.filter(p=>p.dia===hoje).sort((a,b)=>a.hora.localeCompare(b.hora));
+  const DIAS={'2026-10-13':'13 Out — Chegadas','2026-10-14':'14 Out — Dia 1','2026-10-15':'15 Out — Dia 2','2026-10-16':'16 Out — Dia 3','2026-10-17':'17 Out — Final'};
+  el.innerHTML=`<div>
+    <div style="font-size:14px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gl);margin-bottom:24px;text-align:center;">PROGRAMA DO DIA — ${DIAS[hoje]||hoje}</div>
+    ${itemsHoje.length?itemsHoje.map(it=>`<div style="display:flex;gap:20px;align-items:center;padding:14px 20px;margin-bottom:8px;background:${it.hora<=horaAtual?'rgba(201,168,76,.12)':'rgba(255,255,255,.03)'};border-radius:10px;border-left:3px solid ${it.hora<=horaAtual?'var(--gl)':'var(--bdr)'};">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gl);min-width:80px;">${it.hora}</div>
+      <div style="font-size:18px;color:var(--wh);">${it.titulo}</div>
+    </div>`).join(''):'<div style="text-align:center;color:var(--mu);font-size:18px;padding:40px;">Programa do dia nao introduzido ainda</div>'}
+  </div>`;
+}
+
+function renderSlideChecklist(){
+  const el=document.getElementById('slide-content');
+  if(!el)return;
+  const done=_chkData?Object.values(_chkData).filter(v=>v.status==='Done').length:0;
+  const total=45;
+  const pct=Math.round(done/total*100);
+  el.innerHTML=`<div style="text-align:center;">
+    <div style="font-size:14px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gl);margin-bottom:32px;">CHECKLIST WMF — ESTADO ACTUAL</div>
+    <div style="position:relative;width:200px;height:200px;margin:0 auto 28px;">
+      <svg viewBox="0 0 200 200" style="transform:rotate(-90deg);">
+        <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="16"/>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="var(--gl)" stroke-width="16" stroke-dasharray="${2*Math.PI*80}" stroke-dashoffset="${2*Math.PI*80*(1-pct/100)}" stroke-linecap="round"/>
+      </svg>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:#fff;line-height:1;">${pct}%</div>
+        <div style="font-size:13px;color:var(--mu);">concluido</div>
+      </div>
+    </div>
+    <div style="font-size:20px;color:var(--se);">${done} de ${total} itens WMF concluidos</div>
+  </div>`;
+}
+
+function renderSlideKPIs(){
+  const el=document.getElementById('slide-content');
+  if(!el)return;
+  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
+  el.innerHTML=`<div>
+    <div style="font-size:14px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gl);margin-bottom:32px;text-align:center;">ESTADO DO EVENTO — RESUMO</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      ${[
+        {label:'Atletas inscritos',val:_atl.length,icon:''},
+        {label:'Paises',val:new Set(_atl.map(a=>a.pais).filter(Boolean)).size,icon:''},
+        {label:'Voluntarios',val:_vol.length,icon:''},
+        {label:'Receitas reais',val:fmt(totR),icon:''},
+        {label:'Despesas reais',val:fmt(totD),icon:''},
+        {label:'Resultado',val:fmt(totR-totD),icon:''},
+      ].map(k=>`<div style="background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.12);border-radius:14px;padding:24px;text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gl2);margin-bottom:8px;">${k.val}</div>
+        <div style="font-size:12px;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;">${k.label}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ═══ CERTIFICADOS ═══
+function renderCertificados(){
+  const elN=document.getElementById('cert-natl');
+  const elR=document.getElementById('cert-nres');
+  if(elN)elN.textContent=_atl.length;
+  if(elR)elR.textContent=_resultados.length;
+  const lista=document.getElementById('cert-lista');
+  if(!lista)return;
+  if(!_atl.length){lista.innerHTML='<div class="em"><div class="emi">&#9733;</div><div class="emt">Sem atletas registados</div></div>';return;}
+  lista.innerHTML=_atl.map(a=>{
+    const res=_resultados.find(r=>r.nome===a.nome&&r.categoria===a.categoria);
+    return `<div style="background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--wh);">${a.nome||''}</div>
+        <div style="font-size:11px;color:var(--mu);">${a.pais||''} · ${a.categoria==='H'?'Homens':'Senhoras'}</div>
+        ${res?`<div style="font-size:10px;color:var(--gl);margin-top:2px;">Total: ${res.total} · Pos. ${_resultados.filter(r=>r.categoria===a.categoria).sort((x,y)=>x.total-y.total).findIndex(r=>r.nome===a.nome)+1}.</div>`:''}
+      </div>
+      <button class="btn bo bsm" onclick="exportCertificado('${a.id}')">PDF</button>
+    </div>`;
+  }).join('');
+}
+
+function exportCertificado(atlId){
+  const atl=_atl.find(a=>a.id===atlId);
+  if(!atl)return;
+  const res=_resultados.find(r=>r.nome===atl.nome&&r.categoria===atl.categoria);
+  const ranking=res?_resultados.filter(r=>r.categoria===atl.categoria).sort((a,b)=>a.total-b.total).findIndex(r=>r.nome===atl.nome)+1:null;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const W=297,H=210;
+  // Fundo
+  doc.setFillColor(8,15,32);doc.rect(0,0,W,H,'F');
+  // Bordas decorativas
+  doc.setDrawColor(201,168,76);doc.setLineWidth(0.5);doc.rect(8,8,W-16,H-16,'S');
+  doc.setLineWidth(0.2);doc.rect(11,11,W-22,H-22,'S');
+  // Linha gold topo
+  doc.setFillColor(201,168,76);doc.rect(8,8,W-16,1.5,'F');
+  doc.rect(8,H-9.5,W-16,1.5,'F');
+  // Logo SWC
+  try{doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',W/2-15,12,30,30);}catch(e){}
+  // Titulo
+  doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+  doc.text('VIZELGOLFE - ASSOCIACAO DE MINIGOLFE DE VIZELA',W/2,50,{align:'center'});
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
+  doc.text('Seniors World Minigolf Championship · SWC Vizela 2026',W/2,57,{align:'center'});
+  // Certificado
+  doc.setFontSize(28);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  doc.text('CERTIFICADO DE PARTICIPACAO',W/2,78,{align:'center'});
+  // Linha separadora
+  doc.setFillColor(201,168,76);doc.rect(W/2-40,82,80,0.5,'F');
+  // Nome atleta
+  doc.setFontSize(32);doc.setFont('helvetica','bold');doc.setTextColor(232,201,106);
+  doc.text(atl.nome||'',W/2,97,{align:'center'});
+  // País e categoria
+  doc.setFontSize(13);doc.setFont('helvetica','normal');doc.setTextColor(200,192,168);
+  doc.text((atl.pais||'')+' · '+(atl.categoria==='H'?'Men / Homens':'Ladies / Senhoras'),W/2,107,{align:'center'});
+  // Resultado
+  if(res){
+    doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    doc.text('Final result: '+res.total+' strokes'+(ranking?' · Position: '+ranking+'.':''),W/2,117,{align:'center'});
+  }
+  // Texto
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
+  doc.text('participated in the Seniors World Minigolf Championship',W/2,128,{align:'center'});
+  doc.text('13-17 October 2026 · Vizela, Portugal',W/2,135,{align:'center'});
+  // Assinaturas
+  doc.setLineWidth(0.3);doc.setDrawColor(201,168,76);
+  doc.line(60,158,120,158);doc.line(177,158,237,158);
+  doc.setFontSize(9);doc.setTextColor(120,100,60);
+  doc.text('President COE',90,164,{align:'center'});
+  doc.text('WMF Representative',207,164,{align:'center'});
+  doc.text('Date: 17 October 2026',W/2,172,{align:'center'});
+  // Copyright
+  doc.setFontSize(7);doc.setTextColor(60,50,30);
+  doc.text('© Rui Goncalves · Vizelgolfe · SWC Vizela 2026',W/2,H-14,{align:'center'});
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Cert_'+(atl.nome||'atleta').replace(/ /g,'_')+'.pdf');
+  toast('Certificado gerado!');
+}
+
+function exportCertificadoExemplo(){
+  const exemplo={id:'ex',nome:'João Silva',pais:'Portugal',categoria:'H'};
+  const _atlBak=_atl;
+  _atl=[exemplo];
+  exportCertificado('ex');
+  _atl=_atlBak;
+}
+
+function exportTodosCertificados(){
+  if(!_atl.length){toast('Sem atletas registados','er');return;}
+  toast('A gerar '+_atl.length+' certificados...');
+  _atl.forEach((a,i)=>setTimeout(()=>exportCertificado(a.id),i*600));
+}
+
+
 //  EXPORTAÇÃO PDF 
 const {jsPDF} = window.jspdf;
 
@@ -5247,6 +5596,13 @@ window.clearSearch=clearSearch;
 window.renderMapaPaises=renderMapaPaises;
 window.renderPost=renderPost;
 window.copyPost=copyPost;
+window.openIncidenteRapido=openIncidenteRapido;
+window.saveIncidenteRapido=saveIncidenteRapido;
+window.startSlideshow=startSlideshow;
+window.stopSlideshow=stopSlideshow;
+window.exportCertificado=exportCertificado;
+window.exportCertificadoExemplo=exportCertificadoExemplo;
+window.exportTodosCertificados=exportTodosCertificados;
 window.saveProgItem=saveProgItem;
 window.delProgItem=delProgItem;
 window.toggleFullscreen=toggleFullscreen;

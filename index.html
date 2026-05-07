@@ -577,7 +577,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- ORGANIZAÇÃO -->
 <div class="pg" id="pg-organizacao">
-<div class="st"><span class="sn">COE</span>Comité Organizador Executivo</div>
+<div class="st"><span class="sn">COE</span>Comité Organizador Executivo<button class="hbtn" data-help="organizacao" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Estrutura de liderança, delegação de tarefas e equipa de apoio</div>
 <div class="bb" id="bar-org">
   <button class="btn bp" onclick="openM('m-mbr')">+ Membro COE</button>
@@ -637,7 +637,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- DESPORTIVO -->
 <div class="pg" id="pg-desportivo">
-<div class="st"><span class="sn">DSP</span>Desportivo &amp; Arbitragem</div>
+<div class="st"><span class="sn">DSP</span>Desportivo &amp; Arbitragem<button class="hbtn" data-help="desportivo" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Percursos · Árbitros/Juízes WMF/EMF · Pontuação online ao vivo · Antidopagem AMA/WMF</div>
 <div class="bb" id="bar-dsp"><button class="btn bp" onclick="openM('m-arb')">+ Árbitro / Juíz</button></div>
 <div class="g2" style="margin-bottom:14px;">
@@ -663,7 +663,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- COMUNICAÇÃO -->
 <div class="pg" id="pg-comunicacao">
-<div class="st"><span class="sn">COM</span>Comunicação &amp; Branding</div>
+<div class="st"><span class="sn">COM</span>Comunicação &amp; Branding<button class="hbtn" data-help="comunicacao_branding" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Website oficial EN/PT · Redes sociais · Comunicados WMF obrigatórios · Materiais impressos</div>
 <div class="g2">
   <div class="cd"><div class="cdh"><div><div class="cdt">Checklist obrigações WMF</div></div></div><div class="cdb" id="com-chk"></div></div>
@@ -679,7 +679,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- SEGURANÇA -->
 <div class="pg" id="pg-seguranca">
-<div class="st"><span class="sn">SEG</span>Segurança &amp; Seguros</div>
+<div class="st"><span class="sn">SEG</span>Segurança &amp; Seguros<button class="hbtn" data-help="seguranca" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Responsabilidade civil obrigatória · Segurança recinto · Equipamento WMF · Inventário para receber 25% final</div>
 <div class="g2">
   <div class="cd"><div class="cdh"><div><div class="cdt">Seguro de Responsabilidade Civil</div><div class="cds">Obrigatório — cobertura total do evento</div></div></div>
@@ -768,7 +768,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- BALANCETE -->
 <div class="pg" id="pg-balancete">
-<div class="st"><span class="sn">BAL</span>Balancete Mensal SNC-ESNL</div>
+<div class="st"><span class="sn">BAL</span>Balancete Mensal SNC-ESNL<button class="hbtn" data-help="balancete" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Por conta · Débito/Crédito do mês e acumulado · Apenas valores reais registados no sistema</div>
 <div class="bb">
   <select class="fse" id="bal-mes" style="width:180px;" onchange="renderBal()">
@@ -782,7 +782,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- DR -->
 <div class="pg" id="pg-dr">
-<div class="st"><span class="sn">DR</span>Demonstração de Resultados</div>
+<div class="st"><span class="sn">DR</span>Demonstração de Resultados<button class="hbtn" data-help="dr" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Rendimentos vs Gastos · Resultado líquido · PT/EN · Intercalar e versão final</div>
 <div class="bb"><button class="btn bo" onclick="drL=drL==='PT'?'EN':'PT';renderDR()">PT ↔ EN</button><button class="btn bo" onclick="exportDR()">Exportar PDF</button></div>
 <div class="av">Documento intercalar gerado com valores reais registados até à data. Valor definitivo apenas após encerramento total do evento.</div>
@@ -791,7 +791,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- BALANÇO -->
 <div class="pg" id="pg-balanco">
-<div class="st"><span class="sn">BAL</span>Balanço do Evento</div>
+<div class="st"><span class="sn">BAL</span>Balanço do Evento<button class="hbtn" data-help="balanco" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Ativo · Passivo · Capital Próprio · Quadratura absoluta garantida — Total Ativo = Passivo + CP</div>
 <div class="bb"><button class="btn bo" onclick="exportBalanco()">Exportar PDF</button></div>
 <div id="bal-ct"></div>
@@ -799,7 +799,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- IPDJ -->
 <div class="pg" id="pg-ipdj">
-<div class="st"><span class="sn">IPDJ</span>Formulário Anexo B — IPDJ</div>
+<div class="st"><span class="sn">IPDJ</span>Formulário Anexo B — IPDJ<button class="hbtn" data-help="ipdj" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">5 folhas · Formato oficial · Orçamental + Execução real · Pronto a submeter ao IPDJ e FPM</div>
 <div class="bb"><button class="btn bp" onclick="exportIPDJ()">Exportar PDF completo</button></div>
 <div id="ipdj-ct"></div>
@@ -807,7 +807,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- WMF -->
 <div class="pg" id="pg-wmf">
-<div class="st"><span class="sn">WMF</span>Relatório WMF / EMF</div>
+<div class="st"><span class="sn">WMF</span>Relatório WMF / EMF<button class="hbtn" data-help="wmf" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Demonstração financeira taxas · C1+C2 deduzidos · Adiantamento 75%/25% · EN/PT</div>
 <div class="bb"><button class="btn bp" onclick="exportWMF()">Exportar PDF (EN)</button></div>
 <div class="av"><strong>Obrigação contratual:</strong> Esta demonstração deve ser apresentada à WMF 2 semanas antes da competição.</div>
@@ -871,7 +871,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- CONSIGNACAO & MERCHANDISE -->
 <div class="pg" id="pg-consignacao">
-<div class="st"><span class="sn">CONS</span>Consignacao & Merchandise</div>
+<div class="st"><span class="sn">CONS</span>Consignacao & Merchandise<button class="hbtn" data-help="consignacao" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Stock em consignacao por marca · Entradas · Vendas · Devolucoes · Acerto de contas</div>
 <div class="bb" id="bar-consig">
   <button class="btn bp" onclick="openM('m-marca')">+ Nova marca</button>
@@ -912,7 +912,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- ACREDITACOES -->
 <div class="pg" id="pg-acreditacoes">
-<div class="st"><span class="sn">ACCRED</span>Acreditacoes & QR Code</div>
+<div class="st"><span class="sn">ACCRED</span>Acreditacoes & QR Code<button class="hbtn" data-help="acreditacoes" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Cartao digital por atleta / arbitro / voluntario - QR unico - Imprimivel A6</div>
 <div class="bb" id="bar-accred">
   <button class="btn bp" onclick="gerarTodasAccred()">Gerar acreditacoes em falta</button>
@@ -979,7 +979,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- GUIA DO ATLETA -->
 <div class="pg" id="pg-guia">
-<div class="st"><span class="sn">GUIDE</span>Guia do Atleta</div>
+<div class="st"><span class="sn">GUIDE</span>Guia do Atleta<button class="hbtn" data-help="guia" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Documento oficial WMF - EN / PT / DE / ES - Exportacao PDF para enviar as delegacoes</div>
 <div class="bb">
   <select class="fse" id="guia-lang" style="width:120px;" onchange="renderGuia()">
@@ -1114,7 +1114,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- RELATORIO PATROCINADORES -->
 <div class="pg" id="pg-relpatr">
-<div class="st"><span class="sn">PATR</span>Relatorio para Patrocinadores</div>
+<div class="st"><span class="sn">PATR</span>Relatorio para Patrocinadores<button class="hbtn" data-help="relpatrocinadores" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">PDF elegante por patrocinador - Logo - Impacto do evento - Agradecimento - Pos-evento</div>
 <div class="bb">
   <button class="btn bp" onclick="exportRelPatrPDF()">Gerar PDF por patrocinador</button>
@@ -1125,7 +1125,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- ACTAS COE -->
 <div class="pg" id="pg-actas">
-<div class="st"><span class="sn">ACTAS</span>Actas & Convocatorias COE</div>
+<div class="st"><span class="sn">ACTAS</span>Actas & Convocatorias COE<button class="hbtn" data-help="actas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Registo formal das reunioes do COE - Convocatorias - Actas - Decisoes - Arquivo</div>
 <div class="bb" id="bar-actas">
   <button class="btn bp" onclick="openM('m-acta')">+ Nova acta / reuniao</button>
@@ -1180,7 +1180,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- POS-EVENTO -->
 <div class="pg" id="pg-posevento">
-<div class="st"><span class="sn">POST</span>Relatorios Pos-Evento</div>
+<div class="st"><span class="sn">POST</span>Relatorios Pos-Evento<button class="hbtn" data-help="posevento" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Relatorio WMF final - Relatorio AG Vizelgolfe - Relatorio impacto CMV - Fecho do evento</div>
 <div class="bb">
   <button class="btn bp" onclick="exportRelWMFFinal()">Rel. Final WMF</button>
@@ -1197,7 +1197,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- BACKUP -->
 <div class="pg" id="pg-backup">
-<div class="st"><span class="sn">BCK</span>Backup & Exportacao Total</div>
+<div class="st"><span class="sn">BCK</span>Backup & Exportacao Total<button class="hbtn" data-help="backup" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Exportar todos os dados do sistema - Arquivo offline - Enviar a FPM/WMF</div>
 <div id="email-config-section" style="margin-bottom:14px;"></div>
 <div class="av"><strong>Backup completo:</strong> Exporta todos os dados do Firebase num unico ficheiro JSON organizado por modulo. Guarda offline e envia a quem precisar.</div>
@@ -1216,7 +1216,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- MAPA DE PAISES -->
 <div class="pg" id="pg-mapapaises">
-<div class="st"><span class="sn">MAP</span>Mapa de Paises Participantes</div>
+<div class="st"><span class="sn">MAP</span>Mapa de Paises Participantes<button class="hbtn" data-help="mapapaises" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Visualizacao mundial das nacoes participantes - Actualizado automaticamente</div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Paises confirmados</div><div class="smv" id="mp-npaises" style="color:var(--gl2)">0</div></div>
@@ -1234,7 +1234,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- POSTS REDES SOCIAIS -->
 <div class="pg" id="pg-posts">
-<div class="st"><span class="sn">POST</span>Gerador de Posts para Redes Sociais</div>
+<div class="st"><span class="sn">POST</span>Gerador de Posts para Redes Sociais<button class="hbtn" data-help="posts" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Templates prontos para Facebook e Instagram da Vizelgolfe</div>
 <div class="bb">
   <select class="fse" id="post-tipo" style="width:220px;" onchange="renderPost()">
@@ -1257,7 +1257,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- CERTIFICADOS -->
 <div class="pg" id="pg-certificados">
-<div class="st"><span class="sn">CERT</span>Certificados de Participacao</div>
+<div class="st"><span class="sn">CERT</span>Certificados de Participacao<button class="hbtn" data-help="certificados" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">PDF individual por atleta com nome, pais, categoria e resultado — SWC Vizela 2026</div>
 <div class="bb">
   <button class="btn bp" onclick="exportTodosCertificados()">Gerar todos os certificados</button>
@@ -4836,6 +4836,21 @@ const HELP = {
     steps:['Preenche o nome, email e telemovel do responsavel de imprensa.','Os factos do evento (atletas, paises, datas) actualizam automaticamente dos dados do sistema.','O PDF e em Ingles — formato padrao de press kit internacional.','Distribui a jornalistas antes do evento e durante as cerimonias.'],
     warn:'O Press Kit deve ser aprovado pelo COE antes de distribuir. Nao inclui resultados — para isso usa o Diario de Bordo.'},
   log:{icon:'&#9654;',title:'Historico de Actividade',sub:'Auditoria automatica do sistema',o:'Registo automatico de todas as accoes realizadas no sistema — criacao, edicao e eliminacao de registos, acessos e exportacoes de PDF.',steps:['O log e preenchido automaticamente — nao precisas de fazer nada.','Filtra por tipo de accao (Criado/Editado/Eliminado) ou por modulo.','O PDF exporta os 100 registos mais recentes para arquivo.','Util para auditoria e para saber quem fez o que durante o evento.'],warn:'O log pode ser limpo pelo Admin. Exporta o PDF periodicamente para arquivo permanente.'},
+      
+      comunicacao_branding:{icon:'&#9741;',title:'Comunicacao & Branding',sub:'Imagem e comunicacao do evento',o:'Gestao da comunicacao e imagem do SWC Vizela 2026 — website, redes sociais, media e documentos de comunicacao.',steps:['Mantém o website oficial actualizado com informacoes do evento.','Coordena os comunicados de imprensa com a WMF/EMF.','Gere a presenca nas redes sociais da Vizelgolfe.','Usa o modulo Press Kit para documentos oficiais de imprensa.'],warn:'Toda a comunicacao publica deve ser aprovada pelo COE antes de publicar.'},
+      seguranca:{icon:'&#9632;',title:'Seguranca & Seguros',sub:'Equipamento e cobertura de seguros',o:'Controlo do inventario de equipamento WMF e gestao dos seguros do evento.',steps:['Regista cada item de equipamento com descricao, quantidade e estado.','Confirma a cobertura de seguros para o evento e para os atletas.','O item CHK#45 da checklist WMF exige primeiros socorros no local.','Exporta o PDF de inventario para entregar a WMF no inicio do evento.'],warn:'O seguro do evento e obrigatorio. Confirmar cobertura antes de 13 Outubro 2026.'},
+      balancete:{icon:'&#9646;',title:'Balancete Mensal SNC-ESNL',sub:'Mapa de contas por periodo',o:'Balancete mensal com movimentos e saldos por conta SNC. Para controlo interno e apresentar ao ROC ou FPM.',steps:['Selecciona o mes pretendido no selector.','O balancete calcula automaticamente debitos, creditos e saldos por conta.','Exporta o PDF landscape para arquivo ou envio ao ROC.','Usado para controlo interno e quando solicitado pela FPM.'],warn:''},
+      dr:{icon:'&#9647;',title:'Demonstracao de Resultados',sub:'Rendimentos vs Gastos — SNC-ESNL',o:'DR intercalar em PT ou EN. Calcula automaticamente de todos os lancamentos com estado Recebido/Pago.',steps:['Selecciona a lingua (PT/EN) no selector no topo.','Os valores sao calculados automaticamente — nao introduzes nada aqui.','Exporta o PDF para enviar a WMF, FPM ou IPDJ.','So faz sentido se as Receitas e Despesas estiverem actualizadas.'],warn:'Este documento e calculado em tempo real. Exporta apenas quando todos os valores reais estiverem introduzidos.'},
+      balanco:{icon:'&#9648;',title:'Balanco do Evento',sub:'Ativo = Passivo + Capital Proprio',o:'Balanco simplificado SNC-ESNL. Total Ativo deve sempre igualar Total Passivo + Capital Proprio.',steps:['O balanco e calculado automaticamente — nao introduzes nada aqui.','Se houver diferenca, aparece linha de Ajustamentos de encerramento.','Exporta o PDF portrait para enviar a FPM ou IPDJ.'],warn:'Regra absoluta: Total Ativo = Total Passivo + Capital Proprio. Qualquer diferenca indica erro nos lancamentos.'},
+      ipdj:{icon:'&#9649;',title:'Formulario Anexo B — IPDJ',sub:'Programa de Eventos Desportivos Internacionais',o:'Documento oficial para o IPDJ — Instituto Portugues do Desporto e Juventude. Calculado automaticamente.',steps:['Os valores sao calculados automaticamente das Receitas e Despesas.','Separacao automatica entre rendimentos publicos (conta 751) e privados.','Exporta o PDF para submeter ao IPDJ com o relatorio de evento.'],warn:'O IPDJ pode solicitar comprovativos de todas as despesas. Guarda todos os documentos fisicos.'},
+      wmf:{icon:'&#9650;',title:'Relatorio WMF / EMF',sub:'Demonstracao financeira das taxas',o:'Documento exigido pela WMF 2 semanas antes do evento. Calculado automaticamente das taxas de inscricao (conta 729).',steps:['Os valores calculam automaticamente das Receitas com conta SNC 729.','C1=325EUR e C2=2000EUR sao valores fixos contratuais — nao alterar.','75% e pago 4 semanas antes do evento. 25% apos aprovacao do inventario WMF.','Exporta o PDF em EN para enviar directamente a WMF.'],warn:'C1 e C2 sao obrigacoes contratuais fixas do Acordo Tripartido. Nunca alterar estes valores.'},
+      acreditacoes:{icon:'&#9646;',title:'Acreditacoes & QR Code',sub:'Cartoes digitais por participante',o:'Geracao automatica de cartoes de acreditacao com QR Code unico para cada participante.',steps:['Os cartoes geram automaticamente de todos os atletas, arbitros, COE e voluntarios registados.','O QR code contem os dados de identificacao do participante.','Exporta o PDF com a lista completa de acreditacoes.'],warn:''},
+      guia:{icon:'&#9633;',title:'Guia do Atleta',sub:'Documento oficial WMF em 4 linguas',o:'Documento oficial exigido pela WMF. Disponivel em EN, PT, DE e ES.',steps:['Selecciona a lingua no selector (EN/PT/DE/ES).','Os dados de hoteis actualizam automaticamente do modulo Alojamento.','Exporta o PDF na lingua seleccionada para enviar as delegacoes.','Recomendado exportar sempre em EN para comunicacoes internacionais.'],warn:'A WMF exige este documento publicado antes de Setembro 2026 (prazo contratual).'},
+      relpatrocinadores:{icon:'&#9734;',title:'Relatorio para Patrocinadores',sub:'PDF elegante pos-evento por patrocinador',o:'PDF individual por patrocinador com impacto real do evento. Para enviar apos o evento.',steps:['Os dados sao calculados automaticamente — atletas, paises, resultados, financeiro.','Clica no botao PDF ao lado de cada patrocinador para gerar o relatorio individual.','O relatorio inclui contrapartidas acordadas e mensagem de agradecimento.','Distribui a cada patrocinador apos o encerramento do evento.'],warn:'So gerar estes relatorios apos o evento com todos os dados reais introduzidos.'},
+      mapapaises:{icon:'&#9758;',title:'Mapa de Paises Participantes',sub:'Visualizacao das nacoes confirmadas',o:'Mapa visual dos paises participantes. Actualiza automaticamente dos atletas inscritos.',steps:['Os paises aparecem automaticamente quando atletas sao inscritos.','A tabela detalhada mostra atletas H/S por pais, hotel e chefe de delegacao.','Usa este modulo para partilhar o numero de nacoes nas redes sociais.'],warn:''},
+      posts:{icon:'&#9741;',title:'Gerador de Posts Redes Sociais',sub:'Templates para Facebook e Instagram',o:'Templates de texto prontos para publicar nas redes sociais da Vizelgolfe.',steps:['Selecciona o tipo de post (Countdown, Paises, Programa, Abertura, Resultado, Agradecimento).','Selecciona a lingua (PT ou EN).','O texto e gerado automaticamente com dados reais (nr. atletas, paises, dias restantes).','Clica Copiar texto e cola directamente no Facebook ou Instagram.'],warn:'Edita sempre o texto antes de publicar. Nao publiques resultados sem confirmacao oficial.'},
+      certificados:{icon:'&#9733;',title:'Certificados de Participacao',sub:'PDF individual por atleta',o:'Gera um certificado oficial por cada atleta inscrito — com nome, pais, categoria, resultado e posicao final.',steps:['Clica PDF ao lado de cada atleta para gerar o certificado individual.','Clica Gerar todos os certificados para exportar um PDF por cada atleta.','O certificado inclui os campos de assinatura do COE e representante WMF.','Ideal para entregar na cerimonia de encerramento ou enviar por email.'],warn:'So gerar certificados finais apos o encerramento com todos os resultados introduzidos.'},
+      posevento:{icon:'&#9635;',title:'Relatorios Pos-Evento',sub:'Relatorio WMF, AG e CMV',o:'Tres relatorios criticos a gerar APOS o encerramento total do evento.',steps:['Relatorio Final WMF — para receber os 25% finais do contrato.','Relatorio AG Vizelgolfe — resumo para a Assembleia Geral.','Relatorio CMV — impacto economico para a Camara Municipal de Vizela.'],warn:'So gerar estes relatorios quando TODOS os dados reais estiverem introduzidos no sistema. Sao documentos oficiais.'},
       backup:{icon:'&#9729;',title:'Backup & Exportacao Total',sub:'Seguranca dos dados do evento',
     o:'Exporta todos os dados do sistema num unico ficheiro JSON ou PDF resumo. Para guardar offline e enviar a FPM/WMF.',
     steps:['Clica "Exportar backup completo (JSON)" para descarregar todos os dados.','O ficheiro JSON pode ser reimportado noutro sistema ou guardado como arquivo.','O "Resumo executivo (PDF)" mostra a contagem de registos por modulo.','Faz backup diario durante os 5 dias do evento — guarda numa pasta partilhada do COE.'],

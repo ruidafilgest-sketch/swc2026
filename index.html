@@ -448,6 +448,7 @@ td.mu{color:var(--mu);font-style:italic;}
     <div class="si" onclick="nav(this,'posevento','Relatorios Pos-Evento')"><span class="sic">&#9635;</span>Relatorios Pos-Evento</div>
     <div class="si" onclick="nav(this,'certificados','Certificados de Participacao')"><span class="sic">&#9733;</span>Certificados</div>
     <div class="si" onclick="nav(this,'backup','Backup &amp; Exportacao Total')"><span class="sic">&#9729;</span>Backup Total</div>
+    <div class="si" onclick="nav(this,'log','Historico de Actividade')"><span class="sic">&#9654;</span>Log Actividade</div>
     <div class="si" onclick="nav(this,'posts','Gerador Posts Redes Sociais')"><span class="sic">&#9741;</span>Posts Redes Sociais</div>
 
     <div class="sbs">&#9775; Financeiro SNC-ESNL</div>
@@ -594,7 +595,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- ATLETAS -->
 <div class="pg" id="pg-atletas">
-<div class="st"><span class="sn">ATL</span>Atletas &amp; Inscricoes<button class="hbtn" onclick="openHelp('atletas')">i</button></div>
+<div class="st"><span class="sn">ATL</span>Atletas &amp; Inscricoes<button class="hbtn" data-help="atletas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Registo por país/federação — taxas reais, estado, credenciação, alojamento atribuído</div>
 <div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -609,7 +610,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- ALOJAMENTO -->
 <div class="pg" id="pg-alojamento">
-<div class="st"><span class="sn">ALO</span>Alojamento &amp; Logistica<button class="hbtn" onclick="openHelp('alojamento')">i</button></div>
+<div class="st"><span class="sn">ALO</span>Alojamento &amp; Logistica<button class="hbtn" data-help="alojamento" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">5 hotéis · Rooming lists · Transfers OPO ↔ Vizela · Shuttle local diário</div>
 <div class="av"><strong>Requisito WMF obrigatório:</strong> máx. 50€/noite duplo (incl. pequeno-almoço) · mín. 15m² · chuveiro privativo. Incumprimento = perda das taxas de participação.</div>
 <div class="bb" id="bar-alo"><button class="btn bp" onclick="openM('m-hot')">+ Registar hotel</button><button class="btn bo" onclick="openM('m-trn')">+ Transfer / Shuttle</button></div>
@@ -621,7 +622,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- CERIMÓNIAS -->
 <div class="pg" id="pg-cerimonias">
-<div class="st"><span class="sn">CER</span>Cerimonias &amp; Protocolo<button class="hbtn" onclick="openHelp('cerimonias')">i</button></div>
+<div class="st"><span class="sn">CER</span>Cerimonias &amp; Protocolo<button class="hbtn" data-help="cerimonias" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Abertura 13 out 19:30 · Encerramento 17 out 19:30 · Comissão de Honra · VIP</div>
 <div class="bb" id="bar-cer"><button class="btn bp" onclick="openM('m-conv')">+ Convidado VIP</button><button class="btn bo" onclick="exportCerimoniasPDF()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -701,7 +702,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- DIÁRIO -->
 <div class="pg" id="pg-diario">
-<div class="st"><span class="sn">DI</span>Diario de Caixa / Banco<button class="hbtn" onclick="openHelp('diario')">i</button></div>
+<div class="st"><span class="sn">DI</span>Diario de Caixa / Banco<button class="hbtn" data-help="diario" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Lançamento a lançamento · Caixa e Banco separados · Saldo corrente · Apenas valores reais com confirmação documental</div>
 <div class="av"><strong>Rigor contabilístico absoluto:</strong> Cada lançamento requer confirmação documental (fatura, recibo, transferência). Nunca são inseridos valores estimados.</div>
 <div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button></div>
@@ -717,7 +718,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- RECEITAS -->
 <div class="pg" id="pg-receitas">
-<div class="st"><span class="sn">REC</span>Receitas<button class="hbtn" onclick="openHelp('receitas')">i</button></div>
+<div class="st"><span class="sn">REC</span>Receitas<button class="hbtn" data-help="receitas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Classe 7 SNC-ESNL · Valores reais confirmados — nunca estimados ou assumidos</div>
 <div class="bb" id="bar-rec"><button class="btn bp" onclick="openM('m-rec')">+ Nova receita</button><button class="btn bo" onclick="exportReceitas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -732,7 +733,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- DESPESAS -->
 <div class="pg" id="pg-despesas">
-<div class="st"><span class="sn">DESP</span>Despesas<button class="hbtn" onclick="openHelp('despesas')">i</button></div>
+<div class="st"><span class="sn">DESP</span>Despesas<button class="hbtn" data-help="despesas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Classe 6 SNC-ESNL · 17 rubricas · Valores reais por documento fiscal confirmado</div>
 <div class="bb" id="bar-desp"><button class="btn bp" onclick="openM('m-desp')">+ Nova despesa</button><button class="btn bo" onclick="exportDespesas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -747,7 +748,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
 <!-- PATROCÍNIOS -->
 <div class="pg" id="pg-patrocinios">
-<div class="st"><span class="sn">PAT</span>Patrocinios &amp; CRM<button class="hbtn" onclick="openHelp('patrocinios')">i</button></div>
+<div class="st"><span class="sn">PAT</span>Patrocinios &amp; CRM<button class="hbtn" data-help="patrocinios" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Angariação · Gold WMF (direitos especiais) · Patrocinadores locais · Estado do processo</div>
 <div class="bb" id="bar-pat"><button class="btn bp" onclick="openM('m-pat')">+ Novo patrocinador</button><button class="btn bo" onclick="exportPat()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
@@ -815,7 +816,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- PROGRAMA DO EVENTO -->
 <div class="pg" id="pg-programa">
-<div class="st"><span class="sn">PROG</span>Programa Oficial — SWC Vizela 2026<button class="hbtn" onclick="openHelp('programa')">i</button></div>
+<div class="st"><span class="sn">PROG</span>Programa Oficial — SWC Vizela 2026<button class="hbtn" data-help="programa" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">13–17 Outubro 2026 · Hora a hora · Editável · Exportação PDF</div>
 <div class="bb" id="bar-programa"><button class="btn bp" onclick="openM('m-prog-item')">+ Adicionar item</button><button class="btn bo" onclick="exportProgramaPDF()">Exportar PDF oficial</button></div>
 <div class="g4" style="margin-bottom:16px;">
@@ -929,7 +930,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- ROOMING LIST -->
 <div class="pg" id="pg-rooming">
-<div class="st"><span class="sn">ROOM</span>Rooming List Oficial WMF<button class="hbtn" onclick="openHelp('rooming')">i</button></div>
+<div class="st"><span class="sn">ROOM</span>Rooming List Oficial WMF<button class="hbtn" data-help="rooming" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Nome - Pais - Hotel - Quarto - Check-in/out - Documento oficial WMF</div>
 <div class="bb" id="bar-rooming">
   <button class="btn bp" onclick="openM('m-quarto')">+ Atribuir quarto</button>
@@ -961,7 +962,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- CHECKLIST CHEGADAS -->
 <div class="pg" id="pg-chegadas">
-<div class="st"><span class="sn">ARR</span>Checklist de Chegadas por Pais<button class="hbtn" onclick="openHelp('chegadas')">i</button></div>
+<div class="st"><span class="sn">ARR</span>Checklist de Chegadas por Pais<button class="hbtn" data-help="chegadas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Estado por delegacao - Voo - Hotel - Transfer - Credencial - Kit - Pagamento</div>
 <div class="bb" id="bar-chegadas">
   <button class="btn bp" onclick="openM('m-delegacao')">+ Adicionar delegacao</button>
@@ -994,7 +995,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- RESULTADOS DESPORTIVOS -->
 <div class="pg" id="pg-resultados">
-<div class="st"><span class="sn">RES</span>Resultados Desportivos<button class="hbtn" onclick="openHelp('resultados')">i</button></div>
+<div class="st"><span class="sn">RES</span>Resultados Desportivos<button class="hbtn" data-help="resultados" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Classificacoes por categoria - Stroke Play - Match Play - Registo manual - Exportacao oficial WMF</div>
 <div class="bb" id="bar-resultados">
   <button class="btn bp" onclick="openM('m-resultado')">+ Registar resultado</button>
@@ -1024,7 +1025,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- DIARIO DE BORDO -->
 <div class="pg" id="pg-diariobordo">
-<div class="st"><span class="sn">DB</span>Diario de Bordo<button class="hbtn" onclick="openHelp('diariobordo')">i</button></div>
+<div class="st"><span class="sn">DB</span>Diario de Bordo<button class="hbtn" data-help="diariobordo" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Registo cronologico durante os 5 dias do evento - Incidentes - Decisoes - Memoria historica</div>
 <div class="bb" id="bar-diariobordo">
   <button class="btn bp" onclick="openM('m-entrada-db')">+ Nova entrada</button>
@@ -1059,7 +1060,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- ORCAMENTO VS REAL -->
 <div class="pg" id="pg-orcamento">
-<div class="st"><span class="sn">ORC</span>Orcamento vs Real<button class="hbtn" onclick="openHelp('orcamento')">i</button></div>
+<div class="st"><span class="sn">ORC</span>Orcamento vs Real<button class="hbtn" data-help="orcamento" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Comparacao rubrica a rubrica - Semaforo verde/amarelo/vermelho - Desvios - PDF para FPM e IPDJ</div>
 <div class="bb">
   <button class="btn bp" onclick="openM('m-orc-rubrica')">+ Definir rubrica orcamental</button>
@@ -1078,7 +1079,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- FATURAS -->
 <div class="pg" id="pg-faturas">
-<div class="st"><span class="sn">FAT</span>Gestao de Faturas<button class="hbtn" onclick="openHelp('faturas')">i</button></div>
+<div class="st"><span class="sn">FAT</span>Gestao de Faturas<button class="hbtn" data-help="faturas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Registo de faturas - Alertas de vencimento - Estado de pagamento - Controlo documental</div>
 <div class="bb" id="bar-faturas">
   <button class="btn bp" onclick="openM('m-fatura')">+ Nova fatura</button>
@@ -1097,7 +1098,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- FLUXO DE CAIXA -->
 <div class="pg" id="pg-fluxo">
-<div class="st"><span class="sn">FC</span>Fluxo de Caixa Previsto<button class="hbtn" onclick="openHelp('fluxo')">i</button></div>
+<div class="st"><span class="sn">FC</span>Fluxo de Caixa Previsto<button class="hbtn" data-help="fluxo" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Calendario mensal de entradas e saidas previstas - Saldo previsto - Visual por mes</div>
 <div class="bb">
   <button class="btn bp" onclick="openM('m-fluxo-item')">+ Adicionar previsao</button>
@@ -1140,7 +1141,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- COMUNICACOES -->
 <div class="pg" id="pg-comunicacoes">
-<div class="st"><span class="sn">COM</span>Comunicacoes as Delegacoes<button class="hbtn" onclick="openHelp('comunicacoes')">i</button></div>
+<div class="st"><span class="sn">COM</span>Comunicacoes as Delegacoes<button class="hbtn" data-help="comunicacoes" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Templates oficiais em EN - Confirmacao inscricao - Info chegada - Programa - Resultados</div>
 <div class="bb" id="bar-comunicacoes">
   <button class="btn bp" onclick="openM('m-comunicado')">+ Novo comunicado</button>
@@ -1156,7 +1157,7 @@ td.mu{color:var(--mu);font-style:italic;}
 
   <!-- PRESS KIT -->
 <div class="pg" id="pg-presskit">
-<div class="st"><span class="sn">PK</span>Press Kit Digital<button class="hbtn" onclick="openHelp('presskit')">i</button></div>
+<div class="st"><span class="sn">PK</span>Press Kit Digital<button class="hbtn" data-help="presskit" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Pasta de imprensa para jornalistas e comunicacao social - Logo - Factos - Bio - Contactos</div>
 <div class="bb">
   <button class="btn bp" onclick="exportPressKitPDF()">Exportar Press Kit PDF</button>
@@ -1198,6 +1199,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <div class="pg" id="pg-backup">
 <div class="st"><span class="sn">BCK</span>Backup & Exportacao Total</div>
 <div class="sd">Exportar todos os dados do sistema - Arquivo offline - Enviar a FPM/WMF</div>
+<div id="email-config-section" style="margin-bottom:14px;"></div>
 <div class="av"><strong>Backup completo:</strong> Exporta todos os dados do Firebase num unico ficheiro JSON organizado por modulo. Guarda offline e envia a quem precisar.</div>
 <div class="g4" style="margin-bottom:20px;">
   <div class="sm"><div class="sml">Atletas</div><div class="smv" id="bk-atl">0</div></div>
@@ -1340,9 +1342,43 @@ td.mu{color:var(--mu);font-style:italic;}
 </div>
 </div>
 
+  <!-- LOG DE ACTIVIDADE -->
+<div class="pg" id="pg-log">
+<div class="st"><span class="sn">LOG</span>Historico de Actividade<button class="hbtn" onclick="openHelp('log')">i</button></div>
+<div class="sd">Registo automatico de todas as accoes — quem fez o que e quando</div>
+<div class="bb">
+  <button class="btn bo" onclick="exportLogPDF()">Exportar PDF</button>
+  <button class="btn bd2" onclick="if(confirm('Limpar todo o log?'))limparLog()">Limpar log</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Total accoes</div><div class="smv" id="log-total">0</div></div>
+  <div class="sm"><div class="sml">Hoje</div><div class="smv" id="log-hoje" style="color:var(--gl2)">0</div></div>
+  <div class="sm"><div class="sml">Admin</div><div class="smv" id="log-admin">0</div></div>
+  <div class="sm"><div class="sml">Ultima accao</div><div class="smv" id="log-ultima" style="font-size:12px;">—</div></div>
+</div>
+<div class="bb" style="margin-bottom:12px;">
+  <select class="fse" id="log-filtro-tipo" style="width:160px;" onchange="renderLog()">
+    <option value="">Todos os tipos</option>
+    <option value="add">Criados</option>
+    <option value="edit">Editados</option>
+    <option value="del">Eliminados</option>
+    <option value="login">Acessos</option>
+  </select>
+  <select class="fse" id="log-filtro-mod" style="width:180px;" onchange="renderLog()">
+    <option value="">Todos os modulos</option>
+    <option value="atletas">Atletas</option>
+    <option value="financeiro">Financeiro</option>
+    <option value="prazos">Prazos</option>
+    <option value="voluntarios">Voluntarios</option>
+    <option value="resultados">Resultados</option>
+  </select>
+</div>
+<div id="log-lista"></div>
+</div>
+
   <!-- CHECKLIST WMF OFICIAL -->
 <div class="pg" id="pg-wmfcheck">
-<div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026<button class="hbtn" onclick="openHelp('wmfcheck')">i</button></div>
+<div class="st"><span class="sn">WMF</span>Checklist Oficial WMF — SWC Vizela 2026<button class="hbtn" data-help="wmfcheck" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">45 itens · 6 categorias · EN / PT · Contador de dias · Estado cirúrgico</div>
 <div class="bb">
   <button class="btn bo" onclick="chkLang=chkLang==='EN'?'PT':'EN';renderChk()" id="btn-chk-lang">PT ↔ EN</button>
@@ -1891,8 +1927,8 @@ let isAdmin=false;
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function doLogin(){
   const pw=document.getElementById('pw').value;
-  if(pw==='SWC2026***'){isAdmin=true;startApp('Admin');}
-  else if(pw==='VIZELGOLFE2026***'){isAdmin=false;startApp('Leitura');}
+  if(pw==='SWC2026***'){isAdmin=true;startApp('Admin');setTimeout(()=>addLog('login','sistema','Acesso Admin'),1000);}
+  else if(pw==='VIZELGOLFE2026***'){isAdmin=false;startApp('Leitura');setTimeout(()=>addLog('login','sistema','Acesso Leitura'),1000);}
   else{document.getElementById('lerr').textContent='Password incorreta.';}
 }
 function startApp(role){
@@ -1901,7 +1937,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();initChecklist();startCountdown();startModeEvento();loadClima();setInterval(loadClima,600000);startWelcomeCountdown();
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();startCountdown();startModeEvento();loadClima();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -1954,13 +1990,14 @@ function nav(el,id,title){
   if(id==='comunicacoes'){renderComunicados();}
   if(id==='presskit'){renderPressKit();}
   if(id==='posevento'){}
-  if(id==='backup'){renderBackup();}
+  if(id==='backup'){renderBackup();renderEmailConfig();}
   if(id==='orcamento'){renderOrcamento();}
   if(id==='faturas'){renderFaturas();}
   if(id==='fluxo'){renderFluxo();}
   if(id==='relpatr'){renderRelPatr();}
   if(id==='mapapaises'){renderMapaPaises();}
   if(id==='estatisticas'){renderEstatisticas();}
+  if(id==='log'){renderLog();}
   if(id==='certificados'){renderCertificados();}
   if(id==='posts'){renderPost();}
   if(id==='resultados'){renderResultados();renderMatch();}
@@ -4485,6 +4522,7 @@ function startSlideshow(){
   const ov=document.getElementById('slideshow-overlay');
   if(!ov)return;
   ov.style.display='flex';
+  document.body.style.overflow='hidden';
   _slideIdx=0;
   showSlide(0);
   _slideTimer=setInterval(()=>{
@@ -4495,7 +4533,7 @@ function startSlideshow(){
 
 function stopSlideshow(){
   const ov=document.getElementById('slideshow-overlay');
-  if(ov)ov.style.display='none';
+  if(ov){ov.style.display='none';document.body.style.overflow='';}
   if(_slideTimer){clearInterval(_slideTimer);_slideTimer=null;}
 }
 
@@ -4797,7 +4835,8 @@ const HELP = {
     o:'Documento de imprensa para jornalistas e comunicacao social. Gerado automaticamente com dados reais.',
     steps:['Preenche o nome, email e telemovel do responsavel de imprensa.','Os factos do evento (atletas, paises, datas) actualizam automaticamente dos dados do sistema.','O PDF e em Ingles — formato padrao de press kit internacional.','Distribui a jornalistas antes do evento e durante as cerimonias.'],
     warn:'O Press Kit deve ser aprovado pelo COE antes de distribuir. Nao inclui resultados — para isso usa o Diario de Bordo.'},
-  backup:{icon:'&#9729;',title:'Backup & Exportacao Total',sub:'Seguranca dos dados do evento',
+  log:{icon:'&#9654;',title:'Historico de Actividade',sub:'Auditoria automatica do sistema',o:'Registo automatico de todas as accoes realizadas no sistema — criacao, edicao e eliminacao de registos, acessos e exportacoes de PDF.',steps:['O log e preenchido automaticamente — nao precisas de fazer nada.','Filtra por tipo de accao (Criado/Editado/Eliminado) ou por modulo.','O PDF exporta os 100 registos mais recentes para arquivo.','Util para auditoria e para saber quem fez o que durante o evento.'],warn:'O log pode ser limpo pelo Admin. Exporta o PDF periodicamente para arquivo permanente.'},
+      backup:{icon:'&#9729;',title:'Backup & Exportacao Total',sub:'Seguranca dos dados do evento',
     o:'Exporta todos os dados do sistema num unico ficheiro JSON ou PDF resumo. Para guardar offline e enviar a FPM/WMF.',
     steps:['Clica "Exportar backup completo (JSON)" para descarregar todos os dados.','O ficheiro JSON pode ser reimportado noutro sistema ou guardado como arquivo.','O "Resumo executivo (PDF)" mostra a contagem de registos por modulo.','Faz backup diario durante os 5 dias do evento — guarda numa pasta partilhada do COE.'],
     warn:'O backup NAO substitui o Firebase — e apenas uma copia de seguranca adicional. Os dados ficam sempre no Firebase.'},
@@ -4833,6 +4872,7 @@ function closeHelp(){
   document.getElementById('help-overlay').classList.remove('on');
 }
 window.openHelp=openHelp;window.closeHelp=closeHelp;
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){stopSlideshow();closeHelp();if(typeof dsClose==='function')dsClose();}});
 
 // ══ ESTATISTICAS ══
 let _charts = {};
@@ -5016,6 +5056,243 @@ window.addEventListener('load',()=>{
     };
   }
 });
+
+
+// ══ LOG DE ACTIVIDADE ══
+let _log = [];
+
+function loadLog(){
+  _snap('log_actividade',(docs)=>{
+    _log=docs.sort((a,b)=>b.ts-a.ts);
+    renderLog();
+  });
+}
+
+function addLog(tipo, modulo, descricao){
+  const nivel = isAdmin ? 'Admin' : 'Leitura';
+  const d = {
+    tipo,
+    modulo,
+    descricao,
+    nivel,
+    dt: new Date().toLocaleString('pt-PT'),
+    ts: Date.now()
+  };
+  _add('log_actividade', d).catch(()=>{});
+}
+
+function renderLog(){
+  const filtroT = document.getElementById('log-filtro-tipo')?.value||'';
+  const filtroM = document.getElementById('log-filtro-mod')?.value||'';
+  const hoje = new Date().toLocaleDateString('pt-PT');
+
+  const data = _log.filter(l=>
+    (filtroT ? l.tipo===filtroT : true) &&
+    (filtroM ? l.modulo===filtroM : true)
+  );
+
+  const elT = document.getElementById('log-total');
+  const elH = document.getElementById('log-hoje');
+  const elA = document.getElementById('log-admin');
+  const elU = document.getElementById('log-ultima');
+  if(elT) elT.textContent = _log.length;
+  if(elH) elH.textContent = _log.filter(l=>l.dt&&l.dt.startsWith(hoje.split('/').reverse().join('/'))||l.dt&&l.dt.includes(hoje)).length;
+  if(elA) elA.textContent = _log.filter(l=>l.nivel==='Admin').length;
+  if(elU) elU.textContent = _log.length ? (_log[0].descricao||'').substring(0,30)+'...' : '—';
+
+  const lista = document.getElementById('log-lista');
+  if(!lista) return;
+
+  if(!data.length){
+    lista.innerHTML='<div class="em"><div class="emi">&#9654;</div><div class="emt">Sem registos de actividade</div><div class="emd">As accoes ficam registadas automaticamente a partir de agora</div></div>';
+    return;
+  }
+
+  const TIPO_CFG = {
+    add:    {cor:'rgba(74,184,122,.15)',  borda:'rgba(74,184,122,.3)',  label:'CRIADO',   ic:'&#43;'},
+    edit:   {cor:'rgba(201,168,76,.1)',   borda:'rgba(201,168,76,.25)', label:'EDITADO',  ic:'&#9998;'},
+    del:    {cor:'rgba(224,82,82,.1)',    borda:'rgba(224,82,82,.25)',  label:'ELIMINADO',ic:'&#10005;'},
+    login:  {cor:'rgba(90,138,204,.1)',   borda:'rgba(90,138,204,.25)', label:'ACESSO',   ic:'&#9654;'},
+    export: {cor:'rgba(150,100,200,.1)',  borda:'rgba(150,100,200,.25)',label:'PDF',      ic:'&#8681;'},
+  };
+
+  lista.innerHTML = data.slice(0,200).map(l=>{
+    const tc = TIPO_CFG[l.tipo] || {cor:'rgba(255,255,255,.04)',borda:'var(--bdr)',label:l.tipo||'',ic:'&#9632;'};
+    return `<div style="display:flex;gap:12px;align-items:flex-start;padding:9px 12px;margin-bottom:6px;background:${tc.cor};border:1px solid ${tc.borda};border-radius:8px;">
+      <div style="min-width:22px;height:22px;border-radius:50%;background:${tc.borda};display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">${tc.ic}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+          <span style="font-size:9px;font-weight:700;letter-spacing:.1em;color:rgba(201,168,76,.7);">${tc.label}</span>
+          <span style="font-size:9px;color:var(--mu);background:rgba(255,255,255,.05);padding:1px 7px;border-radius:4px;">${l.modulo||'—'}</span>
+          <span style="font-size:9px;color:var(--mu);margin-left:auto;">${l.nivel||''}</span>
+        </div>
+        <div style="font-size:12px;color:var(--wh);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.descricao||''}</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:2px;">${l.dt||''}</div>
+      </div>
+    </div>`;
+  }).join('') + (data.length>200?`<div style="text-align:center;color:var(--mu);font-size:11px;padding:8px;">Mostrando os 200 registos mais recentes de ${data.length} total</div>`:'');
+}
+
+async function limparLog(){
+  if(!isAdmin) return;
+  const items = [..._log];
+  await Promise.all(items.map(l=>_del('log_actividade',l.id)));
+  toast('Log limpo');
+}
+
+function exportLogPDF(){
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Historico de Actividade','SWC Vizela 2026 - Log completo do sistema',true);
+  const rows = _log.slice(0,100).map(l=>[l.dt||'',l.nivel||'',l.tipo||'',l.modulo||'',l.descricao||'']);
+  doc.autoTable({
+    startY:38,
+    head:[['Data/Hora','Nivel','Tipo','Modulo','Descricao']],
+    body:rows.length?rows:[['','','','','Sem registos']],
+    theme:'striped',
+    styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[200,190,170],lineWidth:0.15},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},
+    alternateRowStyles:{fillColor:[250,247,240]},
+    columnStyles:{0:{cellWidth:35},1:{cellWidth:20,halign:'center'},2:{cellWidth:22,halign:'center'},3:{cellWidth:28},4:{cellWidth:130}},
+    margin:{left:5,right:5,bottom:28}
+  });
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Log_Actividade.pdf');
+  toast('PDF log gerado');
+}
+
+// Interceptar _add, _upd, _del via wrapper no startApp
+function wrapFirebaseFns(){
+  const origAdd=_add, origUpd=_upd, origDel=_del;
+  window._addW=function(col,data){
+    const r=origAdd(col,data);
+    if(col!=='log_actividade'&&col!=='diariodb')
+      addLog('add',col,'Novo registo em '+col+(data.nome?' — '+data.nome:data.titulo?' — '+data.titulo:data.empresa?' — '+data.empresa:''));
+    return r;
+  };
+  window._updW=function(col,id,data){
+    const r=origUpd(col,id,data);
+    if(col!=='log_actividade') addLog('edit',col,'Actualizado registo em '+col);
+    return r;
+  };
+  window._delW=function(col,id){
+    const r=origDel(col,id);
+    if(col!=='log_actividade') addLog('del',col,'Eliminado registo em '+col);
+    return r;
+  };
+}
+
+
+// ══ NOTIFICACOES POR EMAIL ══
+// Usa Resend via Cloudflare Worker (mesmo worker do portal socios)
+// Worker URL: https://vzg-nacional.ruigoncalves1968.workers.dev
+// Para activar: configurar RESEND_API_KEY no worker
+
+const EMAIL_TO = 'gestao.vizelgolfe@gmail.com';
+const WORKER_URL = 'https://vzg-nacional.ruigoncalves1968.workers.dev';
+
+async function enviarEmailAlerta(assunto, corpo){
+  try {
+    const resp = await fetch(WORKER_URL + '/email', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        to: EMAIL_TO,
+        subject: '[SWC2026] ' + assunto,
+        html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+          <div style="background:#0A1628;padding:20px;border-bottom:2px solid #C9A84C;">
+            <h2 style="color:#C9A84C;margin:0;font-size:18px;">SWC Vizela 2026 — Alerta Automatico</h2>
+          </div>
+          <div style="padding:20px;background:#f9f9f9;">
+            ${corpo}
+          </div>
+          <div style="padding:12px 20px;background:#0A1628;text-align:center;">
+            <p style="color:#7A7060;font-size:11px;margin:0;">© Rui Goncalves · SWC Vizela 2026 · Sistema de Gestao</p>
+          </div>
+        </div>`
+      })
+    });
+    if(resp.ok) return true;
+    return false;
+  } catch(e) {
+    console.log('Email nao enviado:', e.message);
+    return false;
+  }
+}
+
+// Verificar prazos urgentes e enviar email se necessario
+let _ultimoEmailPrazo = 0;
+
+async function checkEmailAlertas(){
+  if(!isAdmin) return;
+  // So enviar 1 vez por hora no maximo
+  if(Date.now() - _ultimoEmailPrazo < 3600000) return;
+
+  const hoje = new Date();
+  const urgentes = _praz.filter(p=>{
+    const d = new Date(p.data);
+    const diff = (d-hoje)/86400000;
+    return diff >= 0 && diff <= 7 && p.estado !== 'concluido';
+  });
+
+  if(!urgentes.length) return;
+
+  const linhas = urgentes.map(p=>{
+    const diff = Math.ceil((new Date(p.data)-hoje)/86400000);
+    return `<tr>
+      <td style="padding:8px;border-bottom:1px solid #ddd;font-weight:bold;color:#C9A84C;">${p.data}</td>
+      <td style="padding:8px;border-bottom:1px solid #ddd;">${p.titulo}</td>
+      <td style="padding:8px;border-bottom:1px solid #ddd;color:${diff===0?'#e05252':'#e89020'};font-weight:bold;">${diff===0?'HOJE':diff+' dias'}</td>
+      <td style="padding:8px;border-bottom:1px solid #ddd;">${p.resp||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const corpo = `
+    <h3 style="color:#e05252;">⚠ ${urgentes.length} prazo(s) WMF a vencer em 7 dias</h3>
+    <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+      <thead><tr style="background:#0A1628;color:#C9A84C;">
+        <th style="padding:8px;text-align:left;">Data</th>
+        <th style="padding:8px;text-align:left;">Prazo</th>
+        <th style="padding:8px;text-align:left;">Urgencia</th>
+        <th style="padding:8px;text-align:left;">Responsavel</th>
+      </tr></thead>
+      <tbody>${linhas}</tbody>
+    </table>
+    <p style="margin-top:16px;color:#555;font-size:13px;">
+      Acede ao sistema para actualizar o estado de cada prazo:<br>
+      <a href="https://swc.vizelgolfe.net" style="color:#C9A84C;">swc.vizelgolfe.net</a>
+    </p>
+  `;
+
+  const enviado = await enviarEmailAlerta(
+    urgentes.length + ' prazo(s) WMF urgentes — accao necessaria',
+    corpo
+  );
+
+  if(enviado){
+    _ultimoEmailPrazo = Date.now();
+    addLog('email','prazos','Email de alerta enviado — '+urgentes.length+' prazos urgentes');
+    notif('Email de alerta enviado para '+EMAIL_TO,'ok');
+  }
+}
+
+// Pagina de configuracao de emails na sidebar de settings
+function renderEmailConfig(){
+  const secEmail = document.getElementById('email-config-section');
+  if(!secEmail) return;
+  const urgentes = _praz.filter(p=>{
+    const d=new Date(p.data);
+    return (d-new Date())/86400000<=7&&p.estado!=='concluido';
+  });
+  secEmail.innerHTML = `
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:10px;">Notificacoes Email — Alertas WMF</div>
+      <div style="font-size:12px;color:var(--se);margin-bottom:10px;">Email de destino: <strong style="color:var(--wh);">${EMAIL_TO}</strong></div>
+      <div style="font-size:12px;color:var(--se);margin-bottom:12px;">Prazos urgentes detectados: <strong style="color:${urgentes.length>0?'var(--er)':'var(--ok)'};">${urgentes.length}</strong></div>
+      <button class="btn bp bsm" onclick="checkEmailAlertas();toast('A verificar e enviar...')">Enviar email de alerta agora</button>
+      <div style="font-size:10px;color:var(--mu);margin-top:8px;">O sistema envia automaticamente quando abres o sistema e ha prazos urgentes (max 1x por hora).</div>
+    </div>
+  `;
+}
 
 
 //  EXPORTAÇÃO PDF 
@@ -6083,6 +6360,11 @@ window.clearSearch=clearSearch;
 window.renderMapaPaises=renderMapaPaises;
 window.renderEstatisticas=renderEstatisticas;
 window.toggleFoco=toggleFoco;
+window.addLog=addLog;
+window.checkEmailAlertas=checkEmailAlertas;
+window.renderEmailConfig=renderEmailConfig;
+window.limparLog=limparLog;
+window.exportLogPDF=exportLogPDF;
 window.notif=notif;
 window.renderPost=renderPost;
 window.copyPost=copyPost;

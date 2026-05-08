@@ -3657,7 +3657,7 @@ function renderGuia(){
 // ========== PDFs BLOCO B ==========
 
 function exportAccredPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Lista de Acreditacoes','SWC Vizela 2026 - Todos os participantes',true);
   const todos=[
     ..._atl.map(a=>['ATLETA',a.nome||'',a.pais||'',a.categoria||'',a.hotel||'-']),
@@ -3672,7 +3672,7 @@ function exportAccredPDF(){
 }
 
 function exportRoomingPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Rooming List Oficial WMF','SWC Vizela 2026 - Lista oficial de alojamento',true);
   const sorted=[..._rooming].sort((a,b)=>a.hotel.localeCompare(b.hotel)||a.quarto.localeCompare(b.quarto));
   const rows=sorted.map(r=>[r.nome||'',r.pais||'',r.tipo||'',r.hotel||'',r.quarto||'-',r.tquarto||'',r.checkin||'',r.checkout||'',r.obs||'']);
@@ -3685,7 +3685,7 @@ function exportRoomingPDF(){
 function exportRoomingExcel(){toast('Exportacao Excel - em desenvolvimento','er');}
 
 function exportChegadasPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Checklist de Chegadas por Pais','SWC Vizela 2026 - Estado das delegacoes',true);
   const rows=_delegacoes.map(d=>[
     d.pais||'',d.chefe||'',String(d.nAtletas||0),d.hotel||'-',
@@ -3700,7 +3700,7 @@ function exportChegadasPDF(){
 
 function exportGuiaPDF(){
   const L=document.getElementById('guia-lang')?.value||'EN';
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const tit={'EN':'Athlete Guide','PT':'Guia do Atleta','DE':'Athleten-Leitfaden','ES':'Guia del Atleta'};
   pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 12-17 October 2026',false);
   let y=42;
@@ -3886,7 +3886,7 @@ async function delEntradaDB(id){if(!isAdmin||!confirm('Eliminar entrada?'))retur
 
 // --- PDFs BLOCO C ---
 function exportResultadosPDF(){
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Resultados Desportivos Oficiais','SWC Vizela 2026 - Stroke Play & Match Play',false);
   let y=42;
   // Stroke Play Homens
@@ -3915,7 +3915,7 @@ function exportResultadosPDF(){
 }
 
 function exportDiarioBordoPDF(){
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Diario de Bordo','SWC Vizela 2026 - Registo cronologico do evento',false);
   const sorted=[..._diariodb].sort((a,b)=>a.ts-b.ts);
   const DIAS={'2026-10-14':'14 Out - Dia 1','2026-10-15':'15 Out - Dia 2','2026-10-16':'16 Out - Dia 3','2026-10-17':'17 Out - Final'};
@@ -4090,7 +4090,7 @@ function exportRelPatrPDF(){_pat.forEach(p=>exportRelPatrSingle(p.id));}
 function exportRelPatrSingle(patId){
   const p=_pat.find(x=>x.id===patId);
   if(!p)return;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Relatorio de Impacto - Patrocinador','SWC Vizela 2026 - Obrigado pelo seu apoio!',false);
   let y=42;
   // Cabecalho empresa
@@ -4138,7 +4138,7 @@ function exportRelPatrSingle(patId){
 
 // --- PDFs BLOCO D ---
 function exportOrcamentoPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Orcamento vs Execucao Real','SWC Vizela 2026 - Comparacao rubrica a rubrica',true);
   const rows=_orcamento.map(o=>{
     const orc=Number(o.valor||0);
@@ -4154,7 +4154,7 @@ function exportOrcamentoPDF(){
 }
 
 function exportFaturasPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Gestao de Faturas','SWC Vizela 2026 - Registo documental completo',true);
   const rows=_faturas.map(f=>[f.nr||'-',f.forn||'',nomC[f.conta]||f.conta||'',fmtPDF(f.valor),f.data||'',f.venc||'',f.estado||'']);
   const totPend=_faturas.filter(f=>f.estado==='Pendente').reduce((s,f)=>s+Number(f.valor||0),0);
@@ -4164,7 +4164,7 @@ function exportFaturasPDF(){
 }
 
 function exportFluxoPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Fluxo de Caixa Previsto','SWC Vizela 2026 - Entradas e saidas mensais',true);
   const MESES={'2025-12':'Dez 25','2026-01':'Jan 26','2026-02':'Fev 26','2026-03':'Mar 26','2026-04':'Abr 26','2026-05':'Mai 26','2026-06':'Jun 26','2026-07':'Jul 26','2026-08':'Ago 26','2026-09':'Set 26','2026-10':'Out 26','2026-11':'Nov 26'};
   const rows=_fluxo.map(f=>[MESES[f.mes]||f.mes,f.tipo==='entrada'?'Entrada':'Saida',f.desc||'',f.prob||'',fmtPDF(f.valor)]);
@@ -4216,7 +4216,7 @@ async function delActa(id){if(!isAdmin||!confirm('Eliminar acta?'))return;await 
 function exportActaPDF(id){
   const a=_actas.find(x=>x.id===id);
   if(!a)return;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Acta de Reuniao - COE SWC Vizela 2026','Comite Organizador Executivo',false);
   let y=42;
   doc.setFillColor(248,246,240);doc.roundedRect(14,y,182,22,3,3,'F');
@@ -4277,7 +4277,7 @@ async function delComunicado(id){if(!isAdmin||!confirm('Eliminar?'))return;await
 
 function exportComunicadoPDF(id){
   const c=_comunicados.find(x=>x.id===id);if(!c)return;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Comunicado Oficial','SWC Vizela 2026 - '+c.tipo,false);
   let y=42;
   doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(80,60,20);
@@ -4294,7 +4294,7 @@ function exportComunicadoPDF(id){
 }
 
 function exportComunicadoListaPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Lista de Comunicados','SWC Vizela 2026',true);
   const rows=_comunicados.map(c=>[c.tipo||'',c.dest||'',c.lang||'',c.assunto||'',c.estado||'']);
   doc.autoTable({startY:38,head:[['Tipo','Destinatarios','Lingua','Assunto','Estado']],body:rows.length?rows:[['','','','Sem comunicados','']],theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},columnStyles:{0:{cellWidth:50},1:{cellWidth:35},2:{cellWidth:18,halign:'center'},3:{cellWidth:120},4:{cellWidth:25,halign:'center'}},margin:{left:5,right:5,bottom:28}});
@@ -4323,7 +4323,7 @@ function renderPressKit(){
 }
 
 function exportPressKitPDF(){
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Press Kit - Media Information','SWC Vizela 2026 - Seniors World Minigolf Championship',false);
   let y=42;
   const nAtl=_atl.length;
@@ -4356,7 +4356,7 @@ function exportPressKitPDF(){
 
 // --- POS-EVENTO ---
 function exportRelWMFFinal(){
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Final Report - WMF','SWC Vizela 2026 - Post-Event Official Report',false);
   let y=42;
   const nAtl=_atl.length;
@@ -4391,7 +4391,7 @@ function exportRelWMFFinal(){
 }
 
 function exportRelAG(){
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Relatorio para Assembleia Geral','Vizelgolfe - Associacao de Minigolfe de Vizela - SWC 2026',false);
   const nAtl=_atl.length;const nPaises=new Set(_atl.map(a=>a.pais)).size;
   const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
@@ -4414,7 +4414,7 @@ function exportRelAG(){
 }
 
 function exportRelCMV(){
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Relatorio de Impacto Economico Local','SWC Vizela 2026 - Camara Municipal de Vizela',false);
   const nAtl=_atl.length;const nPaises=new Set(_atl.map(a=>a.pais)).size;
   const nNoites=_rooming.reduce((s,r)=>{const ci=new Date(r.checkin||'2026-10-09');const co=new Date(r.checkout||'2026-10-18');return s+Math.ceil((co-ci)/86400000);},0);
@@ -4472,7 +4472,7 @@ function exportBackupJSON(){
 }
 
 function exportBackupPDF(){
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Resumo Executivo - Estado do Sistema','SWC Vizela 2026 - Backup '+new Date().toLocaleDateString('pt-PT'),false);
   const rows=[
     ['Atletas inscritos',String(_atl.length)],
@@ -4988,7 +4988,7 @@ function exportCertificado(atlId){
   if(!atl)return;
   const res=_resultados.find(r=>r.nome===atl.nome&&r.categoria===atl.categoria);
   const ranking=res?_resultados.filter(r=>r.categoria===atl.categoria).sort((a,b)=>a.total-b.total).findIndex(r=>r.nome===atl.nome)+1:null;
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const W=297,H=210;
   // Fundo
   doc.setFillColor(8,15,32);doc.rect(0,0,W,H,'F');
@@ -5477,7 +5477,7 @@ async function limparLog(){
 }
 
 function exportLogPDF(){
-  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Historico de Actividade','SWC Vizela 2026 - Log completo do sistema',true);
   const rows = _log.slice(0,100).map(l=>[l.dt||'',l.nivel||'',l.tipo||'',l.modulo||'',l.descricao||'']);
   doc.autoTable({
@@ -5749,7 +5749,7 @@ function fmtPDF(v){return Number(v||0).toLocaleString('pt-PT',{minimumFractionDi
 
 //  DR PDF 
 function exportDR(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const L = drL;
   pdfHeader(doc,
     L==='PT'?'Demonstracao de Resultados':'Income Statement',
@@ -5844,7 +5844,7 @@ function exportDR(){
 
 //  BALANÇO PDF 
 function exportBalanco(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc, 'Balanco do Evento', 'SWC Vizela 2026 - Ativo - Passivo - Capital Próprio', false);
 
   const cx=_lan.filter(l=>l.cb==='Caixa').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
@@ -5912,7 +5912,7 @@ function exportBalanco(){
 
 //  BALANCETE PDF 
 function exportBalancete(){
-  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const mes = document.getElementById('bal-mes').value;
   const meses = {'2025-12':'Dezembro 2025','2026-01':'Janeiro 2026','2026-02':'Fevereiro 2026','2026-03':'Março 2026','2026-04':'Abril 2026','2026-05':'Maio 2026','2026-06':'Junho 2026','2026-07':'Julho 2026','2026-08':'Agosto 2026','2026-09':'Setembro 2026','2026-10':'Outubro 2026','2026-11':'Novembro 2026'};
   pdfHeader(doc, 'Balancete Mensal SNC-ESNL', 'SWC Vizela 2026 - '+meses[mes], true);
@@ -5960,7 +5960,7 @@ function exportBalancete(){
 
 //  IPDJ PDF 
 function exportIPDJ(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc, 'Formulario Anexo B - IPDJ', 'Programa de Eventos Desportivos Internacionais - SWC Vizela 2026', false);
 
   const tR=_rec.reduce((a,r)=>a+Number(r.valor||0),0);
@@ -6048,7 +6048,7 @@ function exportIPDJ(){
 
 //  WMF PDF 
 function exportWMF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc, 'Financial Statement - WMF/EMF', 'SWC Vizela 2026 - Participation Fees Statement', false);
 
   const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
@@ -6098,7 +6098,7 @@ function exportWMF(){
 
 //  DIÁRIO PDF 
 function exportDiario(){
-  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc, 'Diario de Caixa / Banco', 'SWC Vizela 2026 - Valores reais registados', true);
 
   let cx=0,bk=0;
@@ -6130,7 +6130,7 @@ function exportDiario(){
 
 //  RECEITAS PDF 
 function exportReceitas(){
-  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Receitas','SWC Vizela 2026 - Valores reais registados',true);
   const rows=_rec.map(r=>[r.data||'',r.conta||'',nomC[r.conta]||'',r.desc||'',fmtPDF(r.valor),r.estado||'',r.obs||'']);
   doc.autoTable({startY:38,head:[['Data','SNC','Rubrica','Descrição','Valor','Estado','Obs.']],body:rows.length?rows:[['','','','Sem receitas','','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{4:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:40},4:{cellWidth:28,halign:'right'},5:{cellWidth:25}},margin:{left:5,right:5,bottom:28}});
@@ -6139,7 +6139,7 @@ function exportReceitas(){
 
 //  DESPESAS PDF 
 function exportDespesas(){
-  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Despesas','SWC Vizela 2026 - Valores reais registados',true);
   const rows=_desp.map(d=>[d.data||'',d.doc||'',d.conta||'',nomC[d.conta]||'',d.desc||'',fmtPDF(d.valor),d.estado||'']);
   doc.autoTable({startY:38,head:[['Data','Doc.','SNC','Rubrica','Descrição','Valor','Estado']],body:rows.length?rows:[['','','','','Sem despesas','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{5:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:15},3:{cellWidth:40},5:{cellWidth:28,halign:'right'},6:{cellWidth:22}},margin:{left:5,right:5,bottom:28}});
@@ -6148,7 +6148,7 @@ function exportDespesas(){
 
 //  PATROCÍNIOS PDF 
 function exportPat(){
-  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Patrocinios & CRM','SWC Vizela 2026 - Valores reais confirmados',true);
   const rows=_pat.map(p=>[p.empresa||'',p.tipo||'',p.contacto||'',fmtPDF(p.valor),(p.contrapartidas||'').substring(0,40),p.estado||'']);
   doc.autoTable({startY:38,head:[['Empresa','Tipo','Contacto','Valor confirmado','Contrapartidas','Estado']],body:rows.length?rows:[['','','','','Sem patrocinadores','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{3:{halign:'right',cellWidth:35},1:{cellWidth:30},5:{cellWidth:28}},margin:{left:5,right:5,bottom:28}});
@@ -6157,7 +6157,7 @@ function exportPat(){
 
 //  ATLETAS PDF 
 function exportAtletasPDF(){
-  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Atletas & Inscricoes','SWC Vizela 2026 - Lista oficial de participantes',true);
   const rows = _atl.map(a=>[a.nome||'',a.pais||'',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-',a.email||'']);
   const totTaxas = _atl.reduce((s,a)=>s+Number(a.taxa||0),0);
@@ -6181,7 +6181,7 @@ function exportAtletasPDF(){
 
 //  CERIMONIAS PDF 
 function exportCerimoniasPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Cerimonias & Protocolo','SWC Vizela 2026 - Lista de convidados e protocolo',false);
   // Sumário
   const nAb = _conv.filter(c=>c.abertura==='S').length;
@@ -6222,7 +6222,7 @@ function exportCerimoniasPDF(){
 
 //  COMUNICADOS PDF 
 function exportComunicadosPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Comunicados de Imprensa WMF','SWC Vizela 2026 - Press Releases oficiais (EN)',false);
   let y = 42;
   const pr1 = document.getElementById('pr1')?.value || '';
@@ -6252,7 +6252,7 @@ function exportComunicadosPDF(){
 
 //  PROGRAMA DO EVENTO PDF 
 function exportProgramaPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Programa Oficial do Evento','SWC Vizela 2026 - 13 a 17 Outubro - Vizela, Portugal',false);
 
   let y = 42;
@@ -6321,7 +6321,7 @@ function exportProgramaPDF(){
 
 //  CRONOLOGIA PDF 
 function exportCronPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Cronologia & Prazos WMF','SWC Vizela 2026 - Acordo Tripartido WMF/EMF/FPM',false);
 
   const hoje = new Date();
@@ -6428,7 +6428,7 @@ function renderPrazosTable(doc, prazos, startY){
 
 //  ORGANIZAÇÃO PDF 
 function exportOrgPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Organizacao & COE','SWC Vizela 2026 - Comite Organizador Executivo',false);
   const rowsCOE = _mbr.map(m=>[m.nome||'',m.funcao||'',m.tel||'',m.email||'']);
   doc.autoTable({startY:42,head:[['Nome','Função COE','Telemóvel','Email']],body:rowsCOE.length?rowsCOE:[['','Sem membros COE registados','','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},margin:{left:14,right:14,bottom:28}});
@@ -6442,7 +6442,7 @@ function exportOrgPDF(){
 
 //  SEGURANÇA PDF 
 function exportSegPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Seguranca & Inventario WMF','SWC Vizela 2026 - Equipamento e Seguros',false);
   const rowsInv = _inv.map(i=>[i.desc||'',String(i.qty||1),i.data||'',i.estado||'',i.obs||'']);
   doc.autoTable({startY:42,head:[['Descrição','Qtd.','Data chegada','Estado','Obs.']],body:rowsInv.length?rowsInv:[['','','','Sem itens registados','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{1:{cellWidth:15,halign:'center'},2:{cellWidth:25},3:{cellWidth:40}},margin:{left:14,right:14,bottom:28}});
@@ -6451,7 +6451,7 @@ function exportSegPDF(){
 
 //  CHECKLIST WMF PDF 
 function exportChkPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc = new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const L = chkLang;
   pdfHeader(doc,L==='PT'?'Checklist WMF Oficial':'WMF Official Checklist','SWC Vizela 2026 - '+(L==='PT'?'45 itens - 6 categorias':'45 items - 6 categories'),false);
   const rows=CHK_ITEMS.map(it=>{
@@ -6592,7 +6592,7 @@ async function delVendaCS(id){if(!isAdmin||!confirm('Anular venda?'))return;awai
 function exportAcertoPDF(marcaId){
   const marca=_marcas.find(m=>m.id===marcaId);
   if(!marca){toast('Marca nao encontrada','er');return;}
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Acerto de Contas - Consignacao','SWC Vizela 2026 - '+marca.nome,false);
   let y=42;
   doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
@@ -6637,7 +6637,7 @@ function exportAcertoPDF(marcaId){
 }
 
 function exportConsigPDF(){
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const doc=new window.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Consignacao & Merchandise - Resumo Geral','SWC Vizela 2026 - Por marca',true);
   const rows=_marcas.map(m=>{
     const arts=_artigos.filter(a=>a.marcaId===m.id);
@@ -6695,6 +6695,9 @@ window.startWelcomeCountdown=startWelcomeCountdown;
 window.doGlobalSearch=doGlobalSearch;
 window.clearSearch=clearSearch;
 window.renderMapaPaises=renderMapaPaises;
+window.renderOrg=renderOrg;
+window.renderAtl=renderAtl;
+window.renderAlo=renderAlo;
 window.renderEstatisticas=renderEstatisticas;
 window.toggleFoco=toggleFoco;
 window._toggleFoco=toggleFoco;

@@ -2210,10 +2210,35 @@ const _snap=(col,cb,ord)=>{const q=ord?query(C(col),orderBy(ord)):C(col);return 
 let isAdmin=false;
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function doLogin(){
-  const pw=document.getElementById('pw').value;
-  if(pw==='SWC2026***'){isAdmin=true;startApp('Admin');setTimeout(()=>addLog('login','sistema','Acesso Admin'),1000);}
-  else if(pw==='VIZELGOLFE2026***'){isAdmin=false;startApp('Leitura');setTimeout(()=>addLog('login','sistema','Acesso Leitura'),1000);}
-  else{document.getElementById('lerr').textContent='Password incorreta.';}
+  const pw = document.getElementById('pw').value;
+  if(!pw){ const el=document.getElementById('lerr'); if(el)el.textContent='Introduz a password'; return; }
+
+  // SHA-256 da password introduzida — nunca enviamos a password em claro
+  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
+
+  // Buscar hashes do Firebase — nunca estão no código fonte
+  try {
+    const snap = await get(ref(db,'config/auth'));
+    const cfg = snap.val();
+
+    if(cfg && hashHex === cfg.admin_hash){
+      isAdmin=true;
+      startApp('Admin');
+      setTimeout(()=>addLog('login','sistema','Acesso Admin'),1000);
+    } else if(cfg && hashHex === cfg.leitura_hash){
+      isAdmin=false;
+      startApp('Leitura');
+      setTimeout(()=>addLog('login','sistema','Acesso Leitura'),1000);
+    } else {
+      const el=document.getElementById('lerr');
+      if(el){ el.textContent='Password incorrecta'; setTimeout(()=>{ el.textContent=''; },2500); }
+    }
+  } catch(e) {
+    // Fallback offline — se Firebase não responder
+    const el=document.getElementById('lerr');
+    if(el){ el.textContent='Erro de ligação. Tenta novamente.'; setTimeout(()=>{ el.textContent=''; },3000); }
+  }
 }
 function startApp(role){
   document.getElementById('ls').style.display='none';

@@ -762,7 +762,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="tb">
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="hamburger" onclick="toggleSb()"><span>☰</span></div>
-      <div><div class="tbt" id="pgt">Dashboard</div><div class="tbs">SWC Vizela 2026 · Seniors World Championship · 14–17 Outubro</div></div>
+      <div><div class="tbt" id="pgt">Dashboard</div><div class="tbs">SWC Vizela 2026 · Seniors World Championship · 12–17 Outubro</div></div>
     </div>
     <div class="tbd" id="clk"></div>
   </div>
@@ -2246,7 +2246,7 @@ function startApp(role){
   document.getElementById('role').textContent=role;
   document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
   setAdminBars();tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(()=>{startCountdown();loadClima();},200);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(()=>{startCountdown();},800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -2316,7 +2316,7 @@ function nav(el,id,title){
   if(id==='chegadas'){renderDelegacoes();}
   if(id==='guia'){renderGuia();}
   if(id==='consignacao'){renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();}
-  if(id==='dashboard'){startCountdown();setTimeout(loadClima,100);}
+  if(id==='dashboard'){setTimeout(startCountdown,100);setTimeout(loadClima,200);}
   // Re-aplicar permissoes apos navegacao
   setTimeout(setAdminBars, 50);
   if(id==='modo-evento')startModeEvento();
@@ -3180,8 +3180,8 @@ function renderAlertas(){
 //  COUNTDOWN 
 function startCountdown(){
   const target = new Date('2026-10-12T19:30:00').getTime();
-  // Se os elementos ainda não existirem, aguardar
-  if(!document.getElementById('cd-dias')){setTimeout(startCountdown,300);return;}
+  // Aguardar até os elementos existirem
+  if(!document.getElementById('cd-dias')){setTimeout(startCountdown,500);return;}
   function update(){
     const now = Date.now();
     const diff = target - now;
@@ -4101,7 +4101,7 @@ function exportRelPatrSingle(patId){
   doc.autoTable({startY:y,head:[['Indicador de Impacto','Valor']],body:[
     ['Atletas participantes',String(nAtl)+' atletas'],
     ['Paises representados',String(nPaises2)+' nacoes'],
-    ['Dias de competicao','4 dias (14-17 Outubro 2026)'],
+    ['Dias de competicao','6 dias (12-17 Outubro 2026)'],
     ['Local','Vizela, Portugal'],
     ['Modalidade','Seniors World Minigolf Championship'],
     ['Organizacao','Vizelgolfe - Associacao de Minigolfe de Vizela'],
@@ -6357,7 +6357,7 @@ function exportCronPDF(){
       {data:'Set 2026',    titulo:'Dados bancários WMF - Rooming lists - Guia atleta - Sinalética', resp:'COE', prioridade:'normal', estado:'pendente'},
       {data:'2 sem. antes','titulo':'Demonstração financeira taxas à WMF', resp:'Finanças', prioridade:'urgente', estado:'pendente'},
       {data:'12 Out 2026', titulo:'Cerimonia de Abertura 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
-      {data:'14-17 Out',   titulo:'Competição - 4 dias', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
+      {data:'12-17 Out',   titulo:'Evento - 6 dias', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
       {data:'17 Out 2026', titulo:'Cerimónia de Encerramento e Medalhas 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
       {data:'Pós-evento',  titulo:'Lista resultados + inventário WMF → receber 25%', resp:'Finanças', prioridade:'critico', estado:'pendente'},
     ];

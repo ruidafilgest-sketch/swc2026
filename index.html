@@ -2194,7 +2194,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getFirestore,collection,doc,getDoc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 //  FIREBASE - substituir com credenciais reais do projeto 'swc2026' 
 const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",databaseURL:"https://swc2026-c070b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
 const _app=initializeApp(fbCfg);
@@ -2217,10 +2217,10 @@ async function doLogin(){
   const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
   const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
 
-  // Buscar hashes do Firebase — nunca estão no código fonte
+  // Buscar hashes do Firestore — nunca estão no código fonte
   try {
-    const snap = await get(ref(db,'config/auth'));
-    const cfg = snap.val();
+    const cfgDoc = await getDoc(doc(collection(db,'swc2026_config'),'auth'));
+    const cfg = cfgDoc.exists() ? cfgDoc.data() : null;
 
     if(cfg && hashHex === cfg.admin_hash){
       isAdmin=true;
@@ -2235,9 +2235,9 @@ async function doLogin(){
       if(el){ el.textContent='Password incorrecta'; setTimeout(()=>{ el.textContent=''; },2500); }
     }
   } catch(e) {
-    // Fallback offline — se Firebase não responder
+    console.error('Login error:',e);
     const el=document.getElementById('lerr');
-    if(el){ el.textContent='Erro de ligação. Tenta novamente.'; setTimeout(()=>{ el.textContent=''; },3000); }
+    if(el){ el.textContent='Erro de ligacao. Tenta novamente.'; setTimeout(()=>{ el.textContent=''; },3000); }
   }
 }
 function startApp(role){

@@ -2196,7 +2196,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getFirestore,collection,doc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 //  FIREBASE - substituir com credenciais reais do projeto 'swc2026' 
-const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
+const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",databaseURL:"https://swc2026-c070b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
 const _app=initializeApp(fbCfg);
 const db=getFirestore(_app);
 const C=id=>{const base=doc(collection(db,'swc2026'),'dados');return collection(base,id);};
@@ -2316,6 +2316,7 @@ function nav(el,id,title){
   if(id==='chegadas'){renderDelegacoes();}
   if(id==='guia'){renderGuia();}
   if(id==='consignacao'){renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();}
+  if(id==='dashboard'){startCountdown();setTimeout(loadClima,100);}
   // Re-aplicar permissoes apos navegacao
   setTimeout(setAdminBars, 50);
   if(id==='modo-evento')startModeEvento();
@@ -3179,6 +3180,8 @@ function renderAlertas(){
 //  COUNTDOWN 
 function startCountdown(){
   const target = new Date('2026-10-12T19:30:00').getTime();
+  // Se os elementos ainda não existirem, aguardar
+  if(!document.getElementById('cd-dias')){setTimeout(startCountdown,300);return;}
   function update(){
     const now = Date.now();
     const diff = target - now;
@@ -6690,6 +6693,9 @@ window.toggleFoco=toggleFoco;
 window._toggleFoco=toggleFoco;
 window.addLog=addLog;
 window.checkEmailAlertas=checkEmailAlertas;
+window.renderCertificados=renderCertificados;
+window.dsOpen=function(a,b){if(window._dsOpen)window._dsOpen(a,b);};
+window.dsClose=function(){if(window._dsClose)window._dsClose();};
 window.renderEmailConfig=renderEmailConfig;
 window.limparLog=limparLog;
 window.exportLogPDF=exportLogPDF;

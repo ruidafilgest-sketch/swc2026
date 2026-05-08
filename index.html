@@ -2243,8 +2243,11 @@ async function doLogin(){
 function startApp(role){
   document.getElementById('ls').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('role').textContent=role;
-  document.getElementById('role').className='sbrole '+(isAdmin?'admin':'read');
+  const elRole=document.getElementById('role');
+  if(elRole){elRole.textContent=role;elRole.className='sbrole '+(isAdmin?'admin':'read');}
+  // Actualizar badge na nova sidebar
+  const elBadge=document.getElementById('role-badge');
+  if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+(isAdmin?'admin':'read');}
   setAdminBars();tick();setInterval(tick,60000);
   wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();
 }
@@ -2624,6 +2627,7 @@ function renderOrg(){
     }
   }
   const vol=document.getElementById('org-vol');
+  
   if(!vol)return;
   if(!_vol.length){vol.innerHTML='<div class="em"><div class="emi">&#9711;</div><div class="emt">Sem voluntarios</div></div>';return;}
   vol.innerHTML='';
@@ -3535,11 +3539,11 @@ function renderGuia(){
       datas:'Dates: 9-17 October 2026 (arrivals from 9 Oct)',
       local:'Venue: Minigolf Course - Vizela, Portugal',
       prog:'Programme',
-      p13:'13 Oct - Arrival & Official Training',
-      p14:'14 Oct - Competition Day 1 (Stroke Play)',
-      p15:'15 Oct - Competition Day 2 (Stroke Play)',
-      p16:'16 Oct - Competition Day 3 (Match Play)',
-      p17:'17 Oct - Finals & Closing Ceremony',
+      p13:'12 Oct - Opening Ceremony 19:30',
+      p14:'13 Oct - Arrivals & Official Training',
+      p15:'13 Oct - Arrivals &amp; Official Training',
+      p16:'14 Oct - Competition Day 1 (Stroke Play)',
+      p17:'15 Oct - Competition Day 2 (Stroke Play)\n17 Oct - Finals & Closing Ceremony 19:30',
       aloj:'Accommodation',
       aloftxt:'Hotels H1-H5 in Vizela area. Max 50 EUR/night (double, breakfast included). All hotels within short distance of the course.',
       trans:'Transport',
@@ -3582,9 +3586,9 @@ function renderGuia(){
       local:'Veranstaltungsort: Minigolfanlage - Vizela, Portugal',
       prog:'Programm',
       p13:'13. Okt. - Ankunft & Offizielles Training',
-      p14:'14. Okt. - Wettkampftag 1 (Stroke Play)',
-      p15:'15. Okt. - Wettkampftag 2 (Stroke Play)',
-      p16:'16. Okt. - Wettkampftag 3 (Match Play)',
+      p14:'13. Okt. - Ankunft & offizielles Training',
+      p15:'14. Okt. - Wettkampftag 1 (Stroke Play)',
+      p16:'15. Okt. - Wettkampftag 2 (Stroke Play)',
       p17:'17. Okt. - Finale & Schlussfeier',
       aloj:'Unterkunft',
       aloftxt:'Hotels H1-H5 in der Region Vizela. Max. 50 EUR/Nacht (Doppelzimmer, Fruehstueck inklusive).',

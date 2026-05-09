@@ -2386,7 +2386,9 @@ function renderDash(){
 async function saveLan(){
   if(!isAdmin)return;
   const d={data:document.getElementById('ln-dt').value,dc:document.getElementById('ln-dc').value,cn:document.getElementById('ln-cn').value,cb:document.getElementById('ln-cb').value,ds:document.getElementById('ln-ds').value,tp:document.getElementById('ln-tp').value,vl:parseFloat(document.getElementById('ln-vl').value)||0,ts:Date.now()};
-  await _add('lancamentos',d);closeM('m-lan');toast('Lançamento registado');
+  const _ldEditId=document.getElementById('ld-edit-id')?document.getElementById('ld-edit-id').value:'';
+  if(_ldEditId){await _upd('lancamentos',_ldEditId,d);toast('Actualizado');}else{await _add('lancamentos',d);toast('Registado');}
+  closeM('m-lan');
 }
 function renderDi(){
   let cx=0,bk=0,totD=0,totC=0;
@@ -2394,7 +2396,7 @@ function renderDi(){
     const v=Number(l.vl||0);
     if(l.cb==='Caixa')l.tp==='C'?cx+=v:cx-=v;else l.tp==='C'?bk+=v:bk-=v;
     l.tp==='C'?totC+=v:totD+=v;
-    return `<tr><td>${l.data||''}</td><td class="mu">${l.dc||''}</td><td><span class="sc">${l.cn||''}</span></td><td>${l.ds||''}</td><td><span class="bge ${l.tp==='C'?'bg-ok':'bg-er'}">${l.tp}</span></td><td class="mu">${l.cb||''}</td><td class="${l.tp==='C'?'tok':'tv'}">${l.tp==='C'?'+':'-'}${fmt(l.vl)}</td><td class="go">${fmt(cx+bk)}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delLan('${l.id}')"></button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td>${l.data||''}</td><td class="mu">${l.dc||''}</td><td><span class="sc">${l.cn||''}</span></td><td>${l.ds||''}</td><td><span class="bge ${l.tp==='C'?'bg-ok':'bg-er'}">${l.tp}</span></td><td class="mu">${l.cb||''}</td><td class="${l.tp==='C'?'tok':'tv'}">${l.tp==='C'?'+':'-'}${fmt(l.vl)}</td><td class="go">${fmt(cx+bk)}</td>${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editLan('${l.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delLan('${l.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   });
   document.getElementById('t-di').innerHTML=rows.length?rows.join(''):'<tr><td colspan="9" class="mu" style="text-align:center;padding:24px;">Sem lançamentos</td></tr>';
   document.getElementById('s-cx').textContent=fmt(cx);
@@ -2408,7 +2410,9 @@ async function delLan(id){if(!isAdmin||!confirm('Eliminar este lançamento?'))re
 async function saveRec(){
   if(!isAdmin)return;
   const d={data:document.getElementById('rc-dt').value,conta:document.getElementById('rc-cn').value,desc:document.getElementById('rc-ds').value,valor:parseFloat(document.getElementById('rc-vl').value)||0,estado:document.getElementById('rc-st').value,obs:document.getElementById('rc-ob').value,ts:Date.now()};
-  await _add('receitas',d);closeM('m-rec');toast('Receita registada');
+  const _rdEditId=document.getElementById('rd-edit-id')?document.getElementById('rd-edit-id').value:'';
+  if(_rdEditId){await _upd('receitas',_rdEditId,d);toast('Actualizado');}else{await _add('receitas',d);toast('Registado');}
+  closeM('m-rec');
 }
 function renderRec(){
   const totR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
@@ -2418,7 +2422,7 @@ function renderRec(){
   document.getElementById('r-pen').textContent=fmt(totP);
   document.getElementById('r-pub').textContent=fmt(pub);
   document.getElementById('r-prv').textContent=fmt(totR-pub);
-  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delRec('${r.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
+  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editRec('${r.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delRec('${r.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
 }
 async function delRec(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
 
@@ -2426,7 +2430,9 @@ async function delRec(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveDesp(){
   if(!isAdmin)return;
   const d={data:document.getElementById('dp-dt').value,doc:document.getElementById('dp-dc').value,conta:document.getElementById('dp-cn').value,desc:document.getElementById('dp-ds').value,valor:parseFloat(document.getElementById('dp-vl').value)||0,estado:document.getElementById('dp-st').value,ts:Date.now()};
-  await _add('despesas',d);closeM('m-desp');toast('Despesa registada');
+  const _ddEditId=document.getElementById('dd-edit-id')?document.getElementById('dd-edit-id').value:'';
+  if(_ddEditId){await _upd('despesas',_ddEditId,d);toast('Actualizado');}else{await _add('despesas',d);toast('Registado');}
+  closeM('m-desp');
 }
 function renderDesp(){
   const totP=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
@@ -2437,7 +2443,7 @@ function renderDesp(){
   const byR={};_desp.forEach(d=>{byR[d.conta]=(byR[d.conta]||0)+Number(d.valor||0);});
   const mr=Object.entries(byR).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('d-mrb').textContent=mr?mr[0]:'-';
-  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delDesp('${d.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
+  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editDesp('${d.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delDesp('${d.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
 }
 async function delDesp(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('despesas',id);toast('Eliminada','er');}
 
@@ -2445,7 +2451,9 @@ async function delDesp(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del(
 async function savePat(){
   if(!isAdmin)return;
   const d={empresa:document.getElementById('pt-emp').value,tipo:document.getElementById('pt-tp').value,contacto:document.getElementById('pt-ct').value,valor:parseFloat(document.getElementById('pt-vl').value)||0,contrapartidas:document.getElementById('pt-co').value,estado:document.getElementById('pt-st').value,ts:Date.now()};
-  await _add('patrocinios',d);closeM('m-pat');toast('Patrocinador registado');
+  const _pdEditId=document.getElementById('pd-edit-id')?document.getElementById('pd-edit-id').value:'';
+  if(_pdEditId){await _upd('patrocinios',_pdEditId,d);toast('Actualizado');}else{await _add('patrocinios',d);toast('Registado');}
+  closeM('m-pat');
 }
 function renderPat(){
   const cf=_pat.filter(p=>p.estado==='Recebido'||p.estado==='Confirmado').reduce((a,p)=>a+Number(p.valor||0),0);
@@ -2455,7 +2463,7 @@ function renderPat(){
   document.getElementById('p-gd').textContent=_pat.filter(p=>p.tipo==='Gold WMF').length;
   document.getElementById('p-lc').textContent=_pat.filter(p=>p.tipo!=='Gold WMF').length;
   document.getElementById('p-pct').textContent=cf>0?fmt(cf):'';
-  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delPat('${p.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
+  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editPat('${p.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delPat('${p.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
 }
 async function delPat(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
 
@@ -2463,14 +2471,16 @@ async function delPat(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveAtl(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('at-nm').value,pais:document.getElementById('at-ps').value,federacao:document.getElementById('at-fd').value,categoria:document.getElementById('at-ct').value,taxa:parseFloat(document.getElementById('at-tx').value)||0,estado:document.getElementById('at-st').value,hotel:document.getElementById('at-ht').value,email:document.getElementById('at-em').value,ts:Date.now()};
-  await _add('atletas',d);closeM('m-atl');toast('Atleta registado');
+  const _adEditId=document.getElementById('ad-edit-id')?document.getElementById('ad-edit-id').value:'';
+  if(_adEditId){await _upd('atletas',_adEditId,d);toast('Actualizado');}else{await _add('atletas',d);toast('Registado');}
+  closeM('m-atl');
 }
 function renderAtl(){
   document.getElementById('a-tot').textContent=_atl.length;
   document.getElementById('a-pg').textContent=_atl.filter(a=>a.estado==='Pago').length;
   document.getElementById('a-pn').textContent=_atl.filter(a=>a.estado==='Pendente').length;
   document.getElementById('a-ps').textContent=new Set(_atl.map(a=>a.pais)).size;
-  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delAtl('${a.id}')"></button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
+  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
 }
 async function delAtl(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
 
@@ -2662,18 +2672,22 @@ async function delVol(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveHot(){
   if(!isAdmin)return;
   const d={codigo:document.getElementById('ht-cd').value,nome:document.getElementById('ht-nm').value,dist:document.getElementById('ht-dist').value,tarifa:parseFloat(document.getElementById('ht-tar').value)||0,quartos:document.getElementById('ht-qts').value,contacto:document.getElementById('ht-ct').value,wmf:document.getElementById('ht-wmf').value,ts:Date.now()};
-  await _add('hoteis',d);closeM('m-hot');toast('Hotel registado');
+  const _hdEditId=document.getElementById('hd-edit-id')?document.getElementById('hd-edit-id').value:'';
+  if(_hdEditId){await _upd('hoteis',_hdEditId,d);toast('Actualizado');}else{await _add('hoteis',d);toast('Registado');}
+  closeM('m-hot');
 }
 async function saveTrn(){
   if(!isAdmin)return;
   const d={tipo:document.getElementById('tr-tp').value,data:document.getElementById('tr-dt').value,hora:document.getElementById('tr-hr').value,pax:document.getElementById('tr-px').value,valor:parseFloat(document.getElementById('tr-vl').value)||0,obs:document.getElementById('tr-ob').value,ts:Date.now()};
-  await _add('transfers',d);closeM('m-trn');toast('Transfer registado');
+  const _tdEditId=document.getElementById('td-edit-id')?document.getElementById('td-edit-id').value:'';
+  if(_tdEditId){await _upd('transfers',_tdEditId,d);toast('Actualizado');}else{await _add('transfers',d);toast('Registado');}
+  closeM('m-trn');
 }
 function renderAlo(){
   const lh=document.getElementById('lst-hot');
-  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delHot('${h.id}')"></button>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
+  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<div style="display:flex;gap:4px;margin-top:4px;"><button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bd2 bsm" onclick="delHot('${h.id}')">🗑️</button></div>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
   const lt=document.getElementById('lst-trn');
-  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delTrn('${t.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
+  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="editTrn('${t.id}'")>✏️</button><button class="btn bd2 bsm" onclick="delTrn('${t.id}'")>🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
 }
 async function delHot(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('hoteis',id);}
 async function delTrn(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('transfers',id);}
@@ -2694,11 +2708,13 @@ async function delArb(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveInv(){
   if(!isAdmin)return;
   const d={desc:document.getElementById('iv-ds').value,qty:document.getElementById('iv-qt').value,data:document.getElementById('iv-dt').value,estado:document.getElementById('iv-st').value,obs:document.getElementById('iv-ob').value,ts:Date.now()};
-  await _add('inventario',d);closeM('m-inv');toast('Item registado');
+  const _invdEditId=document.getElementById('invd-edit-id')?document.getElementById('invd-edit-id').value:'';
+  if(_invdEditId){await _upd('inventario',_invdEditId,d);toast('Actualizado');}else{await _add('inventario',d);toast('Registado');}
+  closeM('m-inv');
 }
 function renderInv(){
   const el=document.getElementById('lst-inv');
-  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} - ${i.data||''} - ${i.estado||''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="delInv('${i.id}')"></button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
+  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} - ${i.data||''} - ${i.estado||''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="editInv('${i.id}'")>✏️</button><button class="btn bd2 bsm" onclick="delInv('${i.id}'")>🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
 }
 async function delInv(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('inventario',id);}
 
@@ -2995,9 +3011,10 @@ async function saveProgItem(){
     ts: Date.now()
   };
   if(!d.titulo){toast('Título obrigatório','er'); return;}
-  await _add('programa', d);
+  const progEditId=document.getElementById('progd-edit-id')?document.getElementById('progd-edit-id').value:'';
+  if(progEditId){await _upd('programa',progEditId,d);toast('Item actualizado');}
+  else{await _add('programa', d);toast('Item adicionado ao programa');}
   closeM('m-prog-item');
-  toast('Item adicionado ao programa');
 }
 
 function renderPrograma(){
@@ -3039,7 +3056,7 @@ function renderPrograma(){
           ${it.desc?`<div style="font-size:11px;color:var(--mu);">${it.desc}</div>`:''}
           ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:3px;">Resp: ${it.resp}</div>`:''}
         </div>
-        ${isAdmin?`<button class="btn bd2 bsm" onclick="delProgItem('${it.id}')"></button>`:''}
+        ${isAdmin?`<button class="btn bd2 bsm" onclick="editProgItem('${it.id}'")>✏️</button><button class="btn bd2 bsm" onclick="delProgItem('${it.id}'")>🗑️</button>`:''}
       </div>`;
     });
     html += '</div>';
@@ -3402,7 +3419,9 @@ async function saveQuarto(){
     ts:Date.now()
   };
   if(!d.nome){toast('Nome obrigatorio','er');return;}
-  await _add('rooming',d);
+  const _rd2EditId=document.getElementById('rd2-edit-id')?document.getElementById('rd2-edit-id').value:'';
+  if(_rd2EditId){await _upd('rooming',_rd2EditId,d);toast('Actualizado');}else{await _add('rooming',d);toast('Registado');}
+  closeM('m-quarto');
   closeM('m-quarto');toast('Quarto atribuido');
 }
 
@@ -3430,7 +3449,7 @@ function renderRooming(){
     <td class="mu">${r.checkin||''}</td>
     <td class="mu">${r.checkout||''}</td>
     <td class="mu" style="font-size:11px;">${r.obs||''}</td>
-    ${isAdmin?`<td><button class="btn bd2 bsm" onclick="delQuarto('${r.id}')">X</button></td>`:'<td></td>'}
+    ${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editQuarto('${r.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delQuarto('${r.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
 }
 
@@ -3454,7 +3473,9 @@ async function saveDelegacao(){
     ts:Date.now()
   };
   if(!d.pais){toast('Pais obrigatorio','er');return;}
-  await _add('delegacoes',d);
+  const _deldEditId=document.getElementById('deld-edit-id')?document.getElementById('deld-edit-id').value:'';
+  if(_deldEditId){await _upd('delegacoes',_deldEditId,d);toast('Actualizado');}else{await _add('delegacoes',d);toast('Registado');}
+  closeM('m-delegacao');
   closeM('m-delegacao');toast('Delegacao adicionada');
 }
 
@@ -3503,7 +3524,7 @@ function renderDelegacoes(){
           <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${cor};">${pct}%</div>
           <div style="font-size:9px;color:var(--mu);">${done}/${checks.length} itens</div>
         </div>
-        ${isAdmin?`<button class="btn bd2 bsm" onclick="delDelegacao('${del.id}')">X</button>`:''}
+        ${isAdmin?`<button class="btn bo bsm" onclick="editDelegacao('${del.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delDelegacao('${del.id}')">🗑️</button>`:''}
       </div>
       <div class="cdb">
         ${del.vooChegada?`<div style="font-size:11px;color:var(--mu);margin-bottom:8px;">Chegada: ${del.vooChegada} | Partida: ${del.vooPartida||'-'}</div>`:''}
@@ -3779,7 +3800,9 @@ async function saveResultado(){
     const total=r1+r2+r3+(r4>0?r4:0);
     const d={nome:document.getElementById('rs-nome').value,pais:document.getElementById('rs-pais').value,categoria:document.getElementById('rs-cat').value,r1,r2,r3,r4,total,ts:Date.now()};
     if(!d.nome){toast('Nome obrigatorio','er');return;}
-    await _add('resultados',d);
+    const _resdEditId=document.getElementById('resd-edit-id')?document.getElementById('resd-edit-id').value:'';
+  if(_resdEditId){await _upd('resultados',_resdEditId,d);toast('Actualizado');}else{await _add('resultados',d);toast('Registado');}
+  closeM('m-resultado');
   } else {
     const d={ronda:document.getElementById('mp-ronda').value,categoria:document.getElementById('rs-cat').value,jogA:document.getElementById('mp-a').value,paisA:document.getElementById('mp-pa').value,scoreA:parseInt(document.getElementById('mp-sa').value)||0,scoreB:parseInt(document.getElementById('mp-sb').value)||0,jogB:document.getElementById('mp-b').value,paisB:document.getElementById('mp-pb').value,ts:Date.now()};
     d.vencedor=d.scoreA<d.scoreB?d.jogA:d.scoreB<d.scoreA?d.jogB:'Empate';
@@ -3813,7 +3836,7 @@ function renderResultados(){
     <td style="text-align:center;">${r.r4||'-'}</td>
     <td style="text-align:center;font-weight:700;font-size:14px;color:var(--gl2);">${r.total||0}</td>
     <td><span class="bge ${r.categoria==='H'?'bg-bl':'bg-am'}">${r.categoria==='H'?'Homens':'Senhoras'}</span></td>
-    ${isAdmin?`<td><button class="btn bd2 bsm" onclick="delRes('${r.id}')">X</button></td>`:'<td></td>'}
+    ${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editRes('${r.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delRes('${r.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
 }
 
@@ -3828,7 +3851,7 @@ function renderMatch(){
     <td style="text-align:center;font-weight:700;font-size:14px;color:${m.scoreB<m.scoreA?'var(--ok)':'var(--er)'};">${m.scoreB}</td>
     <td class="vl">${m.jogB||''}</td><td class="mu">${m.paisB||''}</td>
     <td style="font-weight:700;color:var(--gl2);">${m.vencedor||''}</td>
-    ${isAdmin?`<td><button class="btn bd2 bsm" onclick="delMatch('${m.id}')">X</button></td>`:'<td></td>'}
+    ${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editMatch('${m.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delMatch('${m.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
 }
 
@@ -3994,7 +4017,9 @@ async function saveFatura(){
   if(!isAdmin)return;
   const d={nr:document.getElementById('fat-nr').value,forn:document.getElementById('fat-forn').value,conta:document.getElementById('fat-conta').value,valor:parseFloat(document.getElementById('fat-valor').value)||0,data:document.getElementById('fat-data').value,venc:document.getElementById('fat-venc').value,estado:document.getElementById('fat-estado').value,notas:document.getElementById('fat-notas').value,ts:Date.now()};
   if(!d.forn){toast('Fornecedor obrigatorio','er');return;}
-  await _add('faturas',d);closeM('m-fatura');toast('Fatura registada');
+  const _fdEditId=document.getElementById('fd-edit-id')?document.getElementById('fd-edit-id').value:'';
+  if(_fdEditId){await _upd('faturas',_fdEditId,d);toast('Actualizado');}else{await _add('faturas',d);toast('Registado');}
+  closeM('m-fatura');
 }
 
 function renderFaturas(){
@@ -4030,7 +4055,7 @@ function renderFaturas(){
       <td class="mu">${f.data||''}</td>
       <td style="font-weight:${urgente?700:400};color:${urgente?'var(--er)':'var(--se)'};">${f.venc||''}</td>
       <td><span class="bge ${f.estado==='Paga'?'bg-ok':f.estado==='Pendente'?'bg-am':'bg-er'}">${f.estado}</span></td>
-      ${isAdmin?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''}<button class="btn bd2 bsm" onclick="delFatura('${f.id}')">X</button></td>`:'<td></td>'}
+      ${isAdmin?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''} <button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFatura('${f.id}')">X</button></td>`:'<td></td>'}
     </tr>`;
   }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem faturas</td></tr>';
 }
@@ -4042,7 +4067,9 @@ async function delFatura(id){if(!isAdmin||!confirm('Eliminar fatura?'))return;aw
 async function saveFluxoItem(){
   if(!isAdmin)return;
   const d={mes:document.getElementById('fc-mes').value,tipo:document.getElementById('fc-tipo').value,desc:document.getElementById('fc-desc').value,valor:parseFloat(document.getElementById('fc-valor').value)||0,prob:document.getElementById('fc-prob').value,ts:Date.now()};
-  await _add('fluxo',d);closeM('m-fluxo-item');toast('Previsao adicionada');
+  const _fluxdEditId=document.getElementById('fluxd-edit-id')?document.getElementById('fluxd-edit-id').value:'';
+  if(_fluxdEditId){await _upd('fluxo',_fluxdEditId,d);toast('Actualizado');}else{await _add('fluxo',d);toast('Registado');}
+  closeM('m-fluxo-item');
 }
 
 function renderFluxo(){
@@ -4069,8 +4096,8 @@ function renderFluxo(){
     const saldo=totE-totS;
     return `<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${MESES_LABEL[mes]||mes}</div><div class="cds">Entradas: ${fmt(totE)} | Saidas: ${fmt(totS)} | Saldo: ${fmt(saldo)}</div></div><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:${saldo>=0?'var(--ok)':'var(--er)'};">${fmt(saldo)}</div></div>
     <div class="cdb"><div class="g2" style="gap:10px;">
-      <div>${m.entradas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(74,184,122,.1);font-size:12px;"><span style="color:var(--ok);">+ ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--ok);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">X</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem entradas</div>'}</div>
-      <div>${m.saidas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(224,82,82,.1);font-size:12px;"><span style="color:var(--er);">- ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--er);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">X</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem saidas</div>'}</div>
+      <div>${m.entradas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(74,184,122,.1);font-size:12px;"><span style="color:var(--ok);">+ ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--ok);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bo bsm" onclick="editFluxoItem('${f.id}')" style="padding:2px 6px;font-size:9px;">✏️</button> <button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">🗑️</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem entradas</div>'}</div>
+      <div>${m.saidas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(224,82,82,.1);font-size:12px;"><span style="color:var(--er);">- ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--er);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bo bsm" onclick="editFluxoItem('${f.id}')" style="padding:2px 6px;font-size:9px;">✏️</button> <button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">🗑️</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem saidas</div>'}</div>
     </div></div></div>`;
   }).join('');
 }
@@ -4189,7 +4216,9 @@ async function saveActa(){
   if(!isAdmin)return;
   const d={data:document.getElementById('ac-data').value,hora:document.getElementById('ac-hora').value,local:document.getElementById('ac-local').value,pres:document.getElementById('ac-pres').value,part:document.getElementById('ac-part').value,ordem:document.getElementById('ac-ordem').value,dec:document.getElementById('ac-dec').value,prox:document.getElementById('ac-prox').value,ts:Date.now()};
   if(!d.data){toast('Data obrigatoria','er');return;}
-  await _add('actas',d);closeM('m-acta');toast('Acta registada');
+  const _actdEditId=document.getElementById('actd-edit-id')?document.getElementById('actd-edit-id').value:'';
+  if(_actdEditId){await _upd('actas',_actdEditId,d);toast('Actualizado');}else{await _add('actas',d);toast('Registado');}
+  closeM('m-acta');
 }
 
 function renderActas(){
@@ -4202,7 +4231,7 @@ function renderActas(){
   const lista=document.getElementById('actas-lista');
   if(!lista)return;
   if(!_actas.length){lista.innerHTML='<div class="em"><div class="emi">&#9654;</div><div class="emt">Sem actas registadas</div></div>';return;}
-  lista.innerHTML=_actas.map(a=>`<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${a.data||''} ${a.hora?'- '+a.hora:''}</div><div class="cds">${a.local||''} | Presidente: ${a.pres||'-'}</div></div>${isAdmin?`<div style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportActaPDF('${a.id}')">PDF</button><button class="btn bd2 bsm" onclick="delActa('${a.id}')">X</button></div>`:''}</div>
+  lista.innerHTML=_actas.map(a=>`<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${a.data||''} ${a.hora?'- '+a.hora:''}</div><div class="cds">${a.local||''} | Presidente: ${a.pres||'-'}</div></div>${isAdmin?`<div style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportActaPDF('${a.id}')">PDF</button><button class="btn bo bsm" onclick="editActa('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delActa('${a.id}')">🗑️</button></div>`:''}</div>
     <div class="cdb">
       ${a.part?`<div style="font-size:11px;color:var(--mu);margin-bottom:8px;">Presentes: ${a.part}</div>`:''}
       ${a.ordem?`<div style="margin-bottom:8px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:4px;">Ordem do dia</div><div style="font-size:12px;color:var(--se);white-space:pre-line;">${a.ordem}</div></div>`:''}
@@ -4211,6 +4240,21 @@ function renderActas(){
     </div></div>`).join('');
 }
 
+
+function editActa(id){
+  const actd=_actas.find(x=>x.id===id);if(!actd)return;
+  let hidEl=document.getElementById('actd-edit-id');
+  if(!hidEl){hidEl=document.createElement('input');hidEl.type='hidden';hidEl.id='actd-edit-id';const mb=document.getElementById('m-acta').querySelector('.mb');if(mb)mb.prepend(hidEl);}
+  hidEl.value=id;
+  const el_ac_data=document.getElementById('ac-data');if(el_ac_data)el_ac_data.value=actd.data||'';
+  const el_ac_hora=document.getElementById('ac-hora');if(el_ac_hora)el_ac_hora.value=actd.hora||'';
+  const el_ac_local=document.getElementById('ac-local');if(el_ac_local)el_ac_local.value=actd.local||'';
+  const el_ac_pres=document.getElementById('ac-pres');if(el_ac_pres)el_ac_pres.value=actd.pres||'';
+  const el_ac_part=document.getElementById('ac-part');if(el_ac_part)el_ac_part.value=actd.part||'';
+  const el_ac_ordem=document.getElementById('ac-ordem');if(el_ac_ordem)el_ac_ordem.value=actd.ordem||'';
+  const el_ac_dec=document.getElementById('ac-dec');if(el_ac_dec)el_ac_dec.value=actd.dec||'';
+  openM('m-acta');
+}
 async function delActa(id){if(!isAdmin||!confirm('Eliminar acta?'))return;await _del('actas',id);}
 
 function exportActaPDF(id){
@@ -4256,7 +4300,9 @@ function exportActasPDF(){_actas.forEach(a=>exportActaPDF(a.id));}
 async function saveComunicado(){
   if(!isAdmin)return;
   const d={dest:document.getElementById('cm-dest').value,lang:document.getElementById('cm-lang').value,tipo:document.getElementById('cm-tipo').value,assunto:document.getElementById('cm-assunto').value,corpo:document.getElementById('cm-corpo').value,estado:document.getElementById('cm-estado').value,ts:Date.now()};
-  await _add('comunicados',d);closeM('m-comunicado');toast('Comunicado guardado');
+  const _comdEditId=document.getElementById('comd-edit-id')?document.getElementById('comd-edit-id').value:'';
+  if(_comdEditId){await _upd('comunicados',_comdEditId,d);toast('Actualizado');}else{await _add('comunicados',d);toast('Registado');}
+  closeM('m-comunicado');
 }
 
 function renderComunicados(){
@@ -4269,10 +4315,24 @@ function renderComunicados(){
   const lista=document.getElementById('comunicados-lista');
   if(!lista)return;
   if(!_comunicados.length){lista.innerHTML='<div class="em"><div class="emi">&#9993;</div><div class="emt">Sem comunicados criados</div></div>';return;}
-  lista.innerHTML=_comunicados.map(c=>`<div class="cd" style="margin-bottom:10px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${c.tipo||''}</div><div class="cds">${c.dest||''} | ${c.lang||'EN'} | ${c.assunto||''}</div></div><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${c.estado==='Enviado'?'bg-ok':'bg-am'}">${c.estado}</span>${isAdmin?`<button class="btn bo bsm" onclick="exportComunicadoPDF('${c.id}')">PDF</button><button class="btn bd2 bsm" onclick="delComunicado('${c.id}')">X</button>`:''}</div></div>
+  lista.innerHTML=_comunicados.map(c=>`<div class="cd" style="margin-bottom:10px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${c.tipo||''}</div><div class="cds">${c.dest||''} | ${c.lang||'EN'} | ${c.assunto||''}</div></div><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${c.estado==='Enviado'?'bg-ok':'bg-am'}">${c.estado}</span>${isAdmin?`<button class="btn bo bsm" onclick="exportComunicadoPDF('${c.id}')">PDF</button><button class="btn bo bsm" onclick="editComunicado('${c.id}')">✏️</button><button class="btn bd2 bsm" onclick="delComunicado('${c.id}')">🗑️</button>`:''}</div></div>
     <div class="cdb"><div style="font-size:12px;color:var(--se);white-space:pre-line;max-height:80px;overflow:hidden;">${(c.corpo||'').substring(0,200)}${(c.corpo||'').length>200?'...':''}</div></div></div>`).join('');
 }
 
+
+function editComunicado(id){
+  const comd=_comunicados.find(x=>x.id===id);if(!comd)return;
+  let hidEl=document.getElementById('comd-edit-id');
+  if(!hidEl){hidEl=document.createElement('input');hidEl.type='hidden';hidEl.id='comd-edit-id';const mb=document.getElementById('m-comunicado').querySelector('.mb');if(mb)mb.prepend(hidEl);}
+  hidEl.value=id;
+  const el_cm_dest=document.getElementById('cm-dest');if(el_cm_dest)el_cm_dest.value=comd.dest||'';
+  const el_cm_lang=document.getElementById('cm-lang');if(el_cm_lang)el_cm_lang.value=comd.lang||'';
+  const el_cm_tipo=document.getElementById('cm-tipo');if(el_cm_tipo)el_cm_tipo.value=comd.tipo||'';
+  const el_cm_assunto=document.getElementById('cm-assunto');if(el_cm_assunto)el_cm_assunto.value=comd.assunto||'';
+  const el_cm_corpo=document.getElementById('cm-corpo');if(el_cm_corpo)el_cm_corpo.value=comd.corpo||'';
+  const el_cm_estado=document.getElementById('cm-estado');if(el_cm_estado)el_cm_estado.value=comd.estado||'';
+  openM('m-comunicado');
+}
 async function delComunicado(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('comunicados',id);}
 
 function exportComunicadoPDF(id){
@@ -6486,7 +6546,9 @@ async function saveMarca(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('mk-nome').value,contacto:document.getElementById('mk-ct').value,email:document.getElementById('mk-email').value,pct:parseFloat(document.getElementById('mk-pct').value)||0,data:document.getElementById('mk-data').value,notas:document.getElementById('mk-notas').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
-  await _add('cs_marcas',d);closeM('m-marca');toast('Marca registada');
+  const _mdEditId=document.getElementById('md-edit-id')?document.getElementById('md-edit-id').value:'';
+  if(_mdEditId){await _upd('cs_marcas',_mdEditId,d);toast('Actualizado');}else{await _add('cs_marcas',d);toast('Registado');}
+  closeM('m-marca');
 }
 
 async function saveArtigo(){
@@ -6495,7 +6557,9 @@ async function saveArtigo(){
   const marca=_marcas.find(m=>m.id===marcaId);
   const d={marcaId,marcaNome:marca?marca.nome:'',ref:document.getElementById('art-ref').value,desc:document.getElementById('art-desc').value,preco:parseFloat(document.getElementById('art-preco').value)||0,qtyEntrou:parseInt(document.getElementById('art-qty').value)||0,notas:document.getElementById('art-notas').value,ts:Date.now()};
   if(!d.marcaId||!d.ref){toast('Marca e referencia obrigatorias','er');return;}
-  await _add('cs_artigos',d);closeM('m-artigo');toast('Artigo registado');
+  const _artdEditId=document.getElementById('artd-edit-id')?document.getElementById('artd-edit-id').value:'';
+  if(_artdEditId){await _upd('cs_artigos',_artdEditId,d);toast('Actualizado');}else{await _add('cs_artigos',d);toast('Registado');}
+  closeM('m-artigo');
 }
 
 function fillArtigosVenda(){
@@ -6561,7 +6625,7 @@ function renderMarcas(){
     const totE=arts.reduce((s,a)=>s+Number(a.qtyEntrou||0),0);
     const totV=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.qty||0),0);
     const receita=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.comissao||0),0);
-    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${isAdmin?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">X</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${isAdmin?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join('');
 }
 
@@ -6573,7 +6637,7 @@ function renderArtigos(){
     const vendido=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.qty||0),0);
     const stock=Number(a.qtyEntrou||0)-vendido;
     const totalVendas=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.total||0),0);
-    return `<tr><td class="go">${a.marcaNome||''}</td><td style="font-weight:600;font-family:monospace;font-size:11px;">${a.ref||''}</td><td>${a.desc||''}</td><td style="text-align:right;">${fmt(a.preco)}</td><td style="text-align:center;">${a.qtyEntrou||0}</td><td style="text-align:center;color:var(--ok);">${vendido}</td><td style="text-align:center;font-weight:700;color:${stock<=2?'var(--er)':stock<=5?'var(--wr)':'var(--wh)'};">${stock}</td><td class="tok">${fmt(totalVendas)}</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delArtigo('${a.id}')">X</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td class="go">${a.marcaNome||''}</td><td style="font-weight:600;font-family:monospace;font-size:11px;">${a.ref||''}</td><td>${a.desc||''}</td><td style="text-align:right;">${fmt(a.preco)}</td><td style="text-align:center;">${a.qtyEntrou||0}</td><td style="text-align:center;color:var(--ok);">${vendido}</td><td style="text-align:center;font-weight:700;color:${stock<=2?'var(--er)':stock<=5?'var(--wr)':'var(--wh)'};">${stock}</td><td class="tok">${fmt(totalVendas)}</td>${isAdmin?`<td style="white-space:nowrap"><button class="btn bo bsm" onclick="editArtigo('${a.id}')">✏️</button> <button class="btn bd2 bsm" onclick="delArtigo('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join('');
 }
 
@@ -6585,6 +6649,17 @@ function renderVendas(){
   tbody.innerHTML=sorted.map(v=>`<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td>${isAdmin?`<td><button class="btn bd2 bsm" onclick="delVendaCS('${v.id}')">X</button></td>`:'<td></td>'}</tr>`).join('');
 }
 
+
+function editMarca(id){
+  const md=_marcas.find(x=>x.id===id);if(!md)return;
+  let hidEl=document.getElementById('md-edit-id');
+  if(!hidEl){hidEl=document.createElement('input');hidEl.type='hidden';hidEl.id='md-edit-id';const mb=document.getElementById('m-marca').querySelector('.mb');if(mb)mb.prepend(hidEl);}
+  hidEl.value=id;
+  const el_mn_nm=document.getElementById('mn-nm');if(el_mn_nm)el_mn_nm.value=md.nome||'';
+  const el_mn_ct=document.getElementById('mn-ct');if(el_mn_ct)el_mn_ct.value=md.contacto||'';
+  const el_mn_pc=document.getElementById('mn-pc');if(el_mn_pc)el_mn_pc.value=md.pct||'';
+  openM('m-marca');
+}
 async function delMarca(id){if(!isAdmin||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
 async function delArtigo(id){if(!isAdmin||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
 async function delVendaCS(id){if(!isAdmin||!confirm('Anular venda?'))return;await _del('cs_vendas',id);toast('Anulada','er');}

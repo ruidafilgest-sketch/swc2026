@@ -2932,6 +2932,7 @@ function renderChk(){
     items.forEach(it=>{
       const saved = _chkData[it.id] || {};
       const st = saved.status || it.status;
+      if(it.id<=3) console.log('renderChk item',it.id,'saved=',saved,'st=',st,'_chkData keys=',Object.keys(_chkData));
       const scfg = STATUS_CFG[st] || STATUS_CFG.Pending;
       const label = L==='PT' ? it.pt : it.en;
       const notes = saved.notes !== undefined ? saved.notes : it.notes;
@@ -2984,8 +2985,9 @@ function loadChk(){
   _snap('checklist',(docs)=>{
     _chkData = {};
     docs.forEach(d=>{
-      const key = d.itemId !== undefined ? d.itemId : null;
-      if(key !== null) _chkData[key] = d;
+      // Forçar chave numérica para ser consistente com it.id nos CHK_ITEMS
+      const key = d.itemId !== undefined ? Number(d.itemId) : null;
+      if(key !== null && !isNaN(key)) _chkData[key] = d;
     });
     const pg = document.getElementById('pg-wmfcheck');
     if(pg && pg.classList.contains('act')) renderChk();

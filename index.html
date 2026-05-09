@@ -1584,7 +1584,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <!-- Graficos - linha 1 -->
 <div class="g2" style="margin-bottom:20px;">
   <div class="cd">
-    <div class="cdh"><div><div class="cdt">Distribuicao por Categoria</div><div class="cds">Homens vs Senhoras</div></div></div>
+    <div class="cdh"><div><div class="cdt">Distribuicao por Categoria</div><div class="cds">Séniores Masculinos vs Séniores Femininas</div></div></div>
     <div class="cdb" style="height:220px;display:flex;align-items:center;justify-content:center;">
       <canvas id="chart-cat" style="max-height:200px;"></canvas>
     </div>
@@ -1739,7 +1739,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mh"><div class="mt2">Novo Atleta</div><button class="mc" onclick="closeM('m-atl')">✕</button></div>
   <div class="mb">
     <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="at-nm" placeholder="Nome do atleta"></div><div class="fg"><div class="fl">País / Nação</div><input class="fi" id="at-ps" placeholder="País"></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Federação nacional</div><input class="fi" id="at-fd" placeholder="Federação"></div><div class="fg"><div class="fl">Categoria WMF</div><input class="fi" id="at-ct" placeholder="ex: Seniors M, Seniors F"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Federação nacional</div><input class="fi" id="at-fd" placeholder="Federação"></div><div class="fg"><div class="fl">Categoria WMF</div><select class="fse" id="at-ct"><option value="SM">Séniores Masculinos</option><option value="SF">Séniores Femininas</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Taxa inscrição (€) — valor real</div><input class="fi" type="number" step="0.01" id="at-tx" placeholder="0,00"></div><div class="fg"><div class="fl">Estado taxa</div><select class="fse" id="at-st"><option value="Pago">Pago</option><option value="Pendente">Pendente</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Hotel atribuído</div><select class="fse" id="at-ht"><option value="">— Sem atribuição —</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div><div class="fg"><div class="fl">Email / Contacto</div><input class="fi" id="at-em" placeholder="email@federacao.xx"></div></div>
   </div>
@@ -1976,7 +1976,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mb">
     <div class="fr">
       <div class="fg"><div class="fl">Modalidade</div><select class="fse" id="rs-mod" onchange="toggleMatchFields()"><option value="stroke">Stroke Play</option><option value="match">Match Play</option></select></div>
-      <div class="fg"><div class="fl">Categoria</div><select class="fse" id="rs-cat"><option value="H">Homens</option><option value="S">Senhoras</option></select></div>
+      <div class="fg"><div class="fl">Categoria</div><select class="fse" id="rs-cat"><option value="SM">Séniores Masculinos</option><option value="SF">Séniores Femininas</option></select></div>
     </div>
     <!-- Stroke Play -->
     <div id="stroke-fields">
@@ -2197,7 +2197,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,collection,doc,getDoc,getDocFromServer,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getFirestore,collection,doc,getDoc,getDocFromServer,getDocs,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 //  FIREBASE - substituir com credenciais reais do projeto 'swc2026' 
 const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",databaseURL:"https://swc2026-c070b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
 const _app=initializeApp(fbCfg);
@@ -2966,32 +2966,35 @@ function renderChk(){
 
 async function updateChkStatus(id, status){
   if(!isAdmin) return;
-  // Guardar directamente no Firebase — o onSnapshot actualiza _chkData e renderChk automaticamente
+  // Actualizar em memória imediatamente e renderizar
+  _chkData[Number(id)] = {...(_chkData[Number(id)]||{}), itemId:Number(id), status};
+  renderChk();
+  // Guardar no Firebase em background
   const sid = 'chk_' + String(id);
   try {
-    const docRef = doc(C('checklist'), sid);
-    console.log('CHK: a escrever em', docRef.path, 'status=', status);
-    await setDoc(docRef, {itemId:Number(id), status, ts:Date.now()}, {merge:true});
-    console.log('CHK: escrita OK — item', id, '=', status);
-    toast(chkLang==='PT'?'✅ Estado: '+status:'✅ Status: '+status);
+    await setDoc(doc(C('checklist'), sid), {itemId:Number(id), status, ts:Date.now()}, {merge:true});
+    toast(chkLang==='PT'?'✅ Guardado':'✅ Saved');
   } catch(e) {
     console.error('CHK ERRO:', e.code, e.message);
-    toast('❌ Erro Firebase: ' + (e.code||e.message), 'error');
+    toast('❌ Erro: ' + (e.code||e.message), 'error');
   }
 }
 
 // Carregar estados guardados do Firebase
-function loadChk(){
-  _snap('checklist',(docs)=>{
-    _chkData = {};
-    docs.forEach(d=>{
-      // Forçar chave numérica para ser consistente com it.id nos CHK_ITEMS
-      const key = d.itemId !== undefined ? Number(d.itemId) : null;
-      if(key !== null && !isNaN(key)) _chkData[key] = d;
+async function loadChk(){
+  // Leitura única — não usar onSnapshot para evitar sobrescrever alterações locais
+  try {
+    const snap = await getDocs(C('checklist'));
+    snap.forEach(d=>{
+      const data = d.data();
+      const key = data.itemId !== undefined ? Number(data.itemId) : null;
+      if(key !== null && !isNaN(key)) _chkData[key] = data;
     });
-    const pg = document.getElementById('pg-wmfcheck');
-    if(pg && pg.classList.contains('act')) renderChk();
-  });
+  } catch(e) {
+    console.error('loadChk erro:', e);
+  }
+  const pg = document.getElementById('pg-wmfcheck');
+  if(pg && pg.classList.contains('act')) renderChk();
 }
 
 //  PROGRAMA DO EVENTO 
@@ -3820,8 +3823,8 @@ async function saveResultado(){
 }
 
 function renderResultados(){
-  const homens=_resultados.filter(r=>r.categoria==='H').sort((a,b)=>a.total-b.total);
-  const senhoras=_resultados.filter(r=>r.categoria==='S').sort((a,b)=>a.total-b.total);
+  const homens=_resultados.filter(r=>r.categoria==='SM').sort((a,b)=>a.total-b.total);
+  const senhoras=_resultados.filter(r=>r.categoria==='SF').sort((a,b)=>a.total-b.total);
   const el_h=document.getElementById('res-h');
   const el_s=document.getElementById('res-s');
   const el_bh=document.getElementById('res-bh');
@@ -3843,7 +3846,7 @@ function renderResultados(){
     <td style="text-align:center;">${r.r3||'-'}</td>
     <td style="text-align:center;">${r.r4||'-'}</td>
     <td style="text-align:center;font-weight:700;font-size:14px;color:var(--gl2);">${r.total||0}</td>
-    <td><span class="bge ${r.categoria==='H'?'bg-bl':'bg-am'}">${r.categoria==='H'?'Homens':'Senhoras'}</span></td>
+    <td><span class="bge ${r.categoria==='SM'?'bg-bl':'bg-am'}">${r.categoria==='SM'?'Séniores Masc.':'Séniores Fem.'}</span></td>
     ${isAdmin?`<td><button class="btn bo bsm" onclick="editRes('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRes('${r.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
 }
@@ -3921,8 +3924,8 @@ function exportResultadosPDF(){
   pdfHeader(doc,'Resultados Desportivos Oficiais','SWC Vizela 2026 - Stroke Play & Match Play',false);
   let y=42;
   // Stroke Play Homens
-  const homens=_resultados.filter(r=>r.categoria==='H').sort((a,b)=>a.total-b.total);
-  const senhoras=_resultados.filter(r=>r.categoria==='S').sort((a,b)=>a.total-b.total);
+  const homens=_resultados.filter(r=>r.categoria==='SM').sort((a,b)=>a.total-b.total);
+  const senhoras=_resultados.filter(r=>r.categoria==='SF').sort((a,b)=>a.total-b.total);
   [['STROKE PLAY - HOMENS / MEN',homens],['STROKE PLAY - SENHORAS / LADIES',senhoras]].forEach(([titulo,dados])=>{
     if(y>220){doc.addPage();y=20;}
     doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
@@ -4395,8 +4398,8 @@ function exportRelWMFFinal(){
   const taxas=_rec.filter(r=>r.conta==='729').reduce((s,r)=>s+Number(r.valor||0),0);
   const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
   const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
-  const homens=_resultados.filter(r=>r.categoria==='H').sort((a,b)=>a.total-b.total).slice(0,3);
-  const senhoras=_resultados.filter(r=>r.categoria==='S').sort((a,b)=>a.total-b.total).slice(0,3);
+  const homens=_resultados.filter(r=>r.categoria==='SM').sort((a,b)=>a.total-b.total).slice(0,3);
+  const senhoras=_resultados.filter(r=>r.categoria==='SF').sort((a,b)=>a.total-b.total).slice(0,3);
   doc.autoTable({startY:y,head:[['Section','Data']],body:[
     ['Event','SWC Vizela 2026 - Seniors World Minigolf Championship'],
     ['Dates','12-17 October 2026, Vizela, Portugal'],
@@ -4552,7 +4555,7 @@ function renderMapaPaises(){
   _atl.forEach(a=>{
     if(!a.pais)return;
     if(!paises[a.pais])paises[a.pais]={h:0,s:0,hotel:'',chefe:''};
-    if(a.categoria==='H')paises[a.pais].h++;
+    if(a.categoria==='SM')paises[a.pais].h++;
     else paises[a.pais].s++;
   });
   // Cruzar com delegacoes para hotel e chefe
@@ -5006,7 +5009,7 @@ function renderCertificados(){
     return `<div style="background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
       <div>
         <div style="font-size:13px;font-weight:600;color:var(--wh);">${a.nome||''}</div>
-        <div style="font-size:11px;color:var(--mu);">${a.pais||''} · ${a.categoria==='H'?'Homens':'Senhoras'}</div>
+        <div style="font-size:11px;color:var(--mu);">${a.pais||''} · ${a.categoria==='SM'?'Séniores Masc.':'Séniores Fem.'}</div>
         ${res?`<div style="font-size:10px;color:var(--gl);margin-top:2px;">Total: ${res.total} · Pos. ${_resultados.filter(r=>r.categoria===a.categoria).sort((x,y)=>x.total-y.total).findIndex(r=>r.nome===a.nome)+1}.</div>`:''}
       </div>
       <button class="btn bo bsm" onclick="exportCertificado('${a.id}')">PDF</button>
@@ -5046,7 +5049,7 @@ function exportCertificado(atlId){
   doc.text(atl.nome||'',W/2,97,{align:'center'});
   // País e categoria
   doc.setFontSize(13);doc.setFont('helvetica','normal');doc.setTextColor(200,192,168);
-  doc.text((atl.pais||'')+' · '+(atl.categoria==='H'?'Men / Homens':'Ladies / Senhoras'),W/2,107,{align:'center'});
+  doc.text((atl.pais||'')+' · '+(atl.categoria==='SM'?'Men / Senior Men':'Ladies / Senior Ladies'),W/2,107,{align:'center'});
   // Resultado
   if(res){
     doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
@@ -5072,7 +5075,7 @@ function exportCertificado(atlId){
 }
 
 function exportCertificadoExemplo(){
-  const exemplo={id:'ex',nome:'João Silva',pais:'Portugal',categoria:'H'};
+  const exemplo={id:'ex',nome:'João Silva',pais:'Portugal',categoria:'SM'};
   const _atlBak=_atl;
   _atl=[exemplo];
   exportCertificado('ex');
@@ -5282,12 +5285,12 @@ function renderEstatisticas(){
   if(elC)elC.textContent=pctChk+'%';
 
   // ── GRAFICO 1 — Distribuicao por categoria (doughnut) ──
-  const homens=_atl.filter(a=>a.categoria==='H').length;
-  const senhoras=_atl.filter(a=>a.categoria==='S').length;
+  const homens=_atl.filter(a=>a.categoria==='SM').length;
+  const senhoras=_atl.filter(a=>a.categoria==='SF').length;
   const ctx1=document.getElementById('chart-cat');
   if(ctx1){
     _charts.cat=new Chart(ctx1,{type:'doughnut',data:{
-      labels:['Homens','Senhoras'],
+      labels:['Sén. Masculinos','Sén. Femininas'],
       datasets:[{data:[homens,senhoras],backgroundColor:[BL,GOLD],borderColor:'rgba(0,0,0,0)',borderWidth:0}]
     },options:{...opts,cutout:'65%',plugins:{...opts.plugins,
       title:{display:true,text:nAtl+' atletas total',color:TICK,font:{size:12}},

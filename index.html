@@ -2197,7 +2197,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,collection,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getFirestore,collection,doc,getDoc,getDocFromServer,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 //  FIREBASE - substituir com credenciais reais do projeto 'swc2026' 
 const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",databaseURL:"https://swc2026-c070b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
 const _app=initializeApp(fbCfg);
@@ -7991,7 +7991,7 @@ async function guardarDiaRelatorio(dia){
 let _diaRelatorio = 0;
 async function carregarConfigEmail(){
   try{
-    const snap=await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
+    const snap=await getDocFromServer(doc(collection(db,'swc2026_config'),'email_config'));
     if(snap.exists()){
       _diaRelatorio = Number(snap.data().diaRelatorio??0);
       const sel=document.getElementById('sel-dia-relatorio');

@@ -2495,8 +2495,11 @@ async function delConv(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del(
 //  PRAZOS 
 async function savePrazo(){
   if(!isAdmin)return;
-  const d={data:document.getElementById('pz-dt').value,titulo:document.getElementById('pz-tt').value,desc:document.getElementById('pz-ds').value,resp:document.getElementById('pz-rp').value,prioridade:document.getElementById('pz-pr').value,estado:document.getElementById('pz-st').value,ts:Date.now()};
-  await _add('prazos',d);closeM('m-prazo');toast('Prazo registado');
+  const d={data:document.getElementById('pz-dt').value,titulo:document.getElementById('pz-tt').value,desc:document.getElementById('pz-ds').value,resp:document.getElementById('pz-rp')?document.getElementById('pz-rp').value:'',prioridade:document.getElementById('pz-pr').value,estado:document.getElementById('pz-st')?document.getElementById('pz-st').value:'pendente',ts:Date.now()};
+  const prazEid=document.getElementById('praz-eid');
+  const editId=prazEid&&prazEid.value?prazEid.value:'';
+  if(editId){await _upd('prazos',editId,d);if(prazEid)prazEid.value='';toast('Prazo actualizado');}else{await _add('prazos',d);toast('Prazo registado');}
+  closeM('m-prazo');
 }
 function renderCron(){
   const el=document.getElementById('cron-list');
@@ -2950,7 +2953,11 @@ function renderChk(){
 async function updateChkStatus(id, status){
   if(!isAdmin) return;
   _chkData[id] = {...(_chkData[id]||{}), status};
-  await _add('checklist', {itemId: id, status, ts: Date.now()});
+  try{
+    await setDoc(doc(collection(db,'checklist'),id),{itemId:id,status,ts:Date.now()},{merge:true});
+  }catch(e){
+    await _add('checklist',{itemId:id,status,ts:Date.now()});
+  }
   renderChk();
   toast(chkLang==='PT'?'Estado actualizado':'Status updated');
 }
@@ -4116,7 +4123,7 @@ function exportRelPatrSingle(patId){
     ['Modalidade','Seniors World Minigolf Championship'],
     ['Organizacao','Vizelgolfe - Associacao de Minigolfe de Vizela'],
   ],theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:100,fontStyle:'bold'},1:{fontStyle:'bold',textColor:[10,80,10]}},margin:{left:14,right:14,bottom:28}});
-  y=doc.lastAutoTable.finalY+10;
+  y=(doc.lastAutoTable&&doc.lastAutoTable.finalY||y)+10;
   // Contrapartidas
   if(p.contrapartidas&&y<220){
     doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
@@ -5802,7 +5809,11 @@ function exportDR(){
       columnStyles:{0:{cellWidth:25}, 2:{halign:'right', cellWidth:35}},
       margin:{left:0,right:0},
     });
-    y = doc.lastAutoTable.finalY + 4;
+    y = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y) + 4;
+  } else {
+    doc.setFontSize(9);doc.setTextColor(150,150,150);
+    doc.text(L==='PT'?'Sem rendimentos registados':'No income recorded', 14, y+6);
+    y+=12;
   }
 
   // Gastos
@@ -5827,7 +5838,11 @@ function exportDR(){
       columnStyles:{0:{cellWidth:25}, 2:{halign:'right', cellWidth:35}},
       margin:{left:0,right:0},
     });
-    y = doc.lastAutoTable.finalY + 4;
+    y = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y) + 4;
+  } else {
+    doc.setFontSize(9);doc.setTextColor(150,150,150);
+    doc.text(L==='PT'?'Sem gastos registados':'No expenses recorded', 14, y+6);
+    y+=12;
   }
 
   // Resultado
@@ -5904,7 +5919,7 @@ function exportBalanco(){
 
   // Quadratura
   const eq = Math.abs(ativo-(forn+cp))<0.01;
-  const yq = doc.lastAutoTable.finalY + 8;
+  const yq = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y) + 8;
   doc.setFillColor(eq?[15,40,15]:[40,15,15]);
   doc.rect(14,yq,182,10,'F');
   doc.setFontSize(9);
@@ -8026,9 +8041,13 @@ async function editPrazo(id){
     const mb=document.querySelector('#m-prazo .mb');if(mb)mb.prepend(hid);}
   hid.value=id;
   const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};
-  f('pz-dt',item.data||item.p);f('pz-tt',item.titulo||item.l);
-  f('pz-ds',item.desc||item.ds);f('pz-rp',item.resp||item.r);
-  f('pz-pr',item.prioridade||item.pr);f('pz-st',item.estado||item.st||'pendente');
+  f('pz-dt',item.data||item.p||'');
+  f('pz-tt',item.titulo||item.l||'');
+  f('pz-ds',item.desc||item.ds||'');
+  f('pz-pr',item.prioridade||item.pr||'normal');
+  // pz-rp e pz-st podem não existir no modal
+  const rp=document.getElementById('pz-rp');if(rp)rp.value=item.resp||item.r||'';
+  const st=document.getElementById('pz-st');if(st)st.value=item.estado||item.st||'pendente';
   openM('m-prazo');
 }
 window.editPrazo=editPrazo;
@@ -8062,7 +8081,6 @@ async function editEntradaDB(id){
 window.editEntradaDB=editEntradaDB;
 
 // Vendas editar
-async 
 // Patches save para edição
 (function(){
   const saves=[

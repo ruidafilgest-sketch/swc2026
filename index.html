@@ -1431,6 +1431,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="bb" id="bar-comunicacoes">
   <button class="btn bp" onclick="openM('m-comunicado')">+ Novo comunicado</button>
   <button class="btn bo" onclick="exportComunicadoListaPDF()">Exportar lista</button>
+  <button class="btn bp" style="background:linear-gradient(135deg,#e05252,#c03030);" onclick="openM('m-alerta')">📧 Enviar Alerta</button>
+  <button class="btn bo" onclick="enviarRelatorioSemanal(true)" title="Enviar relatório semanal agora">📊 Rel. Semanal</button>
 </div>
 <div class="g3" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Comunicados criados</div><div class="smv" id="com-tot">0</div></div>
@@ -5583,8 +5585,9 @@ function wrapFirebaseFns(){
 // Worker URL: https://vzg-nacional.ruigoncalves1968.workers.dev
 // Para activar: configurar RESEND_API_KEY no worker
 
-const EMAIL_TO = 'gestao.vizelgolfe@gmail.com';
-const WORKER_URL = 'https://vzg-nacional.ruigoncalves1968.workers.dev';
+const EMAIL_FROM = 'swc2026@vizelgolfe.net';
+const EMAIL_TO = 'ruigoncalves1968@gmail.com';
+const WORKER_URL = 'https://resend-proxy.ruigoncalves1968.workers.dev';
 
 async function enviarEmailAlerta(assunto, corpo){
   try {
@@ -5592,7 +5595,9 @@ async function enviarEmailAlerta(assunto, corpo){
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
+        from: 'SWC Vizela 2026 <' + EMAIL_FROM + '>',
         to: EMAIL_TO,
+        reply_to: 'ruigoncalves1968@gmail.com',
         subject: '[SWC2026] ' + assunto,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
           <div style="background:#0A1628;padding:20px;border-bottom:2px solid #C9A84C;">
@@ -6941,4 +6946,186 @@ window.renderPrazosHTML=renderPrazosHTML;
 window.exportSegPDF=exportSegPDF;
 window.closeSb=closeSb;
 window.updateChkStatus=updateChkStatus;
-</script></body></html>
+
+// ══════════════════════════════════════════════════════
+// SISTEMA DE EMAILS — SWC Vizela 2026
+// Worker: resend-proxy.ruigoncalves1968.workers.dev
+// From: swc2026@vizelgolfe.net
+// ══════════════════════════════════════════════════════
+
+// ── Destinatários pré-definidos ──
+function getDestinatarios(grupo) {
+  switch(grupo) {
+    case 'coe':
+      return _mbr.map(m=>m.email).filter(Boolean);
+    case 'voluntarios':
+      return _vol.map(v=>v.email||v.tel).filter(e=>e&&e.includes('@'));
+    case 'delegacoes':
+      return _delegacoes.map(d=>d.email).filter(Boolean);
+    case 'patrocinadores':
+      return _pat.map(p=>p.email||p.contacto).filter(e=>e&&e.includes('@'));
+    case 'wmf':
+      return ['wmf@minigolfsport.com'];
+    case 'emf':
+      return ['emf@minigolf-emf.de'];
+    case 'fpm':
+      return ['fpm@bangolfe.pt'];
+    case 'cmv':
+      return ['geral@cm-vizela.pt'];
+    case 'todos':
+      return [...new Set([
+        ..._mbr.map(m=>m.email),
+        ..._pat.map(p=>p.email||p.contacto),
+      ].filter(e=>e&&e.includes('@')))];
+    default:
+      return [];
+  }
+}
+
+// ── Envio de alerta manual ──
+async function enviarAlertaManual() {
+  if(!isAdmin) return;
+  const grupo = document.getElementById('alert-grupo').value;
+  const emailExtra = document.getElementById('alert-email').value.trim();
+  const assunto = document.getElementById('alert-assunto').value.trim();
+  const mensagem = document.getElementById('alert-msg').value.trim();
+
+  if(!assunto || !mensagem) { toast('Assunto e mensagem obrigatórios','error'); return; }
+
+  let destinatarios = getDestinatarios(grupo);
+  if(emailExtra) destinatarios = [...destinatarios, ...emailExtra.split(',').map(e=>e.trim())];
+  if(!destinatarios.length && !emailExtra) { toast('Nenhum destinatário encontrado','error'); return; }
+
+  const btn = document.getElementById('btn-send-alert');
+  if(btn) { btn.disabled = true; btn.textContent = 'A enviar...'; }
+
+  const corpo = `
+    <h3 style="color:#C9A84C;margin-top:0;">${assunto}</h3>
+    <div style="font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">${mensagem}</div>
+  `;
+
+  let enviados = 0;
+  for(const email of destinatarios) {
+    const ok = await enviarEmailAlerta(assunto, corpo, email);
+    if(ok) enviados++;
+  }
+
+  if(btn) { btn.disabled = false; btn.textContent = 'Enviar'; }
+  closeM('m-alerta');
+  toast(`Email enviado para ${enviados} destinatário(s) ✅`);
+  addLog('email','alerta','Alerta manual enviado — '+assunto+' — '+enviados+' destinatários');
+}
+
+// ── Relatório semanal automático ──
+async function enviarRelatorioSemanal() {
+  if(!isAdmin) return;
+  const hoje = new Date();
+  const diasSemana = hoje.getDay();
+
+  // Só enviar ao domingo (0) ou forçar manualmente
+  const forcado = arguments[0] === true;
+  if(diasSemana !== 0 && !forcado) return;
+
+  // Verificar se já foi enviado esta semana
+  const ultimaChave = 'ultimoRelSemanal';
+  try {
+    const snap = await getDoc(doc(collection(db,'swc2026_config'),'email'));
+    const cfg = snap.exists() ? snap.data() : {};
+    const ultimoEnvio = cfg[ultimaChave] || 0;
+    const diasPassados = (Date.now() - ultimoEnvio) / 86400000;
+    if(diasPassados < 6 && !forcado) return;
+  } catch(e) {}
+
+  // Construir relatório
+  const urgentes = _praz.filter(p=>{
+    const d = new Date(p.data);
+    const diff = (d-hoje)/86400000;
+    return diff >= 0 && diff <= 30 && p.estado !== 'concluido';
+  }).sort((a,b)=>new Date(a.data)-new Date(b.data));
+
+  const emCurso = _chkData ? Object.entries(_chkData).filter(([,v])=>v.status==='em_curso').length : 0;
+  const pendentes = _chkData ? Object.entries(_chkData).filter(([,v])=>!v.status||v.status==='pendente').length : 0;
+  const concluidos = _chkData ? Object.entries(_chkData).filter(([,v])=>v.status==='concluido').length : 0;
+
+  const fatPendentes = _faturas.filter(f=>f.estado==='Pendente');
+  const totalFatPend = fatPendentes.reduce((s,f)=>s+Number(f.valor||0),0);
+
+  const diasEvento = Math.ceil((new Date('2026-10-12')-hoje)/86400000);
+
+  const linhasPrazos = urgentes.slice(0,10).map(p=>{
+    const diff = Math.ceil((new Date(p.data)-hoje)/86400000);
+    const cor = diff<=7?'#e05252':diff<=14?'#e89020':'#C9A84C';
+    return `<tr>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;color:${cor};font-weight:bold;">${p.data}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;">${p.titulo||p.l||''}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;color:${cor};">${diff<=0?'VENCIDO':diff+' dias'}</td>
+    </tr>`;
+  }).join('');
+
+  const corpo = `
+    <div style="background:#0A1628;padding:16px;border-radius:8px;margin-bottom:20px;">
+      <h2 style="color:#C9A84C;margin:0;font-size:20px;">📊 Relatório Semanal SWC Vizela 2026</h2>
+      <p style="color:#7A7060;margin:4px 0 0;font-size:13px;">${hoje.toLocaleDateString('pt-PT',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="background:#f0f4f8;border-radius:8px;padding:14px;text-align:center;">
+        <div style="font-size:32px;font-weight:bold;color:#C9A84C;">${diasEvento}</div>
+        <div style="font-size:12px;color:#666;">dias para o evento</div>
+      </div>
+      <div style="background:#f0f4f8;border-radius:8px;padding:14px;text-align:center;">
+        <div style="font-size:32px;font-weight:bold;color:#2ecc71;">${_atl.length}</div>
+        <div style="font-size:12px;color:#666;">atletas inscritos</div>
+      </div>
+    </div>
+
+    <h3 style="color:#0A1628;border-bottom:2px solid #C9A84C;padding-bottom:6px;">✅ Checklist WMF</h3>
+    <div style="display:flex;gap:16px;margin-bottom:20px;">
+      <span style="background:#2ecc71;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;">${concluidos} concluídos</span>
+      <span style="background:#e89020;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;">${emCurso} em curso</span>
+      <span style="background:#aaa;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;">${pendentes} pendentes</span>
+    </div>
+
+    ${urgentes.length ? `
+    <h3 style="color:#e05252;border-bottom:2px solid #e05252;padding-bottom:6px;">⚠️ Prazos próximos (30 dias)</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px;">
+      <thead><tr style="background:#0A1628;color:#C9A84C;">
+        <th style="padding:8px;text-align:left;">Data</th>
+        <th style="padding:8px;text-align:left;">Prazo</th>
+        <th style="padding:8px;text-align:left;">Urgência</th>
+      </tr></thead>
+      <tbody>${linhasPrazos}</tbody>
+    </table>` : '<p style="color:#2ecc71;">✅ Sem prazos urgentes nos próximos 30 dias</p>'}
+
+    ${fatPendentes.length ? `
+    <h3 style="color:#e89020;border-bottom:2px solid #e89020;padding-bottom:6px;">💰 Faturas pendentes</h3>
+    <p style="font-size:13px;">${fatPendentes.length} fatura(s) por pagar — Total: <strong>${fmt(totalFatPend)} €</strong></p>` : ''}
+
+    <div style="background:#f9f9f9;border-radius:8px;padding:14px;margin-top:20px;text-align:center;">
+      <a href="https://swc2026-vizela.pt" style="background:#C9A84C;color:#fff;padding:10px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">Aceder ao sistema</a>
+    </div>
+  `;
+
+  const destinatarios = getDestinatarios('coe');
+  if(!destinatarios.length) {
+    // Enviar só para o admin se COE não tem emails
+    destinatarios.push(EMAIL_TO);
+  }
+
+  let enviados = 0;
+  for(const email of [...new Set([EMAIL_TO, ...destinatarios])]) {
+    const ok = await enviarEmailAlerta('Relatório Semanal — ' + diasEvento + ' dias para o evento', corpo, email);
+    if(ok) enviados++;
+  }
+
+  // Guardar data de envio
+  try { await _upd('swc2026_config','email',{[ultimaChave]:Date.now()}); } catch(e) {}
+  addLog('email','semanal','Relatório semanal enviado — '+enviados+' destinatários');
+  toast('Relatório semanal enviado ✅');
+}
+
+// Expor funções globais
+window.enviarAlertaManual = enviarAlertaManual;
+window.enviarRelatorioSemanal = () => enviarRelatorioSemanal(true);
+
+</script>

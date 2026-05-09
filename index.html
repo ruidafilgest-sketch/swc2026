@@ -2965,32 +2965,27 @@ function renderChk(){
 
 async function updateChkStatus(id, status){
   if(!isAdmin) return;
-  _chkData[id] = {...(_chkData[id]||{}), status};
-  // Guardar no Firebase via _upd (se já existe) ou _add (se novo)
-  // Usar id como string para chave
-  const sid = 'chk_' + id;
+  // Guardar directamente no Firebase — o onSnapshot actualiza _chkData e renderChk automaticamente
+  const sid = 'chk_' + String(id);
   try {
-    // Tentar update primeiro (se documento já existe)
-    await updateDoc(doc(C('checklist'), sid), {itemId:id, status, ts:Date.now()});
+    const docRef = doc(C('checklist'), sid);
+    console.log('CHK: a escrever em', docRef.path, 'status=', status);
+    await setDoc(docRef, {itemId:Number(id), status, ts:Date.now()}, {merge:true});
+    console.log('CHK: escrita OK — item', id, '=', status);
+    toast(chkLang==='PT'?'✅ Estado: '+status:'✅ Status: '+status);
   } catch(e) {
-    // Se não existe, criar
-    try {
-      await setDoc(doc(C('checklist'), sid), {itemId:id, status, ts:Date.now()});
-    } catch(e2) {
-      console.error('Erro ao guardar estado checklist:', e2);
-    }
+    console.error('CHK ERRO:', e.code, e.message);
+    toast('❌ Erro Firebase: ' + (e.code||e.message), 'error');
   }
-  renderChk();
-  toast(chkLang==='PT'?'Estado actualizado ✅':'Status updated ✅');
 }
 
 // Carregar estados guardados do Firebase
 function loadChk(){
   _snap('checklist',(docs)=>{
     _chkData = {};
-    // Usar o mais recente por itemId (suporta itemId numérico ou chave chk_N)
-    docs.forEach(d=>{ 
-      if(d.itemId !== undefined) _chkData[d.itemId] = d;
+    docs.forEach(d=>{
+      const key = d.itemId !== undefined ? d.itemId : null;
+      if(key !== null) _chkData[key] = d;
     });
     const pg = document.getElementById('pg-wmfcheck');
     if(pg && pg.classList.contains('act')) renderChk();

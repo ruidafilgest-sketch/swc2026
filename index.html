@@ -5809,7 +5809,7 @@ function exportDR(){
       columnStyles:{0:{cellWidth:25}, 2:{halign:'right', cellWidth:35}},
       margin:{left:0,right:0},
     });
-    y = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y) + 4;
+    y = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y||42) + 4;
   } else {
     doc.setFontSize(9);doc.setTextColor(150,150,150);
     doc.text(L==='PT'?'Sem rendimentos registados':'No income recorded', 14, y+6);
@@ -5838,7 +5838,7 @@ function exportDR(){
       columnStyles:{0:{cellWidth:25}, 2:{halign:'right', cellWidth:35}},
       margin:{left:0,right:0},
     });
-    y = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y) + 4;
+    y = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y||42) + 4;
   } else {
     doc.setFontSize(9);doc.setTextColor(150,150,150);
     doc.text(L==='PT'?'Sem gastos registados':'No expenses recorded', 14, y+6);
@@ -5856,7 +5856,7 @@ function exportDR(){
   doc.setFont('helvetica','bold');
   doc.setTextColor(201,168,76);
   doc.text(L==='PT'?'Resultado do Evento':'Event Result', 14, y+8);
-  doc.setTextColor(res>=0?[100,220,130]:[220,100,100]);
+  if(res>=0){doc.setTextColor(100,220,130);}else{doc.setTextColor(220,100,100);}
   doc.text(fmtPDF(res), 196, y+8, {align:'right'});
 
   pdfFooter(doc,false);
@@ -5919,12 +5919,12 @@ function exportBalanco(){
 
   // Quadratura
   const eq = Math.abs(ativo-(forn+cp))<0.01;
-  const yq = (doc.lastAutoTable&&doc.lastAutoTable.finalY||y) + 8;
-  doc.setFillColor(eq?[15,40,15]:[40,15,15]);
+  const yq = (doc.lastAutoTable&&doc.lastAutoTable.finalY||130) + 8;
+  if(eq){doc.setFillColor(15,40,15);}else{doc.setFillColor(40,15,15);}
   doc.rect(14,yq,182,10,'F');
   doc.setFontSize(9);
   doc.setFont('helvetica','bold');
-  doc.setTextColor(eq?[100,220,130]:[220,100,100]);
+  if(eq){doc.setTextColor(100,220,130);}else{doc.setTextColor(220,100,100);}
   doc.text(eq?' Balanço equilibrado - Total Ativo = Total Passivo + Capital Próprio':' Diferença: '+fmtPDF(ativo-(forn+cp)), 105, yq+6.5, {align:'center'});
 
   pdfFooter(doc,false);

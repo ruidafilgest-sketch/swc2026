@@ -5651,6 +5651,8 @@ function renderEmailConfig(){
       <div style="font-size:10px;color:var(--mu);margin-top:8px;">O sistema envia automaticamente quando abres o sistema e ha prazos urgentes (max 1x por hora).</div>
     </div>
   `;
+  // Carregar dia guardado no Firebase e actualizar selector
+  setTimeout(carregarConfigEmail, 200);
 }
 
 

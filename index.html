@@ -5688,6 +5688,18 @@ function renderEmailConfig(){
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;margin-bottom:14px;">
       <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:10px;">Notificacoes Email — Alertas WMF</div>
       <div style="font-size:12px;color:var(--se);margin-bottom:10px;">Email de destino: <strong style="color:var(--wh);">${EMAIL_TO}</strong></div>
+      <div style="font-size:12px;color:var(--se);margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+        Relatório semanal automático:
+        <select id="sel-dia-relatorio" class="fse" style="font-size:11px;padding:3px 8px;" onchange="guardarDiaRelatorio(this.value)">
+          <option value="0">Domingo</option>
+          <option value="1">Segunda-feira</option>
+          <option value="2">Terça-feira</option>
+          <option value="3">Quarta-feira</option>
+          <option value="4">Quinta-feira</option>
+          <option value="5">Sexta-feira</option>
+          <option value="6">Sábado</option>
+        </select>
+      </div>
       <div style="font-size:12px;color:var(--se);margin-bottom:12px;">Prazos urgentes detectados: <strong style="color:${urgentes.length>0?'var(--er)':'var(--ok)'};">${urgentes.length}</strong></div>
       <button class="btn bp bsm" onclick="checkEmailAlertas();toast('A verificar e enviar...')">Enviar email de alerta agora</button>
       <div style="font-size:10px;color:var(--mu);margin-top:8px;">O sistema envia automaticamente quando abres o sistema e ha prazos urgentes (max 1x por hora).</div>
@@ -7020,11 +7032,15 @@ async function enviarAlertaManual() {
 async function enviarRelatorioSemanal() {
   if(!isAdmin) return;
   const hoje = new Date();
-  const diasSemana = hoje.getDay();
-
-  // Só enviar ao domingo (0) ou forçar manualmente
+  // Dia configurável -- ler do Firebase ou usar domingo (0) por defeito
   const forcado = arguments[0] === true;
-  if(diasSemana !== 0 && !forcado) return;
+  let diaEnvio = 0; // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab
+  try {
+    const cfgSnap = await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
+    if(cfgSnap.exists()) diaEnvio = Number(cfgSnap.data().diaRelatorio ?? 0);
+  } catch(e) {}
+  const diasSemana = hoje.getDay();
+  if(diasSemana !== diaEnvio && !forcado) return;
 
   // Verificar se já foi enviado esta semana
   const ultimaChave = 'ultimoRelSemanal';
@@ -7127,5 +7143,28 @@ async function enviarRelatorioSemanal() {
 // Expor funções globais
 window.enviarAlertaManual = enviarAlertaManual;
 window.enviarRelatorioSemanal = () => enviarRelatorioSemanal(true);
+
+// Guardar dia do relatório semanal
+async function guardarDiaRelatorio(dia) {
+  try {
+    await _upd('swc2026_config', 'email_config', { diaRelatorio: Number(dia) });
+    const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    toast('Relatório semanal configurado para ' + dias[dia] + ' ✅');
+  } catch(e) { toast('Erro ao guardar','error'); }
+}
+window.guardarDiaRelatorio = guardarDiaRelatorio;
+
+// Carregar dia configurado ao arrancar
+async function carregarConfigEmail() {
+  try {
+    const snap = await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
+    if(snap.exists()) {
+      const dia = snap.data().diaRelatorio ?? 0;
+      const sel = document.getElementById('sel-dia-relatorio');
+      if(sel) sel.value = dia;
+    }
+  } catch(e) {}
+}
+window.carregarConfigEmail = carregarConfigEmail;
 
 </script>

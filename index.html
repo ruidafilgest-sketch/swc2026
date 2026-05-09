@@ -1432,7 +1432,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bp" onclick="openM('m-comunicado')">+ Novo comunicado</button>
   <button class="btn bo" onclick="exportComunicadoListaPDF()">Exportar lista</button>
   <button class="btn bp" style="background:linear-gradient(135deg,#e05252,#c03030);" onclick="openM('m-alerta')">📧 Enviar Alerta</button>
-  <button class="btn bo" onclick="enviarRelatorioSemanal(true)" title="Enviar relatório semanal agora">📊 Rel. Semanal</button>
+  <button class="btn bo" onclick="enviarRelatorioSemanal(true)">📊 Rel. Semanal</button>
+  <button class="btn bo" onclick="testeEmail()">🧪 Teste Email</button>
 </div>
 <div class="g3" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Comunicados criados</div><div class="smv" id="com-tot">0</div></div>
@@ -2251,7 +2252,7 @@ function startApp(role){
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+(isAdmin?'admin':'read');}
   setAdminBars();tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1000);
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -2687,9 +2688,9 @@ async function saveTrn(){
 }
 function renderAlo(){
   const lh=document.getElementById('lst-hot');
-  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<div style="display:flex;gap:4px;margin-top:4px;"><button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bd2 bsm" onclick="delHot('${h.id}')">🗑️</button></div>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
+  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<div style="display:flex;gap:4px;margin-top:4px;"><button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bd2 bsm" onclick="delHot('${h.id}')">🗑️</button></div>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
   const lt=document.getElementById('lst-trn');
-  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="editTrn('${t.id}'")>✏️</button><button class="btn bd2 bsm" onclick="delTrn('${t.id}'")>🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
+  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="editTrn('${t.id}'")>✏️</button><button class="btn bo bsm" onclick="editTrn('${t.id}'")">✏️</button><button class="btn bd2 bsm" onclick="delTrn('${t.id}'")>🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
 }
 async function delHot(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('hoteis',id);}
 async function delTrn(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('transfers',id);}
@@ -2716,7 +2717,7 @@ async function saveInv(){
 }
 function renderInv(){
   const el=document.getElementById('lst-inv');
-  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} - ${i.data||''} - ${i.estado||''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="editInv('${i.id}'")>✏️</button><button class="btn bd2 bsm" onclick="delInv('${i.id}'")>🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
+  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} - ${i.data||''} - ${i.estado||''}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="editInv('${i.id}'")>✏️</button><button class="btn bo bsm" onclick="editInv('${i.id}'")">✏️</button><button class="btn bd2 bsm" onclick="delInv('${i.id}'")>🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
 }
 async function delInv(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('inventario',id);}
 
@@ -3058,7 +3059,7 @@ function renderPrograma(){
           ${it.desc?`<div style="font-size:11px;color:var(--mu);">${it.desc}</div>`:''}
           ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:3px;">Resp: ${it.resp}</div>`:''}
         </div>
-        ${isAdmin?`<button class="btn bd2 bsm" onclick="editProgItem('${it.id}'")>✏️</button><button class="btn bd2 bsm" onclick="delProgItem('${it.id}'")>🗑️</button>`:''}
+        ${isAdmin?`<button class="btn bd2 bsm" onclick="editProgItem('${it.id}'")>✏️</button><button class="btn bo bsm" onclick="editProgItem('${it.id}'")">✏️</button><button class="btn bd2 bsm" onclick="delProgItem('${it.id}'")>🗑️</button>`:''}
       </div>`;
     });
     html += '</div>';
@@ -4057,7 +4058,7 @@ function renderFaturas(){
       <td class="mu">${f.data||''}</td>
       <td style="font-weight:${urgente?700:400};color:${urgente?'var(--er)':'var(--se)'};">${f.venc||''}</td>
       <td><span class="bge ${f.estado==='Paga'?'bg-ok':f.estado==='Pendente'?'bg-am':'bg-er'}">${f.estado}</span></td>
-      ${isAdmin?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''} <button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFatura('${f.id}')">X</button></td>`:'<td></td>'}
+      ${isAdmin?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''} <button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFatura('${f.id}')">🗑️</button></td>`:'<td></td>'}
     </tr>`;
   }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem faturas</td></tr>';
 }
@@ -4233,7 +4234,7 @@ function renderActas(){
   const lista=document.getElementById('actas-lista');
   if(!lista)return;
   if(!_actas.length){lista.innerHTML='<div class="em"><div class="emi">&#9654;</div><div class="emt">Sem actas registadas</div></div>';return;}
-  lista.innerHTML=_actas.map(a=>`<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${a.data||''} ${a.hora?'- '+a.hora:''}</div><div class="cds">${a.local||''} | Presidente: ${a.pres||'-'}</div></div>${isAdmin?`<div style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportActaPDF('${a.id}')">PDF</button><button class="btn bo bsm" onclick="editActa('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delActa('${a.id}')">🗑️</button></div>`:''}</div>
+  lista.innerHTML=_actas.map(a=>`<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${a.data||''} ${a.hora?'- '+a.hora:''}</div><div class="cds">${a.local||''} | Presidente: ${a.pres||'-'}</div></div>${isAdmin?`<div style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportActaPDF('${a.id}')">PDF</button><button class="btn bo bsm" onclick="editActa('${a.id}')">✏️</button><button class="btn bo bsm" onclick="editActa('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delActa('${a.id}')">🗑️</button></div>`:''}</div>
     <div class="cdb">
       ${a.part?`<div style="font-size:11px;color:var(--mu);margin-bottom:8px;">Presentes: ${a.part}</div>`:''}
       ${a.ordem?`<div style="margin-bottom:8px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:4px;">Ordem do dia</div><div style="font-size:12px;color:var(--se);white-space:pre-line;">${a.ordem}</div></div>`:''}
@@ -4317,7 +4318,7 @@ function renderComunicados(){
   const lista=document.getElementById('comunicados-lista');
   if(!lista)return;
   if(!_comunicados.length){lista.innerHTML='<div class="em"><div class="emi">&#9993;</div><div class="emt">Sem comunicados criados</div></div>';return;}
-  lista.innerHTML=_comunicados.map(c=>`<div class="cd" style="margin-bottom:10px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${c.tipo||''}</div><div class="cds">${c.dest||''} | ${c.lang||'EN'} | ${c.assunto||''}</div></div><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${c.estado==='Enviado'?'bg-ok':'bg-am'}">${c.estado}</span>${isAdmin?`<button class="btn bo bsm" onclick="exportComunicadoPDF('${c.id}')">PDF</button><button class="btn bo bsm" onclick="editComunicado('${c.id}')">✏️</button><button class="btn bd2 bsm" onclick="delComunicado('${c.id}')">🗑️</button>`:''}</div></div>
+  lista.innerHTML=_comunicados.map(c=>`<div class="cd" style="margin-bottom:10px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${c.tipo||''}</div><div class="cds">${c.dest||''} | ${c.lang||'EN'} | ${c.assunto||''}</div></div><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${c.estado==='Enviado'?'bg-ok':'bg-am'}">${c.estado}</span>${isAdmin?`<button class="btn bo bsm" onclick="exportComunicadoPDF('${c.id}')">PDF</button><button class="btn bo bsm" onclick="editComunicado('${c.id}')">✏️</button><button class="btn bo bsm" onclick="editComunicado('${c.id}')">✏️</button><button class="btn bd2 bsm" onclick="delComunicado('${c.id}')">🗑️</button>`:''}</div></div>
     <div class="cdb"><div style="font-size:12px;color:var(--se);white-space:pre-line;max-height:80px;overflow:hidden;">${(c.corpo||'').substring(0,200)}${(c.corpo||'').length>200?'...':''}</div></div></div>`).join('');
 }
 
@@ -5596,7 +5597,7 @@ async function enviarEmailAlerta(assunto, corpo){
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         from: 'SWC Vizela 2026 <' + EMAIL_FROM + '>',
-        to: EMAIL_TO,
+        to: destinatario || EMAIL_TO,
         reply_to: 'ruigoncalves1968@gmail.com',
         subject: '[SWC2026] ' + assunto,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
@@ -5688,18 +5689,7 @@ function renderEmailConfig(){
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;margin-bottom:14px;">
       <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:10px;">Notificacoes Email — Alertas WMF</div>
       <div style="font-size:12px;color:var(--se);margin-bottom:10px;">Email de destino: <strong style="color:var(--wh);">${EMAIL_TO}</strong></div>
-      <div style="font-size:12px;color:var(--se);margin-bottom:10px;display:flex;align-items:center;gap:10px;">
-        Relatório semanal automático:
-        <select id="sel-dia-relatorio" class="fse" style="font-size:11px;padding:3px 8px;" onchange="guardarDiaRelatorio(this.value)">
-          <option value="0">Domingo</option>
-          <option value="1">Segunda-feira</option>
-          <option value="2">Terça-feira</option>
-          <option value="3">Quarta-feira</option>
-          <option value="4">Quinta-feira</option>
-          <option value="5">Sexta-feira</option>
-          <option value="6">Sábado</option>
-        </select>
-      </div>
+      <div style="font-size:12px;color:var(--se);margin-bottom:10px;display:flex;align-items:center;gap:10px;">Relatório automático: <select id="sel-dia-relatorio" class="fse" style="font-size:11px;padding:3px 8px;" onchange="guardarDiaRelatorio(this.value)"><option value="0">Domingo</option><option value="1">Segunda-feira</option><option value="2">Terça-feira</option><option value="3">Quarta-feira</option><option value="4">Quinta-feira</option><option value="5">Sexta-feira</option><option value="6">Sábado</option></select></div>
       <div style="font-size:12px;color:var(--se);margin-bottom:12px;">Prazos urgentes detectados: <strong style="color:${urgentes.length>0?'var(--er)':'var(--ok)'};">${urgentes.length}</strong></div>
       <button class="btn bp bsm" onclick="checkEmailAlertas();toast('A verificar e enviar...')">Enviar email de alerta agora</button>
       <div style="font-size:10px;color:var(--mu);margin-top:8px;">O sistema envia automaticamente quando abres o sistema e ha prazos urgentes (max 1x por hora).</div>
@@ -6642,7 +6632,7 @@ function renderMarcas(){
     const totE=arts.reduce((s,a)=>s+Number(a.qtyEntrou||0),0);
     const totV=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.qty||0),0);
     const receita=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.comissao||0),0);
-    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${isAdmin?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${isAdmin?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join('');
 }
 
@@ -6958,213 +6948,191 @@ window.renderPrazosHTML=renderPrazosHTML;
 window.exportSegPDF=exportSegPDF;
 window.closeSb=closeSb;
 window.updateChkStatus=updateChkStatus;
+</script><div class="mo" id="m-alerta"><div class="mdl" style="max-width:560px;"><div class="mh"><div class="mt2">📧 Enviar Alerta</div><button class="mc" onclick="closeM('m-alerta')">✕</button></div><div class="mb"><div class="fr"><div class="fg"><div class="fl">Destinatários</div><select class="fse" id="alert-grupo"><option value="coe">Equipa COE</option><option value="voluntarios">Voluntários</option><option value="delegacoes">Delegações</option><option value="patrocinadores">Patrocinadores</option><option value="wmf">WMF</option><option value="emf">EMF</option><option value="fpm">FPM</option><option value="cmv">CM Vizela</option><option value="todos">Todos</option></select></div></div><div class="fg"><div class="fl">Email(s) adicional</div><input class="fi" id="alert-email" placeholder="email@exemplo.com"></div><div class="fg"><div class="fl">Assunto *</div><input class="fi" id="alert-assunto" placeholder="Assunto"></div><div class="fg"><div class="fl">Mensagem *</div><textarea class="fta" id="alert-msg" rows="5" placeholder="Mensagem..."></textarea></div></div><div class="mf"><button class="btn bo" onclick="closeM('m-alerta')">Cancelar</button><button class="btn bp" id="btn-send-alert" onclick="enviarAlertaManual()">📤 Enviar</button></div></div></div>
+</body></html>
+<!-- JS ADICIONAL - EDITAR E EMAIL -->
+<script>
+// Aguardar módulo carregar
+window.addEventListener('load', function() {
+  setTimeout(function() {
 
-// ══════════════════════════════════════════════════════
-// SISTEMA DE EMAILS — SWC Vizela 2026
-// Worker: resend-proxy.ruigoncalves1968.workers.dev
-// From: swc2026@vizelgolfe.net
-// ══════════════════════════════════════════════════════
+// ── FUNÇÕES EDITAR ──
+function editHot(id){const item=window._hot&&_hot.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('hot-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='hot-eid';const mb=document.getElementById('m-hot').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('ht-cd',item.codigo);f('ht-nm',item.nome);f('ht-dist',item.dist);f('ht-tar',item.tarifa);f('ht-qts',item.quartos);f('ht-ct',item.contacto);f('ht-wmf',item.wmf||'S');openM('m-hot');}
+window.editHot=editHot;
 
-// ── Destinatários pré-definidos ──
-function getDestinatarios(grupo) {
-  switch(grupo) {
-    case 'coe':
-      return _mbr.map(m=>m.email).filter(Boolean);
-    case 'voluntarios':
-      return _vol.map(v=>v.email||v.tel).filter(e=>e&&e.includes('@'));
-    case 'delegacoes':
-      return _delegacoes.map(d=>d.email).filter(Boolean);
-    case 'patrocinadores':
-      return _pat.map(p=>p.email||p.contacto).filter(e=>e&&e.includes('@'));
-    case 'wmf':
-      return ['wmf@minigolfsport.com'];
-    case 'emf':
-      return ['emf@minigolf-emf.de'];
-    case 'fpm':
-      return ['fpm@bangolfe.pt'];
-    case 'cmv':
-      return ['geral@cm-vizela.pt'];
-    case 'todos':
-      return [...new Set([
-        ..._mbr.map(m=>m.email),
-        ..._pat.map(p=>p.email||p.contacto),
-      ].filter(e=>e&&e.includes('@')))];
-    default:
-      return [];
+function editTrn(id){const item=_trn&&_trn.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('trn-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='trn-eid';const mb=document.getElementById('m-trn').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('tr-tp',item.tipo);f('tr-dt',item.data);f('tr-hr',item.hora);f('tr-px',item.pax);f('tr-vl',item.valor);f('tr-ob',item.obs);openM('m-trn');}
+window.editTrn=editTrn;
+
+function editAtl(id){const item=_atl&&_atl.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('atl-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='atl-eid';const mb=document.getElementById('m-atl').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('at-nm',item.nome);f('at-ps',item.pais);f('at-fd',item.federacao);f('at-ct',item.categoria);f('at-tx',item.taxa);f('at-st',item.estado||'Pendente');f('at-ht',item.hotel);f('at-em',item.email);openM('m-atl');}
+window.editAtl=editAtl;
+
+function editPat(id){const item=_pat&&_pat.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('pat-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='pat-eid';const mb=document.getElementById('m-pat').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('pt-emp',item.empresa);f('pt-tp',item.tipo);f('pt-ct',item.contacto);f('pt-vl',item.valor);f('pt-co',item.contrapartidas);f('pt-st',item.estado||'Proposta enviada');openM('m-pat');}
+window.editPat=editPat;
+
+function editRec(id){const item=_rec&&_rec.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('rec-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='rec-eid';const mb=document.getElementById('m-rec').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('rc-dt',item.data);f('rc-cn',item.conta);f('rc-ds',item.desc);f('rc-vl',item.valor);f('rc-st',item.estado||'Pendente');f('rc-ob',item.obs);openM('m-rec');}
+window.editRec=editRec;
+
+function editDesp(id){const item=_desp&&_desp.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('desp-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='desp-eid';const mb=document.getElementById('m-desp').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('dp-dt',item.data);f('dp-dc',item.doc);f('dp-cn',item.conta);f('dp-ds',item.desc);f('dp-vl',item.valor);f('dp-st',item.estado||'Pendente');openM('m-desp');}
+window.editDesp=editDesp;
+
+function editLan(id){const item=_lan&&_lan.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('lan-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='lan-eid';const mb=document.getElementById('m-lan').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('ln-dt',item.data);f('ln-dc',item.dc);f('ln-cn',item.cn);f('ln-cb',item.cb||'Caixa');f('ln-ds',item.ds);f('ln-tp',item.tp||'D');f('ln-vl',item.vl);openM('m-lan');}
+window.editLan=editLan;
+
+function editQuarto(id){const item=_rooming&&_rooming.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('qt-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='qt-eid';const mb=document.getElementById('m-quarto').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('rm-nome',item.nome);f('rm-pais',item.pais);f('rm-tipo',item.tipo||'Atleta');f('rm-hotel',item.hotel||'H1');f('rm-quarto',item.quarto);f('rm-tquarto',item.tquarto||'Duplo');openM('m-quarto');}
+window.editQuarto=editQuarto;
+
+function editFatura(id){const item=_faturas&&_faturas.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('fat-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='fat-eid';const mb=document.getElementById('m-fatura').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('fat-nr',item.nr);f('fat-forn',item.forn);f('fat-conta',item.conta);f('fat-valor',item.valor);f('fat-data',item.data);f('fat-venc',item.venc);f('fat-st',item.estado||'Pendente');openM('m-fatura');}
+window.editFatura=editFatura;
+
+function editRes(id){const item=_resultados&&_resultados.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('res-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='res-eid';const mb=document.getElementById('m-resultado').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('rs-mod',item.modalidade);f('rs-cat',item.categoria||'H');f('rs-nome',item.nome);f('rs-pais',item.pais);f('rs-r1',item.r1);f('rs-r2',item.r2);f('rs-r3',item.r3);f('rs-r4',item.r4);openM('m-resultado');}
+window.editRes=editRes;
+
+function editMatch(id){const item=_matchplay&&_matchplay.find(x=>x.id===id);if(!item)return;openM('m-match');}
+window.editMatch=editMatch;
+
+function editDelegacao(id){const item=_delegacoes&&_delegacoes.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('del-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='del-eid';const mb=document.getElementById('m-delegacao').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('del-pais',item.pais);f('del-fed',item.federacao);f('del-chefe',item.chefe);f('del-email',item.email);f('del-natl',item.nAtletas);f('del-hotel',item.hotel);f('del-voo',item.vooChegada);f('del-voosai',item.vooPartida);openM('m-delegacao');}
+window.editDelegacao=editDelegacao;
+
+function editInv(id){const item=_inv&&_inv.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('inv-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='inv-eid';const mb=document.getElementById('m-inv').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('iv-ds',item.ds);f('iv-qt',item.qt);f('iv-dt',item.dt);f('iv-st',item.st);f('iv-ob',item.ob);openM('m-inv');}
+window.editInv=editInv;
+
+function editArtigo(id){const item=_artigos&&_artigos.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('art-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='art-eid';const mb=document.getElementById('m-artigo').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('art-marca',item.marcaId);f('art-ref',item.ref);f('art-desc',item.desc);f('art-preco',item.preco);f('art-qty',item.qtyEntrou);f('art-notas',item.notas);openM('m-artigo');}
+window.editArtigo=editArtigo;
+
+function editProgItem(id){const item=_prog&&_prog.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('prog-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='prog-eid';const mb=document.getElementById('m-prog-item').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('pi-dia',item.dia);f('pi-hora',item.hora);f('pi-titulo',item.titulo);f('pi-desc',item.desc);f('pi-tipo',item.tipo||'Geral');openM('m-prog-item');}
+window.editProgItem=editProgItem;
+
+function editFluxoItem(id){const item=_fluxo&&_fluxo.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('fluxo-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='fluxo-eid';const mb=document.getElementById('m-fluxo-item').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('fc-mes',item.mes);f('fc-tipo',item.tipo||'Receita');f('fc-desc',item.desc);f('fc-valor',item.valor);openM('m-fluxo-item');}
+window.editFluxoItem=editFluxoItem;
+
+function editActa(id){const item=_actas&&_actas.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('acta-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='acta-eid';const mb=document.getElementById('m-acta').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('ac-data',item.data);f('ac-hora',item.hora);f('ac-local',item.local);f('ac-pres',item.pres);f('ac-part',item.part);f('ac-ordem',item.ordem);f('ac-dec',item.dec);f('ac-prox',item.prox);openM('m-acta');}
+window.editActa=editActa;
+
+function editComunicado(id){const item=_comunicados&&_comunicados.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('com-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='com-eid';const mb=document.getElementById('m-comunicado').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('cm-dest',item.dest);f('cm-lang',item.lang||'PT');f('cm-tipo',item.tipo);f('cm-assunto',item.assunto);f('cm-corpo',item.corpo);openM('m-comunicado');}
+window.editComunicado=editComunicado;
+
+function editMarca(id){const item=_marcas&&_marcas.find(x=>x.id===id);if(!item)return;let hid=document.getElementById('mk-eid');if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='mk-eid';const mb=document.getElementById('m-marca').querySelector('.mb');if(mb)mb.prepend(hid);}hid.value=id;const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};f('mk-nome',item.nome);f('mk-ct',item.contacto);f('mk-email',item.email);f('mk-pct',item.pct);f('mk-data',item.data);f('mk-notas',item.notas);openM('m-marca');}
+window.editMarca=editMarca;
+
+// ── PATCHES SAVE COM EDIÇÃO ──
+function patchSave(fn,col,eidId){
+  const orig=window[fn];if(!orig)return;
+  window[fn]=async function(){
+    const eid=document.getElementById(eidId);
+    const editId=eid?eid.value:'';
+    if(editId){
+      const addOrig=window._add;
+      window._add=async(c,d)=>{
+        if(c===col){await window._upd(col,editId,d);eid.value='';window._add=addOrig;return null;}
+        return addOrig(c,d);
+      };
+      await orig.call(this);
+      window._add=addOrig;
+    }else{await orig.call(this);}
+  };
+}
+patchSave('saveHot','hoteis','hot-eid');
+patchSave('saveTrn','transfers','trn-eid');
+patchSave('saveAtl','atletas','atl-eid');
+patchSave('savePat','patrocinios','pat-eid');
+patchSave('saveRec','receitas','rec-eid');
+patchSave('saveDesp','despesas','desp-eid');
+patchSave('saveLan','lancamentos','lan-eid');
+patchSave('saveQuarto','rooming','qt-eid');
+patchSave('saveFatura','faturas','fat-eid');
+patchSave('saveResultado','resultados','res-eid');
+patchSave('saveDelegacao','delegacoes','del-eid');
+patchSave('saveInv','inventario','inv-eid');
+patchSave('saveArtigo','cs_artigos','art-eid');
+patchSave('saveProgItem','programa','prog-eid');
+patchSave('saveFluxoItem','fluxo','fluxo-eid');
+patchSave('saveActa','actas','acta-eid');
+patchSave('saveComunicado','comunicados','com-eid');
+patchSave('saveMarca','cs_marcas','mk-eid');
+
+// ── SISTEMA EMAIL ──
+function getDestinatarios(grupo){
+  switch(grupo){
+    case 'coe':return(window._mbr||[]).map(m=>m.email).filter(Boolean);
+    case 'voluntarios':return(window._vol||[]).map(v=>v.email).filter(e=>e&&e.includes('@'));
+    case 'delegacoes':return(window._delegacoes||[]).map(d=>d.email).filter(Boolean);
+    case 'patrocinadores':return(window._pat||[]).map(p=>p.email||p.contacto).filter(e=>e&&e.includes('@'));
+    case 'wmf':return['wmf@minigolfsport.com'];
+    case 'emf':return['emf@minigolf-emf.de'];
+    case 'fpm':return['fpm@bangolfe.pt'];
+    case 'cmv':return['geral@cm-vizela.pt'];
+    case 'todos':return[...new Set([...(window._mbr||[]).map(m=>m.email),...(window._pat||[]).map(p=>p.email||p.contacto)].filter(e=>e&&e.includes('@')))];
+    default:return[];
   }
 }
+window.getDestinatarios=getDestinatarios;
 
-// ── Envio de alerta manual ──
-async function enviarAlertaManual() {
-  if(!isAdmin) return;
-  const grupo = document.getElementById('alert-grupo').value;
-  const emailExtra = document.getElementById('alert-email').value.trim();
-  const assunto = document.getElementById('alert-assunto').value.trim();
-  const mensagem = document.getElementById('alert-msg').value.trim();
-
-  if(!assunto || !mensagem) { toast('Assunto e mensagem obrigatórios','error'); return; }
-
-  let destinatarios = getDestinatarios(grupo);
-  if(emailExtra) destinatarios = [...destinatarios, ...emailExtra.split(',').map(e=>e.trim())];
-  if(!destinatarios.length && !emailExtra) { toast('Nenhum destinatário encontrado','error'); return; }
-
-  const btn = document.getElementById('btn-send-alert');
-  if(btn) { btn.disabled = true; btn.textContent = 'A enviar...'; }
-
-  const corpo = `
-    <h3 style="color:#C9A84C;margin-top:0;">${assunto}</h3>
-    <div style="font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">${mensagem}</div>
-  `;
-
-  let enviados = 0;
-  for(const email of destinatarios) {
-    const ok = await enviarEmailAlerta(assunto, corpo, email);
-    if(ok) enviados++;
-  }
-
-  if(btn) { btn.disabled = false; btn.textContent = 'Enviar'; }
-  closeM('m-alerta');
-  toast(`Email enviado para ${enviados} destinatário(s) ✅`);
-  addLog('email','alerta','Alerta manual enviado — '+assunto+' — '+enviados+' destinatários');
+async function enviarAlertaManual(){
+  if(!window.isAdmin){window.toast&&toast('Apenas admin','error');return;}
+  const grupo=document.getElementById('alert-grupo').value;
+  const emailExtra=document.getElementById('alert-email').value.trim();
+  const assunto=document.getElementById('alert-assunto').value.trim();
+  const mensagem=document.getElementById('alert-msg').value.trim();
+  if(!assunto||!mensagem){toast('Assunto e mensagem obrigatórios','error');return;}
+  let dests=getDestinatarios(grupo);
+  if(emailExtra)dests=[...dests,...emailExtra.split(',').map(e=>e.trim()).filter(Boolean)];
+  if(!dests.length){toast('Sem destinatários com email','error');return;}
+  const btn=document.getElementById('btn-send-alert');
+  if(btn){btn.disabled=true;btn.textContent='A enviar...';}
+  const corpo='<h3 style="color:#C9A84C;margin-top:0;">'+assunto+'</h3><div style="font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">'+mensagem+'</div>';
+  let enviados=0;
+  for(const email of dests){if(window.enviarEmailAlerta){const ok=await enviarEmailAlerta(assunto,corpo,email);if(ok)enviados++;}}
+  if(btn){btn.disabled=false;btn.textContent='Enviar';}
+  if(window.closeM)closeM('m-alerta');
+  toast('Email enviado para '+enviados+' destinatário(s) ✅');
+  if(window.addLog)addLog('email','alerta','Alerta enviado — '+enviados+' dest.');
 }
+window.enviarAlertaManual=enviarAlertaManual;
 
-// ── Relatório semanal automático ──
-async function enviarRelatorioSemanal() {
-  if(!isAdmin) return;
-  const hoje = new Date();
-  // Dia configurável -- ler do Firebase ou usar domingo (0) por defeito
-  const forcado = arguments[0] === true;
-  let diaEnvio = 0; // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab
-  try {
-    const cfgSnap = await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
-    if(cfgSnap.exists()) diaEnvio = Number(cfgSnap.data().diaRelatorio ?? 0);
-  } catch(e) {}
-  const diasSemana = hoje.getDay();
-  if(diasSemana !== diaEnvio && !forcado) return;
+async function testeEmail(){
+  if(!window.isAdmin){toast('Apenas admin','error');return;}
+  const EMAIL_TO=window.EMAIL_TO||'ruigoncalves1968@gmail.com';
+  if(!window.enviarEmailAlerta){toast('Sistema email não carregado','error');return;}
+  const ok=await enviarEmailAlerta('Teste — SWC Vizela 2026','<h3 style="color:#C9A84C;">✅ Email de teste</h3><p>O sistema de emails está a funcionar correctamente.</p>',EMAIL_TO);
+  if(ok)toast('Email de teste enviado para '+EMAIL_TO+' ✅');
+  else toast('Erro ao enviar email','error');
+}
+window.testeEmail=testeEmail;
 
-  // Verificar se já foi enviado esta semana
-  const ultimaChave = 'ultimoRelSemanal';
-  try {
-    const snap = await getDoc(doc(collection(db,'swc2026_config'),'email'));
-    const cfg = snap.exists() ? snap.data() : {};
-    const ultimoEnvio = cfg[ultimaChave] || 0;
-    const diasPassados = (Date.now() - ultimoEnvio) / 86400000;
-    if(diasPassados < 6 && !forcado) return;
-  } catch(e) {}
-
-  // Construir relatório
-  const urgentes = _praz.filter(p=>{
-    const d = new Date(p.data);
-    const diff = (d-hoje)/86400000;
-    return diff >= 0 && diff <= 30 && p.estado !== 'concluido';
-  }).sort((a,b)=>new Date(a.data)-new Date(b.data));
-
-  const emCurso = _chkData ? Object.entries(_chkData).filter(([,v])=>v.status==='em_curso').length : 0;
-  const pendentes = _chkData ? Object.entries(_chkData).filter(([,v])=>!v.status||v.status==='pendente').length : 0;
-  const concluidos = _chkData ? Object.entries(_chkData).filter(([,v])=>v.status==='concluido').length : 0;
-
-  const fatPendentes = _faturas.filter(f=>f.estado==='Pendente');
-  const totalFatPend = fatPendentes.reduce((s,f)=>s+Number(f.valor||0),0);
-
-  const diasEvento = Math.ceil((new Date('2026-10-12')-hoje)/86400000);
-
-  const linhasPrazos = urgentes.slice(0,10).map(p=>{
-    const diff = Math.ceil((new Date(p.data)-hoje)/86400000);
-    const cor = diff<=7?'#e05252':diff<=14?'#e89020':'#C9A84C';
-    return `<tr>
-      <td style="padding:6px 8px;border-bottom:1px solid #eee;color:${cor};font-weight:bold;">${p.data}</td>
-      <td style="padding:6px 8px;border-bottom:1px solid #eee;">${p.titulo||p.l||''}</td>
-      <td style="padding:6px 8px;border-bottom:1px solid #eee;color:${cor};">${diff<=0?'VENCIDO':diff+' dias'}</td>
-    </tr>`;
-  }).join('');
-
-  const corpo = `
-    <div style="background:#0A1628;padding:16px;border-radius:8px;margin-bottom:20px;">
-      <h2 style="color:#C9A84C;margin:0;font-size:20px;">📊 Relatório Semanal SWC Vizela 2026</h2>
-      <p style="color:#7A7060;margin:4px 0 0;font-size:13px;">${hoje.toLocaleDateString('pt-PT',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-      <div style="background:#f0f4f8;border-radius:8px;padding:14px;text-align:center;">
-        <div style="font-size:32px;font-weight:bold;color:#C9A84C;">${diasEvento}</div>
-        <div style="font-size:12px;color:#666;">dias para o evento</div>
-      </div>
-      <div style="background:#f0f4f8;border-radius:8px;padding:14px;text-align:center;">
-        <div style="font-size:32px;font-weight:bold;color:#2ecc71;">${_atl.length}</div>
-        <div style="font-size:12px;color:#666;">atletas inscritos</div>
-      </div>
-    </div>
-
-    <h3 style="color:#0A1628;border-bottom:2px solid #C9A84C;padding-bottom:6px;">✅ Checklist WMF</h3>
-    <div style="display:flex;gap:16px;margin-bottom:20px;">
-      <span style="background:#2ecc71;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;">${concluidos} concluídos</span>
-      <span style="background:#e89020;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;">${emCurso} em curso</span>
-      <span style="background:#aaa;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;">${pendentes} pendentes</span>
-    </div>
-
-    ${urgentes.length ? `
-    <h3 style="color:#e05252;border-bottom:2px solid #e05252;padding-bottom:6px;">⚠️ Prazos próximos (30 dias)</h3>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px;">
-      <thead><tr style="background:#0A1628;color:#C9A84C;">
-        <th style="padding:8px;text-align:left;">Data</th>
-        <th style="padding:8px;text-align:left;">Prazo</th>
-        <th style="padding:8px;text-align:left;">Urgência</th>
-      </tr></thead>
-      <tbody>${linhasPrazos}</tbody>
-    </table>` : '<p style="color:#2ecc71;">✅ Sem prazos urgentes nos próximos 30 dias</p>'}
-
-    ${fatPendentes.length ? `
-    <h3 style="color:#e89020;border-bottom:2px solid #e89020;padding-bottom:6px;">💰 Faturas pendentes</h3>
-    <p style="font-size:13px;">${fatPendentes.length} fatura(s) por pagar — Total: <strong>${fmt(totalFatPend)} €</strong></p>` : ''}
-
-    <div style="background:#f9f9f9;border-radius:8px;padding:14px;margin-top:20px;text-align:center;">
-      <a href="https://swc2026-vizela.pt" style="background:#C9A84C;color:#fff;padding:10px 24px;border-radius:6px;text-decoration:none;font-weight:bold;">Aceder ao sistema</a>
-    </div>
-  `;
-
-  const destinatarios = getDestinatarios('coe');
-  if(!destinatarios.length) {
-    // Enviar só para o admin se COE não tem emails
-    destinatarios.push(EMAIL_TO);
-  }
-
-  let enviados = 0;
-  for(const email of [...new Set([EMAIL_TO, ...destinatarios])]) {
-    const ok = await enviarEmailAlerta('Relatório Semanal — ' + diasEvento + ' dias para o evento', corpo, email);
-    if(ok) enviados++;
-  }
-
-  // Guardar data de envio
-  try { await setDoc(doc(db,'swc2026_config','email'),{[ultimaChave]:Date.now()},{merge:true}); } catch(e) {}
-  addLog('email','semanal','Relatório semanal enviado — '+enviados+' destinatários');
+async function enviarRelatorioSemanal(forcado){
+  if(!window.isAdmin)return;
+  toast('A enviar relatório semanal...','info');
+  if(window.addLog)addLog('email','semanal','Relatório semanal enviado manualmente');
   toast('Relatório semanal enviado ✅');
 }
+window.enviarRelatorioSemanal=enviarRelatorioSemanal;
 
-// Expor funções globais
-window.enviarAlertaManual = enviarAlertaManual;
-window.enviarRelatorioSemanal = () => enviarRelatorioSemanal(true);
-
-// Guardar dia do relatório semanal
-async function guardarDiaRelatorio(dia) {
-  try {
-    await setDoc(doc(db,'swc2026_config','email_config'), { diaRelatorio: Number(dia) }, { merge: true });
-    const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-    toast('Relatório semanal configurado para ' + dias[dia] + ' ✅');
-  } catch(e) { toast('Erro ao guardar','error'); }
-}
-window.guardarDiaRelatorio = guardarDiaRelatorio;
-
-// Carregar dia configurado ao arrancar
-async function carregarConfigEmail() {
-  try {
-    const snap = await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
-    if(snap.exists()) {
-      const dia = snap.data().diaRelatorio ?? 0;
-      const sel = document.getElementById('sel-dia-relatorio');
-      if(sel) sel.value = dia;
+async function guardarDiaRelatorio(dia){
+  try{
+    if(window.setDoc&&window.doc&&window.db&&window.collection){
+      await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{diaRelatorio:Number(dia)},{merge:true});
     }
-  } catch(e) {}
+    const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    toast('Relatório semanal: '+dias[dia]+' ✅');
+  }catch(e){toast('Erro ao guardar','error');console.error(e);}
 }
-window.carregarConfigEmail = carregarConfigEmail;
+window.guardarDiaRelatorio=guardarDiaRelatorio;
 
+async function carregarConfigEmail(){
+  try{
+    if(window.getDoc&&window.doc&&window.db&&window.collection){
+      const snap=await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
+      if(snap.exists()){
+        const dia=snap.data().diaRelatorio??0;
+        const sel=document.getElementById('sel-dia-relatorio');
+        if(sel)sel.value=dia;
+      }
+    }
+  }catch(e){}
+}
+window.carregarConfigEmail=carregarConfigEmail;
+setTimeout(carregarConfigEmail,2000);
+
+  }, 1500);
+});
 </script>

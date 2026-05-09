@@ -7979,21 +7979,26 @@ async function testeEmail(){
 
 async function guardarDiaRelatorio(dia){
   try{
-    await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{diaRelatorio:Number(dia)},{merge:true});
+    const diaNum = Number(dia);
+    await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{diaRelatorio:diaNum},{merge:true});
+    _diaRelatorio = diaNum; // guardar em memória
     const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-    toast('Relatório automático: '+dias[dia]+' ✅');
+    toast('Relatório automático: '+dias[diaNum]+' ✅');
+    console.log('Dia gravado:', diaNum);
   }catch(e){toast('Erro ao guardar','error');console.error(e);}
 }
 
+let _diaRelatorio = 0;
 async function carregarConfigEmail(){
   try{
     const snap=await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
     if(snap.exists()){
-      const dia=snap.data().diaRelatorio??0;
+      _diaRelatorio = Number(snap.data().diaRelatorio??0);
       const sel=document.getElementById('sel-dia-relatorio');
-      if(sel)sel.value=String(dia);
+      if(sel)sel.value=String(_diaRelatorio);
+      console.log('Dia carregado do Firebase:', _diaRelatorio);
     }
-  }catch(e){}
+  }catch(e){console.error('Erro carregarConfigEmail:',e);}
 }
 
 async function enviarRelatorioSemanal(forcado){

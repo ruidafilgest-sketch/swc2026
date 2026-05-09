@@ -2688,7 +2688,7 @@ async function saveTrn(){
 }
 function renderAlo(){
   const lh=document.getElementById('lst-hot');
-  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<div style="display:flex;gap:4px;margin-top:4px;"><button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bd2 bsm" onclick="delHot('${h.id}')">🗑️</button></div>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
+  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<div style="display:flex;gap:4px;margin-top:4px;"><button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bd2 bsm" onclick="delHot('${h.id}')">🗑️</button></div>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
   const lt=document.getElementById('lst-trn');
   lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bd2 bsm" onclick="editTrn('${t.id}'")>✏️</button><button class="btn bo bsm" onclick="editTrn('${t.id}'")">✏️</button><button class="btn bd2 bsm" onclick="delTrn('${t.id}'")>🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
 }
@@ -6785,6 +6785,25 @@ window.toggleFoco=toggleFoco;
 window._toggleFoco=toggleFoco;
 window.addLog=addLog;
 window.checkEmailAlertas=checkEmailAlertas;
+
+// Pontes para o script externo
+window._guardarDiaRelatorio = async function(dia) {
+  try {
+    await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{diaRelatorio:Number(dia)},{merge:true});
+    const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    toast('Relatório semanal: '+dias[dia]+' ✅');
+  } catch(e) { toast('Erro ao guardar','error'); console.error(e); }
+};
+window._carregarConfigEmail = async function() {
+  try {
+    const snap = await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
+    if(snap.exists()) {
+      const dia = snap.data().diaRelatorio ?? 0;
+      const sel = document.getElementById('sel-dia-relatorio');
+      if(sel) sel.value = dia;
+    }
+  } catch(e) {}
+};
 window.renderCertificados=renderCertificados;
 window.dsOpen=function(a,b){if(window._dsOpen)window._dsOpen(a,b);};
 window.dsClose=function(){if(window._dsClose)window._dsClose();};
@@ -7107,28 +7126,23 @@ async function enviarRelatorioSemanal(forcado){
 }
 window.enviarRelatorioSemanal=enviarRelatorioSemanal;
 
-async function guardarDiaRelatorio(dia){
-  try{
-    if(window.setDoc&&window.doc&&window.db&&window.collection){
-      await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{diaRelatorio:Number(dia)},{merge:true});
-    }
+function guardarDiaRelatorio(dia){
+  // Usar a função exposta pelo módulo principal
+  if(window._guardarDiaRelatorio){
+    window._guardarDiaRelatorio(dia);
+  } else {
     const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-    toast('Relatório semanal: '+dias[dia]+' ✅');
-  }catch(e){toast('Erro ao guardar','error');console.error(e);}
+    if(window.toast)toast('A aguardar sistema carregar...','error');
+  }
 }
 window.guardarDiaRelatorio=guardarDiaRelatorio;
 
-async function carregarConfigEmail(){
-  try{
-    if(window.getDoc&&window.doc&&window.db&&window.collection){
-      const snap=await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
-      if(snap.exists()){
-        const dia=snap.data().diaRelatorio??0;
-        const sel=document.getElementById('sel-dia-relatorio');
-        if(sel)sel.value=dia;
-      }
-    }
-  }catch(e){}
+function carregarConfigEmail(){
+  if(window._carregarConfigEmail){
+    window._carregarConfigEmail();
+  } else {
+    setTimeout(carregarConfigEmail, 500);
+  }
 }
 window.carregarConfigEmail=carregarConfigEmail;
 setTimeout(carregarConfigEmail,2000);

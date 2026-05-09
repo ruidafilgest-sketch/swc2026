@@ -2389,7 +2389,9 @@ function renderDash(){
 async function saveLan(){
   if(!isAdmin)return;
   const d={data:document.getElementById('ln-dt').value,dc:document.getElementById('ln-dc').value,cn:document.getElementById('ln-cn').value,cb:document.getElementById('ln-cb').value,ds:document.getElementById('ln-ds').value,tp:document.getElementById('ln-tp').value,vl:parseFloat(document.getElementById('ln-vl').value)||0,ts:Date.now()};
-  await _add('lancamentos',d);closeM('m-lan');toast('Lançamento registado');
+  const _e=document.getElementById('lan-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('lancamentos',_eid,d);if(_e)_e.value='';toast('Lançamento actualizado');}else{await _add('lancamentos',d);toast('Lançamento registado');}
+  closeM('m-lan');toast('Lançamento registado');
 }
 function renderDi(){
   let cx=0,bk=0,totD=0,totC=0;
@@ -2411,7 +2413,9 @@ async function delLan(id){if(!isAdmin||!confirm('Eliminar este lançamento?'))re
 async function saveRec(){
   if(!isAdmin)return;
   const d={data:document.getElementById('rc-dt').value,conta:document.getElementById('rc-cn').value,desc:document.getElementById('rc-ds').value,valor:parseFloat(document.getElementById('rc-vl').value)||0,estado:document.getElementById('rc-st').value,obs:document.getElementById('rc-ob').value,ts:Date.now()};
-  await _add('receitas',d);closeM('m-rec');toast('Receita registada');
+  const _e=document.getElementById('rec-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('receitas',_eid,d);if(_e)_e.value='';toast('Receita actualizado');}else{await _add('receitas',d);toast('Receita registado');}
+  closeM('m-rec');toast('Receita registada');
 }
 function renderRec(){
   const totR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
@@ -2429,7 +2433,9 @@ async function delRec(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveDesp(){
   if(!isAdmin)return;
   const d={data:document.getElementById('dp-dt').value,doc:document.getElementById('dp-dc').value,conta:document.getElementById('dp-cn').value,desc:document.getElementById('dp-ds').value,valor:parseFloat(document.getElementById('dp-vl').value)||0,estado:document.getElementById('dp-st').value,ts:Date.now()};
-  await _add('despesas',d);closeM('m-desp');toast('Despesa registada');
+  const _e=document.getElementById('desp-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('despesas',_eid,d);if(_e)_e.value='';toast('Despesa actualizado');}else{await _add('despesas',d);toast('Despesa registado');}
+  closeM('m-desp');toast('Despesa registada');
 }
 function renderDesp(){
   const totP=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
@@ -2448,7 +2454,9 @@ async function delDesp(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del(
 async function savePat(){
   if(!isAdmin)return;
   const d={empresa:document.getElementById('pt-emp').value,tipo:document.getElementById('pt-tp').value,contacto:document.getElementById('pt-ct').value,valor:parseFloat(document.getElementById('pt-vl').value)||0,contrapartidas:document.getElementById('pt-co').value,estado:document.getElementById('pt-st').value,ts:Date.now()};
-  await _add('patrocinios',d);closeM('m-pat');toast('Patrocinador registado');
+  const _e=document.getElementById('pat-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('patrocinadores',_eid,d);if(_e)_e.value='';toast('Patrocinador actualizado');}else{await _add('patrocinadores',d);toast('Patrocinador registado');}
+  closeM('m-pat');
 }
 function renderPat(){
   const cf=_pat.filter(p=>p.estado==='Recebido'||p.estado==='Confirmado').reduce((a,p)=>a+Number(p.valor||0),0);
@@ -2466,7 +2474,11 @@ async function delPat(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveAtl(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('at-nm').value,pais:document.getElementById('at-ps').value,federacao:document.getElementById('at-fd').value,categoria:document.getElementById('at-ct').value,taxa:parseFloat(document.getElementById('at-tx').value)||0,estado:document.getElementById('at-st').value,hotel:document.getElementById('at-ht').value,email:document.getElementById('at-em').value,ts:Date.now()};
-  await _add('atletas',d);closeM('m-atl');toast('Atleta registado');
+  const eid=document.getElementById('atl-eid');
+  const editId=eid&&eid.value?eid.value:'';
+  if(editId){await _upd('atletas',editId,d);if(eid)eid.value='';toast('Atleta actualizado');}
+  else{await _add('atletas',d);toast('Atleta registado');}
+  closeM('m-atl');
 }
 function renderAtl(){
   document.getElementById('a-tot').textContent=_atl.length;
@@ -2681,12 +2693,16 @@ async function delVol(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveHot(){
   if(!isAdmin)return;
   const d={codigo:document.getElementById('ht-cd').value,nome:document.getElementById('ht-nm').value,dist:document.getElementById('ht-dist').value,tarifa:parseFloat(document.getElementById('ht-tar').value)||0,quartos:document.getElementById('ht-qts').value,contacto:document.getElementById('ht-ct').value,wmf:document.getElementById('ht-wmf').value,ts:Date.now()};
-  await _add('hoteis',d);closeM('m-hot');toast('Hotel registado');
+  const _e=document.getElementById('hot-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('hoteis',_eid,d);if(_e)_e.value='';toast('Hotel actualizado');}else{await _add('hoteis',d);toast('Hotel registado');}
+  closeM('m-hot');toast('Hotel registado');
 }
 async function saveTrn(){
   if(!isAdmin)return;
   const d={tipo:document.getElementById('tr-tp').value,data:document.getElementById('tr-dt').value,hora:document.getElementById('tr-hr').value,pax:document.getElementById('tr-px').value,valor:parseFloat(document.getElementById('tr-vl').value)||0,obs:document.getElementById('tr-ob').value,ts:Date.now()};
-  await _add('transfers',d);closeM('m-trn');toast('Transfer registado');
+  const _e=document.getElementById('trn-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('transfers',_eid,d);if(_e)_e.value='';toast('Transfer actualizado');}else{await _add('transfers',d);toast('Transfer registado');}
+  closeM('m-trn');toast('Transfer registado');
 }
 function renderAlo(){
   const lh=document.getElementById('lst-hot');
@@ -2701,7 +2717,9 @@ async function delTrn(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveArb(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('ar-nm').value,pais:document.getElementById('ar-ps').value,funcao:document.getElementById('ar-fn').value,valor:parseFloat(document.getElementById('ar-vl').value)||0,hotel:document.getElementById('ar-ht').value,ts:Date.now()};
-  await _add('arbitros',d);closeM('m-arb');toast('Árbitro registado');
+  const _e=document.getElementById('arb-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('arbitros',_eid,d);if(_e)_e.value='';toast('Árbitro actualizado');}else{await _add('arbitros',d);toast('Árbitro registado');}
+  closeM('m-arb');toast('Árbitro registado');
 }
 function renderArb(){
   const el=document.getElementById('lst-arb');
@@ -2713,7 +2731,9 @@ async function delArb(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('
 async function saveInv(){
   if(!isAdmin)return;
   const d={desc:document.getElementById('iv-ds').value,qty:document.getElementById('iv-qt').value,data:document.getElementById('iv-dt').value,estado:document.getElementById('iv-st').value,obs:document.getElementById('iv-ob').value,ts:Date.now()};
-  await _add('inventario',d);closeM('m-inv');toast('Item registado');
+  const _e=document.getElementById('inv-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('inventario',_eid,d);if(_e)_e.value='';toast('Item actualizado');}else{await _add('inventario',d);toast('Item registado');}
+  closeM('m-inv');toast('Item registado');
 }
 function renderInv(){
   const el=document.getElementById('lst-inv');
@@ -3029,9 +3049,9 @@ async function saveProgItem(){
     ts: Date.now()
   };
   if(!d.titulo){toast('Título obrigatório','er'); return;}
-  await _add('programa', d);
+  const _e=document.getElementById('prog-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('programa',_eid,d);if(_e)_e.value='';toast('Item actualizado');}else{await _add('programa',d);toast('Item adicionado');}
   closeM('m-prog-item');
-  toast('Item adicionado ao programa');
 }
 
 function renderPrograma(){
@@ -3488,8 +3508,9 @@ async function saveDelegacao(){
     ts:Date.now()
   };
   if(!d.pais){toast('Pais obrigatorio','er');return;}
-  await _add('delegacoes',d);
-  closeM('m-delegacao');toast('Delegacao adicionada');
+  const _e=document.getElementById('del-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('delegacoes',_eid,d);if(_e)_e.value='';toast('Delegação actualizada');}else{await _add('delegacoes',d);toast('Delegação registada');}
+  closeM('m-delegacao');
 }
 
 async function toggleCheck(id,campo,valor){
@@ -3981,7 +4002,9 @@ function loadBlocoD(){
 async function saveOrcRubrica(){
   if(!isAdmin)return;
   const d={conta:document.getElementById('or-conta').value,valor:parseFloat(document.getElementById('or-valor').value)||0,desc:document.getElementById('or-desc').value,ts:Date.now()};
-  await _add('orcamento',d);closeM('m-orc-rubrica');toast('Rubrica orcamental guardada');
+  const _e=document.getElementById('orc-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('orcamento',_eid,d);if(_e)_e.value='';toast('Rubrica actualizado');}else{await _add('orcamento',d);toast('Rubrica registado');}
+  closeM('m-orc-rubrica');toast('Rubrica orcamental guardada');
 }
 
 function renderOrcamento(){
@@ -4028,7 +4051,9 @@ async function saveFatura(){
   if(!isAdmin)return;
   const d={nr:document.getElementById('fat-nr').value,forn:document.getElementById('fat-forn').value,conta:document.getElementById('fat-conta').value,valor:parseFloat(document.getElementById('fat-valor').value)||0,data:document.getElementById('fat-data').value,venc:document.getElementById('fat-venc').value,estado:document.getElementById('fat-estado').value,notas:document.getElementById('fat-notas').value,ts:Date.now()};
   if(!d.forn){toast('Fornecedor obrigatorio','er');return;}
-  await _add('faturas',d);closeM('m-fatura');toast('Fatura registada');
+  const _e=document.getElementById('fat-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('faturas',_eid,d);if(_e)_e.value='';toast('Fatura actualizado');}else{await _add('faturas',d);toast('Fatura registado');}
+  closeM('m-fatura');toast('Fatura registada');
 }
 
 function renderFaturas(){
@@ -4076,7 +4101,9 @@ async function delFatura(id){if(!isAdmin||!confirm('Eliminar fatura?'))return;aw
 async function saveFluxoItem(){
   if(!isAdmin)return;
   const d={mes:document.getElementById('fc-mes').value,tipo:document.getElementById('fc-tipo').value,desc:document.getElementById('fc-desc').value,valor:parseFloat(document.getElementById('fc-valor').value)||0,prob:document.getElementById('fc-prob').value,ts:Date.now()};
-  await _add('fluxo',d);closeM('m-fluxo-item');toast('Previsao adicionada');
+  const _e=document.getElementById('flx-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('fluxo',_eid,d);if(_e)_e.value='';toast('Previsão actualizado');}else{await _add('fluxo',d);toast('Previsão registado');}
+  closeM('m-fluxo-item');toast('Previsao adicionada');
 }
 
 function renderFluxo(){
@@ -4223,7 +4250,9 @@ async function saveActa(){
   if(!isAdmin)return;
   const d={data:document.getElementById('ac-data').value,hora:document.getElementById('ac-hora').value,local:document.getElementById('ac-local').value,pres:document.getElementById('ac-pres').value,part:document.getElementById('ac-part').value,ordem:document.getElementById('ac-ordem').value,dec:document.getElementById('ac-dec').value,prox:document.getElementById('ac-prox').value,ts:Date.now()};
   if(!d.data){toast('Data obrigatoria','er');return;}
-  await _add('actas',d);closeM('m-acta');toast('Acta registada');
+  const _e=document.getElementById('act-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('actas',_eid,d);if(_e)_e.value='';toast('Acta actualizado');}else{await _add('actas',d);toast('Acta registado');}
+  closeM('m-acta');toast('Acta registada');
 }
 
 function renderActas(){
@@ -4290,7 +4319,9 @@ function exportActasPDF(){_actas.forEach(a=>exportActaPDF(a.id));}
 async function saveComunicado(){
   if(!isAdmin)return;
   const d={dest:document.getElementById('cm-dest').value,lang:document.getElementById('cm-lang').value,tipo:document.getElementById('cm-tipo').value,assunto:document.getElementById('cm-assunto').value,corpo:document.getElementById('cm-corpo').value,estado:document.getElementById('cm-estado').value,ts:Date.now()};
-  await _add('comunicados',d);closeM('m-comunicado');toast('Comunicado guardado');
+  const _e=document.getElementById('com-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('comunicados',_eid,d);if(_e)_e.value='';toast('Comunicado actualizado');}else{await _add('comunicados',d);toast('Comunicado registado');}
+  closeM('m-comunicado');toast('Comunicado guardado');
 }
 
 function renderComunicados(){
@@ -6543,7 +6574,9 @@ async function saveMarca(){
   if(!isAdmin)return;
   const d={nome:document.getElementById('mk-nome').value,contacto:document.getElementById('mk-ct').value,email:document.getElementById('mk-email').value,pct:parseFloat(document.getElementById('mk-pct').value)||0,data:document.getElementById('mk-data').value,notas:document.getElementById('mk-notas').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
-  await _add('cs_marcas',d);closeM('m-marca');toast('Marca registada');
+  const _e=document.getElementById('mrc-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('cs_marcas',_eid,d);if(_e)_e.value='';toast('Marca actualizada');}else{await _add('cs_marcas',d);toast('Marca registada');}
+  closeM('m-marca');
 }
 
 async function saveArtigo(){
@@ -6552,7 +6585,9 @@ async function saveArtigo(){
   const marca=_marcas.find(m=>m.id===marcaId);
   const d={marcaId,marcaNome:marca?marca.nome:'',ref:document.getElementById('art-ref').value,desc:document.getElementById('art-desc').value,preco:parseFloat(document.getElementById('art-preco').value)||0,qtyEntrou:parseInt(document.getElementById('art-qty').value)||0,notas:document.getElementById('art-notas').value,ts:Date.now()};
   if(!d.marcaId||!d.ref){toast('Marca e referencia obrigatorias','er');return;}
-  await _add('cs_artigos',d);closeM('m-artigo');toast('Artigo registado');
+  const _e=document.getElementById('art-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('cs_artigos',_eid,d);if(_e)_e.value='';toast('Artigo actualizado');}else{await _add('cs_artigos',d);toast('Artigo registado');}
+  closeM('m-artigo');
 }
 
 function fillArtigosVenda(){
@@ -7239,773 +7274,8 @@ async function editVenda(id){
   openM('m-venda');
 }
 window.editVenda=editVenda;
-(function(){
-  const _o=window.saveLan;
-  if(!_o)return;
-  window.saveLan=async function(){
-    const eid=document.getElementById('lan-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='lancamentos'){await _upd('lancamentos',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('lancamentos'",
-        "await _addTemp('lancamentos'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#lancamentos-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveRec;
-  if(!_o)return;
-  window.saveRec=async function(){
-    const eid=document.getElementById('rec-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='receitas'){await _upd('receitas',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('receitas'",
-        "await _addTemp('receitas'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#receitas-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveDesp;
-  if(!_o)return;
-  window.saveDesp=async function(){
-    const eid=document.getElementById('desp-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='despesas'){await _upd('despesas',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('despesas'",
-        "await _addTemp('despesas'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#despesas-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.savePat;
-  if(!_o)return;
-  window.savePat=async function(){
-    const eid=document.getElementById('pat-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='patrocinios'){await _upd('patrocinios',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('patrocinios'",
-        "await _addTemp('patrocinios'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#patrocinios-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveAtl;
-  if(!_o)return;
-  window.saveAtl=async function(){
-    const eid=document.getElementById('atl-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='atletas'){await _upd('atletas',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('atletas'",
-        "await _addTemp('atletas'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#atletas-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveHot;
-  if(!_o)return;
-  window.saveHot=async function(){
-    const eid=document.getElementById('hot-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='hoteis'){await _upd('hoteis',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('hoteis'",
-        "await _addTemp('hoteis'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#hoteis-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveTrn;
-  if(!_o)return;
-  window.saveTrn=async function(){
-    const eid=document.getElementById('trn-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='transfers'){await _upd('transfers',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('transfers'",
-        "await _addTemp('transfers'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#transfers-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveArb;
-  if(!_o)return;
-  window.saveArb=async function(){
-    const eid=document.getElementById('arb-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='arbitros'){await _upd('arbitros',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('arbitros'",
-        "await _addTemp('arbitros'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#arbitros-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveInv;
-  if(!_o)return;
-  window.saveInv=async function(){
-    const eid=document.getElementById('inv-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='inventario'){await _upd('inventario',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('inventario'",
-        "await _addTemp('inventario'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#inventario-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveProgItem;
-  if(!_o)return;
-  window.saveProgItem=async function(){
-    const eid=document.getElementById('prog-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='programa'){await _upd('programa',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('programa'",
-        "await _addTemp('programa'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#programa-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveQuarto;
-  if(!_o)return;
-  window.saveQuarto=async function(){
-    const eid=document.getElementById('quarto-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='rooming'){await _upd('rooming',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('rooming'",
-        "await _addTemp('rooming'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#rooming-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveDelegacao;
-  if(!_o)return;
-  window.saveDelegacao=async function(){
-    const eid=document.getElementById('deleg-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='delegacoes'){await _upd('delegacoes',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('delegacoes'",
-        "await _addTemp('delegacoes'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#delegacoes-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveResultado;
-  if(!_o)return;
-  window.saveResultado=async function(){
-    const eid=document.getElementById('res-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='resultados'){await _upd('resultados',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('resultados'",
-        "await _addTemp('resultados'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#resultados-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveOrcRubrica;
-  if(!_o)return;
-  window.saveOrcRubrica=async function(){
-    const eid=document.getElementById('orc-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='orcamento'){await _upd('orcamento',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('orcamento'",
-        "await _addTemp('orcamento'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#orcamento-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveFatura;
-  if(!_o)return;
-  window.saveFatura=async function(){
-    const eid=document.getElementById('fat-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='faturas'){await _upd('faturas',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('faturas'",
-        "await _addTemp('faturas'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#faturas-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveFluxoItem;
-  if(!_o)return;
-  window.saveFluxoItem=async function(){
-    const eid=document.getElementById('flux-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='fluxo'){await _upd('fluxo',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('fluxo'",
-        "await _addTemp('fluxo'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#fluxo-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveActa;
-  if(!_o)return;
-  window.saveActa=async function(){
-    const eid=document.getElementById('acta-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='actas'){await _upd('actas',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('actas'",
-        "await _addTemp('actas'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#actas-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveComunicado;
-  if(!_o)return;
-  window.saveComunicado=async function(){
-    const eid=document.getElementById('com-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='comunicados'){await _upd('comunicados',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('comunicados'",
-        "await _addTemp('comunicados'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#comunicados-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveMarca;
-  if(!_o)return;
-  window.saveMarca=async function(){
-    const eid=document.getElementById('mk-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='cs_marcas'){await _upd('cs_marcas',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('cs_marcas'",
-        "await _addTemp('cs_marcas'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#cs-marcas-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-(function(){
-  const _o=window.saveArtigo;
-  if(!_o)return;
-  window.saveArtigo=async function(){
-    const eid=document.getElementById('art-eid');
-    const editId=eid&&eid.value?eid.value:'';
-    if(editId){
-      const _aOrig=_add;
-      // Redefinir _add temporariamente
-      const _addTemp=async(c,d)=>{
-        if(c==='cs_artigos'){await _upd('cs_artigos',editId,d);if(eid)eid.value='';return null;}
-        return _aOrig(c,d);
-      };
-      // Patch temporário via closure
-      const patchedSave=_o.toString().replace(
-        "await _add('cs_artigos'",
-        "await _addTemp('cs_artigos'"
-      );
-      try{
-        const fn=new Function('_add','_upd','_addTemp','openM','closeM','toast','document','return '+_o.toString())(
-          _aOrig,_upd,_addTemp,openM,closeM,toast,document
-        );
-        // Abordagem mais simples: chamar _upd directamente
-        const saveBtn=document.querySelector("#cs-artigos-save");
-      }catch(e){}
-      // Solução mais robusta: modificar _add globalmente por 100ms
-      const origAdd=window._add;
-      window._add=_addTemp;
-      await _o.call(this);
-      window._add=origAdd;
-      if(eid)eid.value='';
-    }else{
-      await _o.call(this);
-    }
-  };
-})();
-// ── Sistema Email ──
-function getDestinatarios(grupo){
-  switch(grupo){
-    case 'coe':return(_mbr||[]).map(m=>m.email).filter(e=>e&&e.includes('@'));
-    case 'voluntarios':return(_vol||[]).map(v=>v.email).filter(e=>e&&e.includes('@'));
-    case 'delegacoes':return(_delegacoes||[]).map(d=>d.email).filter(Boolean);
-    case 'patrocinadores':return(_pat||[]).map(p=>p.email||p.contacto).filter(e=>e&&e.includes('@'));
-    case 'wmf':return['wmf@minigolfsport.com'];
-    case 'emf':return['emf@minigolf-emf.de'];
-    case 'fpm':return['fpm@bangolfe.pt'];
-    case 'cmv':return['geral@cm-vizela.pt'];
-    case 'todos':return[...new Set([...(_mbr||[]).map(m=>m.email),...(_pat||[]).map(p=>p.email||p.contacto)].filter(e=>e&&e.includes('@')))];
-    default:return[];
-  }
-}
-
-async function enviarAlertaManual(){
-  if(!isAdmin)return;
-  const grupo=document.getElementById('alert-grupo').value;
-  const emailExtra=document.getElementById('alert-email').value.trim();
-  const assunto=document.getElementById('alert-assunto').value.trim();
-  const mensagem=document.getElementById('alert-msg').value.trim();
-  if(!assunto||!mensagem){toast('Assunto e mensagem obrigatórios','error');return;}
-  let dests=getDestinatarios(grupo);
-  if(emailExtra)dests=[...dests,...emailExtra.split(',').map(e=>e.trim()).filter(Boolean)];
-  if(!dests.length){toast('Sem destinatários com email válido','error');return;}
-  const btn=document.getElementById('btn-send-alert');
-  if(btn){btn.disabled=true;btn.textContent='A enviar...';}
-  const corpo='<h3 style="color:#C9A84C;margin-top:0;">'+assunto+'</h3><div style="font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">'+mensagem+'</div>';
-  let enviados=0;
-  for(const email of dests){const ok=await enviarEmailAlerta(assunto,corpo,email);if(ok)enviados++;}
-  if(btn){btn.disabled=false;btn.textContent='Enviar';}
-  closeM('m-alerta');
-  toast('Email enviado para '+enviados+' destinatário(s) ✅');
-  addLog('email','alerta','Alerta enviado — '+enviados+' destinatários');
-}
-
-async function testeEmail(){
-  if(!isAdmin){toast('Apenas admin','error');return;}
-  const ok=await enviarEmailAlerta('Teste — SWC Vizela 2026','<h3 style="color:#C9A84C;">✅ Email de teste</h3><p>O sistema de emails do SWC Vizela 2026 está operacional.</p>',EMAIL_TO);
-  if(ok)toast('Email de teste enviado para '+EMAIL_TO+' ✅');
-  else toast('Erro ao enviar — verifica o Worker','error');
-}
-
-async function guardarDiaRelatorio(dia){
+async function gravarDiaRelatorio(diaNum){
   try{
-    const diaNum = Number(dia);
     await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{diaRelatorio:diaNum},{merge:true});
     _diaRelatorio = diaNum; // guardar em memória
     const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];

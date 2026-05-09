@@ -2252,7 +2252,7 @@ function startApp(role){
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+(isAdmin?'admin':'read');}
   setAdminBars();tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(carregarResendKey,1500);
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -5534,18 +5534,22 @@ function wrapFirebaseFns(){
 // Para activar: configurar RESEND_API_KEY no worker
 
 const EMAIL_TO = 'ruigoncalves1968@gmail.com';
-const WORKER_URL = 'https://resend-proxy.ruigoncalves1968.workers.dev';
+const WORKER_URL = 'https://resend-proxy.rui-dafilgest.workers.dev';
 const EMAIL_FROM = 'swc2026@vizelgolfe.net';
 
-async function enviarEmailAlerta(assunto, corpo){
+async function enviarEmailAlerta(assunto, corpo, destinatario){
   try {
-    const resp = await fetch(WORKER_URL + '/email', {
+    const apiKey = _resendKey || '';
+    if(!apiKey){toast('API Key não configurada. Vai a Backup → Notificações Email','error');return false;}
+    const resp = await fetch(WORKER_URL, {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: {
+        'Content-Type':'application/json',
+        'Authorization': 'Bearer ' + apiKey,
+      },
       body: JSON.stringify({
-        from: 'SWC Vizela 2026 <' + EMAIL_FROM + '>',
-        to: destinatario || EMAIL_TO,
-        reply_to: 'ruigoncalves1968@gmail.com',
+        from: EMAIL_FROM,
+        to: [destinatario || EMAIL_TO],
         subject: '[SWC2026] ' + assunto,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
           <div style="background:#0A1628;padding:20px;border-bottom:2px solid #C9A84C;">
@@ -5636,6 +5640,11 @@ function renderEmailConfig(){
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;margin-bottom:14px;">
       <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:10px;">Notificacoes Email — Alertas WMF</div>
       <div style="font-size:12px;color:var(--se);margin-bottom:10px;">Email de destino: <strong style="color:var(--wh);">${EMAIL_TO}</strong></div>
+      <div style="font-size:12px;color:var(--se);margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+        Resend API Key:
+        <input type="password" id="cfg-resend-key" class="fi" style="font-size:11px;padding:4px 8px;max-width:280px;" placeholder="re_xxxxxxxxxxxxxxxx">
+        <button class="btn bp bsm" onclick="guardarResendKey()">Guardar</button>
+      </div>
       <div style="font-size:12px;color:var(--se);margin-bottom:10px;display:flex;align-items:center;gap:10px;">Relatório automático: <select id="sel-dia-relatorio" class="fse" style="font-size:11px;padding:3px 8px;" onchange="guardarDiaRelatorio(this.value)"><option value="0">Domingo</option><option value="1">Segunda-feira</option><option value="2">Terça-feira</option><option value="3">Quarta-feira</option><option value="4">Quinta-feira</option><option value="5">Sexta-feira</option><option value="6">Sábado</option></select></div>
       <div style="font-size:12px;color:var(--se);margin-bottom:12px;">Prazos urgentes detectados: <strong style="color:${urgentes.length>0?'var(--er)':'var(--ok)'};">${urgentes.length}</strong></div>
       <button class="btn bp bsm" onclick="checkEmailAlertas();toast('A verificar e enviar...')">Enviar email de alerta agora</button>
@@ -8003,6 +8012,30 @@ async function enviarRelatorioSemanal(forcado){
   toast('Relatório semanal enviado para '+enviados+' destinatário(s) ✅');
 }
 
+let _resendKey = '';
+
+async function guardarResendKey(){
+  const key = document.getElementById('cfg-resend-key').value.trim();
+  if(!key.startsWith('re_')){toast('API Key inválida — deve começar por re_','error');return;}
+  await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{resendKey:key},{merge:true});
+  _resendKey = key;
+  document.getElementById('cfg-resend-key').value='';
+  document.getElementById('cfg-resend-key').placeholder='✅ API Key guardada';
+  toast('API Key guardada com segurança ✅');
+}
+
+async function carregarResendKey(){
+  try{
+    const snap = await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
+    if(snap.exists() && snap.data().resendKey){
+      _resendKey = snap.data().resendKey;
+      const inp = document.getElementById('cfg-resend-key');
+      if(inp) inp.placeholder = '✅ API Key configurada';
+    }
+  }catch(e){}
+}
+
+window.guardarResendKey=guardarResendKey;
 window.enviarAlertaManual=enviarAlertaManual;
 window.testeEmail=testeEmail;
 window.guardarDiaRelatorio=guardarDiaRelatorio;

@@ -864,7 +864,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">COE</span>Comité Organizador Executivo<button class="hbtn" data-help="organizacao" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Estrutura de liderança, delegação de tarefas e equipa de apoio</div>
 <div class="bb" id="bar-org">
-  <button class="btn bp" onclick="openM('m-mbr')">+ Membro COE</button>
+  <button class="btn bp" onclick="const _e=document.getElementById('mbr-eid');if(_e)_e.value='';openM('m-mbr')">+ Membro COE</button>
   <button class="btn bo" onclick="openM('m-vol')">+ Voluntario</button>
   <label class="btn bo" style="cursor:pointer;">&#8679; Importar Excel
     <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="importVolExcel(this)">
@@ -1775,6 +1775,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Nome</div><input class="fi" id="mb-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">Função / Cargo (texto livre)</div><input class="fi" id="mb-fn" placeholder="ex: Responsável Logística Interna, Responsável Bar..."></div></div>
     <div class="fr"><div class="fg"><div class="fl">Email</div><input class="fi" id="mb-em" placeholder="email@..."></div><div class="fg"><div class="fl">Telemóvel</div><input class="fi" id="mb-tl" placeholder="9xx xxx xxx"></div></div>
     <div class="fg"><div class="fl">Responsabilidades</div><textarea class="fta" id="mb-rp" placeholder="Tarefas e responsabilidades principais..."></textarea></div>
+    <input type="hidden" id="mbr-eid" value="">
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-mbr')">Cancelar</button><button class="btn bp" onclick="saveMbr()">Guardar</button></div>
 </div></div>
@@ -2630,9 +2631,12 @@ async function concPrazo(id){await _upd('prazos',id,{estado:'concluido'});toast(
 
 //  ORGANIZAÇÃO 
 async function saveMbr(){
-  if(!canEdit())return;
+  if(!isAdmin)return;
   const d={nome:document.getElementById('mb-nm').value,funcao:document.getElementById('mb-fn').value,email:document.getElementById('mb-em').value,tel:document.getElementById('mb-tl').value,resp:document.getElementById('mb-rp').value,ts:Date.now()};
-  await _add('membros',d);closeM('m-mbr');toast('Membro COE registado');
+  const _e=document.getElementById('mbr-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('membros',_eid,d);if(_e)_e.value='';toast('Membro actualizado');}
+  else{await _add('membros',d);toast('Membro COE registado');}
+  closeM('m-mbr');
 }
 async function saveVol(){
   if(!canEdit())return;
@@ -2663,6 +2667,7 @@ function editVol(id){
 
 function editMbr(id){
   const m=_mbr.find(x=>x.id===id);if(!m)return;
+  const _e=document.getElementById('mbr-eid');if(_e)_e.value=id;
   document.getElementById('mb-nm').value=m.nome||'';
   document.getElementById('mb-fn').value=m.funcao||'';
   document.getElementById('mb-em').value=m.email||'';
@@ -5629,6 +5634,13 @@ const EMAIL_FROM = 'swc2026@vizelgolfe.net';
 
 async function enviarEmailAlerta(assunto, corpo, destinatario){
   try {
+    // Se _resendKey não carregou ainda, tentar buscar directamente
+    if(!_resendKey){
+      try{
+        const snap=await getDoc(doc(collection(db,'swc2026_config'),'email_config'));
+        if(snap.exists()&&snap.data().resendKey) _resendKey=snap.data().resendKey;
+      }catch(e){}
+    }
     const apiKey = _resendKey || '';
     if(!apiKey){toast('API Key não configurada. Vai a Backup → Notificações Email','error');return false;}
     const resp = await fetch(WORKER_URL, {

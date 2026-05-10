@@ -40,7 +40,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .sbls{font-size:9px;color:var(--mu);letter-spacing:.06em;}
 .sbrole{display:inline-block;font-size:9px;font-weight:600;letter-spacing:.1em;padding:3px 8px;border-radius:3px;text-transform:uppercase;}
 .sbrole.admin{background:rgba(201,168,76,.12);color:var(--gl);border:1px solid var(--bd);}
-.sbrole.read{background:rgba(100,180,255,.08);color:#90c0ff;border:1px solid rgba(100,180,255,.2);}
+.sbrole.read{background:rgba(100,180,255,.08);color:#90c0ff;border:1px solid rgba(100,180,255,.2);}.sbrole.swc{background:rgba(74,144,226,.18);color:#4A90E2;border-color:rgba(74,144,226,.3);}
 .sbn{flex:1;padding:8px 0;}
 
 
@@ -2210,27 +2210,36 @@ const _upd=(col,id,data)=>updateDoc(doc(C(col),id),data);
 const _snap=(col,cb,ord)=>{const q=ord?query(C(col),orderBy(ord)):C(col);return onSnapshot(q,s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))));};
 
 //  AUTH 
-let isAdmin=false;
+// Níveis de acesso: isAdmin=ADMINISTRADOR2026*** | isSWC=SWC2026*** | leitura=VIZELGOLFE2026***
+let isAdmin=false; // ADMINISTRADOR — controlo total
+let isSWC=false;   // SWC2026 — operacional (sem eliminar, sem configs)
+// canEdit = pode editar/adicionar (admin ou swc)
+function canEdit(){ return isAdmin||isSWC; }
+// canDelete = só admin
+function canDelete(){ return isAdmin; }
+
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function doLogin(){
   const pw = document.getElementById('pw').value;
   if(!pw){ const el=document.getElementById('lerr'); if(el)el.textContent='Introduz a password'; return; }
 
-  // SHA-256 da password introduzida — nunca enviamos a password em claro
   const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
   const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
 
-  // Buscar hashes do Firestore — nunca estão no código fonte
   try {
     const cfgDoc = await getDoc(doc(collection(db,'swc2026_config'),'auth'));
     const cfg = cfgDoc.exists() ? cfgDoc.data() : null;
 
     if(cfg && hashHex === cfg.admin_hash){
-      isAdmin=true;
-      startApp('Admin');
-      setTimeout(()=>addLog('login','sistema','Acesso Admin'),1000);
+      isAdmin=true; isSWC=false;
+      startApp('Administrador');
+      setTimeout(()=>addLog('login','sistema','Acesso Administrador'),1000);
+    } else if(cfg && hashHex === cfg.swc_hash){
+      isAdmin=false; isSWC=true;
+      startApp('SWC2026');
+      setTimeout(()=>addLog('login','sistema','Acesso SWC2026'),1000);
     } else if(cfg && hashHex === cfg.leitura_hash){
-      isAdmin=false;
+      isAdmin=false; isSWC=false;
       startApp('Leitura');
       setTimeout(()=>addLog('login','sistema','Acesso Leitura'),1000);
     } else {
@@ -2246,44 +2255,64 @@ async function doLogin(){
 function startApp(role){
   document.getElementById('ls').style.display='none';
   document.getElementById('app').style.display='block';
+  const cls = isAdmin?'admin':isSWC?'swc':'read';
   const elRole=document.getElementById('role');
-  if(elRole){elRole.textContent=role;elRole.className='sbrole '+(isAdmin?'admin':'read');}
-  // Actualizar badge na nova sidebar
+  if(elRole){elRole.textContent=role;elRole.className='sbrole '+cls;}
   const elBadge=document.getElementById('role-badge');
-  if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+(isAdmin?'admin':'read');}
+  if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+cls;}
   setAdminBars();tick();setInterval(tick,60000);
   wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(carregarResendKey,1500);
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
-  // Barras de accao — so visiveis para admin
+  const edit = canEdit();   // admin ou swc
+  const del  = canDelete(); // só admin
+
+  // Barras de acção operacionais — visíveis para admin E swc
   [
-    'bar-cron','bar-org','bar-atl','bar-alo','bar-cer','bar-dsp',
-    'bar-di','bar-rec','bar-desp','bar-pat','bar-inv',
+    'bar-cron','bar-atl','bar-alo','bar-cer',
+    'bar-rec','bar-desp','bar-pat','bar-inv',
     'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
     'bar-resultados','bar-diariobordo','bar-faturas','bar-actas',
-    'bar-consig'
   ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=edit?'flex':'none';
+  });
+
+  // Barras APENAS para admin (configs, org interna, consignação)
+  ['bar-org','bar-dsp','bar-di','bar-consig'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.style.display=isAdmin?'flex':'none';
   });
-  // Colunas de acoes nas tabelas — so visiveis para admin
+
+  // Colunas de acções nas tabelas — visíveis para edit
   [
     'th-atl','th-cer','th-di','th-rec','th-desp','th-pat',
     'th-cs-marca','th-cs-art','th-cs-venda',
     'th-rm','th-match','th-res','th-orc','th-fat',
   ].forEach(id=>{
     const el=document.getElementById(id);
-    if(el)el.style.display=isAdmin?'':'none';
+    if(el)el.style.display=edit?'':'none';
   });
-  // Botoes de edicao inline — so visiveis para admin
-  document.querySelectorAll('.btn.bd2, .btn.bo.bsm').forEach(btn=>{
-    if(!isAdmin)btn.style.display='none';
+
+  // Botões de edição (✏️) — visíveis para edit
+  document.querySelectorAll('.btn.bo.bsm').forEach(btn=>{
+    if(!edit)btn.style.display='none';
   });
-  // Checklist WMF — selector de estado so para admin
-  if(!isAdmin){
-    document.querySelectorAll('.chk-sel').forEach(s=>s.style.display='none');
-  }
+  // Botões de eliminar (🗑️ — classe bd2) — APENAS admin
+  document.querySelectorAll('.btn.bd2').forEach(btn=>{
+    if(!del)btn.style.display='none';
+  });
+
+  // Checklist WMF — selector de estado para admin e swc
+  document.querySelectorAll('.chk-sel').forEach(s=>{
+    s.style.display=edit?'':'none';
+  });
+
+  // Badge CSS cor
+  document.querySelectorAll('.sbrole').forEach(el=>{
+    el.className='sbrole '+(isAdmin?'admin':isSWC?'swc':'read');
+  });
 }
 
 //  NAV 
@@ -2387,7 +2416,7 @@ function renderDash(){
 
 //  DIÁRIO 
 async function saveLan(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={data:document.getElementById('ln-dt').value,dc:document.getElementById('ln-dc').value,cn:document.getElementById('ln-cn').value,cb:document.getElementById('ln-cb').value,ds:document.getElementById('ln-ds').value,tp:document.getElementById('ln-tp').value,vl:parseFloat(document.getElementById('ln-vl').value)||0,ts:Date.now()};
   const _e=document.getElementById('lan-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('lancamentos',_eid,d);if(_e)_e.value='';toast('Lançamento actualizado');}else{await _add('lancamentos',d);toast('Lançamento registado');}
@@ -2399,7 +2428,7 @@ function renderDi(){
     const v=Number(l.vl||0);
     if(l.cb==='Caixa')l.tp==='C'?cx+=v:cx-=v;else l.tp==='C'?bk+=v:bk-=v;
     l.tp==='C'?totC+=v:totD+=v;
-    return `<tr><td>${l.data||''}</td><td class="mu">${l.dc||''}</td><td><span class="sc">${l.cn||''}</span></td><td>${l.ds||''}</td><td><span class="bge ${l.tp==='C'?'bg-ok':'bg-er'}">${l.tp}</span></td><td class="mu">${l.cb||''}</td><td class="${l.tp==='C'?'tok':'tv'}">${l.tp==='C'?'+':'-'}${fmt(l.vl)}</td><td class="go">${fmt(cx+bk)}</td>${isAdmin?`<td><button class="btn bo bsm" onclick="editLan('${l.id}')">✏️</button><button class="btn bd2 bsm" onclick="delLan('${l.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td>${l.data||''}</td><td class="mu">${l.dc||''}</td><td><span class="sc">${l.cn||''}</span></td><td>${l.ds||''}</td><td><span class="bge ${l.tp==='C'?'bg-ok':'bg-er'}">${l.tp}</span></td><td class="mu">${l.cb||''}</td><td class="${l.tp==='C'?'tok':'tv'}">${l.tp==='C'?'+':'-'}${fmt(l.vl)}</td><td class="go">${fmt(cx+bk)}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editLan('${l.id}')">✏️</button><button class="btn bd2 bsm" onclick="delLan('${l.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   });
   document.getElementById('t-di').innerHTML=rows.length?rows.join(''):'<tr><td colspan="9" class="mu" style="text-align:center;padding:24px;">Sem lançamentos</td></tr>';
   document.getElementById('s-cx').textContent=fmt(cx);
@@ -2407,11 +2436,11 @@ function renderDi(){
   document.getElementById('s-deb').textContent=fmt(totD);
   document.getElementById('s-cre').textContent=fmt(totC);
 }
-async function delLan(id){if(!isAdmin||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
+async function delLan(id){if(!canDelete()||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
 
 //  RECEITAS 
 async function saveRec(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={data:document.getElementById('rc-dt').value,conta:document.getElementById('rc-cn').value,desc:document.getElementById('rc-ds').value,valor:parseFloat(document.getElementById('rc-vl').value)||0,estado:document.getElementById('rc-st').value,obs:document.getElementById('rc-ob').value,ts:Date.now()};
   const _e=document.getElementById('rec-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('receitas',_eid,d);if(_e)_e.value='';toast('Receita actualizado');}else{await _add('receitas',d);toast('Receita registado');}
@@ -2425,13 +2454,13 @@ function renderRec(){
   document.getElementById('r-pen').textContent=fmt(totP);
   document.getElementById('r-pub').textContent=fmt(pub);
   document.getElementById('r-prv').textContent=fmt(totR-pub);
-  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${isAdmin?`<td><button class="btn bo bsm" onclick="editRec('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRec('${r.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
+  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editRec('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRec('${r.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
 }
-async function delRec(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
+async function delRec(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
 
 //  DESPESAS 
 async function saveDesp(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={data:document.getElementById('dp-dt').value,doc:document.getElementById('dp-dc').value,conta:document.getElementById('dp-cn').value,desc:document.getElementById('dp-ds').value,valor:parseFloat(document.getElementById('dp-vl').value)||0,estado:document.getElementById('dp-st').value,ts:Date.now()};
   const _e=document.getElementById('desp-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('despesas',_eid,d);if(_e)_e.value='';toast('Despesa actualizado');}else{await _add('despesas',d);toast('Despesa registado');}
@@ -2446,13 +2475,13 @@ function renderDesp(){
   const byR={};_desp.forEach(d=>{byR[d.conta]=(byR[d.conta]||0)+Number(d.valor||0);});
   const mr=Object.entries(byR).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('d-mrb').textContent=mr?mr[0]:'-';
-  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${isAdmin?`<td><button class="btn bo bsm" onclick="editDesp('${d.id}')">✏️</button><button class="btn bd2 bsm" onclick="delDesp('${d.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
+  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editDesp('${d.id}')">✏️</button><button class="btn bd2 bsm" onclick="delDesp('${d.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
 }
-async function delDesp(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('despesas',id);toast('Eliminada','er');}
+async function delDesp(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('despesas',id);toast('Eliminada','er');}
 
 //  PATROCÍNIOS 
 async function savePat(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={empresa:document.getElementById('pt-emp').value,tipo:document.getElementById('pt-tp').value,contacto:document.getElementById('pt-ct').value,valor:parseFloat(document.getElementById('pt-vl').value)||0,contrapartidas:document.getElementById('pt-co').value,estado:document.getElementById('pt-st').value,ts:Date.now()};
   const _e=document.getElementById('pat-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('patrocinadores',_eid,d);if(_e)_e.value='';toast('Patrocinador actualizado');}else{await _add('patrocinadores',d);toast('Patrocinador registado');}
@@ -2466,13 +2495,13 @@ function renderPat(){
   document.getElementById('p-gd').textContent=_pat.filter(p=>p.tipo==='Gold WMF').length;
   document.getElementById('p-lc').textContent=_pat.filter(p=>p.tipo!=='Gold WMF').length;
   document.getElementById('p-pct').textContent=cf>0?fmt(cf):'';
-  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${isAdmin?`<td><button class="btn bo bsm" onclick="editPat('${p.id}')">✏️</button><button class="btn bd2 bsm" onclick="delPat('${p.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
+  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editPat('${p.id}')">✏️</button><button class="btn bd2 bsm" onclick="delPat('${p.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
 }
-async function delPat(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
+async function delPat(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
 
 //  ATLETAS 
 async function saveAtl(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={nome:document.getElementById('at-nm').value,pais:document.getElementById('at-ps').value,federacao:document.getElementById('at-fd').value,categoria:document.getElementById('at-ct').value,taxa:parseFloat(document.getElementById('at-tx').value)||0,estado:document.getElementById('at-st').value,hotel:document.getElementById('at-ht').value,email:document.getElementById('at-em').value,ts:Date.now()};
   const eid=document.getElementById('atl-eid');
   const editId=eid&&eid.value?eid.value:'';
@@ -2485,13 +2514,13 @@ function renderAtl(){
   document.getElementById('a-pg').textContent=_atl.filter(a=>a.estado==='Pago').length;
   document.getElementById('a-pn').textContent=_atl.filter(a=>a.estado==='Pendente').length;
   document.getElementById('a-ps').textContent=new Set(_atl.map(a=>a.pais)).size;
-  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${isAdmin?`<td><button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
+  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
 }
-async function delAtl(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
+async function delAtl(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
 
 //  CONVITES 
 async function saveConv(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={nome:document.getElementById('cv-nm').value,entidade:document.getElementById('cv-en').value,categoria:document.getElementById('cv-ct').value,abertura:document.getElementById('cv-ab').value,encerramento:document.getElementById('cv-enc').value,ts:Date.now()};
   await _add('convites',d);closeM('m-conv');toast('Convite registado');
 }
@@ -2502,11 +2531,11 @@ function renderConv(){
   document.getElementById('c-hon').textContent=_conv.filter(c=>c.categoria==='Comissão de Honra').length;
   document.getElementById('t-conv').innerHTML=_conv.length?_conv.map(c=>`<tr><td class="vl">${c.nome||''}</td><td class="mu">${c.entidade||''}</td><td><span class="bge bg-g">${c.categoria||''}</span></td><td><span class="bge ${c.abertura==='S'?'bg-ok':'bg-er'}">${c.abertura==='S'?'Sim':'Não'}</span></td><td><span class="bge ${c.encerramento==='S'?'bg-ok':'bg-er'}">${c.encerramento==='S'?'Sim':'Não'}</span></td>${isAdmin?`<td><button class="btn bo bsm" onclick="editConv('${c.id}')">✏️</button><button class="btn bd2 bsm" onclick="delConv('${c.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem convites</td></tr>';
 }
-async function delConv(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('convites',id);}
+async function delConv(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('convites',id);}
 
 //  PRAZOS 
 async function savePrazo(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={data:document.getElementById('pz-dt').value,titulo:document.getElementById('pz-tt').value,desc:document.getElementById('pz-ds').value,resp:document.getElementById('pz-rp')?document.getElementById('pz-rp').value:'',prioridade:document.getElementById('pz-pr').value,estado:document.getElementById('pz-st')?document.getElementById('pz-st').value:'pendente',ts:Date.now()};
   const prazEid=document.getElementById('praz-eid');
   const editId=prazEid&&prazEid.value?prazEid.value:'';
@@ -2563,7 +2592,7 @@ function renderCron(){
       {data:'2026-10-12',titulo:'CHK#5 - Caixas de correio para distribuicao de informacao (Clubes/Arbitros)',resp:'Secretariado',prioridade:'normal',estado:'pendente'},
     ];
     const nPend=PRAZOS_WMF.filter(p=>p.estado==='pendente').length;
-    const avisoDiv='<div class="av" style="margin-bottom:12px;"><strong>'+PRAZOS_WMF.length+' prazos WMF/EMF pre-carregados automaticamente</strong> — '+nPend+' pendentes. Inclui Acordo Tripartido e Checklist oficial WMF. Podes adicionar mais e actualizar o estado.'+(isAdmin?'<br><button class="btn bp bsm" style="margin-top:8px;" onclick="importarPrazosWMF()">⬆️ Importar todos para Firebase (editáveis)</button>':'')+'</div>';
+    const avisoDiv='<div class="av" style="margin-bottom:12px;"><strong>'+PRAZOS_WMF.length+' prazos WMF/EMF pre-carregados automaticamente</strong> — '+nPend+' pendentes. Inclui Acordo Tripartido e Checklist oficial WMF. Podes adicionar mais e actualizar o estado.'+(canEdit()?'<br><button class="btn bp bsm" style="margin-top:8px;" onclick="importarPrazosWMF()">⬆️ Importar todos para Firebase (editáveis)</button>':'')+'</div>';
     el.innerHTML = avisoDiv +
       renderPrazosHTML(PRAZOS_WMF, true);
     return;
@@ -2578,11 +2607,11 @@ function renderPrazosHTML(prazos, readOnly){
     const d=new Date(p.data);const diff=Math.ceil((d-hoje)/86400000);
     const badge=p.estado==='concluido'?'bg-ok':diff<0?'bg-er':diff<=7?'bg-er':diff<=30?'bg-am':'bg-mu';
     const label=p.estado==='concluido'?'Concluído':diff<0?`${Math.abs(diff)}d atraso`:diff===0?'Hoje':`${diff}d`;
-    return `<div class="cd" style="margin-bottom:10px;"><div class="cdb" style="display:flex;gap:16px;align-items:flex-start;"><div style="min-width:88px;font-size:11px;font-weight:700;color:var(--gl);">${p.data||''}</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--wh);margin-bottom:3px;">${p.titulo||''}</div><div style="font-size:11px;color:var(--mu);line-height:1.5;">${p.desc||''}</div>${p.resp?`<div style="font-size:10px;color:rgba(201,168,76,.45);margin-top:3px;">Resp: ${p.resp}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><span class="bge ${badge}">${label}</span><span class="bge bg-mu">${p.prioridade||''}</span>${isAdmin?`<div style="display:flex;gap:4px;">${p.estado!=='concluido'?`<button class="btn bsu bsm" onclick="concPrazo(\'${p.id}\')"></button>`:''}<button class="btn bo bsm" onclick="editPrazo(\'${p.id}\')">✏️</button><button class="btn bd2 bsm" onclick="delPrazo(\'${p.id}\')">🗑️</button></div>`:''}</div></div></div>`;
+    return `<div class="cd" style="margin-bottom:10px;"><div class="cdb" style="display:flex;gap:16px;align-items:flex-start;"><div style="min-width:88px;font-size:11px;font-weight:700;color:var(--gl);">${p.data||''}</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--wh);margin-bottom:3px;">${p.titulo||''}</div><div style="font-size:11px;color:var(--mu);line-height:1.5;">${p.desc||''}</div>${p.resp?`<div style="font-size:10px;color:rgba(201,168,76,.45);margin-top:3px;">Resp: ${p.resp}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><span class="bge ${badge}">${label}</span><span class="bge bg-mu">${p.prioridade||''}</span>${canEdit()?`<div style="display:flex;gap:4px;">${p.estado!=='concluido'?`<button class="btn bsu bsm" onclick="concPrazo(\'${p.id}\')"></button>`:''}<button class="btn bo bsm" onclick="editPrazo(\'${p.id}\')">✏️</button><button class="btn bd2 bsm" onclick="delPrazo(\'${p.id}\')">🗑️</button></div>`:''}</div></div></div>`;
   }).join('');
 }
 async function importarPrazosWMF(){
-  if(!isAdmin)return;
+  if(!canDelete())return;
   if(!confirm('Importar os 42 prazos WMF para o Firebase? Ficarão editáveis. Esta operação não pode ser desfeita automaticamente.'))return;
   const el=document.getElementById('cron-list');
   el.innerHTML='<div style="padding:20px;color:var(--mu);text-align:center;">A importar prazos... aguarda</div>';
@@ -2598,12 +2627,12 @@ async function concPrazo(id){await _upd('prazos',id,{estado:'concluido'});toast(
 
 //  ORGANIZAÇÃO 
 async function saveMbr(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={nome:document.getElementById('mb-nm').value,funcao:document.getElementById('mb-fn').value,email:document.getElementById('mb-em').value,tel:document.getElementById('mb-tl').value,resp:document.getElementById('mb-rp').value,ts:Date.now()};
   await _add('membros',d);closeM('m-mbr');toast('Membro COE registado');
 }
 async function saveVol(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const id=document.getElementById('vl-id').value;
   const d={nome:document.getElementById('vl-nm').value,tel:document.getElementById('vl-tl').value,numSocio:document.getElementById('vl-ns').value,email:document.getElementById('vl-em').value,funcao:document.getElementById('vl-fn').value,ar:document.getElementById('vl-ar').value,periodo:document.getElementById('vl-pr').value,ob:document.getElementById('vl-ob').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
@@ -2686,19 +2715,19 @@ function renderOrg(){
   });
 }
 
-async function delMbr(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('membros',id);}
-async function delVol(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('voluntarios',id);}
+async function delMbr(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('membros',id);}
+async function delVol(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('voluntarios',id);}
 
 //  ALOJAMENTO 
 async function saveHot(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={codigo:document.getElementById('ht-cd').value,nome:document.getElementById('ht-nm').value,dist:document.getElementById('ht-dist').value,tarifa:parseFloat(document.getElementById('ht-tar').value)||0,quartos:document.getElementById('ht-qts').value,contacto:document.getElementById('ht-ct').value,wmf:document.getElementById('ht-wmf').value,ts:Date.now()};
   const _e=document.getElementById('hot-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('hoteis',_eid,d);if(_e)_e.value='';toast('Hotel actualizado');}else{await _add('hoteis',d);toast('Hotel registado');}
   closeM('m-hot');toast('Hotel registado');
 }
 async function saveTrn(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={tipo:document.getElementById('tr-tp').value,data:document.getElementById('tr-dt').value,hora:document.getElementById('tr-hr').value,pax:document.getElementById('tr-px').value,valor:parseFloat(document.getElementById('tr-vl').value)||0,obs:document.getElementById('tr-ob').value,ts:Date.now()};
   const _e=document.getElementById('trn-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('transfers',_eid,d);if(_e)_e.value='';toast('Transfer actualizado');}else{await _add('transfers',d);toast('Transfer registado');}
@@ -2706,16 +2735,16 @@ async function saveTrn(){
 }
 function renderAlo(){
   const lh=document.getElementById('lst-hot');
-  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${isAdmin?`<button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bd2 bsm" onclick="delHot('${h.id}')">🗑️</button>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
+  lh.innerHTML=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:13px;font-weight:500;color:var(--wh);">${h.codigo||''} - ${h.nome||''}</div><div style="font-size:11px;color:var(--mu);">Dist: ${h.dist||'-'} - Tarifa: ${fmt(h.tarifa)}/noite - ${h.quartos||0} quartos</div><div style="font-size:10px;color:var(--mu);">${h.contacto||''}</div></div><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;"><span class="bge ${h.wmf==='S'?'bg-ok':h.wmf==='P'?'bg-am':'bg-er'}">${h.wmf==='S'?'WMF OK':h.wmf==='P'?'Verificar':'Fora WMF'}</span>${canEdit()?`<button class="btn bo bsm" onclick="editHot('${h.id}')">✏️</button><button class="btn bd2 bsm" onclick="delHot('${h.id}')">🗑️</button>`:''}</div></div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem hotéis</div></div>';
   const lt=document.getElementById('lst-trn');
-  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${isAdmin?`<button class="btn bo bsm" onclick="editTrn('${t.id}')">✏️</button><button class="btn bd2 bsm" onclick="delTrn('${t.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
+  lt.innerHTML=_trn.length?_trn.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${t.tipo||''}</div><div style="font-size:11px;color:var(--mu);">${t.data||''} ${t.hora||''} - ${t.pax||0} pax - ${fmt(t.valor)}</div></div>${canEdit()?`<button class="btn bo bsm" onclick="editTrn('${t.id}')">✏️</button><button class="btn bd2 bsm" onclick="delTrn('${t.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem transfers</div></div>';
 }
-async function delHot(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('hoteis',id);}
-async function delTrn(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('transfers',id);}
+async function delHot(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('hoteis',id);}
+async function delTrn(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('transfers',id);}
 
 //  ÁRBITROS 
 async function saveArb(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={nome:document.getElementById('ar-nm').value,pais:document.getElementById('ar-ps').value,funcao:document.getElementById('ar-fn').value,valor:parseFloat(document.getElementById('ar-vl').value)||0,hotel:document.getElementById('ar-ht').value,ts:Date.now()};
   const _e=document.getElementById('arb-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('arbitros',_eid,d);if(_e)_e.value='';toast('Árbitro actualizado');}else{await _add('arbitros',d);toast('Árbitro registado');}
@@ -2723,13 +2752,13 @@ async function saveArb(){
 }
 function renderArb(){
   const el=document.getElementById('lst-arb');
-  el.innerHTML=_arb.length?_arb.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${a.nome||''}</div><div style="font-size:11px;color:var(--mu);">${a.funcao||''} - ${a.pais||''} - Hotel: ${a.hotel||'-'}</div></div>${isAdmin?`<button class="btn bo bsm" onclick="editArb('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArb('${a.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem árbitros</div></div>';
+  el.innerHTML=_arb.length?_arb.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${a.nome||''}</div><div style="font-size:11px;color:var(--mu);">${a.funcao||''} - ${a.pais||''} - Hotel: ${a.hotel||'-'}</div></div>${canEdit()?`<button class="btn bo bsm" onclick="editArb('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArb('${a.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem árbitros</div></div>';
 }
-async function delArb(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('arbitros',id);}
+async function delArb(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('arbitros',id);}
 
 //  INVENTÁRIO 
 async function saveInv(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={desc:document.getElementById('iv-ds').value,qty:document.getElementById('iv-qt').value,data:document.getElementById('iv-dt').value,estado:document.getElementById('iv-st').value,obs:document.getElementById('iv-ob').value,ts:Date.now()};
   const _e=document.getElementById('inv-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('inventario',_eid,d);if(_e)_e.value='';toast('Item actualizado');}else{await _add('inventario',d);toast('Item registado');}
@@ -2737,9 +2766,9 @@ async function saveInv(){
 }
 function renderInv(){
   const el=document.getElementById('lst-inv');
-  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} - ${i.data||''} - ${i.estado||''}</div></div>${isAdmin?`<button class="btn bo bsm" onclick="editInv('${i.id}')">✏️</button><button class="btn bd2 bsm" onclick="delInv('${i.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
+  el.innerHTML=_inv.length?_inv.map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${i.desc||''}</div><div style="font-size:11px;color:var(--mu);">Qtd: ${i.qty||1} - ${i.data||''} - ${i.estado||''}</div></div>${canEdit()?`<button class="btn bo bsm" onclick="editInv('${i.id}')">✏️</button><button class="btn bd2 bsm" onclick="delInv('${i.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div>';
 }
-async function delInv(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('inventario',id);}
+async function delInv(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('inventario',id);}
 
 //  CHECKLIST COMUNICAÇÃO 
 function initChecklist(){
@@ -2967,7 +2996,7 @@ function renderChk(){
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:110px;">
           <span class="bge ${scfg.cls}">${L==='PT'?scfg.pt:scfg.en}</span>
-          ${isAdmin?`<select onchange="updateChkStatus(${it.id},this.value)" style="font-size:9px;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:4px;color:var(--wh);padding:2px 4px;cursor:pointer;">
+          ${canEdit()?`<select onchange="updateChkStatus(${it.id},this.value)" style="font-size:9px;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:4px;color:var(--wh);padding:2px 4px;cursor:pointer;">
             <option value="Pending" ${st==='Pending'?'selected':''}> ${L==='PT'?'Pendente':'Pending'}</option>
             <option value="InProgress" ${st==='InProgress'?'selected':''}> ${L==='PT'?'Em Curso':'In Progress'}</option>
             <option value="Done" ${st==='Done'?'selected':''}> ${L==='PT'?'Concluído':'Done'}</option>
@@ -2985,7 +3014,7 @@ function renderChk(){
 }
 
 async function updateChkStatus(id, status){
-  if(!isAdmin) return;
+  if(!canEdit()) return;
   // Actualizar em memória imediatamente e renderizar
   _chkData[Number(id)] = {...(_chkData[Number(id)]||{}), itemId:Number(id), status};
   renderChk();
@@ -3038,7 +3067,7 @@ const TIPO_CFG = {
 };
 
 async function saveProgItem(){
-  if(!isAdmin) return;
+  if(!canEdit()) return;
   const d = {
     dia:    document.getElementById('pi-dia').value,
     hora:   document.getElementById('pi-hora').value,
@@ -3093,7 +3122,7 @@ function renderPrograma(){
           ${it.desc?`<div style="font-size:11px;color:var(--mu);">${it.desc}</div>`:''}
           ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:3px;">Resp: ${it.resp}</div>`:''}
         </div>
-        ${isAdmin?`<button class="btn bo bsm" onclick="editProgItem('${it.id}')">✏️</button><button class="btn bd2 bsm" onclick="delProgItem('${it.id}')">🗑️</button>`:''}
+        ${canEdit()?`<button class="btn bo bsm" onclick="editProgItem('${it.id}')">✏️</button><button class="btn bd2 bsm" onclick="delProgItem('${it.id}')">🗑️</button>`:''}
       </div>`;
     });
     html += '</div>';
@@ -3102,7 +3131,7 @@ function renderPrograma(){
 }
 
 async function delProgItem(id){
-  if(!isAdmin||!confirm('Eliminar?')) return;
+  if(!canDelete()||!confirm('Eliminar?')) return;
   await _del('programa',id);
   toast('Item eliminado','er');
 }
@@ -3281,7 +3310,7 @@ function closeSb(){
 
 // ========== IMPORTAÇÃO EXCEL VOLUNTÁRIOS ==========
 function importVolExcel(input){
-  if(!isAdmin){toast('Apenas admin pode importar','er');return;}
+  if(!canDelete()){toast('Apenas admin pode importar','er');return;}
   const file = input.files[0];
   if(!file){return;}
   const reader = new FileReader();
@@ -3442,7 +3471,7 @@ function gerarTodasAccred(){toast('Acreditacoes geradas para todos os participan
 
 // --- ROOMING LIST ---
 async function saveQuarto(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={
     nome:document.getElementById('rm-nome').value,
     pais:document.getElementById('rm-pais').value,
@@ -3484,15 +3513,15 @@ function renderRooming(){
     <td class="mu">${r.checkin||''}</td>
     <td class="mu">${r.checkout||''}</td>
     <td class="mu" style="font-size:11px;">${r.obs||''}</td>
-    ${isAdmin?`<td><button class="btn bo bsm" onclick="editQuarto('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delQuarto('${r.id}')">🗑️</button></td>`:'<td></td>'}
+    ${canEdit()?`<td><button class="btn bo bsm" onclick="editQuarto('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delQuarto('${r.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
 }
 
-async function delQuarto(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('rooming',id);toast('Eliminado','er');}
+async function delQuarto(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('rooming',id);toast('Eliminado','er');}
 
 // --- DELEGACOES / CHEGADAS ---
 async function saveDelegacao(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={
     pais:document.getElementById('del-pais').value,
     federacao:document.getElementById('del-fed').value,
@@ -3514,7 +3543,7 @@ async function saveDelegacao(){
 }
 
 async function toggleCheck(id,campo,valor){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   await _upd('delegacoes',id,{[campo]:valor});
 }
 
@@ -3558,12 +3587,12 @@ function renderDelegacoes(){
           <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${cor};">${pct}%</div>
           <div style="font-size:9px;color:var(--mu);">${done}/${checks.length} itens</div>
         </div>
-        ${isAdmin?`<button class="btn bo bsm" onclick="editDelegacao('${del.id}')">✏️</button><button class="btn bd2 bsm" onclick="delDelegacao('${del.id}')">🗑️</button>`:''}
+        ${canEdit()?`<button class="btn bo bsm" onclick="editDelegacao('${del.id}')">✏️</button><button class="btn bd2 bsm" onclick="delDelegacao('${del.id}')">🗑️</button>`:''}
       </div>
       <div class="cdb">
         ${del.vooChegada?`<div style="font-size:11px;color:var(--mu);margin-bottom:8px;">Chegada: ${del.vooChegada} | Partida: ${del.vooPartida||'-'}</div>`:''}
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-          ${checks.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:${del[c.key]?'rgba(74,184,122,.08)':'rgba(255,255,255,.03)'};border:1px solid ${del[c.key]?'rgba(74,184,122,.2)':'var(--bdr)'};border-radius:7px;cursor:${isAdmin?'pointer':'default'};" onclick="${isAdmin?`"toggleCheck('${del.id}','${c.key}',${!del[c.key]})"`:'"'}>
+          ${checks.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:${del[c.key]?'rgba(74,184,122,.08)':'rgba(255,255,255,.03)'};border:1px solid ${del[c.key]?'rgba(74,184,122,.2)':'var(--bdr)'};border-radius:7px;cursor:${canEdit()?'pointer':'default'};" onclick="${canEdit()?`"toggleCheck('${del.id}','${c.key}',${!del[c.key]})"`:'"'}>
             <div style="width:14px;height:14px;border-radius:3px;border:1.5px solid ${del[c.key]?'var(--ok)':'var(--mu)'};background:${del[c.key]?'var(--ok)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
               ${del[c.key]?'<span style="color:#fff;font-size:10px;font-weight:700;">v</span>':''}
             </div>
@@ -3576,7 +3605,7 @@ function renderDelegacoes(){
   }).join('');
 }
 
-async function delDelegacao(id){if(!isAdmin||!confirm('Eliminar delegacao?'))return;await _del('delegacoes',id);toast('Eliminada','er');}
+async function delDelegacao(id){if(!canDelete()||!confirm('Eliminar delegacao?'))return;await _del('delegacoes',id);toast('Eliminada','er');}
 
 // --- GUIA DO ATLETA ---
 function renderGuia(){
@@ -3824,7 +3853,7 @@ function toggleMatchFields(){
 }
 
 async function saveResultado(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const mod=document.getElementById('rs-mod').value;
   if(mod==='stroke'){
     const r1=parseInt(document.getElementById('rs-r1').value)||0;
@@ -3868,7 +3897,7 @@ function renderResultados(){
     <td style="text-align:center;">${r.r4||'-'}</td>
     <td style="text-align:center;font-weight:700;font-size:14px;color:var(--gl2);">${r.total||0}</td>
     <td><span class="bge ${r.categoria==='SM'?'bg-bl':'bg-am'}">${r.categoria==='SM'?'Séniores Masc.':'Séniores Fem.'}</span></td>
-    ${isAdmin?`<td><button class="btn bo bsm" onclick="editRes('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRes('${r.id}')">🗑️</button></td>`:'<td></td>'}
+    ${canEdit()?`<td><button class="btn bo bsm" onclick="editRes('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRes('${r.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
 }
 
@@ -3883,16 +3912,16 @@ function renderMatch(){
     <td style="text-align:center;font-weight:700;font-size:14px;color:${m.scoreB<m.scoreA?'var(--ok)':'var(--er)'};">${m.scoreB}</td>
     <td class="vl">${m.jogB||''}</td><td class="mu">${m.paisB||''}</td>
     <td style="font-weight:700;color:var(--gl2);">${m.vencedor||''}</td>
-    ${isAdmin?`<td><button class="btn bo bsm" onclick="editMatch('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMatch('${m.id}')">🗑️</button></td>`:'<td></td>'}
+    ${canEdit()?`<td><button class="btn bo bsm" onclick="editMatch('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMatch('${m.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
 }
 
-async function delRes(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('resultados',id);}
-async function delMatch(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('matchplay',id);}
+async function delRes(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('resultados',id);}
+async function delMatch(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('matchplay',id);}
 
 // --- DIARIO DE BORDO ---
 async function saveEntradaDB(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={dia:document.getElementById('db-dia').value,hora:document.getElementById('db-hora').value,tipo:document.getElementById('db-tipo').value,titulo:document.getElementById('db-titulo').value,desc:document.getElementById('db-desc').value,resp:document.getElementById('db-resp').value,ts:Date.now()};
   if(!d.titulo){toast('Titulo obrigatorio','er');return;}
   await _add('diariodb',d);closeM('m-entrada-db');toast('Entrada registada no Diario de Bordo');
@@ -3928,7 +3957,7 @@ function renderDiarioBordo(){
           <span style="font-size:10px;font-weight:700;color:var(--gl);">${DIAS_LABEL[e.dia]||e.dia} ${e.hora?'· '+e.hora:''}</span>
           <span class="bge ${e.tipo==='incidente'?'bg-er':e.tipo==='decisao'?'bg-g':e.tipo==='wmf'?'bg-bl':'bg-mu'}">${tc.label}</span>
         </div>
-        ${isAdmin?`<button class="btn bo bsm" onclick="editEntradaDB('${e.id}')">✏️</button><button class="btn bd2 bsm" onclick="delEntradaDB('${e.id}')">🗑️</button>`:''}
+        ${canEdit()?`<button class="btn bo bsm" onclick="editEntradaDB('${e.id}')">✏️</button><button class="btn bd2 bsm" onclick="delEntradaDB('${e.id}')">🗑️</button>`:''}
       </div>
       <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:6px;">${e.titulo||''}</div>
       <div style="font-size:12px;color:var(--se);line-height:1.6;">${e.desc||''}</div>
@@ -3937,7 +3966,7 @@ function renderDiarioBordo(){
   }).join('');
 }
 
-async function delEntradaDB(id){if(!isAdmin||!confirm('Eliminar entrada?'))return;await _del('diariodb',id);toast('Eliminada','er');}
+async function delEntradaDB(id){if(!canDelete()||!confirm('Eliminar entrada?'))return;await _del('diariodb',id);toast('Eliminada','er');}
 
 // --- PDFs BLOCO C ---
 function exportResultadosPDF(){
@@ -4000,7 +4029,7 @@ function loadBlocoD(){
 
 // --- ORCAMENTO VS REAL ---
 async function saveOrcRubrica(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={conta:document.getElementById('or-conta').value,valor:parseFloat(document.getElementById('or-valor').value)||0,desc:document.getElementById('or-desc').value,ts:Date.now()};
   const _e=document.getElementById('orc-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('orcamento',_eid,d);if(_e)_e.value='';toast('Rubrica actualizado');}else{await _add('orcamento',d);toast('Rubrica registado');}
@@ -4031,7 +4060,7 @@ function renderOrcamento(){
       <td style="text-align:right;color:${desv>0?'var(--er)':'var(--ok)'};">${desv>=0?'+':''}${fmt(desv)}</td>
       <td style="text-align:center;font-weight:700;color:${pct>110?'var(--er)':pct>80?'var(--wr)':'var(--ok)'};">${pct}%</td>
       <td><span class="bge ${sem}">${semLabel}</span></td>
-      ${isAdmin?`<td><button class="btn bo bsm" onclick="editOrc('${o.id}')">✏️</button><button class="btn bd2 bsm" onclick="delOrc('${o.id}')">🗑️</button></td>`:'<td></td>'}
+      ${canEdit()?`<td><button class="btn bo bsm" onclick="editOrc('${o.id}')">✏️</button><button class="btn bd2 bsm" onclick="delOrc('${o.id}')">🗑️</button></td>`:'<td></td>'}
     </tr>`;
   }).join('');
   const elT=document.getElementById('orc-tot');
@@ -4044,11 +4073,11 @@ function renderOrcamento(){
   if(elP)elP.textContent=(totOrc>0?Math.round(totExec/totOrc*100):0)+'%';
 }
 
-async function delOrc(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('orcamento',id);}
+async function delOrc(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('orcamento',id);}
 
 // --- FATURAS ---
 async function saveFatura(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={nr:document.getElementById('fat-nr').value,forn:document.getElementById('fat-forn').value,conta:document.getElementById('fat-conta').value,valor:parseFloat(document.getElementById('fat-valor').value)||0,data:document.getElementById('fat-data').value,venc:document.getElementById('fat-venc').value,estado:document.getElementById('fat-estado').value,notas:document.getElementById('fat-notas').value,ts:Date.now()};
   if(!d.forn){toast('Fornecedor obrigatorio','er');return;}
   const _e=document.getElementById('fat-eid');const _eid=_e&&_e.value?_e.value:'';
@@ -4089,17 +4118,17 @@ function renderFaturas(){
       <td class="mu">${f.data||''}</td>
       <td style="font-weight:${urgente?700:400};color:${urgente?'var(--er)':'var(--se)'};">${f.venc||''}</td>
       <td><span class="bge ${f.estado==='Paga'?'bg-ok':f.estado==='Pendente'?'bg-am':'bg-er'}">${f.estado}</span></td>
-      ${isAdmin?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''}<button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFatura('${f.id}')">🗑️</button></td>`:'<td></td>'}
+      ${canEdit()?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''}<button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFatura('${f.id}')">🗑️</button></td>`:'<td></td>'}
     </tr>`;
   }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem faturas</td></tr>';
 }
 
-async function marcarPaga(id){if(!isAdmin)return;await _upd('faturas',id,{estado:'Paga'});toast('Fatura marcada como paga');}
-async function delFatura(id){if(!isAdmin||!confirm('Eliminar fatura?'))return;await _del('faturas',id);toast('Eliminada','er');}
+async function marcarPaga(id){if(!canEdit())return;await _upd('faturas',id,{estado:'Paga'});toast('Fatura marcada como paga');}
+async function delFatura(id){if(!canDelete()||!confirm('Eliminar fatura?'))return;await _del('faturas',id);toast('Eliminada','er');}
 
 // --- FLUXO DE CAIXA ---
 async function saveFluxoItem(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={mes:document.getElementById('fc-mes').value,tipo:document.getElementById('fc-tipo').value,desc:document.getElementById('fc-desc').value,valor:parseFloat(document.getElementById('fc-valor').value)||0,prob:document.getElementById('fc-prob').value,ts:Date.now()};
   const _e=document.getElementById('flx-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('fluxo',_eid,d);if(_e)_e.value='';toast('Previsão actualizado');}else{await _add('fluxo',d);toast('Previsão registado');}
@@ -4130,13 +4159,13 @@ function renderFluxo(){
     const saldo=totE-totS;
     return `<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${MESES_LABEL[mes]||mes}</div><div class="cds">Entradas: ${fmt(totE)} | Saidas: ${fmt(totS)} | Saldo: ${fmt(saldo)}</div></div><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:${saldo>=0?'var(--ok)':'var(--er)'};">${fmt(saldo)}</div></div>
     <div class="cdb"><div class="g2" style="gap:10px;">
-      <div>${m.entradas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(74,184,122,.1);font-size:12px;"><span style="color:var(--ok);">+ ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--ok);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bo bsm" onclick="editFluxoItem('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">🗑️</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem entradas</div>'}</div>
-      <div>${m.saidas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(224,82,82,.1);font-size:12px;"><span style="color:var(--er);">- ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--er);font-weight:600;">${fmt(f.valor)}</span>${isAdmin?`<button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">X</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem saidas</div>'}</div>
+      <div>${m.entradas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(74,184,122,.1);font-size:12px;"><span style="color:var(--ok);">+ ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--ok);font-weight:600;">${fmt(f.valor)}</span>${canEdit()?`<button class="btn bo bsm" onclick="editFluxoItem('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">🗑️</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem entradas</div>'}</div>
+      <div>${m.saidas.map(f=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(224,82,82,.1);font-size:12px;"><span style="color:var(--er);">- ${f.desc}</span><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${PROB_CORES[f.prob]||'bg-mu'}" style="font-size:8px;">${f.prob}</span><span style="color:var(--er);font-weight:600;">${fmt(f.valor)}</span>${canDelete()?`<button class="btn bd2 bsm" onclick="delFluxo('${f.id}')" style="padding:2px 6px;font-size:9px;">X</button>`:''}</div></div>`).join('') || '<div class="mu" style="font-size:11px;">Sem saidas</div>'}</div>
     </div></div></div>`;
   }).join('');
 }
 
-async function delFluxo(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('fluxo',id);}
+async function delFluxo(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('fluxo',id);}
 
 // --- RELATORIO PATROCINADORES ---
 function renderRelPatr(){
@@ -4247,7 +4276,7 @@ function loadBlocoE(){
 
 // --- ACTAS COE ---
 async function saveActa(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={data:document.getElementById('ac-data').value,hora:document.getElementById('ac-hora').value,local:document.getElementById('ac-local').value,pres:document.getElementById('ac-pres').value,part:document.getElementById('ac-part').value,ordem:document.getElementById('ac-ordem').value,dec:document.getElementById('ac-dec').value,prox:document.getElementById('ac-prox').value,ts:Date.now()};
   if(!d.data){toast('Data obrigatoria','er');return;}
   const _e=document.getElementById('act-eid');const _eid=_e&&_e.value?_e.value:'';
@@ -4265,7 +4294,7 @@ function renderActas(){
   const lista=document.getElementById('actas-lista');
   if(!lista)return;
   if(!_actas.length){lista.innerHTML='<div class="em"><div class="emi">&#9654;</div><div class="emt">Sem actas registadas</div></div>';return;}
-  lista.innerHTML=_actas.map(a=>`<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${a.data||''} ${a.hora?'- '+a.hora:''}</div><div class="cds">${a.local||''} | Presidente: ${a.pres||'-'}</div></div>${isAdmin?`<div style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportActaPDF('${a.id}')">PDF</button><button class="btn bo bsm" onclick="editActa('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delActa('${a.id}')">🗑️</button></div>`:''}</div>
+  lista.innerHTML=_actas.map(a=>`<div class="cd" style="margin-bottom:12px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${a.data||''} ${a.hora?'- '+a.hora:''}</div><div class="cds">${a.local||''} | Presidente: ${a.pres||'-'}</div></div>${canEdit()?`<div style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportActaPDF('${a.id}')">PDF</button><button class="btn bo bsm" onclick="editActa('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delActa('${a.id}')">🗑️</button></div>`:''}</div>
     <div class="cdb">
       ${a.part?`<div style="font-size:11px;color:var(--mu);margin-bottom:8px;">Presentes: ${a.part}</div>`:''}
       ${a.ordem?`<div style="margin-bottom:8px;"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:4px;">Ordem do dia</div><div style="font-size:12px;color:var(--se);white-space:pre-line;">${a.ordem}</div></div>`:''}
@@ -4274,7 +4303,7 @@ function renderActas(){
     </div></div>`).join('');
 }
 
-async function delActa(id){if(!isAdmin||!confirm('Eliminar acta?'))return;await _del('actas',id);}
+async function delActa(id){if(!canDelete()||!confirm('Eliminar acta?'))return;await _del('actas',id);}
 
 function exportActaPDF(id){
   const a=_actas.find(x=>x.id===id);
@@ -4317,7 +4346,7 @@ function exportActasPDF(){_actas.forEach(a=>exportActaPDF(a.id));}
 
 // --- COMUNICADOS ---
 async function saveComunicado(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={dest:document.getElementById('cm-dest').value,lang:document.getElementById('cm-lang').value,tipo:document.getElementById('cm-tipo').value,assunto:document.getElementById('cm-assunto').value,corpo:document.getElementById('cm-corpo').value,estado:document.getElementById('cm-estado').value,ts:Date.now()};
   const _e=document.getElementById('com-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('comunicados',_eid,d);if(_e)_e.value='';toast('Comunicado actualizado');}else{await _add('comunicados',d);toast('Comunicado registado');}
@@ -4334,11 +4363,11 @@ function renderComunicados(){
   const lista=document.getElementById('comunicados-lista');
   if(!lista)return;
   if(!_comunicados.length){lista.innerHTML='<div class="em"><div class="emi">&#9993;</div><div class="emt">Sem comunicados criados</div></div>';return;}
-  lista.innerHTML=_comunicados.map(c=>`<div class="cd" style="margin-bottom:10px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${c.tipo||''}</div><div class="cds">${c.dest||''} | ${c.lang||'EN'} | ${c.assunto||''}</div></div><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${c.estado==='Enviado'?'bg-ok':'bg-am'}">${c.estado}</span>${isAdmin?`<button class="btn bo bsm" onclick="exportComunicadoPDF('${c.id}')">PDF</button><button class="btn bo bsm" onclick="editComunicado('${c.id}')">✏️</button><button class="btn bd2 bsm" onclick="delComunicado('${c.id}')">🗑️</button>`:''}</div></div>
+  lista.innerHTML=_comunicados.map(c=>`<div class="cd" style="margin-bottom:10px;"><div class="cdh"><div style="flex:1;"><div class="cdt">${c.tipo||''}</div><div class="cds">${c.dest||''} | ${c.lang||'EN'} | ${c.assunto||''}</div></div><div style="display:flex;gap:6px;align-items:center;"><span class="bge ${c.estado==='Enviado'?'bg-ok':'bg-am'}">${c.estado}</span>${canEdit()?`<button class="btn bo bsm" onclick="exportComunicadoPDF('${c.id}')">PDF</button><button class="btn bo bsm" onclick="editComunicado('${c.id}')">✏️</button><button class="btn bd2 bsm" onclick="delComunicado('${c.id}')">🗑️</button>`:''}</div></div>
     <div class="cdb"><div style="font-size:12px;color:var(--se);white-space:pre-line;max-height:80px;overflow:hidden;">${(c.corpo||'').substring(0,200)}${(c.corpo||'').length>200?'...':''}</div></div></div>`).join('');
 }
 
-async function delComunicado(id){if(!isAdmin||!confirm('Eliminar?'))return;await _del('comunicados',id);}
+async function delComunicado(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('comunicados',id);}
 
 function exportComunicadoPDF(id){
   const c=_comunicados.find(x=>x.id===id);if(!c)return;
@@ -4852,7 +4881,7 @@ function openIncidenteRapido(){
 }
 
 async function saveIncidenteRapido(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const titulo=document.getElementById('inc-titulo').value;
   if(!titulo){toast('Titulo obrigatorio','er');return;}
   await _add('diariodb',{
@@ -5470,7 +5499,7 @@ function loadLog(){
 }
 
 function addLog(tipo, modulo, descricao){
-  const nivel = isAdmin ? 'Admin' : 'Leitura';
+  const nivel = isAdmin ? 'Administrador' : isSWC ? 'SWC2026' : 'Leitura';
   const d = {
     tipo,
     modulo,
@@ -6571,7 +6600,7 @@ function populateMarcaSelects(){
 }
 
 async function saveMarca(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const d={nome:document.getElementById('mk-nome').value,contacto:document.getElementById('mk-ct').value,email:document.getElementById('mk-email').value,pct:parseFloat(document.getElementById('mk-pct').value)||0,data:document.getElementById('mk-data').value,notas:document.getElementById('mk-notas').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
   const _e=document.getElementById('mrc-eid');const _eid=_e&&_e.value?_e.value:'';
@@ -6580,7 +6609,7 @@ async function saveMarca(){
 }
 
 async function saveArtigo(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const marcaId=document.getElementById('art-marca').value;
   const marca=_marcas.find(m=>m.id===marcaId);
   const d={marcaId,marcaNome:marca?marca.nome:'',ref:document.getElementById('art-ref').value,desc:document.getElementById('art-desc').value,preco:parseFloat(document.getElementById('art-preco').value)||0,qtyEntrou:parseInt(document.getElementById('art-qty').value)||0,notas:document.getElementById('art-notas').value,ts:Date.now()};
@@ -6616,7 +6645,7 @@ function calcVenda(){
 }
 
 async function saveVenda(){
-  if(!isAdmin)return;
+  if(!canEdit())return;
   const artigoId=document.getElementById('vd-artigo').value;
   const artigo=_artigos.find(a=>a.id===artigoId);
   if(!artigo){toast('Selecionar artigo','er');return;}
@@ -6653,7 +6682,7 @@ function renderMarcas(){
     const totE=arts.reduce((s,a)=>s+Number(a.qtyEntrou||0),0);
     const totV=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.qty||0),0);
     const receita=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.comissao||0),0);
-    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${isAdmin?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${canEdit()?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join('');
 }
 
@@ -6665,7 +6694,7 @@ function renderArtigos(){
     const vendido=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.qty||0),0);
     const stock=Number(a.qtyEntrou||0)-vendido;
     const totalVendas=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.total||0),0);
-    return `<tr><td class="go">${a.marcaNome||''}</td><td style="font-weight:600;font-family:monospace;font-size:11px;">${a.ref||''}</td><td>${a.desc||''}</td><td style="text-align:right;">${fmt(a.preco)}</td><td style="text-align:center;">${a.qtyEntrou||0}</td><td style="text-align:center;color:var(--ok);">${vendido}</td><td style="text-align:center;font-weight:700;color:${stock<=2?'var(--er)':stock<=5?'var(--wr)':'var(--wh)'};">${stock}</td><td class="tok">${fmt(totalVendas)}</td>${isAdmin?`<td><button class="btn bo bsm" onclick="editArtigo('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArtigo('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td class="go">${a.marcaNome||''}</td><td style="font-weight:600;font-family:monospace;font-size:11px;">${a.ref||''}</td><td>${a.desc||''}</td><td style="text-align:right;">${fmt(a.preco)}</td><td style="text-align:center;">${a.qtyEntrou||0}</td><td style="text-align:center;color:var(--ok);">${vendido}</td><td style="text-align:center;font-weight:700;color:${stock<=2?'var(--er)':stock<=5?'var(--wr)':'var(--wh)'};">${stock}</td><td class="tok">${fmt(totalVendas)}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editArtigo('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArtigo('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join('');
 }
 
@@ -6674,12 +6703,12 @@ function renderVendas(){
   if(!tbody)return;
   const sorted=[..._vendas_cs].sort((a,b)=>b.ts-a.ts);
   if(!sorted.length){tbody.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
-  tbody.innerHTML=sorted.map(v=>`<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td>${isAdmin?`<td><button class="btn bo bsm" onclick="editVenda('${v.id}')">✏️</button><button class="btn bd2 bsm" onclick="delVendaCS('${v.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join('');
+  tbody.innerHTML=sorted.map(v=>`<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editVenda('${v.id}')">✏️</button><button class="btn bd2 bsm" onclick="delVendaCS('${v.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join('');
 }
 
-async function delMarca(id){if(!isAdmin||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
-async function delArtigo(id){if(!isAdmin||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
-async function delVendaCS(id){if(!isAdmin||!confirm('Anular venda?'))return;await _del('cs_vendas',id);toast('Anulada','er');}
+async function delMarca(id){if(!canDelete()||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
+async function delArtigo(id){if(!canDelete()||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
+async function delVendaCS(id){if(!canDelete()||!confirm('Anular venda?'))return;await _del('cs_vendas',id);toast('Anulada','er');}
 
 function exportAcertoPDF(marcaId){
   const marca=_marcas.find(m=>m.id===marcaId);
@@ -7348,7 +7377,7 @@ window.enviarRelatorioSemanal=()=>enviarRelatorioSemanal(true);
 
 // Prazos -- delete em falta
 async function delPrazo(id){
-  if(!isAdmin||!confirm('Eliminar este prazo?'))return;
+  if(!canDelete()||!confirm('Eliminar este prazo?'))return;
   await _del('prazos',id);
   toast('Prazo eliminado');
 }

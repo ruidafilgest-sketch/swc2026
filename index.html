@@ -7366,6 +7366,25 @@ async function carregarResendKey(){
   }catch(e){}
 }
 
+async function testeEmail(){
+  if(!isAdmin){toast('Apenas admin','error');return;}
+  const ok=await enviarEmail({
+    to:'rui@dafilgest.pt',
+    subject:'SWC2026 — Teste Email',
+    html:'<p>Email de teste do sistema SWC2026. Se recebeu este email, o sistema está a funcionar correctamente.</p>'
+  });
+  if(ok)toast('Email de teste enviado ✅');
+}
+
+async function guardarDiaRelatorio(diaNum){
+  try{
+    await setDoc(doc(collection(db,'swc2026_config'),'email_config'),{diaRelatorio:Number(diaNum)},{merge:true});
+    _diaRelatorio=Number(diaNum);
+    const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    toast('Relatório automático: '+dias[diaNum]+' ✅');
+  }catch(e){toast('Erro ao guardar','error');console.error(e);}
+}
+
 window.guardarResendKey=guardarResendKey;
 window.enviarAlertaManual=()=>checkEmailAlertas(true);
 window.testeEmail=testeEmail;

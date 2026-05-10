@@ -855,7 +855,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <!-- CRONOLOGIA -->
 <div class="pg" id="pg-cronologia">
 <div class="av"><strong>Prazos WMF/EMF/FPM:</strong> Incumprimento = cancelamento do evento sem compensação. Alertas a 30/15/7/1 dias.</div>
-<div class="bb" id="bar-cron"><button class="btn bp" onclick="openM('m-prazo')">+ Novo prazo / tarefa</button><button class="btn bo" onclick="exportCronPDF()">Exportar PDF</button></div>
+<div class="bb" id="bar-cron"><button class="btn bp" onclick="document.getElementById('praz-eid').value='';document.querySelector('#m-prazo .mt2').textContent='Novo Prazo / Tarefa';openM('m-prazo')">+ Novo prazo / tarefa</button><button class="btn bo" onclick="exportCronPDF()">Exportar PDF</button></div>
 <div id="cron-list"></div>
 </div>
 
@@ -1764,6 +1764,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Descrição</div><textarea class="fta" id="pz-ds" placeholder="Detalhe do que é necessário fazer..."></textarea></div>
     <div class="fg"><div class="fl">Responsável</div><input class="fi" id="pz-rp" placeholder="Nome do responsável ou área COE"></div>
     <div class="fg"><div class="fl">Estado</div><select class="fse" id="pz-st"><option value="pendente">Pendente</option><option value="em_curso">Em curso</option><option value="concluido">Concluído</option></select></div>
+    <input type="hidden" id="praz-eid" value="">
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-prazo')">Cancelar</button><button class="btn bp" onclick="savePrazo()">Guardar prazo</button></div>
 </div></div>
@@ -7398,19 +7399,18 @@ window.delPrazo=delPrazo;
 
 // Prazos editar
 async function editPrazo(id){
-  const item=(_praz||[]).find(x=>x.id===id);if(!item)return;
-  let hid=document.getElementById('praz-eid');
-  if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='praz-eid';
-    const mb=document.querySelector('#m-prazo .mb');if(mb)mb.prepend(hid);}
-  hid.value=id;
-  const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v||'';};
-  f('pz-dt',item.data||item.p||'');
-  f('pz-tt',item.titulo||item.l||'');
-  f('pz-ds',item.desc||item.ds||'');
-  f('pz-pr',item.prioridade||item.pr||'normal');
-  // pz-rp e pz-st podem não existir no modal
-  const rp=document.getElementById('pz-rp');if(rp)rp.value=item.resp||item.r||'';
-  const st=document.getElementById('pz-st');if(st)st.value=item.estado||item.st||'pendente';
+  const item=(_praz||[]).find(x=>x.id===id);
+  if(!item){console.error('Prazo não encontrado:',id,'_praz ids:',(_praz||[]).map(x=>x.id));return;}
+  const hid=document.getElementById('praz-eid');
+  if(hid)hid.value=id;
+  const f=(el,v)=>{const e=document.getElementById(el);if(e)e.value=v??'';};
+  f('pz-dt',item.data||'');
+  f('pz-tt',item.titulo||'');
+  f('pz-ds',item.desc||'');
+  f('pz-pr',item.prioridade||'normal');
+  f('pz-rp',item.resp||'');
+  f('pz-st',item.estado||'pendente');
+  document.querySelector('#m-prazo .mt2').textContent='Editar Prazo';
   openM('m-prazo');
 }
 window.editPrazo=editPrazo;

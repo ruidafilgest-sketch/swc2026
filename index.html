@@ -2523,7 +2523,9 @@ async function delAtl(id){if(!canDelete()||!confirm('Eliminar?'))return;await _d
 async function saveConv(){
   if(!canEdit())return;
   const d={nome:document.getElementById('cv-nm').value,entidade:document.getElementById('cv-en').value,categoria:document.getElementById('cv-ct').value,abertura:document.getElementById('cv-ab').value,encerramento:document.getElementById('cv-enc').value,ts:Date.now()};
-  await _add('convites',d);closeM('m-conv');toast('Convite registado');
+  const _e=document.getElementById('conv-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('convites',_eid,d);if(_e)_e.value='';toast('Convite actualizado');}else{await _add('convites',d);toast('Convite registado');}
+  closeM('m-conv');
 }
 function renderConv(){
   document.getElementById('c-tot').textContent=_conv.length;
@@ -3487,6 +3489,8 @@ async function saveQuarto(){
   };
   if(!d.nome){toast('Nome obrigatorio','er');return;}
   await _add('rooming',d);
+  const _e=document.getElementById('qrt-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('quartos',_eid,d);if(_e)_e.value='';toast('Quarto actualizado');}else{await _add('quartos',d);toast('Quarto registado');}
   closeM('m-quarto');toast('Quarto atribuido');
 }
 
@@ -3864,7 +3868,8 @@ async function saveResultado(){
     const total=r1+r2+r3+(r4>0?r4:0);
     const d={nome:document.getElementById('rs-nome').value,pais:document.getElementById('rs-pais').value,categoria:document.getElementById('rs-cat').value,r1,r2,r3,r4,total,ts:Date.now()};
     if(!d.nome){toast('Nome obrigatorio','er');return;}
-    await _add('resultados',d);
+    const _e=document.getElementById('res-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('resultados',_eid,d);if(_e)_e.value='';toast('Resultado actualizado');}else{await _add('resultados',d);toast('Resultado registado');}
   } else {
     const d={ronda:document.getElementById('mp-ronda').value,categoria:document.getElementById('rs-cat').value,jogA:document.getElementById('mp-a').value,paisA:document.getElementById('mp-pa').value,scoreA:parseInt(document.getElementById('mp-sa').value)||0,scoreB:parseInt(document.getElementById('mp-sb').value)||0,jogB:document.getElementById('mp-b').value,paisB:document.getElementById('mp-pb').value,ts:Date.now()};
     d.vencedor=d.scoreA<d.scoreB?d.jogA:d.scoreB<d.scoreA?d.jogB:'Empate';
@@ -7367,12 +7372,8 @@ async function carregarResendKey(){
 }
 
 async function testeEmail(){
-  if(!isAdmin){toast('Apenas admin','error');return;}
-  const ok=await enviarEmail({
-    to:'rui@dafilgest.pt',
-    subject:'SWC2026 — Teste Email',
-    html:'<p>Email de teste do sistema SWC2026. Se recebeu este email, o sistema está a funcionar correctamente.</p>'
-  });
+  if(!canEdit()){toast('Sem permissão','error');return;}
+  const ok=await enviarEmailAlerta('SWC2026 — Teste Email','<p>Email de teste do sistema SWC2026. Está a funcionar correctamente.</p>','rui@dafilgest.pt');
   if(ok)toast('Email de teste enviado ✅');
 }
 

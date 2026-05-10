@@ -5663,7 +5663,7 @@ async function enviarEmailAlerta(assunto, corpo, destinatario){
       },
       body: JSON.stringify({
         from: EMAIL_FROM,
-        to: [destinatario || EMAIL_TO],
+        to: destinatario ? [destinatario] : [EMAIL_TO, ..._mbr.filter(m=>m.email).map(m=>m.email)],
         subject: '[SWC2026] ' + assunto,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
           <div style="background:#0A1628;padding:20px;border-bottom:2px solid #C9A84C;">
@@ -7397,7 +7397,7 @@ async function carregarResendKey(){
 
 async function testeEmail(){
   if(!canEdit()){toast('Sem permissão','error');return;}
-  const ok=await enviarEmailAlerta('SWC2026 — Teste Email','<p>Email de teste do sistema SWC2026. Está a funcionar correctamente.</p>','rui@dafilgest.pt');
+  const ok=await enviarEmailAlerta('SWC2026 — Teste Email','<p>Email de teste do sistema SWC2026. Está a funcionar correctamente.</p>');
   if(ok)toast('Email de teste enviado ✅');
 }
 

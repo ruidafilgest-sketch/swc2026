@@ -864,7 +864,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">DIR</span>Direcção Operacional SWC 2026<button class="hbtn" data-help="organizacao" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Estrutura de liderança, delegação de tarefas e equipa de apoio</div>
 <div class="bb" id="bar-org">
-  <button class="btn bp" onclick="const _e=document.getElementById('mbr-eid');if(_e)_e.value='';openM('m-mbr')">+ Membro COE</button>
+  <button class="btn bp" onclick="const _e=document.getElementById('mbr-eid');if(_e)_e.value='';openM('m-mbr')">+ Director Operacional</button>
   <button class="btn bo" onclick="openM('m-vol')">+ Voluntario</button>
   <label class="btn bo" style="cursor:pointer;">&#8679; Importar Excel
     <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="importVolExcel(this)">
@@ -872,7 +872,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" onclick="exportOrgPDF()">Exportar PDF</button>
 </div>
 <div class="g2">
-  <div class="cd"><div class="cdh"><div><div class="cdt">Liderança — COE</div><div class="cds">6 funções principais</div></div></div><div class="cdb" id="org-coe"><div class="em"><div class="emi">◈</div><div class="emt">Sem membros da Direcção Operacional</div></div></div></div>
+  <div class="cd"><div class="cdh"><div><div class="cdt">Direcção Operacional</div><div class="cds">Directores Operacionais</div></div></div><div class="cdb" id="org-coe"><div class="em"><div class="emi">◈</div><div class="emt">Sem membros da Direcção Operacional</div></div></div></div>
   <div class="cd"><div class="cdh"><div><div class="cdt">Equipa de Apoio</div><div class="cds" id="org-vol-count">a carregar...</div></div></div><div class="cdb" id="org-vol"><div class="em"><div class="emi">◉</div><div class="emt">Sem voluntários</div></div></div></div>
 </div>
 </div>
@@ -2698,7 +2698,7 @@ function renderOrg(){
       _mbr.forEach(m=>{
         const d=document.createElement('div');
         d.style.cssText='padding:10px 0;border-top:1px solid rgba(201,168,76,.07);';
-        const inner=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);margin-top:2px;">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);">${m.tel||''} ${m.email?('&middot; '+m.email):''}</div>${m.resp?('<div style="font-size:10px;color:var(--mu);font-style:italic;">'+m.resp+'</div>'):''}</div>${isAdmin?('<div style="display:flex;gap:4px;"><button class="btn bo bsm" id="ebtn'+m.id+'">Editar</button><button class="btn bd2 bsm" id="dbtn'+m.id+'">X</button></div>'):''}</div>`;
+        const inner=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);margin-top:2px;">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);">${m.tel||''} ${m.email?('&middot; '+m.email):''}</div>${m.resp?('<div style="font-size:10px;color:var(--mu);font-style:italic;">'+m.resp+'</div>'):''}</div>${isAdmin?('<div style="display:flex;gap:4px;"><button class="btn bo bsm" id="ebtn'+m.id+'">✏️</button><button class="btn bd2 bsm" id="dbtn'+m.id+'">🗑️</button></div>'):''}</div>`;
         d.innerHTML=inner;
         if(isAdmin){
           d.querySelector('#ebtn'+m.id).onclick=()=>editMbr(m.id);

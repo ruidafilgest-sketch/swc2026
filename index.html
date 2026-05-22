@@ -869,6 +869,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <label class="btn bo" style="cursor:pointer;">&#8679; Importar Excel
     <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="importVolExcel(this)">
   </label>
+  <button class="btn bo" onclick="abrirGerirSeccoes()">⚙️ Secções</button>
   <button class="btn bo" onclick="exportOrgPDF()">Exportar PDF</button>
 </div>
 <div class="g2">
@@ -1815,7 +1816,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="vl-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">Telemovel</div><input class="fi" id="vl-tl" placeholder="9xx xxx xxx"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Nr. Socio</div><input class="fi" id="vl-ns" placeholder="ex: 208"></div><div class="fg"><div class="fl">Email</div><input class="fi" id="vl-em" placeholder="email@..."></div></div>
     <div class="fg"><div class="fl">Funcao no evento</div><select class="fse" id="vl-fn"><option value="">-- A definir pelo responsavel --</option><option>Recepcao / Acreditacao</option><option>Campo - Pista 1</option><option>Campo - Pista 2</option><option>Cronometragem / Pontuacao</option><option>Transfers OPO</option><option>Shuttle local</option><option>Cerimonia de Abertura</option><option>Cerimonia de Encerramento</option><option>Apoio tecnico</option><option>Comunicacao / Fotografia</option><option>Secretariado</option><option>Logistica geral</option><option>Outro</option></select></div>
-    <div class="fg"><div class="fl">Sector / Director</div><select class="fse" id="vl-dir"><option value="">-- Sem sector atribuído --</option></select></div>
+    <div class="fg"><div class="fl">Director</div><select class="fse" id="vl-dir" onchange="popularSeccoesPorDirector(this.value)"><option value="">-- Sem Director --</option></select></div>
+    <div class="fg"><div class="fl">Secções (pode seleccionar várias)</div><div id="vl-seccoes-checks" style="display:flex;flex-wrap:wrap;gap:6px;padding:6px;background:var(--cb);border-radius:6px;min-height:32px;border:1px solid var(--bs);"><span style="font-size:11px;color:var(--mu);">Selecciona um Director primeiro</span></div></div>
     <div class="fr"><div class="fg"><div class="fl">Seccao / Area</div><input class="fi" id="vl-ar" placeholder="Campo, Recepcao, Cerimonias..."></div><div class="fg"><div class="fl">Periodo de presenca</div><input class="fi" id="vl-pr" placeholder="ex: 13-18 Out"></div></div>
     <div class="fg"><div class="fl">Observacoes</div><input class="fi" id="vl-ob" placeholder="Notas, necessidades especiais..."></div>
   </div>
@@ -2292,7 +2294,7 @@ function startApp(role){
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+cls;}
   setAdminBars();tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -2408,6 +2410,7 @@ function loadAll(){
   _snap('prazos',(docs)=>{_praz=docs;renderCron();},'data');
   _snap('membros',(docs)=>{_mbr=docs;renderOrg();});
   _snap('voluntarios',(docs)=>{_vol=docs;renderOrg();});
+  _snap('seccoes',(docs)=>{_seccoes=docs;renderOrg();renderSeccoes();},'ordem');
   _snap('hoteis',(docs)=>{_hot=docs;renderAlo();});
   _snap('transfers',(docs)=>{_trn=docs;renderAlo();},'data');
   _snap('arbitros',(docs)=>{_arb=docs;renderArb();});
@@ -2670,7 +2673,8 @@ async function saveMbr(){
 async function saveVol(){
   if(!canEdit())return;
   const id=document.getElementById('vl-id').value;
-  const d={nome:document.getElementById('vl-nm').value,tel:document.getElementById('vl-tl').value,numSocio:document.getElementById('vl-ns').value,email:document.getElementById('vl-em').value,funcao:document.getElementById('vl-fn').value,director:document.getElementById('vl-dir')?document.getElementById('vl-dir').value:'',ar:document.getElementById('vl-ar').value,periodo:document.getElementById('vl-pr').value,ob:document.getElementById('vl-ob').value,ts:Date.now()};
+  const d={nome:document.getElementById('vl-nm').value,tel:document.getElementById('vl-tl').value,numSocio:document.getElementById('vl-ns').value,email:document.getElementById('vl-em').value,funcao:document.getElementById('vl-fn').value,director:document.getElementById('vl-dir')?document.getElementById('vl-dir').value:'',
+    seccoes:Array.from(document.querySelectorAll('#vl-seccoes-checks input[type=checkbox]:checked')).map(cb=>cb.value),ar:document.getElementById('vl-ar').value,periodo:document.getElementById('vl-pr').value,ob:document.getElementById('vl-ob').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
   if(id){await _upd('voluntarios',id,d);toast('Voluntario actualizado');}
   else{await _add('voluntarios',d);toast('Voluntario registado');}
@@ -2723,6 +2727,8 @@ function editVol(id){
   document.getElementById('vl-ob').value=v.ob||v.obs||'';
   const vldirEl=document.getElementById('vl-dir');if(vldirEl)vldirEl.value=v.director||'';
   popularSelectDirector();
+  // Popular secções após director estar definido
+  if(v.director) popularSeccoesPorDirector(v.director, v.seccoes||[]);
   openM('m-vol');
 }
 
@@ -2763,6 +2769,17 @@ function renderOrg(){
           d.querySelector('#dbtn'+m.id).onclick=()=>delMbr(m.id);
         }
         coe.appendChild(d);
+        // Secções deste director
+        const secsDir=(_seccoes||[]).filter(s=>s.directorId===m.id);
+        if(secsDir.length){
+          const secBlock=document.createElement('div');
+          secBlock.style.cssText='padding:2px 0 6px 10px;';
+          secBlock.innerHTML=secsDir.map(s=>{
+            const vols=(_vol||[]).filter(v=>(v.seccoes||[]).includes(s.id));
+            return `<div style="font-size:10px;color:var(--mu);border-left:2px solid rgba(201,168,76,.25);padding-left:6px;margin:2px 0;"><span style="color:var(--gl);">▸ ${s.nome}</span>${vols.length?` <span style="font-size:9px;">(${vols.length})</span>`:''}</div>`;
+          }).join('');
+          coe.appendChild(secBlock);
+        }
       });
     }
   }
@@ -3964,7 +3981,7 @@ function exportGuiaPDF(){
 
 // ========== BLOCO C — RESULTADOS E DIARIO DE BORDO ==========
 
-let _resultados=[], _matchplay=[], _diariodb=[];
+let _resultados=[], _matchplay=[], _diariodb=[], _seccoes=[];
 
 function loadBlocoC(){
   _snap('resultados',(docs)=>{_resultados=docs;renderResultados();});
@@ -7647,5 +7664,182 @@ window.editEntradaDB=editEntradaDB;
 // Vendas editar
 // Patches save para edição
 
+
+
+// ══ SISTEMA DE SECÇÕES ══
+
+// Popular checkboxes de secções por director
+function popularSeccoesPorDirector(directorId, seleccionadas){
+  const container = document.getElementById('vl-seccoes-checks');
+  if(!container) return;
+  const secsDoDir = (_seccoes||[]).filter(s=>s.directorId===directorId);
+  if(!secsDoDir.length){
+    container.innerHTML='<span style="font-size:11px;color:var(--mu);">'+(directorId?'Sem secções definidas — use ⚙️ Secções para criar':'Selecciona um Director primeiro')+'</span>';
+    return;
+  }
+  const sels = seleccionadas||[];
+  container.innerHTML = secsDoDir.map(s=>`
+    <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--wh);background:rgba(201,168,76,.08);padding:3px 8px;border-radius:12px;cursor:pointer;">
+      <input type="checkbox" value="${s.id}" ${sels.includes(s.id)?'checked':''} style="cursor:pointer;">
+      ${s.nome}
+    </label>`).join('');
+}
+window.popularSeccoesPorDirector = popularSeccoesPorDirector;
+
+// popularSeccoesPorDirector é chamado via onchange no select
+
+// ── Modal Gerir Secções ──
+let _gerirSeccoesDirId = null;
+
+function abrirGerirSeccoes(){
+  // Criar modal dinamicamente se não existir
+  let modal = document.getElementById('m-seccoes');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.className = 'mo';
+    modal.id = 'm-seccoes';
+    modal.innerHTML = `
+      <div class="mdl" style="max-width:560px;">
+        <div class="mh">
+          <div class="mt2">⚙️ Gerir Secções</div>
+          <button class="mc" onclick="closeM('m-seccoes')">✕</button>
+        </div>
+        <div class="mb">
+          <div class="fg">
+            <div class="fl">Director</div>
+            <select class="fse" id="sec-dir-sel" onchange="renderSeccoesList(this.value)">
+              <option value="">-- Seleccionar Director --</option>
+            </select>
+          </div>
+          <div id="sec-lista" style="margin-top:10px;"></div>
+          <div id="sec-add-form" style="margin-top:10px;display:none;">
+            <div class="fr">
+              <div class="fg"><div class="fl">Nova Secção</div><input class="fi" id="sec-nova-nome" placeholder="Nome da secção..."></div>
+            </div>
+            <button class="btn bp" onclick="adicionarSeccao()" style="margin-top:6px;">+ Adicionar</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  // Popular select de directores
+  const sel = document.getElementById('sec-dir-sel');
+  if(sel){
+    sel.innerHTML = '<option value="">-- Seleccionar Director --</option>';
+    (_mbr||[]).forEach(m=>{
+      if(m.nome){
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = (m.funcao?m.funcao+' — ':'')+m.nome;
+        sel.appendChild(opt);
+      }
+    });
+  }
+  document.getElementById('sec-add-form').style.display='none';
+  document.getElementById('sec-lista').innerHTML='';
+  openM('m-seccoes');
+}
+window.abrirGerirSeccoes = abrirGerirSeccoes;
+
+function renderSeccoesList(dirId){
+  _gerirSeccoesDirId = dirId;
+  const lista = document.getElementById('sec-lista');
+  const addForm = document.getElementById('sec-add-form');
+  if(!dirId){ lista.innerHTML=''; addForm.style.display='none'; return; }
+  addForm.style.display='block';
+  const secsDir = (_seccoes||[]).filter(s=>s.directorId===dirId);
+  if(!secsDir.length){
+    lista.innerHTML='<div style="font-size:11px;color:var(--mu);padding:6px;">Sem secções. Adiciona a primeira abaixo.</div>';
+    return;
+  }
+  lista.innerHTML = secsDir.map(s=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-top:1px solid rgba(201,168,76,.07);">
+      <span style="font-size:12px;color:var(--wh);">${s.nome}</span>
+      ${isAdmin?`<div style="display:flex;gap:4px;">
+        <button class="btn bo bsm" onclick="editarSeccao('${s.id}','${s.nome.replace(/'/g,"\'")}')">✏️</button>
+        <button class="btn bd2 bsm" onclick="eliminarSeccao('${s.id}')">🗑️</button>
+      </div>`:''}
+    </div>`).join('');
+}
+window.renderSeccoesList = renderSeccoesList;
+
+// renderSeccoes -- chamado pelo snap
+function renderSeccoes(){
+  const dirId = document.getElementById('sec-dir-sel')?.value;
+  if(dirId) renderSeccoesList(dirId);
+}
+window.renderSeccoes = renderSeccoes;
+
+async function adicionarSeccao(){
+  if(!isAdmin) return;
+  const dirId = _gerirSeccoesDirId;
+  const nome = document.getElementById('sec-nova-nome').value.trim();
+  if(!dirId || !nome){ toast('Selecciona um Director e escreve o nome','error'); return; }
+  const ordem = (_seccoes||[]).filter(s=>s.directorId===dirId).length;
+  await _add('seccoes', {directorId:dirId, nome, ordem, ts:Date.now()});
+  document.getElementById('sec-nova-nome').value='';
+  toast('Secção adicionada ✅');
+}
+window.adicionarSeccao = adicionarSeccao;
+
+async function editarSeccao(id, nomeActual){
+  const novo = prompt('Novo nome:', nomeActual);
+  if(!novo || novo===nomeActual) return;
+  await _upd('seccoes', id, {nome:novo, ts:Date.now()});
+  toast('Secção actualizada ✅');
+}
+window.editarSeccao = editarSeccao;
+
+async function eliminarSeccao(id){
+  if(!confirm('Eliminar esta secção?')) return;
+  await _del('seccoes', id);
+  toast('Secção eliminada');
+}
+window.eliminarSeccao = eliminarSeccao;
+
+// ── Criar secções pré-definidas (só se não existirem) ──
+async function criarSeccoesPredefinidas(){
+  if(!isAdmin) return;
+  if((_seccoes||[]).length > 0) return; // já existem
+  const SECCOES = {
+    'Diretor Operacional Logística Interna': ['Árbitros de Pista','Vigilância','Tendas','Merchandising','Speakers de Chamada','Manutenções e Limpezas','Pessoal de Apoio ao Campo'],
+    'Diretor Operacional Logística Externa': ['Transfers','Alojamentos','Recepção de Delegações','Ligação a Hotéis'],
+    'Diretor Operacional Bar': ['Gestor do Bar','Catering','Apoio a Árbitros e Staff'],
+    'Diretor Logística Cerimónia e Protocolos': ['Logística de Desfiles','Montagem de Salas','Gestão de Convidados'],
+    'Diretor Operacional do SWC 2026': ['Redes Sociais','Imprensa','Fotografia','Vídeo','Relações Públicas'],
+  };
+  let criadas = 0;
+  for(const m of (_mbr||[])){
+    const lista = SECCOES[m.funcao||''];
+    if(!lista) continue;
+    for(let i=0;i<lista.length;i++){
+      await _add('seccoes', {directorId:m.id, nome:lista[i], ordem:i, ts:Date.now()});
+      criadas++;
+    }
+  }
+  if(criadas > 0) toast(criadas+' secções criadas automaticamente ✅');
+}
+window.criarSeccoesPredefinidas = criarSeccoesPredefinidas;
+
+// renderOrg com secções -- integrado na função original abaixo
+
+// Botão para criar secções pré-definidas -- só aparece se não houver nenhuma
+function checkSeccoesPredefinidas(){
+  setTimeout(()=>{
+    if((_seccoes||[]).length===0 && (_mbr||[]).length>0 && isAdmin){
+      const bar = document.getElementById('bar-org');
+      if(bar && !document.getElementById('btn-criar-seccoes')){
+        const btn = document.createElement('button');
+        btn.id='btn-criar-seccoes';
+        btn.className='btn bp bsm';
+        btn.textContent='🚀 Criar Secções';
+        btn.title='Criar secções pré-definidas para os 5 Directores';
+        btn.onclick=()=>{criarSeccoesPredefinidas();btn.remove();};
+        bar.appendChild(btn);
+      }
+    }
+  },2000);
+}
+window.checkSeccoesPredefinidas = checkSeccoesPredefinidas;
 
 </script>

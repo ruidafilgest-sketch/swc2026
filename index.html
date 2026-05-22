@@ -5989,7 +5989,12 @@ function pdfFooter(doc, isLandscape){
     doc.text('\u00A9 Rui Gonçalves', 5, FY+19);
     doc.setFont('helvetica','normal');
     doc.setTextColor(120,100,70);
-    doc.text('SWC Vizela 2026 - Vizelgolfe - Associacao de Minigolfe de Vizela - NIF 509 227 902', W/2, FY+19, {align:'center'});
+    doc.text('SWC Vizela 2026 - Vizelgolfe - Associacao de Minigolfe de Vizela - NIF 509 227 902', W/2, FY+16, {align:'center'});
+    if(_ibanEvento){
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(80,60,20);
+      doc.text('IBAN: '+_ibanEvento+' | BIC: CGDIPTPL | Caixa Geral de Depositos', W/2, FY+20, {align:'center'});
+    }
     doc.setFont('helvetica','bold');
     doc.setTextColor(140,110,50);
     doc.text(i+' / '+pages, W-5, FY+19, {align:'right'});
@@ -7485,6 +7490,7 @@ async function enviarRelatorioSemanal(forcado){
 }
 
 let _resendKey = '';
+let _ibanEvento = '';
 
 async function guardarResendKey(){
   const key = document.getElementById('cfg-resend-key').value.trim();
@@ -7541,6 +7547,7 @@ async function guardarIBAN(){
   const iban=document.getElementById('cfg-iban').value.trim().toUpperCase();
   if(!iban){toast('IBAN não pode estar vazio','error');return;}
   await setDoc(doc(collection(db,'swc2026_config'),'evento'),{iban},{merge:true});
+  _ibanEvento=iban;
   atualizarIBANDisplay(iban);
   document.getElementById('cfg-iban').value='';
   document.getElementById('cfg-iban').placeholder=iban;
@@ -7556,9 +7563,10 @@ async function carregarIBAN(){
   try{
     const snap=await getDocFromServer(doc(collection(db,'swc2026_config'),'evento'));
     if(snap.exists()&&snap.data().iban){
-      atualizarIBANDisplay(snap.data().iban);
+      _ibanEvento=snap.data().iban;
+      atualizarIBANDisplay(_ibanEvento);
       const inp=document.getElementById('cfg-iban');
-      if(inp)inp.placeholder=snap.data().iban;
+      if(inp)inp.placeholder=_ibanEvento;
     }
   }catch(e){}
 }

@@ -937,7 +937,14 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="cd"><div class="cdh"><div><div class="cdt">Árbitros &amp; Juízes WMF/EMF</div></div></div><div class="cdb" id="lst-arb"><div class="em"><div class="emi">◎</div><div class="emt">Sem árbitros registados</div></div></div></div>
 </div>
 <div class="cd"><div class="cdh"><div><div class="cdt">Protocolo Antidopagem AMA/WMF</div><div class="cds">Obrigatório durante treino oficial e dias de competição</div></div></div>
-  <div class="cdb"><div class="g3">
+  <div class="cdb"><div style="background:var(--cb);border:1px solid var(--bs);border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;">
+  <div style="font-size:20px;">🏦</div>
+  <div>
+    <div style="font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.1em;">IBAN do Evento</div>
+    <div style="font-size:13px;font-weight:700;color:var(--wh);font-family:monospace;" id="dash-iban-card">Não configurado</div>
+  </div>
+</div>
+<div class="g3">
     <div class="sm"><div class="sml">WC Homens (separado)</div><div class="smv">⚪</div><div class="smn">local a confirmar</div></div>
     <div class="sm"><div class="sml">WC Mulheres (separado)</div><div class="smv">⚪</div><div class="smn">local a confirmar</div></div>
     <div class="sm"><div class="sml">Sala espera atletas</div><div class="smv">⚪</div><div class="smn">refrigerantes fechados</div></div>
@@ -1488,6 +1495,14 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">BCK</span>Backup & Exportacao Total<button class="hbtn" data-help="backup" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Exportar todos os dados do sistema - Arquivo offline - Enviar a FPM/WMF</div>
 <div id="email-config-section" style="margin-bottom:14px;"></div>
+<div style="background:var(--cb);border:1px solid var(--bs);border-radius:10px;padding:14px;margin-bottom:14px;">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:10px;">Conta Bancária do Evento</div>
+  <div style="font-size:12px;color:var(--se);margin-bottom:10px;">IBAN: <strong style="color:var(--wh);" id="dash-iban-display">Não configurado</strong></div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <input type="text" id="cfg-iban" class="fi" style="font-size:11px;padding:4px 8px;max-width:320px;" placeholder="PT50 0000 0000 0000 0000 0000 0">
+    <button class="btn bp bsm" onclick="guardarIBAN()">Guardar</button>
+  </div>
+</div>
 <div class="av"><strong>Backup completo:</strong> Exporta todos os dados do Firebase num unico ficheiro JSON organizado por modulo. Guarda offline e envia a quem precisar.</div>
 <div class="g4" style="margin-bottom:20px;">
   <div class="sm"><div class="sml">Atletas</div><div class="smv" id="bk-atl">0</div></div>
@@ -2277,7 +2292,7 @@ function startApp(role){
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+cls;}
   setAdminBars();tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(carregarResendKey,1500);
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -2969,7 +2984,7 @@ function renderIPDJ(){
 function renderWMF(){
   const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
   const c1=325,c2=2000,liq=taxas-c1-c2;
-  document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement - WMF/EMF</div><div class="cds">SWC Vizela 2026 - Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 - WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 - Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) - 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) - post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0045 1401 4037 3110 4744 6 - NIF 509 227 902<br>Vizelgolfe - Associação de Minigolfe de Vizela</div></div></div>`;
+  document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement - WMF/EMF</div><div class="cds">SWC Vizela 2026 - Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 - WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 - Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) - 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) - post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0035 0931 0002 8547 9306 4 - NIF 509 227 902<br>Vizelgolfe - Associação de Minigolfe de Vizela</div></div></div>`;
 }
 
 //  CHECKLIST WMF OFICIAL 
@@ -6302,7 +6317,7 @@ function exportWMF(){
   doc.setFontSize(9);
   doc.setTextColor(150,150,150);
   doc.text('Organising Association: Vizelgolfe - Associação de Minigolfe de Vizela', 14, y);
-  doc.text('NIF: 509 227 902 | IBAN: PT50 0045 1401 4037 3110 4744 6', 14, y+5);
+  doc.text('NIF: 509 227 902 | IBAN: PT50 0035 0931 0002 8547 9306 4 | BIC: CGDIPTPL | Caixa Geral de Depósitos', 14, y+5);
   y+=14;
 
   doc.autoTable({
@@ -7521,6 +7536,33 @@ window.guardarResendKey=guardarResendKey;
 window.enviarAlertaManual=()=>checkEmailAlertas(true);
 window.testeEmail=testeEmail;
 window.guardarDiaRelatorio=guardarDiaRelatorio;
+
+async function guardarIBAN(){
+  const iban=document.getElementById('cfg-iban').value.trim().toUpperCase();
+  if(!iban){toast('IBAN não pode estar vazio','error');return;}
+  await setDoc(doc(collection(db,'swc2026_config'),'evento'),{iban},{merge:true});
+  atualizarIBANDisplay(iban);
+  document.getElementById('cfg-iban').value='';
+  document.getElementById('cfg-iban').placeholder=iban;
+  toast('IBAN guardado ✅');
+}
+
+function atualizarIBANDisplay(iban){
+  const els=['dash-iban-display','dash-iban-card'];
+  els.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=iban||'Não configurado';});
+}
+
+async function carregarIBAN(){
+  try{
+    const snap=await getDocFromServer(doc(collection(db,'swc2026_config'),'evento'));
+    if(snap.exists()&&snap.data().iban){
+      atualizarIBANDisplay(snap.data().iban);
+      const inp=document.getElementById('cfg-iban');
+      if(inp)inp.placeholder=snap.data().iban;
+    }
+  }catch(e){}
+}
+window.guardarIBAN=guardarIBAN;
 window.carregarConfigEmail=carregarConfigEmail;
 window.enviarRelatorioSemanal=()=>enviarRelatorioSemanal(true);
 

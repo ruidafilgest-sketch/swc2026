@@ -1816,8 +1816,11 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="vl-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">Telemovel</div><input class="fi" id="vl-tl" placeholder="9xx xxx xxx"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Nr. Socio</div><input class="fi" id="vl-ns" placeholder="ex: 208"></div><div class="fg"><div class="fl">Email</div><input class="fi" id="vl-em" placeholder="email@..."></div></div>
     <div class="fg"><div class="fl">Funcao no evento</div><select class="fse" id="vl-fn"><option value="">-- A definir pelo responsavel --</option><option>Recepcao / Acreditacao</option><option>Campo - Pista 1</option><option>Campo - Pista 2</option><option>Cronometragem / Pontuacao</option><option>Transfers OPO</option><option>Shuttle local</option><option>Cerimonia de Abertura</option><option>Cerimonia de Encerramento</option><option>Apoio tecnico</option><option>Comunicacao / Fotografia</option><option>Secretariado</option><option>Logistica geral</option><option>Outro</option></select></div>
-    <div class="fg"><div class="fl">Director</div><select class="fse" id="vl-dir" onchange="popularSeccoesPorDirector(this.value)"><option value="">-- Sem Director --</option></select></div>
-    <div class="fg"><div class="fl">Secções (pode seleccionar várias)</div><div id="vl-seccoes-checks" style="display:flex;flex-wrap:wrap;gap:6px;padding:6px;background:var(--cb);border-radius:6px;min-height:32px;border:1px solid var(--bs);"><span style="font-size:11px;color:var(--mu);">Selecciona um Director primeiro</span></div></div>
+    <div class="fg"><div class="fl">Directores e Secções</div>
+      <div id="vl-dirs-seccoes" style="background:var(--cb);border:1px solid var(--bs);border-radius:6px;padding:8px;max-height:220px;overflow-y:auto;">
+        <span style="font-size:11px;color:var(--mu);">A carregar...</span>
+      </div>
+    </div>
     <div class="fr"><div class="fg"><div class="fl">Seccao / Area</div><input class="fi" id="vl-ar" placeholder="Campo, Recepcao, Cerimonias..."></div><div class="fg"><div class="fl">Periodo de presenca</div><input class="fi" id="vl-pr" placeholder="ex: 13-18 Out"></div></div>
     <div class="fg"><div class="fl">Observacoes</div><input class="fi" id="vl-ob" placeholder="Notas, necessidades especiais..."></div>
   </div>
@@ -2673,8 +2676,9 @@ async function saveMbr(){
 async function saveVol(){
   if(!canEdit())return;
   const id=document.getElementById('vl-id').value;
-  const d={nome:document.getElementById('vl-nm').value,tel:document.getElementById('vl-tl').value,numSocio:document.getElementById('vl-ns').value,email:document.getElementById('vl-em').value,funcao:document.getElementById('vl-fn').value,director:document.getElementById('vl-dir')?document.getElementById('vl-dir').value:'',
-    seccoes:Array.from(document.querySelectorAll('#vl-seccoes-checks input[type=checkbox]:checked')).map(cb=>cb.value),ar:document.getElementById('vl-ar').value,periodo:document.getElementById('vl-pr').value,ob:document.getElementById('vl-ob').value,ts:Date.now()};
+  const d={nome:document.getElementById('vl-nm').value,tel:document.getElementById('vl-tl').value,numSocio:document.getElementById('vl-ns').value,email:document.getElementById('vl-em').value,funcao:document.getElementById('vl-fn').value,directores:Array.from(document.querySelectorAll('#vl-dirs-seccoes input[type=checkbox][data-type=dir]:checked')).map(cb=>cb.value),
+    seccoes:Array.from(document.querySelectorAll('#vl-dirs-seccoes input[type=checkbox][data-type=sec]:checked')).map(cb=>cb.value),
+    director:Array.from(document.querySelectorAll('#vl-dirs-seccoes input[type=checkbox][data-type=dir]:checked')).map(cb=>cb.value)[0]||'',ar:document.getElementById('vl-ar').value,periodo:document.getElementById('vl-pr').value,ob:document.getElementById('vl-ob').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
   if(id){await _upd('voluntarios',id,d);toast('Voluntario actualizado');}
   else{await _add('voluntarios',d);toast('Voluntario registado');}
@@ -2691,8 +2695,7 @@ function openModalVol(){
     const el=document.getElementById(id);if(el)el.value='';
   });
   document.getElementById('vl-fn').value='';
-  // Popular select de director
-  popularSelectDirector();
+  popularDirsSeccoes([], []);
   openM('m-vol');
 }
 window.openModalVol=openModalVol;
@@ -2725,10 +2728,7 @@ function editVol(id){
   document.getElementById('vl-ar').value=v.ar||v.area||'';
   document.getElementById('vl-pr').value=v.periodo||'';
   document.getElementById('vl-ob').value=v.ob||v.obs||'';
-  const vldirEl=document.getElementById('vl-dir');if(vldirEl)vldirEl.value=v.director||'';
-  popularSelectDirector();
-  // Popular secções após director estar definido
-  if(v.director) popularSeccoesPorDirector(v.director, v.seccoes||[]);
+  popularDirsSeccoes(v.directores||[v.director||''].filter(Boolean), v.seccoes||[]);
   openM('m-vol');
 }
 
@@ -2809,13 +2809,16 @@ function renderOrg(){
 
   vol.innerHTML='';
 
-  // Agrupar por director
+  // Agrupar por director -- suporta múltiplos directores por voluntário
   const grupos={};
   const semDir=[];
   _vol.forEach(v=>{
-    if(v.director){
-      if(!grupos[v.director])grupos[v.director]=[];
-      grupos[v.director].push(v);
+    const dirs = v.directores && v.directores.length ? v.directores : (v.director ? [v.director] : []);
+    if(dirs.length){
+      dirs.forEach(dirId=>{
+        if(!grupos[dirId])grupos[dirId]=[];
+        grupos[dirId].push(v);
+      });
     }else{
       semDir.push(v);
     }
@@ -2825,7 +2828,8 @@ function renderOrg(){
     const d=document.createElement('div');
     d.style.cssText='padding:8px 0 8px 12px;border-top:1px solid rgba(201,168,76,.05);';
     const fn=v.funcao||'';
-    const badges=fn?`<span class="bge bg-g" style="font-size:9px;">${fn}</span>`:'';
+    const volSecs=(v.seccoes||[]).map(sid=>{const s=(_seccoes||[]).find(x=>x.id===sid);return s?s.nome:'';}).filter(Boolean);
+    const badges=(fn?`<span class="bge bg-g" style="font-size:9px;">${fn}</span> `:'')+(volSecs.map(s=>`<span class="bge bg-mu" style="font-size:9px;">${s}</span>`).join(' '));
     const extra=(v.tel?`<div style="font-size:10px;color:var(--mu);">${v.tel}${v.email?' · '+v.email:''}</div>`:'')+
                 (v.periodo?`<div style="font-size:10px;color:var(--mu);">${v.periodo}</div>`:'')+
                 (v.ob||v.obs?`<div style="font-size:10px;color:var(--mu);font-style:italic;">${v.ob||v.obs}</div>`:'');
@@ -6709,19 +6713,138 @@ function renderPrazosTable(doc, prazos, startY){
 
 //  ORGANIZAÇÃO PDF 
 function exportOrgPDF(){
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Organizacao & COE','SWC Vizela 2026 - Comite Organizador Executivo',false);
-  const rowsCOE = _mbr.map(m=>[m.nome||'',m.funcao||'',m.tel||'',m.email||'']);
-  doc.autoTable({startY:42,head:[['Nome','Função COE','Telemóvel','Email']],body:rowsCOE.length?rowsCOE:[['','Sem membros da Direcção Operacional registados','','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},margin:{left:14,right:14,bottom:28}});
-  let y = doc.lastAutoTable.finalY + 8;
-  doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
-  doc.text('Equipa de Apoio - Voluntários', 14, y); y+=4;
-  const rowsVol = _vol.map(v=>[v.nome||'',v.area||'',v.periodo||'',v.tel||'']);
-  doc.autoTable({startY:y,head:[['Nome','Área de actuação','Período','Telemóvel']],body:rowsVol.length?rowsVol:[['','Sem voluntários registados','','']],theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},margin:{left:14,right:14,bottom:28}});
-  pdfFooter(doc,false);doc.save('SWC2026_Organizacao_COE.pdf');toast('PDF gerado com sucesso');
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+  pdfHeader(doc, 'Organograma SWC Vizela 2026', 'Direcção Operacional · Secções · Equipas');
+  let y = 42;
+  const W = 210;
+  const pageH = 297;
+
+  function checkPage(need){
+    if(y + need > pageH - 25){ doc.addPage(); pdfHeader(doc,'Organograma SWC Vizela 2026','Direcção Operacional · Secções · Equipas'); y=42; }
+  }
+
+  if(!_mbr.length){
+    doc.setFontSize(10); doc.setTextColor(120,100,70);
+    doc.text('Sem Directores registados', 14, y); y+=8;
+  }
+
+  _mbr.forEach(m=>{
+    checkPage(20);
+    // Director
+    doc.setFillColor(8,16,32);
+    doc.roundedRect(8, y, W-16, 12, 2, 2, 'F');
+    doc.setFillColor(201,168,76);
+    doc.roundedRect(8, y, 3, 12, 1, 1, 'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(10);
+    doc.setTextColor(201,168,76);
+    doc.text((m.funcao||'Director').substring(0,50), 14, y+5);
+    doc.setFontSize(8);
+    doc.setTextColor(200,180,140);
+    doc.text(m.nome||'', 14, y+9.5);
+    if(m.email||m.tel){
+      doc.setFontSize(7); doc.setTextColor(150,130,100);
+      doc.text([m.tel,m.email].filter(Boolean).join(' · '), W-10, y+7, {align:'right'});
+    }
+    y += 15;
+
+    // Secções deste director
+    const secsDir = (_seccoes||[]).filter(s=>s.directorId===m.id);
+    if(!secsDir.length){
+      checkPage(8);
+      doc.setFontSize(8); doc.setTextColor(120,100,70);
+      doc.setFont('helvetica','italic');
+      doc.text('  Sem secções definidas', 16, y); y+=6;
+    } else {
+      secsDir.forEach(sec=>{
+        checkPage(16);
+        // Secção
+        doc.setFillColor(20,40,80);
+        doc.roundedRect(12, y, W-24, 9, 1, 1, 'F');
+        doc.setFont('helvetica','bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(180,160,100);
+        doc.text('▸ '+sec.nome, 16, y+6);
+        y += 11;
+
+        // Voluntários nesta secção
+        const vols = (_vol||[]).filter(v=>(v.seccoes||[]).includes(sec.id));
+        if(!vols.length){
+          checkPage(6);
+          doc.setFontSize(7.5); doc.setFont('helvetica','italic'); doc.setTextColor(100,90,70);
+          doc.text('    Sem voluntários atribuídos', 20, y); y+=5;
+        } else {
+          vols.forEach(v=>{
+            checkPage(8);
+            doc.setFillColor(240,238,232);
+            doc.rect(16, y-0.5, W-32, 7, 'F');
+            doc.setFont('helvetica','normal');
+            doc.setFontSize(8);
+            doc.setTextColor(30,30,30);
+            doc.text('↳ '+(v.nome||''), 20, y+4);
+            if(v.funcao){
+              doc.setFontSize(7); doc.setTextColor(100,80,40);
+              doc.text(v.funcao, W-12, y+4, {align:'right'});
+            }
+            y += 8;
+          });
+        }
+        y += 2;
+      });
+    }
+
+    // Voluntários do director sem secção específica
+    const dirsVols = (_vol||[]).filter(v=>{
+      const dirs = v.directores&&v.directores.length?v.directores:(v.director?[v.director]:[]);
+      return dirs.includes(m.id) && !(v.seccoes||[]).some(sid=>(_seccoes||[]).find(s=>s.id===sid&&s.directorId===m.id));
+    });
+    if(dirsVols.length){
+      checkPage(12);
+      doc.setFillColor(20,40,80);
+      doc.roundedRect(12, y, W-24, 9, 1, 1, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(180,160,100);
+      doc.text('▸ Apoio Geral', 16, y+6);
+      y += 11;
+      dirsVols.forEach(v=>{
+        checkPage(8);
+        doc.setFillColor(240,238,232);
+        doc.rect(16, y-0.5, W-32, 7, 'F');
+        doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(30,30,30);
+        doc.text('↳ '+(v.nome||''), 20, y+4);
+        y += 8;
+      });
+      y += 2;
+    }
+    y += 5;
+  });
+
+  // Voluntários sem director
+  const semDir = (_vol||[]).filter(v=>{
+    const dirs = v.directores&&v.directores.length?v.directores:(v.director?[v.director]:[]);
+    return !dirs.length;
+  });
+  if(semDir.length){
+    checkPage(16);
+    doc.setFillColor(60,60,60);
+    doc.roundedRect(8, y, W-16, 12, 2, 2, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(200,200,200);
+    doc.text('Sem sector atribuído', 14, y+8);
+    y += 15;
+    semDir.forEach(v=>{
+      checkPage(8);
+      doc.setFillColor(240,238,232);
+      doc.rect(12, y-0.5, W-24, 7, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(30,30,30);
+      doc.text('↳ '+(v.nome||''), 16, y+4);
+      y += 8;
+    });
+  }
+
+  pdfFooter(doc, false);
+  doc.save('SWC2026_Organograma.pdf');
 }
 
-//  SEGURANÇA PDF 
 function exportSegPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Seguranca & Inventario WMF','SWC Vizela 2026 - Equipamento e Seguros',false);
@@ -7669,22 +7792,6 @@ window.editEntradaDB=editEntradaDB;
 // ══ SISTEMA DE SECÇÕES ══
 
 // Popular checkboxes de secções por director
-function popularSeccoesPorDirector(directorId, seleccionadas){
-  const container = document.getElementById('vl-seccoes-checks');
-  if(!container) return;
-  const secsDoDir = (_seccoes||[]).filter(s=>s.directorId===directorId);
-  if(!secsDoDir.length){
-    container.innerHTML='<span style="font-size:11px;color:var(--mu);">'+(directorId?'Sem secções definidas — use ⚙️ Secções para criar':'Selecciona um Director primeiro')+'</span>';
-    return;
-  }
-  const sels = seleccionadas||[];
-  container.innerHTML = secsDoDir.map(s=>`
-    <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--wh);background:rgba(201,168,76,.08);padding:3px 8px;border-radius:12px;cursor:pointer;">
-      <input type="checkbox" value="${s.id}" ${sels.includes(s.id)?'checked':''} style="cursor:pointer;">
-      ${s.nome}
-    </label>`).join('');
-}
-window.popularSeccoesPorDirector = popularSeccoesPorDirector;
 
 // popularSeccoesPorDirector é chamado via onchange no select
 
@@ -7841,5 +7948,38 @@ function checkSeccoesPredefinidas(){
   },2000);
 }
 window.checkSeccoesPredefinidas = checkSeccoesPredefinidas;
+
+
+// ── MULTI-DIRECTOR + SECÇÕES ──
+
+// Popular o painel de Directores+Secções no modal
+function popularDirsSeccoes(dirsSelec, secsSelec){
+  const container = document.getElementById('vl-dirs-seccoes');
+  if(!container) return;
+  if(!(_mbr||[]).length){ container.innerHTML='<span style="font-size:11px;color:var(--mu);">Sem Directores registados</span>'; return; }
+  container.innerHTML = (_mbr||[]).map(m=>{
+    const secsDir = (_seccoes||[]).filter(s=>s.directorId===m.id);
+    const dirChecked = dirsSelec.includes(m.id);
+    const secsHtml = secsDir.length ? secsDir.map(s=>`
+      <label style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mu);margin-left:16px;cursor:pointer;">
+        <input type="checkbox" data-type="sec" value="${s.id}" ${secsSelec.includes(s.id)?'checked':''} style="cursor:pointer;">
+        ${s.nome}
+      </label>`).join('') : '<div style="font-size:10px;color:var(--mu);margin-left:16px;font-style:italic;">Sem secções definidas</div>';
+    return `<div style="margin-bottom:6px;border:1px solid rgba(201,168,76,.15);border-radius:6px;padding:6px;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--gl);cursor:pointer;">
+        <input type="checkbox" data-type="dir" value="${m.id}" ${dirChecked?'checked':''} style="cursor:pointer;">
+        ${m.funcao||'Director'} — ${m.nome||''}
+      </label>
+      <div style="margin-top:4px;">${secsHtml}</div>
+    </div>`;
+  }).join('');
+}
+window.popularDirsSeccoes = popularDirsSeccoes;
+
+// Compatibilidade -- manter popularSeccoesPorDirector funcional
+function popularSeccoesPorDirector(dirId, selec){
+  popularDirsSeccoes(dirId?[dirId]:[], selec||[]);
+}
+window.popularSeccoesPorDirector = popularSeccoesPorDirector;
 
 </script>

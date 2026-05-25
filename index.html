@@ -6715,13 +6715,13 @@ function renderPrazosTable(doc, prazos, startY){
 function exportOrgPDF(){
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-  pdfHeader(doc, 'Organograma SWC Vizela 2026', 'Direcção Operacional · Secções · Equipas');
+  pdfHeader(doc, 'Organograma SWC Vizela 2026', 'Direccao Operacional - Seccoes - Equipas');
   let y = 42;
   const W = 210;
   const pageH = 297;
 
   function checkPage(need){
-    if(y + need > pageH - 25){ doc.addPage(); pdfHeader(doc,'Organograma SWC Vizela 2026','Direcção Operacional · Secções · Equipas'); y=42; }
+    if(y + need > pageH - 25){ doc.addPage(); pdfHeader(doc,'Organograma SWC Vizela 2026','Direccao Operacional - Seccoes - Equipas'); y=42; }
   }
 
   if(!_mbr.length){
@@ -6737,7 +6737,7 @@ function exportOrgPDF(){
     doc.setFillColor(201,168,76);
     doc.roundedRect(8, y, 3, 12, 1, 1, 'F');
     doc.setFont('helvetica','bold');
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setTextColor(201,168,76);
     doc.text((m.funcao||'Director').substring(0,50), 14, y+5);
     doc.setFontSize(8);
@@ -6745,35 +6745,35 @@ function exportOrgPDF(){
     doc.text(m.nome||'', 14, y+9.5);
     if(m.email||m.tel){
       doc.setFontSize(7); doc.setTextColor(150,130,100);
-      doc.text([m.tel,m.email].filter(Boolean).join(' · '), W-10, y+7, {align:'right'});
+      doc.text([m.tel,m.email].filter(Boolean).join(' - '), W-10, y+7, {align:'right'});
     }
     y += 15;
 
-    // Secções deste director
+    // Seccoes deste director
     const secsDir = (_seccoes||[]).filter(s=>s.directorId===m.id);
     if(!secsDir.length){
       checkPage(8);
       doc.setFontSize(8); doc.setTextColor(120,100,70);
       doc.setFont('helvetica','italic');
-      doc.text('  Sem secções definidas', 16, y); y+=6;
+      doc.text('  Sem seccões definidas', 16, y); y+=6;
     } else {
       secsDir.forEach(sec=>{
         checkPage(16);
-        // Secção
+        // Seccao
         doc.setFillColor(20,40,80);
         doc.roundedRect(12, y, W-24, 9, 1, 1, 'F');
         doc.setFont('helvetica','bold');
         doc.setFontSize(8.5);
         doc.setTextColor(180,160,100);
-        doc.text('▸ '+sec.nome, 16, y+6);
+        doc.setFont('helvetica','bold');doc.text('  > '+sec.nome, 16, y+6);
         y += 11;
 
-        // Voluntários nesta secção
+        // Voluntarios nesta seccao
         const vols = (_vol||[]).filter(v=>(v.seccoes||[]).includes(sec.id));
         if(!vols.length){
           checkPage(6);
           doc.setFontSize(7.5); doc.setFont('helvetica','italic'); doc.setTextColor(100,90,70);
-          doc.text('    Sem voluntários atribuídos', 20, y); y+=5;
+          doc.text('    Sem voluntarios atribuidos', 20, y); y+=5;
         } else {
           vols.forEach(v=>{
             checkPage(8);
@@ -6782,7 +6782,7 @@ function exportOrgPDF(){
             doc.setFont('helvetica','normal');
             doc.setFontSize(8);
             doc.setTextColor(30,30,30);
-            doc.text('↳ '+(v.nome||''), 20, y+4);
+            doc.setFont('helvetica','normal');doc.text('     - '+(v.nome||''), 20, y+4);
             if(v.funcao){
               doc.setFontSize(7); doc.setTextColor(100,80,40);
               doc.text(v.funcao, W-12, y+4, {align:'right'});
@@ -6794,7 +6794,7 @@ function exportOrgPDF(){
       });
     }
 
-    // Voluntários do director sem secção específica
+    // Voluntarios do director sem seccao especifica
     const dirsVols = (_vol||[]).filter(v=>{
       const dirs = v.directores&&v.directores.length?v.directores:(v.director?[v.director]:[]);
       return dirs.includes(m.id) && !(v.seccoes||[]).some(sid=>(_seccoes||[]).find(s=>s.id===sid&&s.directorId===m.id));
@@ -6804,14 +6804,14 @@ function exportOrgPDF(){
       doc.setFillColor(20,40,80);
       doc.roundedRect(12, y, W-24, 9, 1, 1, 'F');
       doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(180,160,100);
-      doc.text('▸ Apoio Geral', 16, y+6);
+      doc.setFont('helvetica','bold');doc.text('  > Apoio Geral', 16, y+6);
       y += 11;
       dirsVols.forEach(v=>{
         checkPage(8);
         doc.setFillColor(240,238,232);
         doc.rect(16, y-0.5, W-32, 7, 'F');
         doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(30,30,30);
-        doc.text('↳ '+(v.nome||''), 20, y+4);
+        doc.setFont('helvetica','normal');doc.text('     - '+(v.nome||''), 20, y+4);
         y += 8;
       });
       y += 2;
@@ -6819,7 +6819,7 @@ function exportOrgPDF(){
     y += 5;
   });
 
-  // Voluntários sem director
+  // Voluntarios sem director
   const semDir = (_vol||[]).filter(v=>{
     const dirs = v.directores&&v.directores.length?v.directores:(v.director?[v.director]:[]);
     return !dirs.length;
@@ -6829,14 +6829,14 @@ function exportOrgPDF(){
     doc.setFillColor(60,60,60);
     doc.roundedRect(8, y, W-16, 12, 2, 2, 'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(200,200,200);
-    doc.text('Sem sector atribuído', 14, y+8);
+    doc.text('Sem sector atribuido', 14, y+8);
     y += 15;
     semDir.forEach(v=>{
       checkPage(8);
       doc.setFillColor(240,238,232);
       doc.rect(12, y-0.5, W-24, 7, 'F');
       doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(30,30,30);
-      doc.text('↳ '+(v.nome||''), 16, y+4);
+      doc.setFont('helvetica','normal');doc.text('     - '+(v.nome||''), 16, y+4);
       y += 8;
     });
   }
@@ -6849,7 +6849,7 @@ function exportSegPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Seguranca & Inventario WMF','SWC Vizela 2026 - Equipamento e Seguros',false);
   const rowsInv = _inv.map(i=>[i.desc||'',String(i.qty||1),i.data||'',i.estado||'',i.obs||'']);
-  doc.autoTable({startY:42,head:[['Descrição','Qtd.','Data chegada','Estado','Obs.']],body:rowsInv.length?rowsInv:[['','','','Sem itens registados','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{1:{cellWidth:15,halign:'center'},2:{cellWidth:25},3:{cellWidth:40}},margin:{left:14,right:14,bottom:28}});
+  doc.autoTable({startY:42,head:[['Descricao','Qtd.','Data chegada','Estado','Obs.']],body:rowsInv.length?rowsInv:[['','','','Sem itens registados','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{1:{cellWidth:15,halign:'center'},2:{cellWidth:25},3:{cellWidth:40}},margin:{left:14,right:14,bottom:28}});
   pdfFooter(doc,false);doc.save('SWC2026_Inventario_WMF.pdf');toast('PDF gerado com sucesso');
 }
 
@@ -6863,7 +6863,7 @@ function exportChkPDF(){
     const scfg=STATUS_CFG[st]||STATUS_CFG.Pending;
     return[String(it.id),L==='PT'?it.pt:it.en,it.resp||'',L==='PT'?scfg.pt:scfg.en];
   });
-  doc.autoTable({startY:38,head:[['#',L==='PT'?'Item':'Item',L==='PT'?'Responsável':'Responsible',L==='PT'?'Estado':'Status']],body:rows,theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:10,halign:'center'},1:{cellWidth:130},2:{cellWidth:25},3:{cellWidth:25,halign:'center'}},margin:{left:5,right:5}});
+  doc.autoTable({startY:38,head:[['#',L==='PT'?'Item':'Item',L==='PT'?'Responsavel':'Responsible',L==='PT'?'Estado':'Status']],body:rows,theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:10,halign:'center'},1:{cellWidth:130},2:{cellWidth:25},3:{cellWidth:25,halign:'center'}},margin:{left:5,right:5}});
   pdfFooter(doc);doc.save('SWC2026_Checklist_WMF.pdf');toast('PDF gerado com sucesso');
 }
 
@@ -7061,7 +7061,7 @@ function exportConsigPDF(){
 }
 
 
-//  EXPOR FUNÇÕES AO HTML 
+//  EXPOR FUNCÕES AO HTML 
 window.doLogin=doLogin;
 window._doLogin=doLogin;
 window.doLogout=doLogout;

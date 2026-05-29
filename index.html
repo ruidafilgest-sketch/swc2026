@@ -1849,7 +1849,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <input type="hidden" id="vl-id">
     <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="vl-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">Telemovel</div><input class="fi" id="vl-tl" placeholder="9xx xxx xxx"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Nr. Socio</div><input class="fi" id="vl-ns" placeholder="ex: 208"></div><div class="fg"><div class="fl">Email</div><input class="fi" id="vl-em" placeholder="email@..."></div></div>
-    <div class="fg"><div class="fl">Funcao no evento</div><select class="fse" id="vl-fn"><option value="">-- A definir pelo responsavel --</option><option>Recepcao / Acreditacao</option><option>Campo - Pista 1</option><option>Campo - Pista 2</option><option>Cronometragem / Pontuacao</option><option>Transfers OPO</option><option>Shuttle local</option><option>Cerimonia de Abertura</option><option>Cerimonia de Encerramento</option><option>Apoio tecnico</option><option>Comunicacao / Fotografia</option><option>Secretariado</option><option>Logistica geral</option><option>Outro</option></select></div>
+    <div class="fg"><div class="fl">Funcao no evento</div><select class="fse" id="vl-fn"><option value="">-- A definir pelo responsavel --</option><option>Recepcao / Acreditacao</option><option>Campo - Pista 2</option><option>Campo - Pista 7</option><option>Cronometragem / Pontuacao</option><option>Transfers OPO</option><option>Shuttle local</option><option>Speaker de Chamada</option><option>Cerimonia de Abertura</option><option>Cerimonia de Encerramento</option><option>Apoio tecnico</option><option>Comunicacao / Fotografia</option><option>Secretariado</option><option>Logistica geral</option><option>Bar / Restauracao</option><option>Outro</option></select></div>
     <div class="fg"><div class="fl">Directores e Secções</div>
       <div id="vl-dirs-seccoes" style="background:var(--cb);border:1px solid var(--bs);border-radius:6px;padding:8px;max-height:220px;overflow-y:auto;">
         <span style="font-size:11px;color:var(--mu);">A carregar...</span>
@@ -8100,8 +8100,50 @@ function renderMarcadoresMapa() {
       </div>`;
 
     // Clique para mostrar painel de informação
+    // Drag & drop em modo edição
+    let _isDragging = false;
+    let _dragStartX, _dragStartY;
+
+    el.addEventListener('mousedown', function(e) {
+      if(!_modoEdicao || !isAdmin) return;
+      _isDragging = false;
+      _dragStartX = e.clientX;
+      _dragStartY = e.clientY;
+      const mapaImg = document.getElementById('mapa-img');
+      const rect = mapaImg.getBoundingClientRect();
+
+      function onMove(ev) {
+        const dx = Math.abs(ev.clientX - _dragStartX);
+        const dy = Math.abs(ev.clientY - _dragStartY);
+        if(dx > 3 || dy > 3) _isDragging = true;
+        if(!_isDragging) return;
+        const x = ((ev.clientX - rect.left) / rect.width * 100).toFixed(2);
+        const y = ((ev.clientY - rect.top) / rect.height * 100).toFixed(2);
+        el.style.left = x + '%';
+        el.style.top = y + '%';
+      }
+
+      function onUp(ev) {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        if(_isDragging) {
+          const x = ((ev.clientX - rect.left) / rect.width * 100).toFixed(2);
+          const y = ((ev.clientY - rect.top) / rect.height * 100).toFixed(2);
+          const idx = _marcadoresMapa.findIndex(x=>x.id===m.id);
+          if(idx>=0){ _marcadoresMapa[idx].x = x; _marcadoresMapa[idx].y = y; }
+          guardarMarcadoresMapa();
+          toast('Posto reposicionado ✅');
+        }
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+      e.preventDefault();
+    });
+
     el.addEventListener('click', function(e) {
       if(_modoEdicao) return;
+      if(_isDragging) { _isDragging = false; return; }
       e.stopPropagation();
       mostrarPainelMarcador(m, tipo, volsPostos, el);
     });

@@ -5874,8 +5874,11 @@ let _ultimoEmailPrazo = 0;
 
 async function checkEmailAlertas(){
   if(!isAdmin) return;
-  // So enviar 1 vez por hora no maximo
-  if(Date.now() - _ultimoEmailPrazo < 3600000) return;
+  // So enviar automaticamente às segundas-feiras
+  const _diaSemana = new Date().getDay();
+  if(_diaSemana !== 1) return; // 1 = Segunda-feira
+  // So enviar 1 vez por semana no maximo
+  if(Date.now() - _ultimoEmailPrazo < 604800000) return;
 
   const hoje = new Date();
   const urgentes = _praz.filter(p=>{

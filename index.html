@@ -2664,7 +2664,13 @@ function renderCron(){
       {data:'2026-10-12',titulo:'CHK#45 - Primeiros socorros confirmados no local',resp:'Seguranca',prioridade:'critico',estado:'pendente'},
       {data:'2026-10-12',titulo:'CHK#15 - Voluntarios suficientes no campo confirmados',resp:'COE',prioridade:'critico',estado:'pendente'},
       {data:'2026-10-12',titulo:'CHK#5 - Caixas de correio para distribuicao de informacao (Clubes/Arbitros)',resp:'Secretariado',prioridade:'normal',estado:'pendente'},
-    ];
+    ,
+      {data:'2026-08-31',titulo:'Prazo registo atletas na EMF',resp:'Organizacao',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-09',titulo:'Inicio treinos oficiais — Grupo A e B',resp:'Logistica',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-10',titulo:'Prazo acreditacao atletas e oficiais — 18:00',resp:'Acreditacoes',prioridade:'critico',estado:'pendente'},
+      {data:'2026-10-11',titulo:'Treinos — ultimo dia antes de competicao',resp:'Logistica',prioridade:'alto',estado:'pendente'},
+      {data:'2026-10-12',titulo:'Conferencia imprensa — 11:00',resp:'Comunicacao',prioridade:'alto',estado:'pendente'},
+      {data:'2026-10-12',titulo:'Prazo order list equipas — 17:00',resp:'Organizacao',prioridade:'critico',estado:'pendente'}];
     const nPend=PRAZOS_WMF.filter(p=>p.estado==='pendente').length;
     const avisoDiv='<div class="av" style="margin-bottom:12px;"><strong>'+PRAZOS_WMF.length+' prazos WMF/EMF pre-carregados automaticamente</strong> — '+nPend+' pendentes. Inclui Acordo Tripartido e Checklist oficial WMF. Podes adicionar mais e actualizar o estado.'+(canEdit()?'<br><button class="btn bp bsm" style="margin-top:8px;" onclick="importarPrazosWMF()">⬆️ Importar todos para Firebase (editáveis)</button>':'')+'</div>';
     el.innerHTML = avisoDiv +
@@ -5300,7 +5306,7 @@ function exportCertificado(atlId){
   doc.text(atl.nome||'',W/2,97,{align:'center'});
   // País e categoria
   doc.setFontSize(13);doc.setFont('helvetica','normal');doc.setTextColor(200,192,168);
-  doc.text((atl.pais||'')+' · '+(atl.categoria==='SM'?'Men / Senior Men':'Ladies / Senior Ladies'),W/2,107,{align:'center'});
+  doc.text((atl.pais||'')+' · '+(atl.categoria==='SM'?'Seniors Men':'Seniors Women'),W/2,107,{align:'center'});
   // Resultado
   if(res){
     doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
@@ -5310,16 +5316,25 @@ function exportCertificado(atlId){
   doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
   doc.text('participated in the Seniors World Minigolf Championship',W/2,128,{align:'center'});
   doc.text('12-17 October 2026 · Vizela, Portugal',W/2,135,{align:'center'});
-  // Assinaturas
-  doc.setLineWidth(0.3);doc.setDrawColor(201,168,76);
-  doc.line(60,158,120,158);doc.line(177,158,237,158);
-  doc.setFontSize(9);doc.setTextColor(120,100,60);
-  doc.text('President COE',90,164,{align:'center'});
-  doc.text('WMF Representative',207,164,{align:'center'});
-  doc.text('Date: 17 October 2026',W/2,172,{align:'center'});
+  // Assinaturas -- fundo claro para maximo contraste
+  doc.setFillColor(248,245,235);
+  doc.roundedRect(14,148,W-28,46,3,3,'F');
+  doc.setFillColor(201,168,76);
+  doc.rect(14,148,W-28,1.5,'F');
+  // Linhas de assinatura -- escuras e visiveis
+  doc.setDrawColor(20,20,20);doc.setLineWidth(0.5);
+  doc.line(40,170,120,170);
+  doc.line(177,170,257,170);
+  // Titulos bold e escuros
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(20,20,20);
+  doc.text('President COE',80,177,{align:'center'});
+  doc.text('WMF Representative',217,177,{align:'center'});
+  // Data
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(50,40,20);
+  doc.text('Date: 17 October 2026',W/2,186,{align:'center'});
   // Copyright
-  doc.setFontSize(7);doc.setTextColor(60,50,30);
-  doc.text('© Rui Goncalves · Vizelgolfe · SWC Vizela 2026',W/2,H-14,{align:'center'});
+  doc.setFontSize(7);doc.setTextColor(100,80,50);
+  doc.text('© Rui Goncalves · Vizelgolfe · SWC Vizela 2026',W/2,193,{align:'center'});
   pdfFooter(doc,true);
   doc.save('SWC2026_Cert_'+(atl.nome||'atleta').replace(/ /g,'_')+'.pdf');
   toast('Certificado gerado!');

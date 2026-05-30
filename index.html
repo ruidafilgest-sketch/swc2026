@@ -600,6 +600,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(185,139,208,.6);">Passwords por area</div>
     </div>
   </div>
+  <div class="si" title="Caixa do merchandise - vendas - stock" onclick="nav(this,'merch','Merchandise — Caixa')" style="">
+    <i class="ti ti-shirt" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Merchandise — Caixa</div>
+      <div class="si-sub" style="color:rgba(74,184,122,.6);">Caixa - Vendas - Stock</div>
+    </div>
+  </div>
 <div class="si" title="Stock · Vendas · Acerto de contas" onclick="nav(this,'consignacao','Consignação &amp; Merchandise')" style="">
     <i class="ti ti-shirt" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -811,6 +818,17 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div style="font-size:10px;color:var(--mu);margin-bottom:4px;">Abertura oficial</div>
     <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--wh);line-height:1.1;">12 Outubro<br>2026</div>
     <div style="font-size:10px;color:var(--gl);margin-top:4px;">Vizela, Portugal</div>
+  </div>
+</div>
+<!-- RESUMO CAIXA (auto) -->
+<div style="display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:240px;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.18);border-radius:10px;padding:12px 16px;">
+    <div style="font-size:10px;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">Receita em caixa (automatico) &mdash; Bar + Merchandise</div>
+    <div style="display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;">
+      <div><div style="font-size:10px;color:var(--mu);">Bar</div><div style="font-size:18px;font-weight:700;color:var(--wh);" id="cxr-bar">0,00EUR</div></div>
+      <div><div style="font-size:10px;color:var(--mu);">Merchandise</div><div style="font-size:18px;font-weight:700;color:var(--wh);" id="cxr-merch">0,00EUR</div></div>
+      <div><div style="font-size:10px;color:var(--gl);">Total caixa</div><div style="font-size:22px;font-weight:800;color:var(--gl2);" id="cxr-total">0,00EUR</div></div>
+    </div>
   </div>
 </div>
 <!-- CLIMA + INCIDENTE STRIP -->
@@ -1188,7 +1206,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="pg" id="pg-bar">
 <div class="st"><span class="sn">BAR</span>Bar &mdash; Caixa</div>
 <div class="sd">Caixa do bar: toca nos artigos, soma a conta e regista a venda &mdash; o stock baixa automaticamente.</div>
-<div class="bb" id="bar-bar">
+<div class="bb gestao-only" id="bar-bar">
   <button class="btn bp" onclick="openM('m-bar-art')">+ Novo artigo</button>
 </div>
 <div class="g4" style="margin-bottom:16px;">
@@ -1210,12 +1228,12 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <button class="btn bo" style="width:100%;" onclick="barLimpar()">Limpar talao</button>
   </div>
 </div>
-<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">ARTIGOS</span>Gestao de artigos &amp; stock</div>
+<div class="gestao-only"><div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">ARTIGOS</span>Gestao de artigos &amp; stock</div>
 <div class="tbl-wrap tw" style="margin-bottom:20px;"><table>
   <thead><tr><th>Artigo</th><th>Categoria</th><th>Preco</th><th>Stock inicial</th><th>Stock atual</th><th id="th-bar-a">Acoes</th></tr></thead>
   <tbody id="t-bar-art"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr></tbody>
 </table></div>
-<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">VENDAS</span>Registo de vendas do bar</div>
+</div><div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">VENDAS</span>Registo de vendas do bar</div>
 <div class="tbl-wrap tw"><table>
   <thead><tr><th>Data / Hora</th><th>Artigos</th><th>Total</th><th id="th-bar-v">Acoes</th></tr></thead>
   <tbody id="t-bar-vendas"><tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr></tbody>
@@ -1231,6 +1249,45 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="tbl-wrap tw"><table>
   <thead><tr><th>Seccao</th><th>Modulos com acesso</th><th>Acoes</th></tr></thead>
   <tbody id="t-acessos"><tr><td colspan="3" class="mu" style="text-align:center;padding:22px;">Sem acessos de seccao.</td></tr></tbody>
+</table></div>
+</div>
+
+<div class="pg" id="pg-merch">
+<div class="st"><span class="sn">MERCH</span>Merchandise — Caixa</div>
+<div class="sd">Caixa do merchandise: toca nos artigos, soma a conta e regista a venda — o stock baixa e o valor e assumido automaticamente.</div>
+<div class="bb gestao-only" id="bar-merch">
+  <button class="btn bp" onclick="openM('m-merch-art')">+ Novo artigo</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Artigos</div><div class="smv" id="merch-k-art">0</div></div>
+  <div class="sm"><div class="sml">Stock total</div><div class="smv" id="merch-k-stock">0 un.</div></div>
+  <div class="sm"><div class="sml">Vendido</div><div class="smv" id="merch-k-vend" style="color:var(--ok)">0 un.</div></div>
+  <div class="sm"><div class="sml">Receita merchandise</div><div class="smv" id="merch-k-rec" style="color:var(--gl2)">0,00EUR</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start;margin-bottom:22px;">
+  <div>
+    <div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">CAIXA</span>Artigos disponiveis</div>
+    <div id="merch-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;"></div>
+  </div>
+  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:14px;position:sticky;top:10px;">
+    <div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">TALAO</span>Venda atual</div>
+    <div id="merch-cart" style="margin-bottom:12px;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:800;border-top:1px solid rgba(201,168,76,.25);padding-top:10px;margin-bottom:12px;"><span>Total</span><span id="merch-total" style="color:var(--gl2)">0,00EUR</span></div>
+    <button class="btn bp" style="width:100%;margin-bottom:8px;font-size:15px;padding:12px;" onclick="merchRegistar()">&#10003; Registar venda</button>
+    <button class="btn bo" style="width:100%;" onclick="merchLimpar()">Limpar talao</button>
+  </div>
+</div>
+<div class="gestao-only">
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">ARTIGOS</span>Gestao de artigos &amp; stock</div>
+<div class="tbl-wrap tw" style="margin-bottom:20px;"><table>
+  <thead><tr><th>Artigo</th><th>Marca</th><th>Ref.</th><th>Preco</th><th>Stock inicial</th><th>Stock atual</th><th id="th-merch-a">Acoes</th></tr></thead>
+  <tbody id="t-merch-art"><tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr></tbody>
+</table></div>
+</div>
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">VENDAS</span>Registo de vendas do merchandise</div>
+<div class="tbl-wrap tw"><table>
+  <thead><tr><th>Data / Hora</th><th>Artigos</th><th>Total</th><th id="th-merch-v">Acoes</th></tr></thead>
+  <tbody id="t-merch-vendas"><tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr></tbody>
 </table></div>
 </div>
 
@@ -1864,8 +1921,19 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <input type="hidden" id="ac-eid">
     <div class="fr"><div class="fg"><div class="fl">Nome da seccao</div><input class="fi" id="ac-nome" placeholder="Ex.: Bar"></div><div class="fg"><div class="fl">Password</div><input class="fi" type="text" id="ac-pw" placeholder="Definir password"></div></div>
     <div class="fg"><div class="fl">Modulos a que esta seccao tem acesso</div><div id="ac-mods" style="max-height:200px;overflow:auto;border:1px solid rgba(201,168,76,.18);border-radius:8px;padding:10px;"></div></div>
+    <div class="fg"><label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox" id="ac-sovendas"> <span>So registar vendas (nao pode carregar nem editar artigos)</span></label></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-acesso')">Cancelar</button><button class="btn bp" onclick="salvarAcesso()">Guardar acesso</button></div>
+</div></div>
+
+<div class="mo" id="m-merch-art"><div class="mdl">
+  <div class="mh"><div class="mt2">Artigo de Merchandise</div><button class="mc" onclick="closeM('m-merch-art')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr"><div class="fg"><div class="fl">Nome do artigo</div><input class="fi" id="me-nome" placeholder="Ex.: Polo SWC"></div><div class="fg"><div class="fl">Marca</div><input class="fi" id="me-marca" placeholder="Ex.: Vizelgolfe"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Referencia</div><input class="fi" id="me-ref" placeholder="Ex.: POL-001"></div><div class="fg"><div class="fl">Preco de venda (EUR)</div><input class="fi" type="number" step="0.01" id="me-preco" placeholder="0,00"></div></div>
+    <div class="fg"><div class="fl">Stock (unidades)</div><input class="fi" type="number" step="1" id="me-qty" placeholder="0"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-merch-art')">Cancelar</button><button class="btn bp" onclick="saveMerchArtigo()">Guardar artigo</button></div>
 </div></div>
 
 <div class="mo" id="m-pat"><div class="mdl">
@@ -2413,7 +2481,7 @@ function startApp(role){
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+cls;}
   setAdminBars();setTimeout(aplicarAcessos,150);if(isAdmin)setTimeout(loadAcessos,400);tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBar();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBar();loadMerch();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
 }
 function doLogout(){isAdmin=false;isSWC=false;isSecao=false;_secAtual=null;document.querySelectorAll('.si').forEach(si=>si.style.display='');document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -2423,7 +2491,7 @@ function setAdminBars(){
   // Barras de acção operacionais — visíveis para admin E swc
   [
     'bar-cron','bar-atl','bar-alo','bar-cer',
-    'bar-rec','bar-desp','bar-pat','bar-inv','bar-bar',
+    'bar-rec','bar-desp','bar-pat','bar-inv','bar-bar','bar-merch',
     'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
     'bar-resultados','bar-diariobordo','bar-faturas','bar-actas',
   ].forEach(id=>{
@@ -2439,7 +2507,7 @@ function setAdminBars(){
 
   // Colunas de acções nas tabelas — visíveis para edit
   [
-    'th-atl','th-cer','th-di','th-rec','th-desp','th-pat','th-bar-a','th-bar-v',
+    'th-atl','th-cer','th-di','th-rec','th-desp','th-pat','th-bar-a','th-bar-v','th-merch-a','th-merch-v',
     'th-cs-marca','th-cs-art','th-cs-venda',
     'th-rm','th-match','th-res','th-orc','th-fat',
   ].forEach(id=>{
@@ -7018,7 +7086,7 @@ function renderBarKPIs(){
   (document.getElementById('bar-k-art')||{}).textContent=_barArt.length;
   (document.getElementById('bar-k-stock')||{}).textContent=stock+' un.';
   (document.getElementById('bar-k-vend')||{}).textContent=vend+' un.';
-  (document.getElementById('bar-k-rec')||{}).textContent=fmt(rec);
+  (document.getElementById('bar-k-rec')||{}).textContent=fmt(rec);if(typeof renderCaixaResumo==='function')renderCaixaResumo();
 }
 function renderBarGrid(){
   const g=document.getElementById('bar-grid');if(!g)return;
@@ -7089,6 +7157,7 @@ window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine
 //  ACESSOS POR SECCAO (Fase 2) 
 let _acessos=[];
 const MODULOS_GATEAVEIS=[
+  {id:'merch',label:'Merchandise — Caixa'},
   {id:'bar',label:'Bar — Caixa'},
   {id:'consignacao',label:'Consignação & Merchandise'},
   {id:'alojamento',label:'Alojamento & Logística'},
@@ -7116,6 +7185,7 @@ async function trySecaoLogin(hashHex){
 function aplicarAcessos(){
   document.querySelectorAll('.si').forEach(si=>si.style.display='');
   const siAc=document.getElementById('si-acessos'); if(siAc)siAc.style.display=isAdmin?'':'none';
+  const soV=isSecao&&_secAtual&&_secAtual.soVendas;document.querySelectorAll('.gestao-only').forEach(el=>el.style.display=soV?'none':'');
   if(isSecao&&_secAtual){
     const permit=_secAtual.modulos||[];
     document.querySelectorAll('.si').forEach(si=>{
@@ -7145,14 +7215,14 @@ function openNovoAcesso(){
   const e=document.getElementById('ac-eid'); if(e)e.value='';
   const n=document.getElementById('ac-nome'); if(n)n.value='';
   const p=document.getElementById('ac-pw'); if(p){p.value='';p.placeholder='Definir password';}
-  renderModCheckboxes([]); openM('m-acesso');
+  renderModCheckboxes([]);const sv0=document.getElementById('ac-sovendas');if(sv0)sv0.checked=false;openM('m-acesso');
 }
 function editAcesso(idx){
   const a=_acessos[idx]; if(!a)return;
   document.getElementById('ac-eid').value=idx;
   document.getElementById('ac-nome').value=a.nome||'';
   const p=document.getElementById('ac-pw'); p.value=''; p.placeholder='(manter password atual)';
-  renderModCheckboxes(a.modulos||[]); openM('m-acesso');
+  renderModCheckboxes(a.modulos||[]);const sv1=document.getElementById('ac-sovendas');if(sv1)sv1.checked=!!a.soVendas;openM('m-acesso');
 }
 async function salvarAcesso(){
   if(!isAdmin){toast('Apenas administrador','er');return;}
@@ -7166,7 +7236,7 @@ async function salvarAcesso(){
   if(pw){hash=await sha256(pw);}
   else if(eid>=0){hash=_acessos[eid].hash;}
   else{toast('Define uma password','er');return;}
-  const obj={nome,hash,modulos:mods};
+  const obj={nome,hash,modulos:mods,soVendas:(document.getElementById('ac-sovendas')||{}).checked||false};
   if(eid>=0){_acessos[eid]=obj;}else{_acessos.push(obj);}
   await salvarAcessosDoc(); renderAcessos(); closeM('m-acesso'); toast('Acesso guardado');
 }
@@ -7176,10 +7246,101 @@ function renderAcessos(){
   if(!_acessos.length){tb.innerHTML='<tr><td colspan="3" class="mu" style="text-align:center;padding:22px;">Sem acessos de seccao. Cria o primeiro em "+ Novo acesso".</td></tr>';return;}
   tb.innerHTML=_acessos.map((a,i)=>{
     const labels=(a.modulos||[]).map(id=>{const m=MODULOS_GATEAVEIS.find(x=>x.id===id);return m?m.label:id;}).join(', ');
-    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="mu" style="font-size:11px;">'+labels+'</td><td><button class="btn bo bsm" onclick="editAcesso('+i+')">&#9999;</button><button class="btn bd2 bsm" onclick="delAcesso('+i+')">&#128465;</button></td></tr>';
+    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="mu" style="font-size:11px;">'+labels+(a.soVendas?' <span class="bge bg-am">so vendas</span>':'')+'</td><td><button class="btn bo bsm" onclick="editAcesso('+i+')">&#9999;</button><button class="btn bd2 bsm" onclick="delAcesso('+i+')">&#128465;</button></td></tr>';
   }).join('');
 }
 window.openNovoAcesso=openNovoAcesso;window.editAcesso=editAcesso;window.salvarAcesso=salvarAcesso;window.delAcesso=delAcesso;
+//  MERCHANDISE (Caixa) 
+let _merchArt=[], _merchVen=[], _merchCart={};
+function loadMerch(){
+  _snap('merch_artigos',(d)=>{_merchArt=d;renderMerchGrid();renderMerchArtigos();renderMerchKPIs();});
+  _snap('merch_vendas',(d)=>{_merchVen=d;renderMerchVendas();renderMerchArtigos();renderMerchGrid();renderMerchKPIs();});
+}
+function merchStock(id){const a=_merchArt.find(x=>x.id===id);if(!a)return 0;let s=0;_merchVen.forEach(v=>(v.items||[]).forEach(it=>{if(it.artigoId===id)s+=Number(it.qty||0);}));return Number(a.qtyEntrou||0)-s;}
+function renderCaixaResumo(){
+  const tBar=(typeof _barVen!=='undefined'?_barVen:[]).reduce((s,v)=>s+Number(v.total||0),0);
+  const tMer=(typeof _merchVen!=='undefined'?_merchVen:[]).reduce((s,v)=>s+Number(v.total||0),0);
+  (document.getElementById('cxr-bar')||{}).textContent=fmt(tBar);
+  (document.getElementById('cxr-merch')||{}).textContent=fmt(tMer);
+  (document.getElementById('cxr-total')||{}).textContent=fmt(tBar+tMer);
+}
+function renderMerchKPIs(){
+  const stock=_merchArt.reduce((s,a)=>s+merchStock(a.id),0);let vend=0,rec=0;
+  _merchVen.forEach(v=>{rec+=Number(v.total||0);(v.items||[]).forEach(it=>vend+=Number(it.qty||0));});
+  (document.getElementById('merch-k-art')||{}).textContent=_merchArt.length;
+  (document.getElementById('merch-k-stock')||{}).textContent=stock+' un.';
+  (document.getElementById('merch-k-vend')||{}).textContent=vend+' un.';
+  (document.getElementById('merch-k-rec')||{}).textContent=fmt(rec);
+  renderCaixaResumo();
+}
+function renderMerchGrid(){
+  const g=document.getElementById('merch-grid');if(!g)return;
+  if(!_merchArt.length){g.innerHTML='<div class="mu" style="grid-column:1/-1;text-align:center;padding:22px;">Sem artigos disponiveis.</div>';return;}
+  g.innerHTML=_merchArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
+    const st=merchStock(a.id);const out=st<=0;
+    return '<button onclick="merchAdd(\''+a.id+'\')" '+(out?'disabled':'')+' style="text-align:left;border:1px solid rgba(201,168,76,'+(out?'.1':'.28')+');background:rgba(255,255,255,'+(out?'.02':'.05')+');border-radius:10px;padding:11px;cursor:'+(out?'not-allowed':'pointer')+';opacity:'+(out?'.4':'1')+';color:var(--wh);font-family:inherit;"><div style="font-weight:700;font-size:13px;margin-bottom:2px;line-height:1.2;">'+(a.nome||'')+'</div><div style="font-size:10px;color:var(--mu);margin-bottom:4px;">'+(a.marca||'')+(a.ref?(' &middot; '+a.ref):'')+'</div><div style="font-size:16px;font-weight:800;color:var(--gl2);">'+fmt(a.preco)+'</div><div style="font-size:10px;color:'+(st<=3?'var(--er)':'var(--mu)')+';margin-top:3px;">stock: '+st+'</div></button>';
+  }).join('');
+}
+function merchAdd(id){const st=merchStock(id);const inc=_merchCart[id]||0;if(inc>=st){toast('Sem stock suficiente','er');return;}_merchCart[id]=inc+1;renderMerchCart();}
+function merchInc(id){merchAdd(id);}
+function merchDec(id){if(!_merchCart[id])return;_merchCart[id]--;if(_merchCart[id]<=0)delete _merchCart[id];renderMerchCart();}
+function merchDelLine(id){delete _merchCart[id];renderMerchCart();}
+function renderMerchCart(){
+  const c=document.getElementById('merch-cart');if(!c)return;const ids=Object.keys(_merchCart);
+  if(!ids.length){c.innerHTML='<div class="mu" style="text-align:center;padding:16px;font-size:12px;">Talao vazio &mdash; toca nos artigos</div>';(document.getElementById('merch-total')||{}).textContent=fmt(0);return;}
+  let total=0;
+  c.innerHTML=ids.map(id=>{const a=_merchArt.find(x=>x.id===id)||{};const q=_merchCart[id];const lt=Number(a.preco||0)*q;total+=lt;
+    return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:12px;"><div style="flex:1;min-width:0;"><div style="font-weight:600;">'+(a.nome||'')+'</div><div class="mu" style="font-size:10px;">'+fmt(a.preco)+' x '+q+'</div></div><button class="btn bo bsm" onclick="merchDec(\''+id+'\')">&minus;</button><span style="min-width:18px;text-align:center;font-weight:700;">'+q+'</span><button class="btn bo bsm" onclick="merchInc(\''+id+'\')">+</button><span style="min-width:54px;text-align:right;font-weight:700;">'+fmt(lt)+'</span><button class="btn bd2 bsm" onclick="merchDelLine(\''+id+'\')">&#10005;</button></div>';
+  }).join('');
+  (document.getElementById('merch-total')||{}).textContent=fmt(total);
+}
+async function merchRegistar(){
+  if(!canEdit()){toast('Sem permissao','er');return;}
+  const ids=Object.keys(_merchCart);if(!ids.length){toast('Talao vazio','er');return;}
+  const items=[];let total=0;
+  for(const id of ids){const a=_merchArt.find(x=>x.id===id);if(!a)continue;const q=_merchCart[id];if(q>merchStock(id)){toast('Stock insuficiente: '+(a.nome||''),'er');return;}const lt=Number(a.preco||0)*q;total+=lt;items.push({artigoId:id,nome:a.nome||'',qty:q,precoUnit:Number(a.preco||0),total:lt});}
+  await _add('merch_vendas',{items,total,dt:new Date().toLocaleString('pt-PT'),ts:Date.now()});
+  _merchCart={};renderMerchCart();toast('Venda registada '+fmt(total));
+}
+function merchLimpar(){_merchCart={};renderMerchCart();}
+function renderMerchArtigos(){
+  const tb=document.getElementById('t-merch-art');if(!tb)return;
+  if(!_merchArt.length){tb.innerHTML='<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr>';return;}
+  tb.innerHTML=_merchArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
+    const st=merchStock(a.id);
+    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="go">'+(a.marca||'')+'</td><td style="font-family:monospace;font-size:11px;">'+(a.ref||'')+'</td><td style="text-align:right;">'+fmt(a.preco)+'</td><td style="text-align:center;">'+(a.qtyEntrou||0)+'</td><td style="text-align:center;font-weight:700;color:'+(st<=3?'var(--er)':'var(--wh)')+';">'+st+'</td>'+(canEdit()?'<td><button class="btn bo bsm" onclick="editMerchArtigo(\''+a.id+'\')">&#9999;</button>'+(canDelete()?'<button class="btn bd2 bsm" onclick="delMerchArtigo(\''+a.id+'\')">&#128465;</button>':'')+'</td>':'<td></td>')+'</tr>';
+  }).join('');
+}
+function renderMerchVendas(){
+  const tb=document.getElementById('t-merch-vendas');if(!tb)return;
+  const sorted=[..._merchVen].sort((a,b)=>b.ts-a.ts);
+  if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
+  tb.innerHTML=sorted.map(v=>{const desc=(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');
+    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bd2 bsm" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
+  }).join('');
+}
+async function saveMerchArtigo(){
+  if(!canEdit())return;
+  const d={nome:document.getElementById('me-nome').value,marca:document.getElementById('me-marca').value,ref:document.getElementById('me-ref').value,preco:parseFloat(document.getElementById('me-preco').value)||0,qtyEntrou:parseInt(document.getElementById('me-qty').value)||0,ts:Date.now()};
+  if(!d.nome){toast('Nome obrigatorio','er');return;}
+  const _e=document.getElementById('me-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('merch_artigos',_eid,d);if(_e)_e.value='';toast('Artigo actualizado');}else{await _add('merch_artigos',d);toast('Artigo registado');}
+  closeM('m-merch-art');
+}
+function editMerchArtigo(id){
+  const a=_merchArt.find(x=>x.id===id);if(!a)return;
+  let hid=document.getElementById('me-eid');
+  if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='me-eid';const mb=document.querySelector('#m-merch-art .mb');if(mb)mb.prepend(hid);}
+  hid.value=id;
+  const set=(i,v)=>{const e=document.getElementById(i);if(e)e.value=v;};
+  set('me-nome',a.nome||'');set('me-marca',a.marca||'');set('me-ref',a.ref||'');set('me-preco',a.preco||'');set('me-qty',a.qtyEntrou||0);
+  openM('m-merch-art');
+}
+async function delMerchArtigo(id){if(!canDelete()||!confirm('Eliminar artigo de merchandise?'))return;await _del('merch_artigos',id);toast('Eliminado','er');}
+async function delMerchVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await _del('merch_vendas',id);toast('Anulada','er');}
+window.merchAdd=merchAdd;window.merchInc=merchInc;window.merchDec=merchDec;window.merchDelLine=merchDelLine;window.merchRegistar=merchRegistar;window.merchLimpar=merchLimpar;window.saveMerchArtigo=saveMerchArtigo;window.editMerchArtigo=editMerchArtigo;window.delMerchArtigo=delMerchArtigo;window.delMerchVenda=delMerchVenda;
+
+
 
 
 

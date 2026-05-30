@@ -2556,7 +2556,7 @@ async function savePat(){
   if(!canEdit())return;
   const d={empresa:document.getElementById('pt-emp').value,tipo:document.getElementById('pt-tp').value,contacto:document.getElementById('pt-ct').value,valor:parseFloat(document.getElementById('pt-vl').value)||0,contrapartidas:document.getElementById('pt-co').value,estado:document.getElementById('pt-st').value,ts:Date.now()};
   const _e=document.getElementById('pat-eid');const _eid=_e&&_e.value?_e.value:'';
-  if(_eid){await _upd('patrocinadores',_eid,d);if(_e)_e.value='';toast('Patrocinador actualizado');}else{await _add('patrocinadores',d);toast('Patrocinador registado');}
+  if(_eid){await _upd('patrocinios',_eid,d);if(_e)_e.value='';toast('Patrocinador actualizado');}else{await _add('patrocinios',d);toast('Patrocinador registado');}
   closeM('m-pat');
 }
 function renderPat(){

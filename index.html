@@ -1086,7 +1086,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="sm"><div class="sml">Total confirmado</div><div class="smv" id="p-cf" style="color:var(--ok)">0,00€</div><div class="smn">valor real</div></div>
   <div class="sm"><div class="sml">Em negociação</div><div class="smv" id="p-ng" style="color:var(--wr)">0,00€</div></div>
   <div class="sm"><div class="sml">Gold WMF</div><div class="smv" id="p-gd">0</div></div>
-  <div class="sm"><div class="sml">Locais / Outros</div><div class="smv" id="p-lc">0</div></div>
+  <div class="sm"><div class="sml">Locais / Outros</div><div class="smv" id="p-lc">0</div></div><div class="sm"><div class="sml">Em espécie (estimado)</div><div class="smv" id="p-esp" style="color:var(--gl2)">0,00€</div><div class="smn">géneros/logística</div></div>
 </div>
 <div style="margin-bottom:16px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:11px;color:var(--se);">Termómetro de angariação — total confirmado real</span><span style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gl2);" id="p-pct"></span></div>
@@ -1940,7 +1940,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mh"><div class="mt2">Novo Patrocinador</div><button class="mc" onclick="closeM('m-pat')">✕</button></div>
   <div class="mb">
     <div class="fr"><div class="fg"><div class="fl">Empresa</div><input class="fi" id="pt-emp" placeholder="Nome da empresa"></div><div class="fg"><div class="fl">Tipo</div><select class="fse" id="pt-tp"><option value="Gold WMF">Gold WMF (direitos especiais)</option><option value="Local">Patrocinador local</option><option value="Institucional">Institucional</option></select></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Contacto</div><input class="fi" id="pt-ct" placeholder="Nome e email/telefone"></div><div class="fg"><div class="fl">Valor confirmado (€) — real</div><input class="fi" type="number" step="0.01" id="pt-vl" placeholder="0,00"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Contacto</div><input class="fi" id="pt-ct" placeholder="Nome e email/telefone"></div><div class="fg"><div class="fl">Valor (€) — real ou estimado</div><input class="fi" type="number" step="0.01" id="pt-vl" placeholder="0,00"></div></div><div class="fr"><div class="fg"><div class="fl">Tipo de valor</div><select class="fse" id="pt-tv"><option value="Monetário">Monetário (€)</option><option value="Espécie">Em espécie (géneros, logística, equipamentos)</option></select></div><div class="fg"></div></div>
     <div class="fg"><div class="fl">Contrapartidas acordadas</div><textarea class="fta" id="pt-co" placeholder="Logo, espaço venda, acessos VIP, menção comunicados..."></textarea></div>
     <div class="fg"><div class="fl">Estado do processo</div><select class="fse" id="pt-st"><option value="Abordagem">Abordagem inicial</option><option value="Proposta enviada">Proposta enviada</option><option value="Confirmado">Confirmado</option><option value="Recebido">Recebido</option><option value="Recusado">Recusado</option></select></div>
   </div>
@@ -2611,7 +2611,7 @@ function renderDash(){
   const totD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
   const cx=_lan.filter(l=>l.cb==='Caixa').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
   const bk=_lan.filter(l=>l.cb==='Banco').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
-  const patC=_pat.filter(p=>p.estado==='Recebido'||p.estado==='Confirmado').reduce((a,p)=>a+Number(p.valor||0),0);
+  const patC=_pat.filter(p=>(p.estado==='Recebido'||p.estado==='Confirmado')&&p.tipoValor!=='Espécie').reduce((a,p)=>a+Number(p.valor||0),0);
   (document.getElementById('k-rec')||{}).textContent=fmt(totR);
   (document.getElementById('k-desp')||{}).textContent=fmt(totD);
   (document.getElementById('k-saldo')||{}).textContent=fmt(cx+bk);
@@ -2704,20 +2704,20 @@ async function delDesp(id){if(!canDelete()||!confirm('Eliminar?'))return;await _
 //  PATROCÍNIOS 
 async function savePat(){
   if(!canEdit())return;
-  const d={empresa:document.getElementById('pt-emp').value,tipo:document.getElementById('pt-tp').value,contacto:document.getElementById('pt-ct').value,valor:parseFloat(document.getElementById('pt-vl').value)||0,contrapartidas:document.getElementById('pt-co').value,estado:document.getElementById('pt-st').value,ts:Date.now()};
+  const d={empresa:document.getElementById('pt-emp').value,tipo:document.getElementById('pt-tp').value,contacto:document.getElementById('pt-ct').value,valor:parseFloat(document.getElementById('pt-vl').value)||0,contrapartidas:document.getElementById('pt-co').value,estado:document.getElementById('pt-st').value,tipoValor:(document.getElementById('pt-tv')||{}).value||'Monetário',ts:Date.now()};
   const _e=document.getElementById('pat-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('patrocinios',_eid,d);if(_e)_e.value='';toast('Patrocinador actualizado');}else{await _add('patrocinios',d);toast('Patrocinador registado');}
   closeM('m-pat');
 }
 function renderPat(){
-  const cf=_pat.filter(p=>p.estado==='Recebido'||p.estado==='Confirmado').reduce((a,p)=>a+Number(p.valor||0),0);
+  const cf=_pat.filter(p=>(p.estado==='Recebido'||p.estado==='Confirmado')&&p.tipoValor!=='Espécie').reduce((a,p)=>a+Number(p.valor||0),0);const esp=_pat.filter(p=>(p.estado==='Recebido'||p.estado==='Confirmado')&&p.tipoValor==='Espécie').reduce((a,p)=>a+Number(p.valor||0),0);if(document.getElementById('p-esp'))document.getElementById('p-esp').textContent=fmt(esp);
   const ng=_pat.filter(p=>p.estado==='Proposta enviada').reduce((a,p)=>a+Number(p.valor||0),0);
   document.getElementById('p-cf').textContent=fmt(cf);
   document.getElementById('p-ng').textContent=fmt(ng);
   document.getElementById('p-gd').textContent=_pat.filter(p=>p.tipo==='Gold WMF').length;
   document.getElementById('p-lc').textContent=_pat.filter(p=>p.tipo!=='Gold WMF').length;
   document.getElementById('p-pct').textContent=cf>0?fmt(cf):'';
-  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editPat('${p.id}')">✏️</button><button class="btn bd2 bsm" onclick="delPat('${p.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
+  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}${p.tipoValor==='Espécie'?' <span class="bge bg-am" style="font-size:9px;">espécie</span>':''}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editPat('${p.id}')">✏️</button><button class="btn bd2 bsm" onclick="delPat('${p.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
 }
 async function delPat(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
 
@@ -7810,7 +7810,7 @@ async function editPat(id){
   const _ept_ct=document.getElementById('pt-ct');if(_ept_ct)_ept_ct.value=item.contacto||'';
   const _ept_vl=document.getElementById('pt-vl');if(_ept_vl)_ept_vl.value=item.valor||'';
   const _ept_co=document.getElementById('pt-co');if(_ept_co)_ept_co.value=item.contrapartidas||'';
-  const _ept_st=document.getElementById('pt-st');if(_ept_st)_ept_st.value=item.estado||'';
+  const _ept_st=document.getElementById('pt-st');if(_ept_st)_ept_st.value=item.estado||'';const _ept_tv=document.getElementById('pt-tv');if(_ept_tv)_ept_tv.value=item.tipoValor||'Monetário';
   openM('m-pat');
 }
 window.editPat=editPat;

@@ -607,6 +607,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(74,184,122,.6);">Caixa - Vendas - Stock</div>
     </div>
   </div>
+  <div class="si" title="Dossier de patrocinio - ver e enviar" onclick="nav(this,'dossier','Dossier de Patrocínio');carregarDossier()" style="">
+    <i class="ti ti-file-text" style="font-size:20px;color:#C9A84C;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Dossier de Patrocínio</div>
+      <div class="si-sub" style="color:rgba(201,168,76,.6);">Ver - Enviar</div>
+    </div>
+  </div>
 <div class="si" title="Stock · Vendas · Acerto de contas" onclick="nav(this,'consignacao','Consignação &amp; Merchandise')" style="">
     <i class="ti ti-shirt" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -1291,6 +1298,17 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </table></div>
 </div>
 
+<div class="pg" id="pg-dossier">
+<div class="st"><span class="sn">DOSSIER</span>Dossier de Patrocínio</div>
+<div class="sd">Apresentacao oficial do SWC Vizela 2026 para patrocinadores e entidades. Abre, copia o link ou envia por email.</div>
+<div class="bb">
+  <button class="btn bo" onclick="window.open('dossier.html','_blank')">Abrir em nova janela</button>
+  <button class="btn bo" onclick="copiarLinkDossier()">Copiar link</button>
+  <button class="btn bp" id="btn-dossier-send" onclick="openM('m-dossier-email')">Enviar por email</button>
+</div>
+<iframe id="dossier-frame" style="width:100%;height:78vh;border:1px solid rgba(201,168,76,.25);border-radius:10px;background:#fff;margin-top:8px;" title="Dossier de Patrocinio"></iframe>
+</div>
+
 <div class="pg" id="pg-consignacao">
 <div class="st"><span class="sn">CONS</span>Consignacao & Merchandise<button class="hbtn" data-help="consignacao" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Stock em consignacao por marca · Entradas · Vendas · Devolucoes · Acerto de contas</div>
@@ -1934,6 +1952,16 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Stock (unidades)</div><input class="fi" type="number" step="1" id="me-qty" placeholder="0"></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-merch-art')">Cancelar</button><button class="btn bp" onclick="saveMerchArtigo()">Guardar artigo</button></div>
+</div></div>
+
+<div class="mo" id="m-dossier-email"><div class="mdl">
+  <div class="mh"><div class="mt2">Enviar Dossier por Email</div><button class="mc" onclick="closeM('m-dossier-email')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fg"><div class="fl">Email do destinatario</div><input class="fi" id="dse-email" placeholder="nome@empresa.pt"></div>
+    <div class="fg"><div class="fl">Mensagem (opcional)</div><textarea class="fi" id="dse-msg" rows="3" placeholder="Mensagem personalizada para o destinatario..."></textarea></div>
+    <div class="mu" style="font-size:11px;">O email leva um link para o dossier. Funciona quando o sistema esta publicado online (nao em ficheiro local).</div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-dossier-email')">Cancelar</button><button class="btn bp" onclick="enviarDossierEmail()">Enviar</button></div>
 </div></div>
 
 <div class="mo" id="m-pat"><div class="mdl">
@@ -7339,6 +7367,36 @@ function editMerchArtigo(id){
 async function delMerchArtigo(id){if(!canDelete()||!confirm('Eliminar artigo de merchandise?'))return;await _del('merch_artigos',id);toast('Eliminado','er');}
 async function delMerchVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await _del('merch_vendas',id);toast('Anulada','er');}
 window.merchAdd=merchAdd;window.merchInc=merchInc;window.merchDec=merchDec;window.merchDelLine=merchDelLine;window.merchRegistar=merchRegistar;window.merchLimpar=merchLimpar;window.saveMerchArtigo=saveMerchArtigo;window.editMerchArtigo=editMerchArtigo;window.delMerchArtigo=delMerchArtigo;window.delMerchVenda=delMerchVenda;
+//  DOSSIER DE PATROCINIO 
+function carregarDossier(){
+  const f=document.getElementById('dossier-frame');
+  if(f&&!f.dataset.loaded){f.src='dossier.html';f.dataset.loaded='1';}
+  const sb=document.getElementById('btn-dossier-send');if(sb)sb.style.display=canEdit()?'':'none';
+}
+function copiarLinkDossier(){
+  const url=new URL('dossier.html', location.href).href;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(()=>toast('Link copiado'),()=>toast(url));}
+  else{toast(url);}
+}
+async function enviarDossierEmail(){
+  if(!canEdit()){toast('Sem permissao para enviar','er');return;}
+  const dest=(document.getElementById('dse-email')||{}).value||'';
+  if(!dest.trim()||dest.indexOf('@')<0){toast('Email invalido','er');return;}
+  const url=new URL('dossier.html', location.href).href;
+  const msg=(document.getElementById('dse-msg')||{}).value||'';
+  const corpo='<div style="font-family:Arial,Helvetica,sans-serif;color:#222;line-height:1.5;">'
+    +(msg?('<p>'+msg.replace(/\n/g,'<br>')+'</p>'):'')
+    +'<p>Boa tarde,</p><p>Em nome da organizacao do <strong>Seniors World Championship Vizela 2026</strong> (Campeonato do Mundo de Minigolfe de Seniores, 12 a 17 de Outubro de 2026), temos o prazer de partilhar o nosso <strong>Dossier de Patrocinio</strong>.</p>'
+    +'<p style="text-align:center;margin:22px 0;"><a href="'+url+'" style="background:#0A1628;color:#C9A84C;text-decoration:none;padding:12px 26px;border-radius:8px;font-weight:700;">Abrir o Dossier de Patrocinio</a></p>'
+    +'<p style="font-size:13px;color:#555;">Ou copie o link:<br>'+url+'</p>'
+    +'<p>Com os melhores cumprimentos,<br><strong>Vizelgolfe &mdash; Associacao de Minigolfe de Vizela</strong></p></div>';
+  const ok=await enviarEmailAlerta('Seniors World Championship Vizela 2026 — Dossier de Patrocinio', corpo, dest.trim());
+  if(ok){closeM('m-dossier-email');const e=document.getElementById('dse-email');if(e)e.value='';toast('Dossier enviado');}
+  else{toast('Falha no envio — verifica a configuracao de email','er');}
+}
+window.carregarDossier=carregarDossier;window.copiarLinkDossier=copiarLinkDossier;window.enviarDossierEmail=enviarDossierEmail;
+
+
 
 
 

@@ -593,6 +593,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(224,165,59,.6);">Caixa - Vendas - Stock</div>
     </div>
   </div>
+  <div class="si" id="si-acessos" title="Acessos por seccao (admin)" onclick="nav(this,'acessos','Acessos por Secção')" style="">
+    <i class="ti ti-key" style="font-size:20px;color:#B98BD0;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Acessos por Secção</div>
+      <div class="si-sub" style="color:rgba(185,139,208,.6);">Passwords por area</div>
+    </div>
+  </div>
 <div class="si" title="Stock · Vendas · Acerto de contas" onclick="nav(this,'consignacao','Consignação &amp; Merchandise')" style="">
     <i class="ti ti-shirt" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -1212,6 +1219,18 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="tbl-wrap tw"><table>
   <thead><tr><th>Data / Hora</th><th>Artigos</th><th>Total</th><th id="th-bar-v">Acoes</th></tr></thead>
   <tbody id="t-bar-vendas"><tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr></tbody>
+</table></div>
+</div>
+
+<div class="pg" id="pg-acessos">
+<div class="st"><span class="sn">ACESSO</span>Acessos por Secção</div>
+<div class="sd">Cria uma password propria para cada seccao. Quem entrar com ela ve apenas os modulos atribuidos. As passwords sao guardadas cifradas (hash).</div>
+<div class="bb" id="bar-acessos">
+  <button class="btn bp" onclick="openNovoAcesso()">+ Novo acesso</button>
+</div>
+<div class="tbl-wrap tw"><table>
+  <thead><tr><th>Seccao</th><th>Modulos com acesso</th><th>Acoes</th></tr></thead>
+  <tbody id="t-acessos"><tr><td colspan="3" class="mu" style="text-align:center;padding:22px;">Sem acessos de seccao.</td></tr></tbody>
 </table></div>
 </div>
 
@@ -1839,6 +1858,16 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mf"><button class="btn bo" onclick="closeM('m-bar-art')">Cancelar</button><button class="btn bp" onclick="saveBarArtigo()">Guardar artigo</button></div>
 </div></div>
 
+<div class="mo" id="m-acesso"><div class="mdl">
+  <div class="mh"><div class="mt2">Acesso de Seccao</div><button class="mc" onclick="closeM('m-acesso')">&#10005;</button></div>
+  <div class="mb">
+    <input type="hidden" id="ac-eid">
+    <div class="fr"><div class="fg"><div class="fl">Nome da seccao</div><input class="fi" id="ac-nome" placeholder="Ex.: Bar"></div><div class="fg"><div class="fl">Password</div><input class="fi" type="text" id="ac-pw" placeholder="Definir password"></div></div>
+    <div class="fg"><div class="fl">Modulos a que esta seccao tem acesso</div><div id="ac-mods" style="max-height:200px;overflow:auto;border:1px solid rgba(201,168,76,.18);border-radius:8px;padding:10px;"></div></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-acesso')">Cancelar</button><button class="btn bp" onclick="salvarAcesso()">Guardar acesso</button></div>
+</div></div>
+
 <div class="mo" id="m-pat"><div class="mdl">
   <div class="mh"><div class="mt2">Novo Patrocinador</div><button class="mc" onclick="closeM('m-pat')">✕</button></div>
   <div class="mb">
@@ -2335,11 +2364,11 @@ const _snap=(col,cb,ord)=>{const q=ord?query(C(col),orderBy(ord)):C(col);return 
 //  AUTH 
 // Níveis de acesso: isAdmin=ADMINISTRADOR2026*** | isSWC=SWC2026*** | leitura=VIZELGOLFE2026***
 let isAdmin=false; // ADMINISTRADOR — controlo total
-let isSWC=false;   // SWC2026 — operacional (sem eliminar, sem configs)
+let isSWC=false; let isSecao=false, _secAtual=null;   // SWC2026 — operacional (sem eliminar, sem configs)
 // canEdit = pode editar/adicionar (admin ou swc)
-function canEdit(){ return isAdmin||isSWC; }
+function canEdit(){ return isAdmin||isSWC||isSecao; }
 // canDelete = só admin
-function canDelete(){ return isAdmin; }
+function canDelete(){ return isAdmin||isSecao; }
 
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function doLogin(){
@@ -2367,7 +2396,7 @@ async function doLogin(){
       setTimeout(()=>addLog('login','sistema','Acesso Leitura'),1000);
     } else {
       const el=document.getElementById('lerr');
-      if(el){ el.textContent='Password incorrecta'; setTimeout(()=>{ el.textContent=''; },2500); }
+      if(await trySecaoLogin(hashHex)){ return; } if(el){ el.textContent='Password incorrecta'; setTimeout(()=>{ el.textContent=''; },2500); }
     }
   } catch(e) {
     console.error('Login error:',e);
@@ -2383,10 +2412,10 @@ function startApp(role){
   if(elRole){elRole.textContent=role;elRole.className='sbrole '+cls;}
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+cls;}
-  setAdminBars();tick();setInterval(tick,60000);
+  setAdminBars();setTimeout(aplicarAcessos,150);if(isAdmin)setTimeout(loadAcessos,400);tick();setInterval(tick,60000);
   wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBar();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
 }
-function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
+function doLogout(){isAdmin=false;isSWC=false;isSecao=false;_secAtual=null;document.querySelectorAll('.si').forEach(si=>si.style.display='');document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
   const edit = canEdit();   // admin ou swc
   const del  = canDelete(); // só admin
@@ -2403,7 +2432,7 @@ function setAdminBars(){
   });
 
   // Barras APENAS para admin (configs, org interna, consignação)
-  ['bar-org','bar-dsp','bar-di','bar-consig'].forEach(id=>{
+  ['bar-org','bar-dsp','bar-di','bar-consig','bar-acessos'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.style.display=isAdmin?'flex':'none';
   });
@@ -7057,6 +7086,102 @@ function editBarArtigo(id){
 async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
 async function delBarVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await _del('bar_vendas',id);toast('Anulada','er');}
 window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;
+//  ACESSOS POR SECCAO (Fase 2) 
+let _acessos=[];
+const MODULOS_GATEAVEIS=[
+  {id:'bar',label:'Bar — Caixa'},
+  {id:'consignacao',label:'Consignação & Merchandise'},
+  {id:'alojamento',label:'Alojamento & Logística'},
+  {id:'acreditacoes',label:'Acreditações & QR Code'},
+  {id:'resultados',label:'Resultados Desportivos'},
+  {id:'rooming',label:'Rooming List WMF'},
+  {id:'chegadas',label:'Checklist de Chegadas'},
+  {id:'comunicacao',label:'Comunicação & Branding'},
+  {id:'posts',label:'Posts & Redes Sociais'},
+  {id:'guia',label:'Guia do Atleta'},
+  {id:'atletas',label:'Atletas & Inscrições'},
+];
+async function trySecaoLogin(hashHex){
+  try{
+    const snap=await getDoc(doc(collection(db,'swc2026_config'),'acessos_seccao'));
+    const lista=(snap.exists()&&Array.isArray(snap.data().lista))?snap.data().lista:[];
+    const match=lista.find(s=>s.hash===hashHex);
+    if(!match)return false;
+    isAdmin=false; isSWC=false; isSecao=true; _secAtual=match;
+    startApp('Secção: '+(match.nome||''));
+    setTimeout(()=>addLog('login','sistema','Acesso Secção: '+(match.nome||'')),1000);
+    return true;
+  }catch(e){console.error('Secao login:',e);return false;}
+}
+function aplicarAcessos(){
+  document.querySelectorAll('.si').forEach(si=>si.style.display='');
+  const siAc=document.getElementById('si-acessos'); if(siAc)siAc.style.display=isAdmin?'':'none';
+  if(isSecao&&_secAtual){
+    const permit=_secAtual.modulos||[];
+    document.querySelectorAll('.si').forEach(si=>{
+      const m=(si.getAttribute('onclick')||'').match(/nav\(this,'([^']+)'/);
+      const id=m?m[1]:null;
+      si.style.display=(id&&permit.includes(id))?'':'none';
+    });
+    const first=permit[0];
+    if(first){
+      const t=[...document.querySelectorAll('.si')].find(si=>{const m=(si.getAttribute('onclick')||'').match(/nav\(this,'([^']+)'/);return m&&m[1]===first;});
+      if(t)setTimeout(()=>t.click(),60);
+    }
+  }
+}
+async function loadAcessos(){
+  try{const snap=await getDoc(doc(collection(db,'swc2026_config'),'acessos_seccao'));
+    _acessos=(snap.exists()&&Array.isArray(snap.data().lista))?snap.data().lista:[];}
+  catch(e){_acessos=[];}
+  renderAcessos();
+}
+async function salvarAcessosDoc(){ await setDoc(doc(collection(db,'swc2026_config'),'acessos_seccao'),{lista:_acessos},{merge:true}); }
+function renderModCheckboxes(sel){
+  const c=document.getElementById('ac-mods'); if(!c)return;
+  c.innerHTML=MODULOS_GATEAVEIS.map(m=>'<label style="display:flex;align-items:center;gap:6px;font-size:12px;margin-bottom:5px;cursor:pointer;"><input type="checkbox" value="'+m.id+'" '+((sel||[]).includes(m.id)?'checked':'')+'> '+m.label+'</label>').join('');
+}
+function openNovoAcesso(){
+  const e=document.getElementById('ac-eid'); if(e)e.value='';
+  const n=document.getElementById('ac-nome'); if(n)n.value='';
+  const p=document.getElementById('ac-pw'); if(p){p.value='';p.placeholder='Definir password';}
+  renderModCheckboxes([]); openM('m-acesso');
+}
+function editAcesso(idx){
+  const a=_acessos[idx]; if(!a)return;
+  document.getElementById('ac-eid').value=idx;
+  document.getElementById('ac-nome').value=a.nome||'';
+  const p=document.getElementById('ac-pw'); p.value=''; p.placeholder='(manter password atual)';
+  renderModCheckboxes(a.modulos||[]); openM('m-acesso');
+}
+async function salvarAcesso(){
+  if(!isAdmin){toast('Apenas administrador','er');return;}
+  const nome=document.getElementById('ac-nome').value.trim();
+  if(!nome){toast('Nome obrigatorio','er');return;}
+  const mods=[...document.querySelectorAll('#ac-mods input:checked')].map(c=>c.value);
+  if(!mods.length){toast('Escolhe pelo menos um modulo','er');return;}
+  const pw=document.getElementById('ac-pw').value;
+  const eidEl=document.getElementById('ac-eid'); const eid=(eidEl&&eidEl.value!=='')?parseInt(eidEl.value):-1;
+  let hash;
+  if(pw){hash=await sha256(pw);}
+  else if(eid>=0){hash=_acessos[eid].hash;}
+  else{toast('Define uma password','er');return;}
+  const obj={nome,hash,modulos:mods};
+  if(eid>=0){_acessos[eid]=obj;}else{_acessos.push(obj);}
+  await salvarAcessosDoc(); renderAcessos(); closeM('m-acesso'); toast('Acesso guardado');
+}
+async function delAcesso(idx){ if(!isAdmin)return; if(!confirm('Eliminar este acesso de seccao?'))return; _acessos.splice(idx,1); await salvarAcessosDoc(); renderAcessos(); toast('Acesso eliminado','er'); }
+function renderAcessos(){
+  const tb=document.getElementById('t-acessos'); if(!tb)return;
+  if(!_acessos.length){tb.innerHTML='<tr><td colspan="3" class="mu" style="text-align:center;padding:22px;">Sem acessos de seccao. Cria o primeiro em "+ Novo acesso".</td></tr>';return;}
+  tb.innerHTML=_acessos.map((a,i)=>{
+    const labels=(a.modulos||[]).map(id=>{const m=MODULOS_GATEAVEIS.find(x=>x.id===id);return m?m.label:id;}).join(', ');
+    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="mu" style="font-size:11px;">'+labels+'</td><td><button class="btn bo bsm" onclick="editAcesso('+i+')">&#9999;</button><button class="btn bd2 bsm" onclick="delAcesso('+i+')">&#128465;</button></td></tr>';
+  }).join('');
+}
+window.openNovoAcesso=openNovoAcesso;window.editAcesso=editAcesso;window.salvarAcesso=salvarAcesso;window.delAcesso=delAcesso;
+
+
 
 function loadConsig(){
   _snap('cs_marcas',(docs)=>{_marcas=docs;renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();});

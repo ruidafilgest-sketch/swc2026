@@ -586,7 +586,14 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(74,184,122,.58);">Alojamento oficial · Por hotel</div>
     </div>
   </div>
-  <div class="si" title="Stock · Vendas · Acerto de contas" onclick="nav(this,'consignacao','Consignação &amp; Merchandise')" style="">
+    <div class="si" title="Caixa do bar - vendas - stock" onclick="nav(this,'bar','Bar &mdash; Caixa')" style="">
+    <i class="ti ti-cash-register" style="font-size:20px;color:#E0A53B;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Bar &mdash; Caixa</div>
+      <div class="si-sub" style="color:rgba(224,165,59,.6);">Caixa - Vendas - Stock</div>
+    </div>
+  </div>
+<div class="si" title="Stock · Vendas · Acerto de contas" onclick="nav(this,'consignacao','Consignação &amp; Merchandise')" style="">
     <i class="ti ti-shirt" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
       <div class="si-label">Consignação &amp; Merchandise</div>
@@ -1171,6 +1178,43 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 
   <!-- CONSIGNACAO & MERCHANDISE -->
+<div class="pg" id="pg-bar">
+<div class="st"><span class="sn">BAR</span>Bar &mdash; Caixa</div>
+<div class="sd">Caixa do bar: toca nos artigos, soma a conta e regista a venda &mdash; o stock baixa automaticamente.</div>
+<div class="bb" id="bar-bar">
+  <button class="btn bp" onclick="openM('m-bar-art')">+ Novo artigo</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Artigos</div><div class="smv" id="bar-k-art">0</div></div>
+  <div class="sm"><div class="sml">Stock total</div><div class="smv" id="bar-k-stock">0 un.</div></div>
+  <div class="sm"><div class="sml">Vendido</div><div class="smv" id="bar-k-vend" style="color:var(--ok)">0 un.</div></div>
+  <div class="sm"><div class="sml">Receita do bar</div><div class="smv" id="bar-k-rec" style="color:var(--gl2)">0,00EUR</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start;margin-bottom:22px;">
+  <div>
+    <div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">CAIXA</span>Artigos disponiveis</div>
+    <div id="bar-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;"></div>
+  </div>
+  <div style="background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:14px;position:sticky;top:10px;">
+    <div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">TALAO</span>Venda atual</div>
+    <div id="bar-cart" style="margin-bottom:12px;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:800;border-top:1px solid rgba(201,168,76,.25);padding-top:10px;margin-bottom:12px;"><span>Total</span><span id="bar-total" style="color:var(--gl2)">0,00EUR</span></div>
+    <button class="btn bp" style="width:100%;margin-bottom:8px;font-size:15px;padding:12px;" onclick="barRegistar()">&#10003; Registar venda</button>
+    <button class="btn bo" style="width:100%;" onclick="barLimpar()">Limpar talao</button>
+  </div>
+</div>
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">ARTIGOS</span>Gestao de artigos &amp; stock</div>
+<div class="tbl-wrap tw" style="margin-bottom:20px;"><table>
+  <thead><tr><th>Artigo</th><th>Categoria</th><th>Preco</th><th>Stock inicial</th><th>Stock atual</th><th id="th-bar-a">Acoes</th></tr></thead>
+  <tbody id="t-bar-art"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr></tbody>
+</table></div>
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">VENDAS</span>Registo de vendas do bar</div>
+<div class="tbl-wrap tw"><table>
+  <thead><tr><th>Data / Hora</th><th>Artigos</th><th>Total</th><th id="th-bar-v">Acoes</th></tr></thead>
+  <tbody id="t-bar-vendas"><tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr></tbody>
+</table></div>
+</div>
+
 <div class="pg" id="pg-consignacao">
 <div class="st"><span class="sn">CONS</span>Consignacao & Merchandise<button class="hbtn" data-help="consignacao" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Stock em consignacao por marca · Entradas · Vendas · Devolucoes · Acerto de contas</div>
@@ -1786,6 +1830,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mf"><button class="btn bo" onclick="closeM('m-desp')">Cancelar</button><button class="btn bp" onclick="saveDesp()">Guardar despesa</button></div>
 </div></div>
 
+<div class="mo" id="m-bar-art"><div class="mdl">
+  <div class="mh"><div class="mt2">Artigo do Bar</div><button class="mc" onclick="closeM('m-bar-art')">&#10005;</button></div>
+  <div class="mb">
+    <div class="fr"><div class="fg"><div class="fl">Nome do artigo</div><input class="fi" id="ba-nome" placeholder="Ex.: Agua 0,5L"></div><div class="fg"><div class="fl">Categoria</div><input class="fi" id="ba-cat" placeholder="Bebidas / Snacks..."></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Preco de venda (EUR)</div><input class="fi" type="number" step="0.01" id="ba-preco" placeholder="0,00"></div><div class="fg"><div class="fl">Stock (unidades)</div><input class="fi" type="number" step="1" id="ba-qty" placeholder="0"></div></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-bar-art')">Cancelar</button><button class="btn bp" onclick="saveBarArtigo()">Guardar artigo</button></div>
+</div></div>
+
 <div class="mo" id="m-pat"><div class="mdl">
   <div class="mh"><div class="mt2">Novo Patrocinador</div><button class="mc" onclick="closeM('m-pat')">✕</button></div>
   <div class="mb">
@@ -2331,7 +2384,7 @@ function startApp(role){
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+cls;}
   setAdminBars();tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBar();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
 }
 function doLogout(){document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -2341,7 +2394,7 @@ function setAdminBars(){
   // Barras de acção operacionais — visíveis para admin E swc
   [
     'bar-cron','bar-atl','bar-alo','bar-cer',
-    'bar-rec','bar-desp','bar-pat','bar-inv',
+    'bar-rec','bar-desp','bar-pat','bar-inv','bar-bar',
     'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
     'bar-resultados','bar-diariobordo','bar-faturas','bar-actas',
   ].forEach(id=>{
@@ -2357,7 +2410,7 @@ function setAdminBars(){
 
   // Colunas de acções nas tabelas — visíveis para edit
   [
-    'th-atl','th-cer','th-di','th-rec','th-desp','th-pat',
+    'th-atl','th-cer','th-di','th-rec','th-desp','th-pat','th-bar-a','th-bar-v',
     'th-cs-marca','th-cs-art','th-cs-venda',
     'th-rm','th-match','th-res','th-orc','th-fat',
   ].forEach(id=>{
@@ -6922,6 +6975,88 @@ function exportChkPDF(){
 
 // === CONSIGNACAO & MERCHANDISE ===
 let _marcas=[], _artigos=[], _vendas_cs=[];
+
+//  BAR (Caixa) 
+let _barArt=[], _barVen=[], _barCart={};
+function loadBar(){
+  _snap('bar_artigos',(d)=>{_barArt=d;renderBarGrid();renderBarArtigos();renderBarKPIs();});
+  _snap('bar_vendas',(d)=>{_barVen=d;renderBarVendas();renderBarArtigos();renderBarGrid();renderBarKPIs();});
+}
+function barStock(id){const a=_barArt.find(x=>x.id===id);if(!a)return 0;let s=0;_barVen.forEach(v=>(v.items||[]).forEach(it=>{if(it.artigoId===id)s+=Number(it.qty||0);}));return Number(a.qtyEntrou||0)-s;}
+function renderBarKPIs(){
+  const stock=_barArt.reduce((s,a)=>s+barStock(a.id),0);let vend=0,rec=0;
+  _barVen.forEach(v=>{rec+=Number(v.total||0);(v.items||[]).forEach(it=>vend+=Number(it.qty||0));});
+  (document.getElementById('bar-k-art')||{}).textContent=_barArt.length;
+  (document.getElementById('bar-k-stock')||{}).textContent=stock+' un.';
+  (document.getElementById('bar-k-vend')||{}).textContent=vend+' un.';
+  (document.getElementById('bar-k-rec')||{}).textContent=fmt(rec);
+}
+function renderBarGrid(){
+  const g=document.getElementById('bar-grid');if(!g)return;
+  if(!_barArt.length){g.innerHTML='<div class="mu" style="grid-column:1/-1;text-align:center;padding:22px;">Sem artigos disponiveis.</div>';return;}
+  g.innerHTML=_barArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
+    const st=barStock(a.id);const out=st<=0;
+    return '<button onclick="barAdd(\''+a.id+'\')" '+(out?'disabled':'')+' style="text-align:left;border:1px solid rgba(201,168,76,'+(out?'.1':'.28')+');background:rgba(255,255,255,'+(out?'.02':'.05')+');border-radius:10px;padding:11px;cursor:'+(out?'not-allowed':'pointer')+';opacity:'+(out?'.4':'1')+';color:var(--wh);font-family:inherit;"><div style="font-weight:700;font-size:13px;margin-bottom:4px;line-height:1.2;">'+(a.nome||'')+'</div><div style="font-size:16px;font-weight:800;color:var(--gl2);">'+fmt(a.preco)+'</div><div style="font-size:10px;color:'+(st<=3?'var(--er)':'var(--mu)')+';margin-top:3px;">stock: '+st+'</div></button>';
+  }).join('');
+}
+function barAdd(id){const st=barStock(id);const inc=_barCart[id]||0;if(inc>=st){toast('Sem stock suficiente','er');return;}_barCart[id]=inc+1;renderBarCart();}
+function barInc(id){barAdd(id);}
+function barDec(id){if(!_barCart[id])return;_barCart[id]--;if(_barCart[id]<=0)delete _barCart[id];renderBarCart();}
+function barDelLine(id){delete _barCart[id];renderBarCart();}
+function renderBarCart(){
+  const c=document.getElementById('bar-cart');if(!c)return;const ids=Object.keys(_barCart);
+  if(!ids.length){c.innerHTML='<div class="mu" style="text-align:center;padding:16px;font-size:12px;">Talao vazio &mdash; toca nos artigos</div>';(document.getElementById('bar-total')||{}).textContent=fmt(0);return;}
+  let total=0;
+  c.innerHTML=ids.map(id=>{const a=_barArt.find(x=>x.id===id)||{};const q=_barCart[id];const lt=Number(a.preco||0)*q;total+=lt;
+    return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:12px;"><div style="flex:1;min-width:0;"><div style="font-weight:600;">'+(a.nome||'')+'</div><div class="mu" style="font-size:10px;">'+fmt(a.preco)+' x '+q+'</div></div><button class="btn bo bsm" onclick="barDec(\''+id+'\')">&minus;</button><span style="min-width:18px;text-align:center;font-weight:700;">'+q+'</span><button class="btn bo bsm" onclick="barInc(\''+id+'\')">+</button><span style="min-width:54px;text-align:right;font-weight:700;">'+fmt(lt)+'</span><button class="btn bd2 bsm" onclick="barDelLine(\''+id+'\')">&#10005;</button></div>';
+  }).join('');
+  (document.getElementById('bar-total')||{}).textContent=fmt(total);
+}
+async function barRegistar(){
+  if(!canEdit()){toast('Sem permissao','er');return;}
+  const ids=Object.keys(_barCart);if(!ids.length){toast('Talao vazio','er');return;}
+  const items=[];let total=0;
+  for(const id of ids){const a=_barArt.find(x=>x.id===id);if(!a)continue;const q=_barCart[id];if(q>barStock(id)){toast('Stock insuficiente: '+(a.nome||''),'er');return;}const lt=Number(a.preco||0)*q;total+=lt;items.push({artigoId:id,nome:a.nome||'',qty:q,precoUnit:Number(a.preco||0),total:lt});}
+  await _add('bar_vendas',{items,total,dt:new Date().toLocaleString('pt-PT'),ts:Date.now()});
+  _barCart={};renderBarCart();toast('Venda registada '+fmt(total));
+}
+function barLimpar(){_barCart={};renderBarCart();}
+function renderBarArtigos(){
+  const tb=document.getElementById('t-bar-art');if(!tb)return;
+  if(!_barArt.length){tb.innerHTML='<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr>';return;}
+  tb.innerHTML=_barArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
+    const st=barStock(a.id);
+    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="mu">'+(a.categoria||'')+'</td><td style="text-align:right;">'+fmt(a.preco)+'</td><td style="text-align:center;">'+(a.qtyEntrou||0)+'</td><td style="text-align:center;font-weight:700;color:'+(st<=3?'var(--er)':'var(--wh)')+';">'+st+'</td>'+(canEdit()?'<td><button class="btn bo bsm" onclick="editBarArtigo(\''+a.id+'\')">&#9999;</button>'+(canDelete()?'<button class="btn bd2 bsm" onclick="delBarArtigo(\''+a.id+'\')">&#128465;</button>':'')+'</td>':'<td></td>')+'</tr>';
+  }).join('');
+}
+function renderBarVendas(){
+  const tb=document.getElementById('t-bar-vendas');if(!tb)return;
+  const sorted=[..._barVen].sort((a,b)=>b.ts-a.ts);
+  if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
+  tb.innerHTML=sorted.map(v=>{const desc=(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');
+    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
+  }).join('');
+}
+async function saveBarArtigo(){
+  if(!canEdit())return;
+  const d={nome:document.getElementById('ba-nome').value,categoria:document.getElementById('ba-cat').value,preco:parseFloat(document.getElementById('ba-preco').value)||0,qtyEntrou:parseInt(document.getElementById('ba-qty').value)||0,ts:Date.now()};
+  if(!d.nome){toast('Nome obrigatorio','er');return;}
+  const _e=document.getElementById('ba-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('bar_artigos',_eid,d);if(_e)_e.value='';toast('Artigo actualizado');}else{await _add('bar_artigos',d);toast('Artigo registado');}
+  closeM('m-bar-art');
+}
+function editBarArtigo(id){
+  const a=_barArt.find(x=>x.id===id);if(!a)return;
+  let hid=document.getElementById('ba-eid');
+  if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='ba-eid';const mb=document.querySelector('#m-bar-art .mb');if(mb)mb.prepend(hid);}
+  hid.value=id;
+  const set=(i,v)=>{const e=document.getElementById(i);if(e)e.value=v;};
+  set('ba-nome',a.nome||'');set('ba-cat',a.categoria||'');set('ba-preco',a.preco||'');set('ba-qty',a.qtyEntrou||0);
+  openM('m-bar-art');
+}
+async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
+async function delBarVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await _del('bar_vendas',id);toast('Anulada','er');}
+window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;
 
 function loadConsig(){
   _snap('cs_marcas',(docs)=>{_marcas=docs;renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();});

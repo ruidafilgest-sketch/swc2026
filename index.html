@@ -1232,7 +1232,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div id="bar-cart" style="margin-bottom:12px;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:800;border-top:1px solid rgba(201,168,76,.25);padding-top:10px;margin-bottom:12px;"><span>Total</span><span id="bar-total" style="color:var(--gl2)">0,00EUR</span></div>
     <button class="btn bp" style="width:100%;margin-bottom:8px;font-size:15px;padding:12px;" onclick="barRegistar()">&#10003; Registar venda</button>
-    <button class="btn bo" style="width:100%;" onclick="barLimpar()">Limpar talao</button>
+    <button class="btn bo" style="width:100%;margin-bottom:8px;" onclick="barLimpar()">Limpar talao</button>
+    <button class="btn bo" style="width:100%;" onclick="comprovativoBarCart()">&#128442; Comprovativo / Receipt</button>
   </div>
 </div>
 <div class="gestao-only"><div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">ARTIGOS</span>Gestao de artigos &amp; stock</div>
@@ -1282,7 +1283,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div id="merch-cart" style="margin-bottom:12px;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:800;border-top:1px solid rgba(201,168,76,.25);padding-top:10px;margin-bottom:12px;"><span>Total</span><span id="merch-total" style="color:var(--gl2)">0,00EUR</span></div>
     <button class="btn bp" style="width:100%;margin-bottom:8px;font-size:15px;padding:12px;" onclick="merchRegistar()">&#10003; Registar venda</button>
-    <button class="btn bo" style="width:100%;" onclick="merchLimpar()">Limpar talao</button>
+    <button class="btn bo" style="width:100%;margin-bottom:8px;" onclick="merchLimpar()">Limpar talao</button>
+    <button class="btn bo" style="width:100%;" onclick="comprovativoMerchCart()">&#128442; Comprovativo / Receipt</button>
   </div>
 </div>
 <div class="gestao-only">
@@ -6286,6 +6288,51 @@ function pdfFooter(doc, isLandscape){
 }
 
 function fmtPDF(v){return Number(v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';}
+// === COMPROVATIVO DE VENDA (nao oficial / non-official sales receipt) ===
+function comprovativoVenda(origem,itens,total,quando){
+  try{
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a5'});
+    const W=148;
+    doc.setFillColor(8,16,32);doc.rect(0,0,W,30,'F');
+    doc.setFillColor(201,168,76);doc.rect(0,0,W,1,'F');
+    doc.setFillColor(255,255,255);doc.roundedRect(7,4,20,20,2,2,'F');
+    try{ doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',8,5,18,18); }catch(e){}
+    doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('helvetica','bold');
+    doc.text('SWC Vizela 2026',31,12);
+    doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(201,168,76);
+    doc.text(origem==='bar'?'Bar / Bar':'Merchandising / Merchandise',31,17);
+    doc.setTextColor(210,210,210);doc.setFontSize(7);
+    doc.text('Vizelgolfe - Associacao de Minigolfe de Vizela',31,21.5);
+    let y=38;
+    doc.setTextColor(20,20,20);doc.setFont('helvetica','bold');doc.setFontSize(11);
+    doc.text('COMPROVATIVO DE VENDA',W/2,y,{align:'center'});y+=5;
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(90,90,90);
+    doc.text('Proof of purchase',W/2,y,{align:'center'});y+=7;
+    doc.setFontSize(8);doc.setTextColor(40,40,40);
+    doc.text('Data / Date: '+(quando||new Date().toLocaleString('pt-PT')),12,y);y+=2;
+    const body=(itens||[]).map(it=>[String(it.qty||1),(it.nome||''),fmtPDF(it.precoUnit||0),fmtPDF((it.precoUnit||0)*(it.qty||1))]);
+    doc.autoTable({startY:y+2,head:[['Qt','Artigo / Item','Preco / Price','Total']],body:body,theme:'grid',
+      styles:{fontSize:8,textColor:[35,35,35],cellPadding:2.5,lineColor:[210,200,180],lineWidth:0.2},
+      headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},
+      columnStyles:{0:{cellWidth:12,halign:'center'},2:{halign:'right'},3:{halign:'right'}}});
+    let yf=doc.lastAutoTable.finalY+6;
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(10,22,40);
+    doc.text('TOTAL: '+fmtPDF(total),W-12,yf,{align:'right'});yf+=10;
+    doc.setDrawColor(200,200,200);doc.line(12,yf,W-12,yf);yf+=5;
+    doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(120,120,120);
+    doc.text('Documento sem valor fiscal. Nao serve como fatura.',W/2,yf,{align:'center'});yf+=3.5;
+    doc.text('Non-official document. Not valid as an invoice.',W/2,yf,{align:'center'});yf+=6;
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(150,150,150);
+    doc.text('Obrigado pela sua visita! / Thank you for your visit!',W/2,yf,{align:'center'});
+    doc.save('SWC2026_Comprovativo_'+(origem||'venda')+'_'+Date.now()+'.pdf');
+    if(typeof toast==='function')toast('Comprovativo gerado');
+  }catch(e){console.error('comprovativo',e);if(typeof toast==='function')toast('Erro ao gerar comprovativo','er');}
+}
+function comprovativoBarCart(){ const ids=Object.keys(_barCart||{}); if(!ids.length){toast('Talao vazio','er');return;} let total=0; const itens=ids.map(id=>{const a=_barArt.find(x=>x.id===id)||{};const q=_barCart[id];total+=Number(a.preco||0)*q;return {nome:(a.nome||''),qty:q,precoUnit:Number(a.preco||0)};}); comprovativoVenda('bar',itens,total); }
+function comprovativoMerchCart(){ const ids=Object.keys(_merchCart||{}); if(!ids.length){toast('Talao vazio','er');return;} let total=0; const itens=ids.map(id=>{const a=MART().find(x=>x.id===id)||{};const q=_merchCart[id];total+=Number(a.preco||0)*q;return {nome:(a.desc||a.ref||'Artigo'),qty:q,precoUnit:Number(a.preco||0)};}); comprovativoVenda('merch',itens,total); }
+function comprovativoBarVenda(id){ const v=(_barVen||[]).find(x=>x.id===id); if(!v)return; const itens=(v.items||[]).map(it=>({nome:it.nome||'',qty:it.qty||1,precoUnit:it.precoUnit||0})); comprovativoVenda('bar',itens,v.total,v.dt); }
+function comprovativoMerchVenda(id){ const v=MVEN().find(x=>x.id===id); if(!v)return; comprovativoVenda('merch',[{nome:(v.desc||v.ref||'Artigo'),qty:v.qty||1,precoUnit:v.precoUnit||0}],v.total,v.dt); }
+window.comprovativoBarCart=comprovativoBarCart;window.comprovativoMerchCart=comprovativoMerchCart;window.comprovativoBarVenda=comprovativoBarVenda;window.comprovativoMerchVenda=comprovativoMerchVenda;
 
 //  DR PDF 
 function exportDR(){
@@ -7193,7 +7240,7 @@ function renderBarVendas(){
   const sorted=[..._barVen].sort((a,b)=>b.ts-a.ts);
   if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
   tb.innerHTML=sorted.map(v=>{const desc=(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');
-    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
+    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoBarVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
   }).join('');
 }
 async function saveBarArtigo(){
@@ -7384,7 +7431,7 @@ function renderMerchVendas(){
   const sorted=[...MVEN()].sort((a,b)=>(b.ts||0)-(a.ts||0));
   if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
   tb.innerHTML=sorted.map(v=>{const desc=Number(v.qty||0)+'x '+(v.desc||v.ref||'');
-    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bd2 bsm" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
+    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoMerchVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
   }).join('');
 }
 async function saveMerchArtigo(){

@@ -1263,7 +1263,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">MERCH</span>Merchandise — Caixa</div>
 <div class="sd">Caixa do merchandise: toca nos artigos, soma a conta e regista a venda — o stock baixa e o valor e assumido automaticamente.</div>
 <div class="bb gestao-only" id="bar-merch">
-  <button class="btn bp" onclick="openM('m-merch-art')">+ Novo artigo</button>
+  <button class="btn bo" onclick="nav(document.querySelector('.si[onclick*=consignacao]'),'consignacao','Consignação &amp; Merchandise')">+ Carregar artigos (Consignacao)</button>
+  <span class="mu" style="font-size:11px;align-self:center;margin-left:8px;">Os artigos sao geridos em Consignacao &amp; Merchandise &mdash; aqui so se vende.</span>
 </div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Artigos</div><div class="smv" id="merch-k-art">0</div></div>
@@ -2454,6 +2455,37 @@ const C=id=>{const base=doc(collection(db,'swc2026'),'dados');return collection(
 // Wrappers para API modular
 const _add=(col,data)=>addDoc(C(col),data);
 const _del=(col,id)=>deleteDoc(doc(C(col),id));
+// === LIGACAO AO DIARIO (lancamentos): cria/remove entrada de Caixa por venda ===
+async function lancarVendaContab(origem,conta,ds,total,refId){
+  if(!(Number(total)>0))return;
+  const data=new Date().toISOString().slice(0,10);
+  try{
+    await _add('receitas',{data,conta:conta,desc:ds,valor:Number(total),estado:'Recebido',obs:'Auto '+origem,origem:origem,refId:refId||'',ts:Date.now()});
+    await _add('lancamentos',{data,dc:'',cn:conta,cb:'Caixa',ds:ds,tp:'C',vl:Number(total),origem:origem,refId:refId||'',ts:Date.now()});
+  }catch(e){console.error('lancarVendaContab',e);}
+}
+async function lancarLanConta(origem,conta,ds,valor,tp,refId){
+  if(!(Number(valor)>0))return;
+  const data=new Date().toISOString().slice(0,10);
+  try{ await _add('lancamentos',{data,dc:'',cn:conta,cb:'Caixa',ds:ds||origem,tp:tp||'C',vl:Number(valor),origem:origem,refId:refId||'',ts:Date.now()}); }catch(e){console.error('lancarLanConta',e);}
+}
+async function removerVendaContab(refId){
+  if(!refId)return;
+  for(const r of (typeof _rec!=='undefined'&&_rec?_rec:[]).filter(x=>x.refId===refId)){ try{ await _del('receitas',r.id); }catch(e){} }
+  for(const l of (typeof _lan!=='undefined'&&_lan?_lan:[]).filter(x=>x.refId===refId)){ try{ await _del('lancamentos',l.id); }catch(e){} }
+}
+async function removerLanPorRef(refId){
+  if(!refId)return;
+  for(const l of (typeof _lan!=='undefined'&&_lan?_lan:[]).filter(x=>x.refId===refId)){ try{ await _del('lancamentos',l.id); }catch(e){} }
+}
+function jaLancado(id){ return (typeof _lan!=='undefined'&&_lan?_lan:[]).some(l=>l.refId===id); }
+async function lancarReceita(id){ if(!canEdit())return; const r=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(!r)return; if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('receita',(r.conta||'788'),(r.desc||'Receita'),Number(r.valor||0),'C',id); toast('Lancado no Diario'); }
+async function lancarDespesa(id){ if(!canEdit())return; const x=(typeof _desp!=='undefined'?_desp:[]).find(y=>y.id===id); if(!x)return; if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('despesa',(x.conta||'6268'),(x.desc||'Despesa'),Number(x.valor||0),'D',id); toast('Lancado no Diario'); }
+async function lancarPatroc(id){ if(!canEdit())return; const p=(typeof _pat!=='undefined'?_pat:[]).find(y=>y.id===id); if(!p)return; if(p.tipoValor==='Espécie'){toast('Patrocinio em especie nao e dinheiro','am');return;} if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarVendaContab('patroc','724',('Patrocinio '+(p.empresa||'')),Number(p.valor||0),id); toast('Lancado no Diario'); }
+async function deslancarRec(id){ if(!canEdit())return; await removerLanPorRef(id); toast('Removido do Diario','er'); }
+async function deslancarDesp(id){ if(!canEdit())return; await removerLanPorRef(id); toast('Removido do Diario','er'); }
+async function deslancarPat(id){ if(!canEdit())return; await removerVendaContab(id); toast('Removido do Diario','er'); }
+window.lancarReceita=lancarReceita;window.lancarDespesa=lancarDespesa;window.lancarPatroc=lancarPatroc;window.deslancarRec=deslancarRec;window.deslancarDesp=deslancarDesp;window.deslancarPat=deslancarPat;
 const _upd=(col,id,data)=>updateDoc(doc(C(col),id),data);
 const _snap=(col,cb,ord)=>{const q=ord?query(C(col),orderBy(ord)):C(col);return onSnapshot(q,s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))));};
 
@@ -2617,7 +2649,7 @@ function toast(msg,type='ok'){const t=document.getElementById('tst');t.textConte
 //  DATA 
 let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[];
 function loadAll(){
-  _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();},'data');
+  _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
   _snap('despesas',(docs)=>{_desp=docs;renderDesp();renderDash();},'data');
   _snap('patrocinios',(docs)=>{_pat=docs;renderPat();renderDash();});
@@ -2704,7 +2736,7 @@ function renderRec(){
   document.getElementById('r-pen').textContent=fmt(totP);
   document.getElementById('r-pub').textContent=fmt(pub);
   document.getElementById('r-prv').textContent=fmt(totR-pub);
-  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editRec('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRec('${r.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
+  document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${canEdit()?`<td>${jaLancado(r.id)?`<span class="bge bg-ok" style="font-size:9px;">Diário</span><button class="btn bo bsm" title="Remover do Diario" onclick="deslancarRec('${r.id}')">&#8634;</button>`:`<button class="btn bp bsm" title="Lancar no Diario" onclick="lancarReceita('${r.id}')">&#8364;&#8594;</button>`}<button class="btn bo bsm" onclick="editRec('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRec('${r.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
 }
 async function delRec(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
 
@@ -2725,7 +2757,7 @@ function renderDesp(){
   const byR={};_desp.forEach(d=>{byR[d.conta]=(byR[d.conta]||0)+Number(d.valor||0);});
   const mr=Object.entries(byR).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('d-mrb').textContent=mr?mr[0]:'-';
-  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editDesp('${d.id}')">✏️</button><button class="btn bd2 bsm" onclick="delDesp('${d.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
+  document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${canEdit()?`<td>${jaLancado(d.id)?`<span class="bge bg-ok" style="font-size:9px;">Diário</span><button class="btn bo bsm" title="Remover do Diario" onclick="deslancarDesp('${d.id}')">&#8634;</button>`:`<button class="btn bp bsm" title="Lancar no Diario" onclick="lancarDespesa('${d.id}')">&#8364;&#8594;</button>`}<button class="btn bo bsm" onclick="editDesp('${d.id}')">✏️</button><button class="btn bd2 bsm" onclick="delDesp('${d.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
 }
 async function delDesp(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('despesas',id);toast('Eliminada','er');}
 
@@ -2745,7 +2777,7 @@ function renderPat(){
   document.getElementById('p-gd').textContent=_pat.filter(p=>p.tipo==='Gold WMF').length;
   document.getElementById('p-lc').textContent=_pat.filter(p=>p.tipo!=='Gold WMF').length;
   document.getElementById('p-pct').textContent=cf>0?fmt(cf):'';
-  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}${p.tipoValor==='Espécie'?' <span class="bge bg-am" style="font-size:9px;">espécie</span>':''}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editPat('${p.id}')">✏️</button><button class="btn bd2 bsm" onclick="delPat('${p.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
+  document.getElementById('t-pat').innerHTML=_pat.length?_pat.map(p=>`<tr><td class="vl">${p.empresa||''}</td><td class="mu">${p.contacto||''}</td><td><span class="bge ${p.tipo==='Gold WMF'?'bg-g':'bg-bl'}">${p.tipo||''}</span></td><td class="tok">${fmt(p.valor)}${p.tipoValor==='Espécie'?' <span class="bge bg-am" style="font-size:9px;">espécie</span>':''}</td><td class="mu" style="font-size:11px;">${(p.contrapartidas||'').substring(0,45)}${(p.contrapartidas||'').length>45?'...':''}</td><td><span class="bge ${p.estado==='Recebido'||p.estado==='Confirmado'?'bg-ok':p.estado==='Proposta enviada'?'bg-am':p.estado==='Recusado'?'bg-er':'bg-mu'}">${p.estado}</span></td>${canEdit()?`<td>${(p.tipoValor!=='Espécie')?(jaLancado(p.id)?`<span class="bge bg-ok" style="font-size:9px;">Diário</span><button class="btn bo bsm" title="Remover do Diario" onclick="deslancarPat('${p.id}')">&#8634;</button>`:`<button class="btn bp bsm" title="Lancar no Diario" onclick="lancarPatroc('${p.id}')">&#8364;&#8594;</button>`):''}<button class="btn bo bsm" onclick="editPat('${p.id}')">✏️</button><button class="btn bd2 bsm" onclick="delPat('${p.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr>';
 }
 async function delPat(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
 
@@ -7142,7 +7174,9 @@ async function barRegistar(){
   const ids=Object.keys(_barCart);if(!ids.length){toast('Talao vazio','er');return;}
   const items=[];let total=0;
   for(const id of ids){const a=_barArt.find(x=>x.id===id);if(!a)continue;const q=_barCart[id];if(q>barStock(id)){toast('Stock insuficiente: '+(a.nome||''),'er');return;}const lt=Number(a.preco||0)*q;total+=lt;items.push({artigoId:id,nome:a.nome||'',qty:q,precoUnit:Number(a.preco||0),total:lt});}
-  await _add('bar_vendas',{items,total,dt:new Date().toLocaleString('pt-PT'),ts:Date.now()});
+  const _bref=await _add('bar_vendas',{items,total,dt:new Date().toLocaleString('pt-PT'),ts:Date.now()});
+  const _bdesc='Bar: '+items.map(it=>it.qty+'x '+(it.nome||'')).join(', ');
+  await lancarVendaContab('bar','788',_bdesc,total,_bref&&_bref.id);
   _barCart={};renderBarCart();toast('Venda registada '+fmt(total));
 }
 function barLimpar(){_barCart={};renderBarCart();}
@@ -7180,7 +7214,7 @@ function editBarArtigo(id){
   openM('m-bar-art');
 }
 async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
-async function delBarVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await _del('bar_vendas',id);toast('Anulada','er');}
+async function delBarVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await removerVendaContab(id);await _del('bar_vendas',id);toast('Anulada','er');}
 window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;
 //  ACESSOS POR SECCAO (Fase 2) 
 let _acessos=[];
@@ -7279,23 +7313,24 @@ function renderAcessos(){
 }
 window.openNovoAcesso=openNovoAcesso;window.editAcesso=editAcesso;window.salvarAcesso=salvarAcesso;window.delAcesso=delAcesso;
 //  MERCHANDISE (Caixa) 
-let _merchArt=[], _merchVen=[], _merchCart={};
-function loadMerch(){
-  _snap('merch_artigos',(d)=>{_merchArt=d;renderMerchGrid();renderMerchArtigos();renderMerchKPIs();});
-  _snap('merch_vendas',(d)=>{_merchVen=d;renderMerchVendas();renderMerchArtigos();renderMerchGrid();renderMerchKPIs();});
-}
-function merchStock(id){const a=_merchArt.find(x=>x.id===id);if(!a)return 0;let s=0;_merchVen.forEach(v=>(v.items||[]).forEach(it=>{if(it.artigoId===id)s+=Number(it.qty||0);}));return Number(a.qtyEntrou||0)-s;}
+let _merchCart={};
+// FONTE UNICA: a Caixa de merchandise usa os MESMOS dados da Consignacao (cs_artigos / cs_vendas / cs_marcas)
+function MART(){ return (typeof _artigos!=='undefined'&&_artigos)?_artigos:[]; }
+function MVEN(){ return (typeof _vendas_cs!=='undefined'&&_vendas_cs)?_vendas_cs:[]; }
+function loadMerch(){ /* dados carregados por loadConsig(); a caixa apenas re-renderiza */ renderMerchGrid();renderMerchArtigos();renderMerchVendas();renderMerchKPIs(); }
+function merchRefresh(){ if(document.getElementById('merch-grid')){renderMerchGrid();renderMerchArtigos();renderMerchVendas();renderMerchKPIs();} }
+function merchStock(id){const a=MART().find(x=>x.id===id);if(!a)return 0;const vend=MVEN().filter(v=>v.artigoId===id).reduce((s,v)=>s+Number(v.qty||0),0);return Number(a.qtyEntrou||0)-vend;}
 function renderCaixaResumo(){
   const tBar=(typeof _barVen!=='undefined'?_barVen:[]).reduce((s,v)=>s+Number(v.total||0),0);
-  const tMer=(typeof _merchVen!=='undefined'?_merchVen:[]).reduce((s,v)=>s+Number(v.total||0),0);
+  const tMer=MVEN().reduce((s,v)=>s+Number(v.total||0),0);
   (document.getElementById('cxr-bar')||{}).textContent=fmt(tBar);
   (document.getElementById('cxr-merch')||{}).textContent=fmt(tMer);
   (document.getElementById('cxr-total')||{}).textContent=fmt(tBar+tMer);
 }
 function renderMerchKPIs(){
-  const stock=_merchArt.reduce((s,a)=>s+merchStock(a.id),0);let vend=0,rec=0;
-  _merchVen.forEach(v=>{rec+=Number(v.total||0);(v.items||[]).forEach(it=>vend+=Number(it.qty||0));});
-  (document.getElementById('merch-k-art')||{}).textContent=_merchArt.length;
+  const stock=MART().reduce((s,a)=>s+merchStock(a.id),0);let vend=0,rec=0;
+  MVEN().forEach(v=>{rec+=Number(v.total||0);vend+=Number(v.qty||0);});
+  (document.getElementById('merch-k-art')||{}).textContent=MART().length;
   (document.getElementById('merch-k-stock')||{}).textContent=stock+' un.';
   (document.getElementById('merch-k-vend')||{}).textContent=vend+' un.';
   (document.getElementById('merch-k-rec')||{}).textContent=fmt(rec);
@@ -7303,10 +7338,11 @@ function renderMerchKPIs(){
 }
 function renderMerchGrid(){
   const g=document.getElementById('merch-grid');if(!g)return;
-  if(!_merchArt.length){g.innerHTML='<div class="mu" style="grid-column:1/-1;text-align:center;padding:22px;">Sem artigos disponiveis.</div>';return;}
-  g.innerHTML=_merchArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
-    const st=merchStock(a.id);const out=st<=0;
-    return '<button onclick="merchAdd(\''+a.id+'\')" '+(out?'disabled':'')+' style="text-align:left;border:1px solid rgba(201,168,76,'+(out?'.1':'.28')+');background:rgba(255,255,255,'+(out?'.02':'.05')+');border-radius:10px;padding:11px;cursor:'+(out?'not-allowed':'pointer')+';opacity:'+(out?'.4':'1')+';color:var(--wh);font-family:inherit;"><div style="font-weight:700;font-size:13px;margin-bottom:2px;line-height:1.2;">'+(a.nome||'')+'</div><div style="font-size:10px;color:var(--mu);margin-bottom:4px;">'+(a.marca||'')+(a.ref?(' &middot; '+a.ref):'')+'</div><div style="font-size:16px;font-weight:800;color:var(--gl2);">'+fmt(a.preco)+'</div><div style="font-size:10px;color:'+(st<=3?'var(--er)':'var(--mu)')+';margin-top:3px;">stock: '+st+'</div></button>';
+  const arr=MART();
+  if(!arr.length){g.innerHTML='<div class="mu" style="grid-column:1/-1;text-align:center;padding:22px;">Sem artigos. Carrega-os em Consignacao &amp; Merchandise.</div>';return;}
+  g.innerHTML=arr.slice().sort((a,b)=>((a.desc||a.ref||'')).localeCompare(b.desc||b.ref||'')).map(a=>{
+    const st=merchStock(a.id);const out=st<=0;const titulo=(a.desc||a.ref||'Artigo');
+    return '<button onclick="merchAdd(\''+a.id+'\')" '+(out?'disabled':'')+' style="text-align:left;border:1px solid rgba(201,168,76,'+(out?'.1':'.28')+');background:rgba(255,255,255,'+(out?'.02':'.05')+');border-radius:10px;padding:11px;cursor:'+(out?'not-allowed':'pointer')+';opacity:'+(out?'.4':'1')+';color:var(--wh);font-family:inherit;"><div style="font-weight:700;font-size:13px;margin-bottom:2px;line-height:1.2;">'+titulo+'</div><div style="font-size:10px;color:var(--mu);margin-bottom:4px;">'+(a.marcaNome||'')+(a.ref?(' &middot; '+a.ref):'')+'</div><div style="font-size:16px;font-weight:800;color:var(--gl2);">'+fmt(a.preco)+'</div><div style="font-size:10px;color:'+(st<=3?'var(--er)':'var(--mu)')+';margin-top:3px;">stock: '+st+'</div></button>';
   }).join('');
 }
 function merchAdd(id){const st=merchStock(id);const inc=_merchCart[id]||0;if(inc>=st){toast('Sem stock suficiente','er');return;}_merchCart[id]=inc+1;renderMerchCart();}
@@ -7317,33 +7353,37 @@ function renderMerchCart(){
   const c=document.getElementById('merch-cart');if(!c)return;const ids=Object.keys(_merchCart);
   if(!ids.length){c.innerHTML='<div class="mu" style="text-align:center;padding:16px;font-size:12px;">Talao vazio &mdash; toca nos artigos</div>';(document.getElementById('merch-total')||{}).textContent=fmt(0);return;}
   let total=0;
-  c.innerHTML=ids.map(id=>{const a=_merchArt.find(x=>x.id===id)||{};const q=_merchCart[id];const lt=Number(a.preco||0)*q;total+=lt;
-    return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:12px;"><div style="flex:1;min-width:0;"><div style="font-weight:600;">'+(a.nome||'')+'</div><div class="mu" style="font-size:10px;">'+fmt(a.preco)+' x '+q+'</div></div><button class="btn bo bsm" onclick="merchDec(\''+id+'\')">&minus;</button><span style="min-width:18px;text-align:center;font-weight:700;">'+q+'</span><button class="btn bo bsm" onclick="merchInc(\''+id+'\')">+</button><span style="min-width:54px;text-align:right;font-weight:700;">'+fmt(lt)+'</span><button class="btn bd2 bsm" onclick="merchDelLine(\''+id+'\')">&#10005;</button></div>';
+  c.innerHTML=ids.map(id=>{const a=MART().find(x=>x.id===id)||{};const q=_merchCart[id];const lt=Number(a.preco||0)*q;total+=lt;
+    return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:12px;"><div style="flex:1;min-width:0;"><div style="font-weight:600;">'+(a.desc||a.ref||'Artigo')+'</div><div class="mu" style="font-size:10px;">'+fmt(a.preco)+' x '+q+'</div></div><button class="btn bo bsm" onclick="merchDec(\''+id+'\')">&minus;</button><span style="min-width:18px;text-align:center;font-weight:700;">'+q+'</span><button class="btn bo bsm" onclick="merchInc(\''+id+'\')">+</button><span style="min-width:54px;text-align:right;font-weight:700;">'+fmt(lt)+'</span><button class="btn bd2 bsm" onclick="merchDelLine(\''+id+'\')">&#10005;</button></div>';
   }).join('');
   (document.getElementById('merch-total')||{}).textContent=fmt(total);
 }
 async function merchRegistar(){
   if(!canEdit()){toast('Sem permissao','er');return;}
   const ids=Object.keys(_merchCart);if(!ids.length){toast('Talao vazio','er');return;}
-  const items=[];let total=0;
-  for(const id of ids){const a=_merchArt.find(x=>x.id===id);if(!a)continue;const q=_merchCart[id];if(q>merchStock(id)){toast('Stock insuficiente: '+(a.nome||''),'er');return;}const lt=Number(a.preco||0)*q;total+=lt;items.push({artigoId:id,nome:a.nome||'',qty:q,precoUnit:Number(a.preco||0),total:lt});}
-  await _add('merch_vendas',{items,total,dt:new Date().toLocaleString('pt-PT'),ts:Date.now()});
-  _merchCart={};renderMerchCart();toast('Venda registada '+fmt(total));
+  let total=0; const agora=new Date().toISOString().slice(0,10);
+  for(const id of ids){const a=MART().find(x=>x.id===id);if(!a)continue;const q=_merchCart[id];if(q>merchStock(id)){toast('Stock insuficiente: '+(a.desc||a.ref||''),'er');return;}}
+  for(const id of ids){const a=MART().find(x=>x.id===id);if(!a)continue;const q=_merchCart[id];const preco=Number(a.preco||0);const lt=preco*q;total+=lt;
+    const marca=(typeof _marcas!=='undefined'?_marcas:[]).find(m=>m.id===a.marcaId);const pct=marca?Number(marca.pct||0):0;
+    const _mref=await _add('cs_vendas',{marcaId:a.marcaId||'',marcaNome:a.marcaNome||'',artigoId:id,ref:a.ref||'',desc:a.desc||'',qty:q,precoUnit:preco,total:lt,pct,comissao:lt*pct/100,dt:agora,notas:'Caixa Merchandise',ts:Date.now()});
+    await lancarVendaContab('merch','7153',(q+'x '+(a.desc||a.ref||'Artigo')),lt,_mref&&_mref.id);}
+  _merchCart={};renderMerchCart();merchRefresh();toast('Venda registada '+fmt(total));
 }
 function merchLimpar(){_merchCart={};renderMerchCart();}
 function renderMerchArtigos(){
   const tb=document.getElementById('t-merch-art');if(!tb)return;
-  if(!_merchArt.length){tb.innerHTML='<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr>';return;}
-  tb.innerHTML=_merchArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
+  const arr=MART();
+  if(!arr.length){tb.innerHTML='<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem artigos. Carrega em Consignacao &amp; Merchandise.</td></tr>';return;}
+  tb.innerHTML=arr.slice().sort((a,b)=>((a.desc||a.ref||'')).localeCompare(b.desc||b.ref||'')).map(a=>{
     const st=merchStock(a.id);
-    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="go">'+(a.marca||'')+'</td><td style="font-family:monospace;font-size:11px;">'+(a.ref||'')+'</td><td style="text-align:right;">'+fmt(a.preco)+'</td><td style="text-align:center;">'+(a.qtyEntrou||0)+'</td><td style="text-align:center;font-weight:700;color:'+(st<=3?'var(--er)':'var(--wh)')+';">'+st+'</td>'+(canEdit()?'<td><button class="btn bo bsm" onclick="editMerchArtigo(\''+a.id+'\')">&#9999;</button>'+(canDelete()?'<button class="btn bd2 bsm" onclick="delMerchArtigo(\''+a.id+'\')">&#128465;</button>':'')+'</td>':'<td></td>')+'</tr>';
+    return '<tr><td class="vl">'+(a.desc||a.ref||'')+'</td><td class="go">'+(a.marcaNome||'')+'</td><td style="font-family:monospace;font-size:11px;">'+(a.ref||'')+'</td><td style="text-align:right;">'+fmt(a.preco)+'</td><td style="text-align:center;">'+(a.qtyEntrou||0)+'</td><td style="text-align:center;font-weight:700;color:'+(st<=3?'var(--er)':'var(--wh)')+';">'+st+'</td><td><span class="bge bg-mu" style="font-size:9px;">via Consignacao</span></td></tr>';
   }).join('');
 }
 function renderMerchVendas(){
   const tb=document.getElementById('t-merch-vendas');if(!tb)return;
-  const sorted=[..._merchVen].sort((a,b)=>b.ts-a.ts);
+  const sorted=[...MVEN()].sort((a,b)=>(b.ts||0)-(a.ts||0));
   if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
-  tb.innerHTML=sorted.map(v=>{const desc=(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');
+  tb.innerHTML=sorted.map(v=>{const desc=Number(v.qty||0)+'x '+(v.desc||v.ref||'');
     return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bd2 bsm" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
   }).join('');
 }
@@ -7365,7 +7405,7 @@ function editMerchArtigo(id){
   openM('m-merch-art');
 }
 async function delMerchArtigo(id){if(!canDelete()||!confirm('Eliminar artigo de merchandise?'))return;await _del('merch_artigos',id);toast('Eliminado','er');}
-async function delMerchVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await _del('merch_vendas',id);toast('Anulada','er');}
+async function delMerchVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await removerVendaContab(id);await _del('cs_vendas',id);merchRefresh();toast('Anulada','er');}
 window.merchAdd=merchAdd;window.merchInc=merchInc;window.merchDec=merchDec;window.merchDelLine=merchDelLine;window.merchRegistar=merchRegistar;window.merchLimpar=merchLimpar;window.saveMerchArtigo=saveMerchArtigo;window.editMerchArtigo=editMerchArtigo;window.delMerchArtigo=delMerchArtigo;window.delMerchVenda=delMerchVenda;
 //  DOSSIER DE PATROCINIO 
 function carregarDossier(){
@@ -7403,9 +7443,9 @@ window.carregarDossier=carregarDossier;window.copiarLinkDossier=copiarLinkDossie
 
 
 function loadConsig(){
-  _snap('cs_marcas',(docs)=>{_marcas=docs;renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();});
-  _snap('cs_artigos',(docs)=>{_artigos=docs;renderArtigos();renderConsigKPIs();});
-  _snap('cs_vendas',(docs)=>{_vendas_cs=docs;renderVendas();renderConsigKPIs();});
+  _snap('cs_marcas',(docs)=>{_marcas=docs;renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();if(typeof merchRefresh==='function')merchRefresh();});
+  _snap('cs_artigos',(docs)=>{_artigos=docs;renderArtigos();renderConsigKPIs();if(typeof merchRefresh==='function')merchRefresh();});
+  _snap('cs_vendas',(docs)=>{_vendas_cs=docs;renderVendas();renderConsigKPIs();if(typeof merchRefresh==='function')merchRefresh();if(typeof renderCaixaResumo==='function')renderCaixaResumo();});
 }
 
 function populateMarcaSelects(){
@@ -7477,7 +7517,8 @@ async function saveVenda(){
   const preco=Number(artigo.preco||0);
   const total=preco*qty;
   const pct=marca?Number(marca.pct||0):0;
-  await _add('cs_vendas',{marcaId:artigo.marcaId,marcaNome:artigo.marcaNome||'',artigoId,ref:artigo.ref||'',desc:artigo.desc||'',qty,precoUnit:preco,total,pct,comissao:total*pct/100,dt:document.getElementById('vd-dt').value,notas:document.getElementById('vd-notas').value,ts:Date.now()});
+  const _cvref=await _add('cs_vendas',{marcaId:artigo.marcaId,marcaNome:artigo.marcaNome||'',artigoId,ref:artigo.ref||'',desc:artigo.desc||'',qty,precoUnit:preco,total,pct,comissao:total*pct/100,dt:document.getElementById('vd-dt').value,notas:document.getElementById('vd-notas').value,ts:Date.now()});
+  await lancarVendaContab('merch','7153',(qty+'x '+(artigo.desc||artigo.ref||'Artigo')),total,_cvref&&_cvref.id);
   closeM('m-venda');toast('Venda registada');
 }
 
@@ -7527,7 +7568,7 @@ function renderVendas(){
 
 async function delMarca(id){if(!canDelete()||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
 async function delArtigo(id){if(!canDelete()||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
-async function delVendaCS(id){if(!canDelete()||!confirm('Anular venda?'))return;await _del('cs_vendas',id);toast('Anulada','er');}
+async function delVendaCS(id){if(!canDelete()||!confirm('Anular venda?'))return;await removerVendaContab(id);await _del('cs_vendas',id);toast('Anulada','er');}
 
 function exportAcertoPDF(marcaId){
   const marca=_marcas.find(m=>m.id===marcaId);

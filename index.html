@@ -2449,10 +2449,12 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getFirestore,collection,doc,getDoc,getDocFromServer,getDocs,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getAuth,signInWithEmailAndPassword,signOut}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 //  FIREBASE - substituir com credenciais reais do projeto 'swc2026' 
 const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",databaseURL:"https://swc2026-c070b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
 const _app=initializeApp(fbCfg);
 const db=getFirestore(_app);
+const _auth=getAuth(_app);
 const C=id=>{const base=doc(collection(db,'swc2026'),'dados');return collection(base,id);};
 // Wrappers para API modular
 const _add=(col,data)=>addDoc(C(col),data);
@@ -2491,49 +2493,55 @@ window.lancarReceita=lancarReceita;window.lancarDespesa=lancarDespesa;window.lan
 const _upd=(col,id,data)=>updateDoc(doc(C(col),id),data);
 const _snap=(col,cb,ord)=>{const q=ord?query(C(col),orderBy(ord)):C(col);return onSnapshot(q,s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))));};
 
-//  AUTH 
-// Níveis de acesso: isAdmin=ADMINISTRADOR2026*** | isSWC=SWC2026*** | leitura=VIZELGOLFE2026***
-let isAdmin=false; // ADMINISTRADOR — controlo total
-let isSWC=false; let isSecao=false, _secAtual=null;   // SWC2026 — operacional (sem eliminar, sem configs)
-// canEdit = pode editar/adicionar (admin ou swc)
+//  AUTH (Firebase Authentication) 
+let isAdmin=false;
+let isSWC=false; let isSecao=false, _secAtual=null;
 function canEdit(){ return isAdmin||isSWC||isSecao; }
-// canDelete = só admin
 function canDelete(){ return isAdmin||isSecao; }
 
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+
+// Contas Firebase (UIDs nao sao secretos). O acesso real e' garantido pelas Regras do Firestore.
+const _ACCOUNTS=[
+  {uid:'3chbXAr0b7bOXmOVJ15b6IgcTxI2', email:'admin@swc2026.pt',       role:'admin'},
+  {uid:'GOZEfot3NsWiMIgUj8h9AZXQDOq1', email:'operacional@swc2026.pt', role:'swc'},
+  {uid:'ILJNN7HEm8UboFEJsTowJZbXzUF3', email:'leitura@swc2026.pt',     role:'leitura'},
+  {uid:'CPnZQ60ZHTfId8OUj2EVUhVbR6W2', email:'bar@sec2026.pt',         role:'seccao', nome:'Bar',         modulos:['bar'],   soVendas:true},
+  {uid:'CweijrhKWzV3sNQmh2imJEUbMc32', email:'merch@swc2026.pt',       role:'seccao', nome:'Merchandise', modulos:['merch'], soVendas:true}
+];
+
 async function doLogin(){
-  const pw = document.getElementById('pw').value;
-  if(!pw){ const el=document.getElementById('lerr'); if(el)el.textContent='Introduz a password'; return; }
+  const pw=document.getElementById('pw').value;
+  const el=document.getElementById('lerr');
+  if(!pw){ if(el)el.textContent='Introduz a password'; return; }
+  if(el)el.textContent='A entrar...';
+  let cred=null;
+  for(const acc of _ACCOUNTS){
+    try{ cred=await signInWithEmailAndPassword(_auth, acc.email, pw); break; }
+    catch(err){ /* password nao corresponde a esta conta; tenta a proxima */ }
+  }
+  if(!cred){ if(el){ el.textContent='Password incorrecta'; setTimeout(()=>{ if(el)el.textContent=''; },2500); } return; }
+  if(el)el.textContent='';
+  applyRole(cred.user.uid);
+}
 
-  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-  const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
-
-  try {
-    const cfgDoc = await getDoc(doc(collection(db,'swc2026_config'),'auth'));
-    const cfg = cfgDoc.exists() ? cfgDoc.data() : null;
-
-    if(cfg && hashHex === cfg.admin_hash){
-      isAdmin=true; isSWC=false;
-      startApp('Administrador');
-      setTimeout(()=>addLog('login','sistema','Acesso Administrador'),1000);
-    } else if(cfg && hashHex === cfg.swc_hash){
-      isAdmin=false; isSWC=true;
-      startApp('SWC2026');
-      setTimeout(()=>addLog('login','sistema','Acesso SWC2026'),1000);
-    } else if(cfg && hashHex === cfg.leitura_hash){
-      isAdmin=false; isSWC=false;
-      startApp('Leitura');
-      setTimeout(()=>addLog('login','sistema','Acesso Leitura'),1000);
-    } else {
-      const el=document.getElementById('lerr');
-      if(await trySecaoLogin(hashHex)){ return; } if(el){ el.textContent='Password incorrecta'; setTimeout(()=>{ el.textContent=''; },2500); }
-    }
-  } catch(e) {
-    console.error('Login error:',e);
-    const el=document.getElementById('lerr');
-    if(el){ el.textContent='Erro de ligacao. Tenta novamente.'; setTimeout(()=>{ el.textContent=''; },3000); }
+function applyRole(uid){
+  const acc=_ACCOUNTS.find(a=>a.uid===uid);
+  if(acc && acc.role==='admin'){
+    isAdmin=true; isSWC=false; isSecao=false; _secAtual=null;
+    startApp('Administrador'); setTimeout(()=>addLog('login','sistema','Acesso Administrador'),1000);
+  } else if(acc && acc.role==='swc'){
+    isAdmin=false; isSWC=true; isSecao=false; _secAtual=null;
+    startApp('SWC2026'); setTimeout(()=>addLog('login','sistema','Acesso SWC2026'),1000);
+  } else if(acc && acc.role==='seccao'){
+    isAdmin=false; isSWC=false; isSecao=true; _secAtual={nome:acc.nome,modulos:acc.modulos,soVendas:acc.soVendas};
+    startApp('Secção: '+acc.nome); setTimeout(()=>addLog('login','sistema','Acesso Secção: '+acc.nome),1000);
+  } else {
+    isAdmin=false; isSWC=false; isSecao=false; _secAtual=null;
+    startApp('Leitura'); setTimeout(()=>addLog('login','sistema','Acesso Leitura'),1000);
   }
 }
+
 function startApp(role){
   document.getElementById('ls').style.display='none';
   document.getElementById('app').style.display='block';
@@ -2545,7 +2553,7 @@ function startApp(role){
   setAdminBars();setTimeout(aplicarAcessos,150);if(isAdmin)setTimeout(loadAcessos,400);tick();setInterval(tick,60000);
   wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBar();loadMerch();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
 }
-function doLogout(){isAdmin=false;isSWC=false;isSecao=false;_secAtual=null;document.querySelectorAll('.si').forEach(si=>si.style.display='');document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
+function doLogout(){try{signOut(_auth);}catch(e){}isAdmin=false;isSWC=false;isSecao=false;_secAtual=null;document.querySelectorAll('.si').forEach(si=>si.style.display='');document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
   const edit = canEdit();   // admin ou swc
   const del  = canDelete(); // só admin

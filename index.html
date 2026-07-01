@@ -3246,6 +3246,8 @@ function renderOrg(){
   const elVC=document.getElementById('org-vol-count');
   if(elVC)elVC.textContent=_vol.length+' voluntários registados';
 
+  const vol=document.getElementById('org-vol');
+  if(!vol)return;
   if(!_vol.length){vol.innerHTML='<div class="em"><div class="emi">&#9711;</div><div class="emt">Sem voluntarios</div></div>';return;}
 
   vol.innerHTML='';
@@ -3320,8 +3322,6 @@ function editBoardEmf(id){
 }
 async function importarDirecao2026(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
-  const jaExiste=_mbr.some(m=>m.refDirecao2026);
-  if(jaExiste&&!confirm('Já existe a Direção 2026 importada.\nDeseja importar na mesma (podem criar duplicados)?'))return;
   const DIRECAO_2026=[
     {nome:'Ricardo Costa',funcao:'Diretor Operacional do SWC 2026',email:'',tel:'',resp:'Diretor Geral do evento — coordenação global de todas as secções.',refDirecao2026:true},
     {nome:'Domingos Silva',funcao:'Diretor Operacional Logística Interna',email:'',tel:'',resp:'Logística dentro do recinto — montagem, sinalética, apoio técnico.',refDirecao2026:true},
@@ -3330,18 +3330,20 @@ async function importarDirecao2026(){
     {nome:'Catarina Ferreira',funcao:'Diretor Operacional Comunicação & Media',email:'',tel:'',resp:'Redes sociais, imprensa, fotografia, vídeo e relações públicas.',refDirecao2026:true},
     {nome:'Gonçalo Castro',funcao:'Diretor Logística Cerimónia e Protocolos',email:'',tel:'',resp:'Cerimónias de abertura e encerramento, prémios, protocolo de entidades.',refDirecao2026:true},
   ];
+  const jaImportados=DIRECAO_2026.filter(m=>_mbr.some(x=>x.refDirecao2026&&x.nome===m.nome));
+  const porImportar=DIRECAO_2026.filter(m=>!_mbr.some(x=>x.refDirecao2026&&x.nome===m.nome));
+  if(!porImportar.length){toast('Direção 2026 já está toda importada — nada a fazer.','inf');return;}
+  if(jaImportados.length&&!confirm('Já existem '+jaImportados.length+' director(es) da Direção 2026 importado(s):\n'+jaImportados.map(m=>'- '+m.nome).join('\n')+'\n\nVão ser ignorados. Importar apenas os '+porImportar.length+' que faltam?'))return;
   let ok=0,err=0;
-  toast('A importar '+DIRECAO_2026.length+' directores...','inf');
-  for(const m of DIRECAO_2026){
+  toast('A importar '+porImportar.length+' director(es)...','inf');
+  for(const m of porImportar){
     try{await _add('membros',{...m,ts:Date.now()});ok++;}
     catch(e){console.error('Erro ao importar',m.nome,e);err++;}
   }
-  toast('Direção 2026 importada: '+ok+' directores'+(err?' ('+err+' erros)':''),'ok');
+  toast('Direção 2026 importada: '+ok+' director(es)'+(err?' ('+err+' erros)':''),'ok');
 }
 async function importarBoardEMF(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
-  const jaExiste=_boardEmf.length>0;
-  if(jaExiste&&!confirm('Já existem membros do Board EMF.\nDeseja importar na mesma (podem criar duplicados)?'))return;
   const BOARD_EMF=[
     {nome:'Ermes Franchini',funcao:'Presidente',email:''},
     {nome:'Peter Burri',funcao:'Secretary General',email:'secretary-general@minigolf-europe.org'},
@@ -3350,13 +3352,17 @@ async function importarBoardEMF(){
     {nome:'Henrique Sousa',funcao:'Media Manager',email:''},
     {nome:'Wil van Disseldorp',funcao:'Senior Players Officer',email:''},
   ];
+  const jaImportados=BOARD_EMF.filter(m=>_boardEmf.some(x=>x.nome===m.nome));
+  const porImportar=BOARD_EMF.filter(m=>!_boardEmf.some(x=>x.nome===m.nome));
+  if(!porImportar.length){toast('Board EMF já está todo importado — nada a fazer.','inf');return;}
+  if(jaImportados.length&&!confirm('Já existem '+jaImportados.length+' membro(s) do Board EMF importado(s):\n'+jaImportados.map(m=>'- '+m.nome).join('\n')+'\n\nVão ser ignorados. Importar apenas os '+porImportar.length+' que faltam?'))return;
   let ok=0,err=0;
-  toast('A importar '+BOARD_EMF.length+' membros do Board EMF...','inf');
-  for(const m of BOARD_EMF){
+  toast('A importar '+porImportar.length+' membro(s) do Board EMF...','inf');
+  for(const m of porImportar){
     try{await _add('boardEmf',{...m,ts:Date.now()});ok++;}
     catch(e){console.error('Erro ao importar',m.nome,e);err++;}
   }
-  toast('Board EMF importado: '+ok+' membros'+(err?' ('+err+' erros)':''),'ok');
+  toast('Board EMF importado: '+ok+' membro(s)'+(err?' ('+err+' erros)':''),'ok');
 }
 async function delVol(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('voluntarios',id);}
 

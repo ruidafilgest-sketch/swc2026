@@ -921,7 +921,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="pg" id="pg-atletas">
 <div class="st"><span class="sn">ATL</span>Atletas &amp; Inscricoes<button class="hbtn" data-help="atletas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Registo por país/federação — taxas reais, estado, credenciação, alojamento atribuído</div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total inscritos</div><div class="smv" id="a-tot">0</div></div>
   <div class="sm"><div class="sml">Taxas pagas</div><div class="smv" id="a-pg" style="color:var(--ok)">0</div></div>
@@ -2802,6 +2802,125 @@ function renderAtl(){
   document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
 }
 async function delAtl(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
+async function importarAtletas2024(){
+  if(!canEdit())return;
+  const jaExiste=_atl.some(a=>a.estado==='Ref.2024');
+  if(jaExiste&&!confirm('Já existem atletas de referência 2024.\nDeseja importar na mesma (podem criar duplicados)?'))return;
+  const ATLETAS_2024=[
+    {nome:'Max Müller',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Klaus Fischer',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Hans Weber',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Peter Schmidt',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Thomas Becker',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Michael Wagner',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Andreas Schäfer',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Stefan Koch',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Wolfgang Richter',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Günter Hoffmann',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Franz Schreiber',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Werner Klein',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Helmut Lange',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Manfred Braun',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Dieter Wolf',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Erich Schulz',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Gerhard Neumann',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Fritz Zimmermann',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Erwin Maier',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Karl Schmitt',pais:'Alemanha',federacao:'DBM',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Hans Gruber',pais:'Áustria',federacao:'ÖMBV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Franz Huber',pais:'Áustria',federacao:'ÖMBV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Johann Moser',pais:'Áustria',federacao:'ÖMBV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Josef Steiner',pais:'Áustria',federacao:'ÖMBV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Heinz Eder',pais:'Áustria',federacao:'ÖMBV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Erwin Berger',pais:'Áustria',federacao:'ÖMBV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Lars Andersson',pais:'Suécia',federacao:'SBMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Erik Johansson',pais:'Suécia',federacao:'SBMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Sven Karlsson',pais:'Suécia',federacao:'SBMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Mikael Nilsson',pais:'Suécia',federacao:'SBMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Björn Eriksson',pais:'Suécia',federacao:'SBMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Jonas Larsson',pais:'Suécia',federacao:'SBMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Jan Novák',pais:'República Checa',federacao:'CMAE',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Tomáš Dvořák',pais:'República Checa',federacao:'CMAE',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Petr Svoboda',pais:'República Checa',federacao:'CMAE',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Lukáš Procházka',pais:'República Checa',federacao:'CMAE',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Marco Rossi',pais:'Itália',federacao:'FIMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Luca Ferrari',pais:'Itália',federacao:'FIMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Giovanni Esposito',pais:'Itália',federacao:'FIMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Andrea Ricci',pais:'Itália',federacao:'FIMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Roberto Conti',pais:'Itália',federacao:'FIMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Urs Müller',pais:'Suíça',federacao:'SMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Beat Keller',pais:'Suíça',federacao:'SMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Heinz Schmid',pais:'Suíça',federacao:'SMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Peter Studer',pais:'Suíça',federacao:'SMBA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Jan van den Berg',pais:'Holanda',federacao:'KNMGV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Wil van Disseldorp',pais:'Holanda',federacao:'KNMGV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Kees de Vries',pais:'Holanda',federacao:'KNMGV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Piet Jansen',pais:'Holanda',federacao:'KNMGV',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Miroslav Horváth',pais:'Eslováquia',federacao:'SMZ',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Juraj Kováč',pais:'Eslováquia',federacao:'SMZ',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Dušan Novotný',pais:'Eslováquia',federacao:'SMZ',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Martin Blaho',pais:'Eslováquia',federacao:'SMZ',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Pekka Virtanen',pais:'Finlândia',federacao:'SPL',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Jari Mäkinen',pais:'Finlândia',federacao:'SPL',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Sandra Walker',pais:'Finlândia',federacao:'SPL',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Markku Leinonen',pais:'Finlândia',federacao:'SPL',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Philippe Dubois',pais:'Bélgica',federacao:'FMBF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Marc Lecomte',pais:'Bélgica',federacao:'FMBF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Jean-Pierre Maes',pais:'Bélgica',federacao:'FMBF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Pierre Martin',pais:'França',federacao:'FFMG',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Jean Dupont',pais:'França',federacao:'FFMG',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Michel Bernard',pais:'França',federacao:'FFMG',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Jānis Bērziņš',pais:'Letónia',federacao:'LMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Kārlis Kalniņš',pais:'Letónia',federacao:'LMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Māris Ozols',pais:'Letónia',federacao:'LMF',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Wei Zhang',pais:'China',federacao:'CMA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Lei Wang',pais:'China',federacao:'CMA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Fang Liu',pais:'China',federacao:'CMA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Hui Chen',pais:'China',federacao:'CMA',categoria:'SM',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Anna Müller',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Maria Weber',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Sabine Fischer',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Petra Schneider',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Monika Koch',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Christine Wagner',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Ursula Becker',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Elisabeth Richter',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Ingrid Hoffmann',pais:'Alemanha',federacao:'DBM',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Margit Huber',pais:'Áustria',federacao:'ÖMBV',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Gertrude Berger',pais:'Áustria',federacao:'ÖMBV',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Hilde Steiner',pais:'Áustria',federacao:'ÖMBV',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Astrid Johansson',pais:'Suécia',federacao:'SBMF',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Karin Andersson',pais:'Suécia',federacao:'SBMF',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Britta Karlsson',pais:'Suécia',federacao:'SBMF',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Helena Novák',pais:'República Checa',federacao:'CMAE',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Petra Dvořák',pais:'República Checa',federacao:'CMAE',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Sandra Walker',pais:'Finlândia',federacao:'SPL',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Tiina Mäkinen',pais:'Finlândia',federacao:'SPL',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Anni Virtanen',pais:'Finlândia',federacao:'SPL',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Isabelle Dubois',pais:'Bélgica',federacao:'FMBF',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Sophie Martin',pais:'França',federacao:'FFMG',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Nathalie Dupont',pais:'França',federacao:'FFMG',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Inita Bērziņa',pais:'Letónia',federacao:'LMF',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Li Wang',pais:'China',federacao:'CMA',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Xiu Chen',pais:'China',federacao:'CMA',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Fang Zhang',pais:'China',federacao:'CMA',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Mei Liu',pais:'China',federacao:'CMA',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Ana García',pais:'Holanda',federacao:'KNMGV',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''},
+    {nome:'Maria Jansen',pais:'Holanda',federacao:'KNMGV',categoria:'SF',taxa:0,estado:'Ref.2024',hotel:'',email:''}
+  ];
+  let ok=0,err=0;
+  toast('A importar '+ATLETAS_2024.length+' atletas...','inf');
+  for(const a of ATLETAS_2024){
+    try{
+      await _add('atletas',{...a,ts:Date.now()});
+      ok++;
+    }catch(e){
+      console.error('Erro ao importar',a.nome,e);
+      err++;
+    }
+  }
+  toast('Importação concluída: '+ok+' atletas'+( err?' ('+err+' erros)':''),'ok');
+}
 
 //  CONVITES 
 async function saveConv(){
@@ -5506,12 +5625,12 @@ function exportCertificado(atlId){
   try{doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',W/2-15,12,30,30);}catch(e){}
   // Titulo
   doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
-  doc.text('VIZELGOLFE - ASSOCIACAO DE MINIGOLFE DE VIZELA',W/2,50,{align:'center'});
+  doc.text('VIZELGOLFE - ASSOCIAÇÃO DE MINIGOLFE DE VIZELA',W/2,50,{align:'center'});
   doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
   doc.text('Seniors World Minigolf Championship · SWC Vizela 2026',W/2,57,{align:'center'});
   // Certificado
   doc.setFontSize(28);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
-  doc.text('CERTIFICADO DE PARTICIPACAO',W/2,78,{align:'center'});
+  doc.text('CERTIFICADO DE PARTICIPAÇÃO',W/2,78,{align:'center'});
   // Linha separadora
   doc.setFillColor(201,168,76);doc.rect(W/2-40,82,80,0.5,'F');
   // Nome atleta
@@ -5528,7 +5647,7 @@ function exportCertificado(atlId){
   // Texto
   doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
   doc.text('participated in the Seniors World Minigolf Championship',W/2,128,{align:'center'});
-  doc.text('12-17 October 2026 · Vizela, Portugal',W/2,135,{align:'center'});
+  doc.text('14-17 October 2026 · Vizela, Portugal',W/2,135,{align:'center'});
   // Assinaturas -- fundo claro para maximo contraste
   doc.setFillColor(248,245,235);
   doc.roundedRect(14,148,W-28,46,3,3,'F');
@@ -5547,7 +5666,7 @@ function exportCertificado(atlId){
   doc.text('Date: 17 October 2026',W/2,186,{align:'center'});
   // Copyright
   doc.setFontSize(7);doc.setTextColor(100,80,50);
-  doc.text('© Rui Goncalves · Vizelgolfe · SWC Vizela 2026',W/2,193,{align:'center'});
+  doc.text('© Rui Gonçalves · Vizelgolfe · SWC Vizela 2026',W/2,193,{align:'center'});
   pdfFooter(doc,true);
   doc.save('SWC2026_Cert_'+(atl.nome||'atleta').replace(/ /g,'_')+'.pdf');
   toast('Certificado gerado!');

@@ -348,7 +348,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   margin-bottom:10px;">SWC VIZELA 2026</div>
 <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(14px,2.5vw,20px);color:#C8C0A8;letter-spacing:.06em;margin-bottom:6px;">Sistema de Gestão Total do Evento</div>
-<div style="font-size:13px;color:#7A7060;letter-spacing:.12em;text-transform:uppercase;margin-bottom:36px;">12 — 17 Outubro 2026 · Vizela, Portugal</div>
+<div style="font-size:13px;color:#7A7060;letter-spacing:.12em;text-transform:uppercase;margin-bottom:36px;">14 — 17 Outubro 2026 · Vizela, Portugal</div>
 
 <!-- Countdown -->
 <div style="display:flex;gap:clamp(10px,2.5vw,24px);align-items:flex-end;margin-bottom:44px;">
@@ -790,7 +790,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="tb">
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="hamburger" onclick="toggleSb()"><span>☰</span></div>
-      <div><div class="tbt" id="pgt">Dashboard</div><div class="tbs">SWC Vizela 2026 · Seniors World Championship · 12–17 Outubro</div></div>
+      <div><div class="tbt" id="pgt">Dashboard</div><div class="tbs">SWC Vizela 2026 · Seniors World Championship · 14–17 Outubro</div></div>
     </div>
     <div class="tbd" id="clk"></div>
   </div>
@@ -866,7 +866,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="tli wn"><div class="tld">31 Mai 2026</div><div class="tlt">Material informativo e lista alojamento publicados</div></div>
       <div class="tli wn"><div class="tld">14 Ago 2026</div><div class="tlt">Salas reunião WMF · Espaço venda Gold 8m²</div></div>
       <div class="tli"><div class="tld">Set 2026</div><div class="tlt">Dados bancários WMF · Rooming lists · Guia atleta</div></div>
-      <div class="tli"><div class="tld">12–17 Out 2026</div><div class="tlt">EVENTO — Treino oficial + competição + cerimónias</div></div>
+      <div class="tli"><div class="tld">09–17 Out 2026</div><div class="tlt">EVENTO — Treino oficial + competição + cerimónias</div></div>
     </div></div>
   </div>
   <div class="cd"><div class="cdh"><div class="cdn">◐</div><div><div class="cdt">Estado financeiro geral</div><div class="cds">Valores reais registados</div></div></div>
@@ -1148,7 +1148,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <!-- PROGRAMA DO EVENTO -->
 <div class="pg" id="pg-programa">
 <div class="st"><span class="sn">PROG</span>Programa Oficial — SWC Vizela 2026<button class="hbtn" data-help="programa" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">12–17 Outubro 2026 · Hora a hora · Editável · Exportação PDF</div>
+<div class="sd">14–17 Outubro 2026 · Hora a hora · Editável · Exportação PDF</div>
 <div class="bb" id="bar-programa"><button class="btn bp" onclick="openM('m-prog-item')">+ Adicionar item</button><button class="btn bo" onclick="exportProgramaPDF()">Exportar PDF oficial</button></div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">09-11 Out — Pre-chegadas</div><div class="smv" id="prog-09">—</div></div>
@@ -4194,7 +4194,7 @@ function renderGuia(){
       bv:'Willkommen in Vizela, Portugal!',
       bvtxt:'Wir freuen uns, Sie zur SWC Vizela 2026 begruessen zu duerfen. Dieser Leitfaden enthaelt alle wichtigen Informationen fuer Ihren Aufenthalt.',
       evento:'Veranstaltungsdetails',
-      datas:'Datum: 13.-17. Oktober 2026',
+      datas:'Datum: 14.-17. Oktober 2026',
       local:'Veranstaltungsort: Minigolfanlage - Vizela, Portugal',
       prog:'Programm',
       p13:'13. Okt. - Ankunft & Offizielles Training',
@@ -4217,7 +4217,7 @@ function renderGuia(){
       bv:'Bienvenido a Vizela, Portugal!',
       bvtxt:'Nos complace darle la bienvenida al SWC Vizela 2026. Esta guia contiene toda la informacion esencial para su estancia.',
       evento:'Detalles del Evento',
-      datas:'Fechas: 12-17 Octubre 2026',
+      datas:'Fechas: 14-17 Octubre 2026',
       local:'Sede: Campo de Minigolf - Vizela, Portugal',
       prog:'Programa',
       p13:'13 Oct - Llegadas & Entrenamiento Oficial',
@@ -4314,14 +4314,14 @@ function exportGuiaPDF(){
   const L=document.getElementById('guia-lang')?.value||'EN';
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const tit={'EN':'Athlete Guide','PT':'Guia do Atleta','DE':'Athleten-Leitfaden','ES':'Guia del Atleta'};
-  pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 12-17 October 2026',false);
+  pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 14-17 October 2026',false);
   let y=42;
   const blocos=[
     {titulo:{'EN':'Event Details','PT':'Detalhes do Evento','DE':'Veranstaltungsdetails','ES':'Detalles del Evento'},
-     corpo:{'EN':'Dates: 12-17 October 2026 | Venue: Minigolf Course, Vizela, Portugal | Opening Ceremony: 13 Oct 19:30 | Closing Ceremony: 17 Oct 19:30',
-            'PT':'Datas: 12-17 Outubro 2026 | Local: Campo de Minigolfe, Vizela, Portugal | Cerimonia de Abertura: 12 Out 19:30 | Cerimonia de Encerramento: 17 Out 19:30',
-            'DE':'Datum: 13.-17. Oktober 2026 | Ort: Minigolfanlage, Vizela | Eroeffnungsfeier: 13. Okt. 19:30 | Schlussfeier: 17. Okt. 19:30',
-            'ES':'Fechas: 12-17 Octubre 2026 | Sede: Campo de Minigolf, Vizela | Ceremonia Apertura: 13 Oct 19:30 | Ceremonia Clausura: 17 Oct 19:30'}},
+     corpo:{'EN':'Dates: 14-17 October 2026 | Venue: Minigolf Course, Vizela, Portugal | Opening Ceremony: 12 Oct 19:30 | Closing Ceremony: 17 Oct 19:30',
+            'PT':'Datas: 14-17 Outubro 2026 | Local: Campo de Minigolfe, Vizela, Portugal | Cerimonia de Abertura: 12 Out 19:30 | Cerimonia de Encerramento: 17 Out 19:30',
+            'DE':'Datum: 14.-17. Oktober 2026 | Ort: Minigolfanlage, Vizela | Eroeffnungsfeier: 12. Okt. 19:30 | Schlussfeier: 17. Okt. 19:30',
+            'ES':'Fechas: 14-17 Octubre 2026 | Sede: Campo de Minigolf, Vizela | Ceremonia Apertura: 12 Oct 19:30 | Ceremonia Clausura: 17 Oct 19:30'}},
     {titulo:{'EN':'Accommodation','PT':'Alojamento','DE':'Unterkunft','ES':'Alojamiento'},
      corpo:{'EN':'Hotels H1-H5 in Vizela area. Max 50 EUR/night (double room, breakfast included). All hotels within short distance of the course.',
             'PT':'Hoteis H1-H5 na area de Vizela. Max 50 EUR/noite (quarto duplo, pequeno-almoco incluido). Todos os hoteis a curta distancia do campo.',
@@ -4727,7 +4727,7 @@ function exportRelPatrSingle(patId){
   doc.autoTable({startY:y,head:[['Indicador de Impacto','Valor']],body:[
     ['Atletas participantes',String(nAtl)+' atletas'],
     ['Paises representados',String(nPaises2)+' nacoes'],
-    ['Dias de competicao','6 dias (12-17 Outubro 2026)'],
+    ['Dias de competicao','4 dias (14-17 Outubro 2026)'],
     ['Local','Vizela, Portugal'],
     ['Modalidade','Seniors World Minigolf Championship'],
     ['Organizacao','Vizelgolfe - Associacao de Minigolfe de Vizela'],
@@ -4933,7 +4933,7 @@ function renderPressKit(){
   const totRec=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
   el.innerHTML=[
     {label:'Evento',val:'SWC Vizela 2026 - Seniors World Minigolf Championship'},
-    {label:'Data',val:'12-17 Outubro 2026'},
+    {label:'Data',val:'14-17 Outubro 2026'},
     {label:'Local',val:'Vizela, Portugal'},
     {label:'Organizacao',val:'Vizelgolfe - Associacao de Minigolfe de Vizela'},
     {label:'Atletas inscritos',val:nAtl+' participantes'},
@@ -4953,7 +4953,7 @@ function exportPressKitPDF(){
   const nPaises=new Set(_atl.map(a=>a.pais)).size;
   const factos=[
     ['Event','SWC Vizela 2026 - Seniors World Minigolf Championship'],
-    ['Dates','12-17 October 2026'],
+    ['Dates','14-17 October 2026'],
     ['Venue','Vizela, Portugal'],
     ['Organiser','Vizelgolfe - Associacao de Minigolfe de Vizela'],
     ['Athletes',''+nAtl+' participants from '+nPaises+' nations'],
@@ -4991,7 +4991,7 @@ function exportRelWMFFinal(){
   const senhoras=_resultados.filter(r=>r.categoria==='SF').sort((a,b)=>a.total-b.total).slice(0,3);
   doc.autoTable({startY:y,head:[['Section','Data']],body:[
     ['Event','SWC Vizela 2026 - Seniors World Minigolf Championship'],
-    ['Dates','12-17 October 2026, Vizela, Portugal'],
+    ['Dates','14-17 October 2026, Vizela, Portugal'],
     ['Total participants',''+nAtl+' athletes from '+nPaises+' nations'],
     ['Total income (actual)',''+fmtPDF(totR)],
     ['Total expenses (actual)',''+fmtPDF(totD)],
@@ -5024,7 +5024,7 @@ function exportRelAG(){
   doc.text('A Assembleia Geral da Vizelgolfe apresenta o relatorio do evento SWC Vizela 2026.',14,y);y+=12;
   doc.autoTable({startY:y,head:[['Indicador','Resultado']],body:[
     ['Atletas participantes',nAtl+' de '+nPaises+' paises'],
-    ['Dias de evento','5 dias (13 a 17 Outubro 2026)'],
+    ['Dias de evento','4 dias (14-17 Outubro 2026)'],
     ['Voluntarios envolvidos',''+_vol.length],
     ['Total receitas reais',fmtPDF(totR)],
     ['Total despesas reais',fmtPDF(totD)],
@@ -5045,7 +5045,7 @@ function exportRelCMV(){
   doc.autoTable({startY:y,head:[['Impacto','Estimativa']],body:[
     ['Atletas e acompanhantes',nAtl+' pessoas de '+nPaises+' paises'],
     ['Noites de hotel geradas',''+nNoites+' noites (estimativa)'],
-    ['Dias de presenca na cidade','5 dias (12-17 Outubro 2026)'],
+    ['Dias de presenca na cidade','4 dias (14-17 Outubro 2026)'],
     ['Refeicoes consumidas localmente',nAtl*5*3+' refeicoes (estimativa)'],
     ['Visibilidade internacional',nPaises+' paises representados'],
     ['Impacto mediatico','Comunicados WMF - media internacional de minigolfe'],
@@ -5215,7 +5215,7 @@ function renderPost(){
       PT:`🏌️ FALTAM ${diff} DIAS para o SWC Vizela 2026!
 
 🌍 O Campeonato Mundial de Minigolfe Seniors está a chegar a Vizela!
-📅 13 a 17 de Outubro de 2026
+📅 14 a 17 de Outubro de 2026
 📍 Vizela, Portugal
 
 Já temos ${nAtl} atletas inscritos de ${nPaises} paises!
@@ -5224,7 +5224,7 @@ Já temos ${nAtl} atletas inscritos de ${nPaises} paises!
       EN:`🏌️ ONLY ${diff} DAYS to SWC Vizela 2026!
 
 🌍 The Seniors World Minigolf Championship is coming to Vizela!
-📅 12-17 October 2026
+📅 14-17 October 2026
 📍 Vizela, Portugal
 
 Already ${nAtl} athletes from ${nPaises} nations registered!
@@ -5236,14 +5236,14 @@ Already ${nAtl} athletes from ${nPaises} nations registered!
 
 Já temos ${nPaises} nacoes confirmadas com ${nAtl} atletas inscritos!
 
-O mundo do minigolfe vai estar em Vizela de 13 a 17 de Outubro de 2026.
+O mundo do minigolfe vai estar em Vizela de 14 a 17 de Outubro de 2026.
 
 #SWCVizela2026 #Minigolfe #WorldChampionship #Vizela #Portugal`,
       EN:`🌍 NATIONS CONFIRMED for SWC Vizela 2026!
 
 ${nPaises} nations confirmed with ${nAtl} athletes registered!
 
-The minigolf world will be in Vizela, October 12-17, 2026.
+The minigolf world will be in Vizela, October 14-17, 2026.
 
 #SWCVizela2026 #Minigolf #WorldChampionship #Vizela #Portugal`,
     },
@@ -5506,7 +5506,7 @@ function renderSlideCountdown(){
       <div style="font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(201,168,76,.3);padding-bottom:20px;">:</div>
       <div><div style="font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:1;color:#fff;text-shadow:0 0 40px rgba(201,168,76,.5);">${String(horas).padStart(2,'0')}</div><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--mu);">HORAS</div></div>
     </div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--se);">12 — 17 Outubro 2026 · Vizela, Portugal</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--se);">14 — 17 Outubro 2026 · Vizela, Portugal</div>
     <div style="margin-top:20px;font-size:16px;color:var(--mu);">${_atl.length} atletas de ${new Set(_atl.map(a=>a.pais).filter(Boolean)).size} paises</div>
   </div>`;
 }
@@ -5698,7 +5698,7 @@ const HELP = {
     o:'Contem os 41 prazos contratuais do Acordo Tripartido WMF/EMF/FPM pre-carregados automaticamente. Inclui prazos do Acordo e itens criticos da Checklist oficial WMF.',
     steps:['Os prazos sao pre-carregados — nao precisas de introduzir nada.','Clica em "Alterar estado" para marcar como Em curso ou Concluido.','Usa "+ Novo prazo" para adicionar prazos internos da Vizelgolfe.','O semaforo actualiza automaticamente: verde (30+ dias), amarelo (7-30 dias), vermelho (menos de 7 dias).'],
     warn:'Os prazos Criticos (a vermelho) sao obrigacoes contratuais com a WMF. O incumprimento pode resultar no cancelamento do evento sem compensacao.'},
-  programa:{icon:'&#9783;',title:'Programa Oficial do Evento',sub:'13 a 17 Outubro 2026',
+  programa:{icon:'&#9783;',title:'Programa Oficial do Evento',sub:'14-17 Outubro 2026',
     o:'Registo hora a hora dos 5 dias do evento. Cada item tem dia, hora, titulo, local/descricao, tipo de actividade e responsavel.',
     steps:['Clica "+ Adicionar item" para criar um novo item no programa.','Escolhe o dia, hora e tipo de actividade (Competicao, Cerimonia, Treino, etc.).','Os itens aparecem automaticamente ordenados por hora em cada dia.','O PDF oficial inclui todos os dias com cabecalho e 5 logos institucionais.'],
     warn:'O Programa e usado pelo Modo Evento para determinar a sessao actual. Introduz as horas com precisao.'},
@@ -6188,7 +6188,7 @@ async function enviarEmailAlerta(assunto, corpo, destinatario){
             ${corpo}
           </div>
           <div style="padding:12px 20px;background:#0A1628;text-align:center;">
-            <p style="color:#7A7060;font-size:11px;margin:0;">© Rui Goncalves · SWC Vizela 2026 · Sistema de Gestao</p>
+            <p style="color:#7A7060;font-size:11px;margin:0;">© Rui Gonçalves · SWC Vizela 2026 · Sistema de Gestao</p>
           </div>
         </div>`
       })
@@ -6347,7 +6347,7 @@ function pdfHeader(doc, titulo, subtitulo, isLandscape){
   doc.setFontSize(7);
   doc.setFont('helvetica','normal');
   doc.setTextColor(150,130,90);
-  doc.text('12-17 Outubro 2026', W-30, 18, {align:'center'});
+  doc.text('14-17 Outubro 2026', W-30, 18, {align:'center'});
 
   // Data geração
   const hoje = new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
@@ -6689,7 +6689,7 @@ function exportIPDJ(){
   doc.setTextColor(150,150,150);
   doc.setFont('helvetica','normal');
   doc.text('Entidade organizadora: Vizelgolfe - Associação de Minigolfe de Vizela', 14, y);
-  doc.text('NIF: 509 227 902 | Evento: SWC Vizela 2026 | Data: 12-17 Outubro 2026', 14, y+5);
+  doc.text('NIF: 509 227 902 | Evento: SWC Vizela 2026 | Data: 14-17 Outubro 2026', 14, y+5);
   y+=14;
 
   // Mapa síntese
@@ -6968,7 +6968,7 @@ function exportComunicadosPDF(){
 //  PROGRAMA DO EVENTO PDF 
 function exportProgramaPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Programa Oficial do Evento','SWC Vizela 2026 - 13 a 17 Outubro - Vizela, Portugal',false);
+  pdfHeader(doc,'Programa Oficial do Evento','SWC Vizela 2026 - 14-17 Outubro - Vizela, Portugal',false);
 
   let y = 42;
 
@@ -7079,7 +7079,7 @@ function exportCronPDF(){
       {data:'Set 2026',    titulo:'Dados bancários WMF - Rooming lists - Guia atleta - Sinalética', resp:'COE', prioridade:'normal', estado:'pendente'},
       {data:'2 sem. antes','titulo':'Demonstração financeira taxas à WMF', resp:'Finanças', prioridade:'urgente', estado:'pendente'},
       {data:'12 Out 2026', titulo:'Cerimonia de Abertura 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
-      {data:'12-17 Out',   titulo:'Evento - 6 dias', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
+      {data:'14-17 Out',   titulo:'Evento - 4 dias', resp:'Chefe Desportivo', prioridade:'critico', estado:'pendente'},
       {data:'17 Out 2026', titulo:'Cerimónia de Encerramento e Medalhas 19:30', resp:'COE', prioridade:'critico', estado:'pendente'},
       {data:'Pós-evento',  titulo:'Lista resultados + inventário WMF → receber 25%', resp:'Finanças', prioridade:'critico', estado:'pendente'},
     ];
@@ -7593,7 +7593,7 @@ async function enviarDossierEmail(){
   const msg=(document.getElementById('dse-msg')||{}).value||'';
   const corpo='<div style="font-family:Arial,Helvetica,sans-serif;color:#222;line-height:1.5;">'
     +(msg?('<p>'+msg.replace(/\n/g,'<br>')+'</p>'):'')
-    +'<p>Boa tarde,</p><p>Em nome da organizacao do <strong>Seniors World Championship Vizela 2026</strong> (Campeonato do Mundo de Minigolfe de Seniores, 12 a 17 de Outubro de 2026), temos o prazer de partilhar o nosso <strong>Dossier de Patrocinio</strong>.</p>'
+    +'<p>Boa tarde,</p><p>Em nome da organizacao do <strong>Seniors World Championship Vizela 2026</strong> (Campeonato do Mundo de Minigolfe de Seniores, 14 a 17 de Outubro de 2026), temos o prazer de partilhar o nosso <strong>Dossier de Patrocinio</strong>.</p>'
     +'<p style="text-align:center;margin:22px 0;"><a href="'+url+'" style="background:#0A1628;color:#C9A84C;text-decoration:none;padding:12px 26px;border-radius:8px;font-weight:700;">Abrir o Dossier de Patrocinio</a></p>'
     +'<p style="font-size:13px;color:#555;">Ou copie o link:<br>'+url+'</p>'
     +'<p>Com os melhores cumprimentos,<br><strong>Vizelgolfe &mdash; Associacao de Minigolfe de Vizela</strong></p></div>';

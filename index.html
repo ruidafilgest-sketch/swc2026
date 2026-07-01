@@ -964,6 +964,22 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 <div class="tw"><table><thead><tr><th>Nome</th><th>Entidade / Cargo</th><th>Categoria</th><th>Abertura</th><th>Encerramento</th><th id="th-cer">Ações</th></tr></thead>
 <tbody id="t-conv"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem convites registados</td></tr></tbody></table></div>
+
+<div class="cd" style="margin-top:16px;"><div class="cdh"><div><div class="cdt">Guião de Cerimónia</div><div class="cds">Timeline dos itens de Cerimónia (Abertura/Encerramento) — usa os itens já criados no Programa do evento</div></div><button class="btn bo bsm" onclick="nav(document.querySelector(&quot;[onclick*=\'programa\']&quot;),'programa','Programa Oficial')">Ir para Programa</button></div>
+  <div class="cdb" id="guiao-cer"><div class="em"><div class="emi"></div><div class="emt">Sem itens de cerimónia no programa</div><div class="emd">Adiciona itens do tipo "✦ Cerimónia" no Programa do Evento — aparecem automaticamente aqui, ordenados por hora, com responsável e contacto.</div></div></div>
+</div>
+
+<div class="cd" style="margin-top:16px;"><div class="cdh"><div><div class="cdt">Protocolo de Entrega de Medalhas</div><div class="cds">Pódio automático — Equipas · Match Play · Stroke Play — Senhoras e Homens</div></div><button class="btn bo bsm" onclick="exportProtocoloMedalhasPDF()">Exportar PDF</button></div>
+  <div class="cdb">
+    <div class="bb" style="margin-bottom:10px;"><button class="btn bo bsm" onclick="openM('m-equipa')">+ Resultado Equipas</button></div>
+    <div id="podios-medalhas"></div>
+    <div style="margin-top:14px;">
+      <div class="st" style="font-size:14px;margin-bottom:8px;"><span class="sn">EQ</span>Classificação Equipas (manual)</div>
+      <div class="tw"><table><thead><tr><th>Pos.</th><th>País / Equipa</th><th>Categoria</th><th>Pontos</th><th id="th-eq">Ações</th></tr></thead>
+      <tbody id="t-equipas"><tr><td colspan="5" class="mu" style="text-align:center;padding:22px;">Sem resultados de equipas</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- DESPORTIVO -->
@@ -2121,9 +2137,23 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <option value="outro">📌 Outro</option>
     </select></div>
     <div class="fg"><div class="fl">Responsável</div><input class="fi" id="pi-resp" placeholder="COE · Chefe Desportivo · Logística..."></div>
+    <div class="fg"><div class="fl">Contacto do responsável (opcional)</div><input class="fi" id="pi-contacto" placeholder="Telefone ou email — usado no Guião de Cerimónia"></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-prog-item')">Cancelar</button><button class="btn bp" onclick="saveProgItem()">Guardar</button></div>
 </div></div>
+
+<!-- MODAL EQUIPAS (Protocolo de Medalhas) -->
+<div class="mo" id="m-equipa"><div class="mdl">
+  <div class="mh"><div class="mt2">Resultado Equipas</div><button class="mc" onclick="closeM('m-equipa')">✕</button></div>
+  <div class="mb">
+    <div class="fg"><div class="fl">País / Equipa</div><input class="fi" id="eq-pais" placeholder="Ex: Portugal"></div>
+    <div class="fr"><div class="fg"><div class="fl">Categoria</div><select class="fse" id="eq-cat"><option value="H">Homens</option><option value="S">Senhoras</option></select></div>
+    <div class="fg"><div class="fl">Posição final</div><input class="fi" type="number" id="eq-pos" min="1" placeholder="1"></div></div>
+    <div class="fg"><div class="fl">Pontos (opcional)</div><input class="fi" type="number" id="eq-pts" placeholder="Total de pontos/pancadas da equipa"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-equipa')">Cancelar</button><button class="btn bp" onclick="saveEquipa()">Guardar</button></div>
+</div></div>
+
 
 <!-- MODAL MARCA -->
 <div class="mo" id="m-marca"><div class="mdl">
@@ -2648,6 +2678,7 @@ function nav(el,id,title){
   if(id==='certificados'){renderCertificados();}
   if(id==='posts'){renderPost();}
   if(id==='resultados'){renderResultados();renderMatch();}
+  if(id==='cerimonias'){renderGuiaoCerimonia();renderEquipas();}
   if(id==='diariobordo'){renderDiarioBordo();}
   if(id==='acreditacoes'){renderAccred();}
   if(id==='rooming'){renderRooming();}
@@ -2681,6 +2712,7 @@ function loadAll(){
   _snap('membros',(docs)=>{_mbr=docs;renderOrg();});
   _snap('boardEmf',(docs)=>{_boardEmf=docs;renderOrg();});
   _snap('voluntarios',(docs)=>{_vol=docs;renderOrg();});
+  _snap('equipas',(docs)=>{_equipas=docs;renderEquipas();});
   _snap('seccoes',(docs)=>{_seccoes=docs;renderOrg();renderSeccoes();},'ordem');
   _snap('hoteis',(docs)=>{_hot=docs;renderAlo();});
   _snap('transfers',(docs)=>{_trn=docs;renderAlo();},'data');
@@ -3723,6 +3755,7 @@ async function saveProgItem(){
     desc:   document.getElementById('pi-desc').value,
     tipo:   document.getElementById('pi-tipo').value,
     resp:   document.getElementById('pi-resp').value,
+    contacto: document.getElementById('pi-contacto').value,
     ts: Date.now()
   };
   if(!d.titulo){toast('Título obrigatório','er'); return;}
@@ -3768,7 +3801,7 @@ function renderPrograma(){
         <div style="flex:1;">
           <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:2px;">${it.titulo||''}</div>
           ${it.desc?`<div style="font-size:11px;color:var(--mu);">${it.desc}</div>`:''}
-          ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:3px;">Resp: ${it.resp}</div>`:''}
+          ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.5);margin-top:3px;">Resp: ${it.resp}${it.contacto?(' · '+it.contacto):''}</div>`:''}
         </div>
         ${canEdit()?`<button class="btn bo bsm" onclick="editProgItem('${it.id}')">✏️</button><button class="btn bd2 bsm" onclick="delProgItem('${it.id}')">🗑️</button>`:''}
       </div>`;
@@ -3776,6 +3809,128 @@ function renderPrograma(){
     html += '</div>';
   });
   el.innerHTML = html;
+  renderGuiaoCerimonia();
+}
+
+function renderGuiaoCerimonia(){
+  const el=document.getElementById('guiao-cer');
+  if(!el)return;
+  const itensCer=(_prog||[]).filter(p=>p.tipo==='cerimonia').sort((a,b)=>((a.dia||'')+(a.hora||'')).localeCompare((b.dia||'')+(b.hora||'')));
+  if(!itensCer.length){
+    el.innerHTML='<div class="em"><div class="emi"></div><div class="emt">Sem itens de cerimónia no programa</div><div class="emd">Adiciona itens do tipo "✦ Cerimónia" no Programa do Evento — aparecem automaticamente aqui, ordenados por hora, com responsável e contacto.</div></div>';
+    return;
+  }
+  el.innerHTML=itensCer.map(it=>`<div style="display:flex;gap:14px;align-items:flex-start;padding:10px 14px;margin-bottom:8px;background:rgba(100,160,255,.08);border:1px solid #90c0ff;border-left:3px solid #90c0ff;border-radius:10px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gl);min-width:100px;line-height:1.2;">${DIAS_LABEL[it.dia]||it.dia||''}<br><span style="font-size:20px;">${it.hora||'--:--'}</span></div>
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:2px;">${it.titulo||''}</div>
+      ${it.desc?`<div style="font-size:11px;color:var(--mu);">${it.desc}</div>`:''}
+      ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.7);margin-top:3px;">Interveniente/Resp: ${it.resp}${it.contacto?(' · Contacto: '+it.contacto):''}</div>`:''}
+    </div>
+  </div>`).join('');
+}
+
+//  EQUIPAS (Protocolo de Medalhas) 
+let _equipas=[];
+async function saveEquipa(){
+  if(!canEdit())return;
+  const d={pais:document.getElementById('eq-pais').value,categoria:document.getElementById('eq-cat').value,posicao:parseInt(document.getElementById('eq-pos').value)||0,pontos:parseFloat(document.getElementById('eq-pts').value)||0,ts:Date.now()};
+  if(!d.pais){toast('País/Equipa obrigatório','er');return;}
+  if(!d.posicao){toast('Posição final obrigatória','er');return;}
+  const _e=document.getElementById('eq-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('equipas',_eid,d);if(_e)_e.value='';toast('Resultado de equipa actualizado');}else{await _add('equipas',d);toast('Resultado de equipa registado');}
+  closeM('m-equipa');
+}
+async function delEquipa(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('equipas',id);}
+function editEquipa(id){
+  const e=_equipas.find(x=>x.id===id);if(!e)return;
+  let hid=document.getElementById('eq-eid');
+  if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='eq-eid';
+    const mb=document.querySelector('#m-equipa .mb');if(mb)mb.prepend(hid);}
+  hid.value=id;
+  document.getElementById('eq-pais').value=e.pais||'';
+  document.getElementById('eq-cat').value=e.categoria||'H';
+  document.getElementById('eq-pos').value=e.posicao||'';
+  document.getElementById('eq-pts').value=e.pontos||'';
+  openM('m-equipa');
+}
+function renderEquipas(){
+  const tbody=document.getElementById('t-equipas');
+  if(!tbody)return;
+  const ord=[...(_equipas||[])].sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||(a.posicao||99)-(b.posicao||99));
+  if(!ord.length){tbody.innerHTML='<tr><td colspan="5" class="mu" style="text-align:center;padding:22px;">Sem resultados de equipas</td></tr>';}
+  else{
+    tbody.innerHTML=ord.map(e=>`<tr>
+      <td style="font-weight:700;color:${e.posicao===1?'#ffd700':e.posicao===2?'#c0c0c0':e.posicao===3?'#cd7f32':'var(--se)'};text-align:center;">${e.posicao||''}</td>
+      <td class="vl">${e.pais||''}</td>
+      <td><span class="bge ${e.categoria==='H'?'bg-bl':'bg-am'}">${e.categoria==='H'?'Homens':'Senhoras'}</span></td>
+      <td style="text-align:center;">${e.pontos||'-'}</td>
+      ${canEdit()?`<td><button class="btn bo bsm" onclick="editEquipa('${e.id}')">✏️</button><button class="btn bd2 bsm" onclick="delEquipa('${e.id}')">🗑️</button></td>`:'<td></td>'}
+    </tr>`).join('');
+  }
+  renderPodiosMedalhas();
+}
+
+//  PODIOS AUTOMÁTICOS (Protocolo de Medalhas) 
+function getPodios(){
+  const podios={};
+  // Stroke Play individual — top3 por categoria (menor total vence)
+  ['SM','SF'].forEach(cat=>{
+    const key=cat==='SM'?'strokeH':'strokeS';
+    podios[key]=[...(_resultados||[])].filter(r=>r.categoria===cat).sort((a,b)=>(a.total||9999)-(b.total||9999)).slice(0,3)
+      .map((r,i)=>({pos:i+1,nome:r.nome||'',pais:r.pais||''}));
+  });
+  // Match Play — Final define 1º/2º, "Final 3/4 lugar" define 3º
+  ['SM','SF'].forEach(cat=>{
+    const key=cat==='SM'?'matchH':'matchS';
+    const arr=[];
+    const final=(_matchplay||[]).find(m=>m.categoria===cat&&m.ronda==='Final');
+    if(final&&final.scoreA!==final.scoreB){
+      const vencedorNome=final.scoreA<final.scoreB?final.jogA:final.jogB;
+      const vencedorPais=final.scoreA<final.scoreB?final.paisA:final.paisB;
+      const perdedorNome=final.scoreA<final.scoreB?final.jogB:final.jogA;
+      const perdedorPais=final.scoreA<final.scoreB?final.paisB:final.paisA;
+      arr.push({pos:1,nome:vencedorNome||'',pais:vencedorPais||''});
+      arr.push({pos:2,nome:perdedorNome||'',pais:perdedorPais||''});
+    }
+    const bronze=(_matchplay||[]).find(m=>m.categoria===cat&&m.ronda==='Final 3/4 lugar');
+    if(bronze&&bronze.scoreA!==bronze.scoreB){
+      const vencedorNome=bronze.scoreA<bronze.scoreB?bronze.jogA:bronze.jogB;
+      const vencedorPais=bronze.scoreA<bronze.scoreB?bronze.paisA:bronze.paisB;
+      arr.push({pos:3,nome:vencedorNome||'',pais:vencedorPais||''});
+    }
+    podios[key]=arr;
+  });
+  // Equipas — top3 por categoria, por posição registada manualmente
+  ['H','S'].forEach(cat=>{
+    const key=cat==='H'?'equipasH':'equipasS';
+    podios[key]=[...(_equipas||[])].filter(e=>e.categoria===cat).sort((a,b)=>(a.posicao||99)-(b.posicao||99)).slice(0,3)
+      .map(e=>({pos:e.posicao,nome:e.pais||'',pais:''}));
+  });
+  return podios;
+}
+const PODIO_GRUPOS=[
+  {key:'equipasS',titulo:'Equipas — Senhoras'},
+  {key:'equipasH',titulo:'Equipas — Homens'},
+  {key:'matchS',titulo:'Match Play — Senhoras'},
+  {key:'matchH',titulo:'Match Play — Homens'},
+  {key:'strokeS',titulo:'Stroke Play — Senhoras'},
+  {key:'strokeH',titulo:'Stroke Play — Homens'},
+];
+function renderPodiosMedalhas(){
+  const el=document.getElementById('podios-medalhas');
+  if(!el)return;
+  const podios=getPodios();
+  el.innerHTML='<div class="g2">'+PODIO_GRUPOS.map(g=>{
+    const arr=podios[g.key]||[];
+    const linhas=[1,2,3].map(pos=>{
+      const item=arr.find(x=>x.pos===pos);
+      const medalha=pos===1?'🥇':pos===2?'🥈':'🥉';
+      if(!item)return `<div style="font-size:11px;color:var(--mu);padding:4px 0;">${medalha} — Pendente</div>`;
+      return `<div style="font-size:12px;color:var(--wh);padding:4px 0;"><strong>${medalha}</strong> ${item.nome}${item.pais?' — '+item.pais:''}</div>`;
+    }).join('');
+    return `<div class="cd"><div class="cdh"><div><div class="cdt" style="font-size:13px;">${g.titulo}</div></div></div><div class="cdb">${linhas}</div></div>`;
+  }).join('')+'</div>';
 }
 
 async function delProgItem(id){
@@ -4550,6 +4705,7 @@ function renderResultados(){
     <td><span class="bge ${r.categoria==='SM'?'bg-bl':'bg-am'}">${r.categoria==='SM'?'Séniores Masc.':'Séniores Fem.'}</span></td>
     ${canEdit()?`<td><button class="btn bo bsm" onclick="editRes('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRes('${r.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
+  renderPodiosMedalhas();
 }
 
 function renderMatch(){
@@ -4565,6 +4721,7 @@ function renderMatch(){
     <td style="font-weight:700;color:var(--gl2);">${m.vencedor||''}</td>
     ${canEdit()?`<td><button class="btn bo bsm" onclick="editMatch('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMatch('${m.id}')">🗑️</button></td>`:'<td></td>'}
   </tr>`).join('');
+  renderPodiosMedalhas();
 }
 
 async function delRes(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('resultados',id);}
@@ -7057,6 +7214,43 @@ function exportCerimoniasPDF(){
   toast('PDF gerado com sucesso');
 }
 
+//  PROTOCOLO DE MEDALHAS PDF 
+function exportProtocoloMedalhasPDF(){
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Protocolo de Entrega de Medalhas','SWC Vizela 2026 - Cerimonia de Encerramento, 17 Out 20:00',false);
+  const podios=getPodios();
+  const rows=[];
+  PODIO_GRUPOS.forEach(g=>{
+    const arr=podios[g.key]||[];
+    [1,2,3].forEach(pos=>{
+      const item=arr.find(x=>x.pos===pos);
+      const medalha=pos===1?'Ouro':pos===2?'Prata':'Bronze';
+      rows.push([g.titulo,medalha,item?item.nome:'-',item?(item.pais||'-'):'-',item?('Hino: '+(item.pais||item.nome)+' / Bandeira: '+(item.pais||item.nome)):'Pendente']);
+    });
+  });
+  doc.autoTable({
+    startY:42,
+    head:[['Prova / Categoria','Lugar','Nome / Equipa','Pais','Hino & Bandeira']],
+    body:rows,
+    theme:'grid',
+    styles:{fontSize:8,textColor:[35,35,35],cellPadding:3.5,lineColor:[210,200,180],lineWidth:0.2},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+    alternateRowStyles:{fillColor:[250,247,240]},
+    columnStyles:{0:{cellWidth:40},1:{cellWidth:20},2:{cellWidth:40},3:{cellWidth:30},4:{cellWidth:55}},
+    margin:{left:14,right:14,bottom:28},
+    didParseCell:function(data){
+      if(data.column.index===1&&data.section==='body'){
+        if(data.cell.raw==='Ouro')data.cell.styles.textColor=[180,140,0];
+        if(data.cell.raw==='Prata')data.cell.styles.textColor=[120,120,120];
+        if(data.cell.raw==='Bronze')data.cell.styles.textColor=[150,90,40];
+      }
+    }
+  });
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Protocolo_Medalhas.pdf');
+  toast('PDF gerado com sucesso');
+}
+
 //  COMUNICADOS PDF 
 function exportComunicadosPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -8005,6 +8199,10 @@ window.toggleFullscreen=toggleFullscreen;
 window.exportProgramaPDF=exportProgramaPDF;
 window.exportAtletasPDF=exportAtletasPDF;
 window.exportCerimoniasPDF=exportCerimoniasPDF;
+window.exportProtocoloMedalhasPDF=exportProtocoloMedalhasPDF;
+window.saveEquipa=saveEquipa;
+window.delEquipa=delEquipa;
+window.editEquipa=editEquipa;
 window.exportComunicadosPDF=exportComunicadosPDF;
 window.saveMarca=saveMarca;
 window.saveArtigo=saveArtigo;
@@ -8365,6 +8563,7 @@ async function editProgItem(id){
   const _epi_desc=document.getElementById('pi-desc');if(_epi_desc)_epi_desc.value=item.desc||'';
   const _epi_tipo=document.getElementById('pi-tipo');if(_epi_tipo)_epi_tipo.value=item.tipo||'';
   const _epi_resp=document.getElementById('pi-resp');if(_epi_resp)_epi_resp.value=item.resp||'';
+  const _epi_contacto=document.getElementById('pi-contacto');if(_epi_contacto)_epi_contacto.value=item.contacto||'';
   openM('m-prog-item');
 }
 window.editProgItem=editProgItem;

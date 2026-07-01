@@ -2803,7 +2803,7 @@ function renderAtl(){
 }
 async function delAtl(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
 async function importarAtletas2024(){
-  if(!canEdit())return;
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
   const jaExiste=_atl.some(a=>a.estado==='Ref.2024');
   if(jaExiste&&!confirm('Já existem atletas de referência 2024.\nDeseja importar na mesma (podem criar duplicados)?'))return;
   const ATLETAS_2024=[

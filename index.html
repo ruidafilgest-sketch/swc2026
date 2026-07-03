@@ -4478,6 +4478,16 @@ function renderDelegacoes(){
 async function delDelegacao(id){if(!canDelete()||!confirm('Eliminar delegacao?'))return;await _del('delegacoes',id);toast('Eliminada','er');}
 
 // --- GUIA DO ATLETA ---
+function progAtletaPorDia(){
+  // Devolve o programa oficial (colecao 'programa') agrupado por dia, para uso no Guia do Atleta
+  const dias=(typeof DIAS_EVENTO!=='undefined')?DIAS_EVENTO:['2026-10-12','2026-10-14','2026-10-15','2026-10-16','2026-10-17'];
+  const labels=(typeof DIAS_LABEL!=='undefined')?DIAS_LABEL:{};
+  return dias.map(dia=>({
+    dia, label:labels[dia]||dia,
+    itens:(_prog||[]).filter(p=>p.dia===dia).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''))
+  })).filter(d=>d.itens.length);
+}
+
 function renderGuia(){
   const L=document.getElementById('guia-lang')?.value||'EN';
   const el=document.getElementById('guia-content');
@@ -4488,120 +4498,201 @@ function renderGuia(){
       titulo:'Athlete Guide - SWC Vizela 2026',
       subtitulo:'Seniors World Minigolf Championship',
       bv:'Welcome to Vizela, Portugal!',
-      bvtxt:'We are delighted to welcome you to the SWC Vizela 2026. This guide contains all essential information for your stay.',
+      bvtxt:'We are delighted to welcome you to the SWC Vizela 2026. This guide contains all essential information for your stay, prepared by the Local Organising Committee.',
+      overview:'Championship Overview',
+      overviewtxt:'The Seniors World Minigolf Championship (SWC) 2026 is organised by Vizelgolfe - Associação de Minigolfe de Vizela, under the authority of the World Minigolf Sport Federation (WMF) and the European Minigolf Sport Federation (EMF), with the support of the Portuguese Minigolf Federation (FPM) and Vizela City Council.',
       evento:'Event Details',
-      datas:'Dates: 9-17 October 2026 (arrivals from 9 Oct)',
+      datas:'Dates: 9-17 October 2026 (arrivals from 9 Oct, competition 14-17 Oct)',
       local:'Venue: Minigolf Course - Vizela, Portugal',
-      prog:'Programme',
-      p13:'12 Oct - Opening Ceremony 19:30',
-      p14:'13 Oct - Arrivals & Official Training',
-      p15:'13 Oct - Arrivals &amp; Official Training',
-      p16:'14 Oct - Competition Day 1 (Stroke Play)',
-      p17:'15 Oct - Competition Day 2 (Stroke Play)\n17 Oct - Finals & Closing Ceremony 20:00',
+      format:'Competition Format',
+      formattxt:'Stroke Play: 4 rounds, ranked by total strokes (lowest score wins). Match Play: knockout format (Round of 16, Quarter-finals, Semi-finals, Final and 3rd/4th place match). Team Competition: combined results by national delegation. Categories: Men (SM) and Ladies (SF).',
+      prog:'Full Programme',
+      progempty:'The detailed hour-by-hour programme will be published here as soon as it is finalised by the Organising Committee.',
+      registo:'Registration & Accreditation',
+      registotxt:'Athlete registration: via minigolf-europe.org, deadline 31 August 2026 (contact: Peter Burri, EMF). On-site accreditation: at the secretariat, 10 October 2026, until 18:00. Entry by Name (final squad list per delegation): 12 October 2026, until 17:00.',
       aloj:'Accommodation',
       aloftxt:'Hotels H1-H5 in Vizela area. Max 50 EUR/night (double, breakfast included). All hotels within short distance of the course.',
       trans:'Transport',
-      transtxt:'Airport transfers: Porto Airport (OPO) <-> Vizela. Daily shuttle service between hotels and course.',
-      cont:'Emergency Contacts',
+      transtxt:'Airport transfers: Porto Airport (OPO) <-> Vizela. Daily shuttle service between hotels and course. Please confirm arrival/departure details with the organisation in advance.',
+      cerim:'Ceremonies',
+      cerimtxt:'Opening Ceremony: 12 October, from 17:30 (Praça da República / Auditório Municipal Francisco Ferreira / Casa do Park). Closing Ceremony & Awards: 17 October, from 19:00 (Quinta d\'Miranda). Smart-casual dress recommended. Flag bearers and delegation representatives are asked to arrive 30 minutes before the scheduled start.',
+      antidoping:'Anti-Doping',
+      antidopingtxt:'WMF/WADA anti-doping protocol applies throughout the official training period and all competition days. Athletes may be selected for testing at any time. Please consult your federation for full regulations.',
+      clima:'Weather & What to Bring',
+      climatxt:'Vizela in October has a mild climate, average 12-18°C, with occasional rain. We recommend comfortable playing shoes, a light rain jacket and layered clothing.',
+      localarea:'About Vizela',
+      localareatxt:'Vizela is a historic spa town in northern Portugal, known for its thermal waters and Roman heritage, on the banks of the river Vizela. Currency: Euro (EUR). Language: Portuguese. Emergency number: 112.',
+      cont:'Emergency & Organisation Contacts',
       org:'Organisation:',
-      med:'Medical:',
-      pol:'Police: 112',
+      med:'Medical: available on site during competition days',
+      pol:'Police / Emergency: 112',
     },
     PT:{
       titulo:'Guia do Atleta - SWC Vizela 2026',
       subtitulo:'Campeonato Mundial de Minigolfe Seniors',
       bv:'Bem-vindo a Vizela, Portugal!',
-      bvtxt:'Temos o prazer de receber no SWC Vizela 2026. Este guia contem todas as informacoes essenciais para a sua estadia.',
+      bvtxt:'Temos o prazer de o receber no SWC Vizela 2026. Este guia contém todas as informações essenciais para a sua estadia, preparado pelo Comité Organizador Local.',
+      overview:'Visão Geral do Campeonato',
+      overviewtxt:'O Seniors World Minigolf Championship (SWC) 2026 é organizado pela Vizelgolfe - Associação de Minigolfe de Vizela, sob a autoridade da World Minigolf Sport Federation (WMF) e da European Minigolf Sport Federation (EMF), com o apoio da Federação Portuguesa de Minigolfe (FPM) e da Câmara Municipal de Vizela.',
       evento:'Detalhes do Evento',
-      datas:'Datas: 9-17 Outubro 2026 (chegadas a partir de 9 Out)',
+      datas:'Datas: 9-17 Outubro 2026 (chegadas a partir de 9 Out, competição 14-17 Out)',
       local:'Local: Campo de Minigolfe - Vizela, Portugal',
-      prog:'Programa',
-      p13:'12 Out - Cerimonia de Abertura 19:30',
-      p14:'14 Out - Dia 1 Competicao (Stroke Play)',
-      p15:'15 Out - Dia 2 Competicao (Stroke Play)',
-      p16:'16 Out - Dia 3 Competicao (Match Play)',
-      p17:'17 Out - Finais & Cerimonia de Encerramento',
+      format:'Formato de Competição',
+      formattxt:'Stroke Play: 4 rondas, classificação por total de pancadas (menor pontuação vence). Match Play: eliminatório (Oitavos-de-final, Quartos-de-final, Meias-finais, Final e 3º/4º lugar). Competição por Equipas: soma dos resultados por delegação nacional. Categorias: Homens (SM) e Senhoras (SF).',
+      prog:'Programa Completo',
+      progempty:'O programa detalhado hora-a-hora será publicado aqui assim que finalizado pelo Comité Organizador.',
+      registo:'Inscrição & Acreditação',
+      registotxt:'Inscrição de atletas: via minigolf-europe.org, prazo 31 de Agosto de 2026 (contacto: Peter Burri, EMF). Acreditação no local: junto do secretariado, 10 de Outubro de 2026, até às 18:00. Entry by Name (lista definitiva por delegação): 12 de Outubro de 2026, até às 17:00.',
       aloj:'Alojamento',
-      aloftxt:'Hoteis H1-H5 na area de Vizela. Max 50 EUR/noite (duplo, pequeno-almoco incluido). Todos os hoteis a curta distancia do campo.',
+      aloftxt:'Hotéis H1-H5 na área de Vizela. Max 50 EUR/noite (duplo, pequeno-almoço incluído). Todos os hotéis a curta distância do campo.',
       trans:'Transportes',
-      transtxt:'Transfers aeroporto: Aeroporto do Porto (OPO) <-> Vizela. Shuttle diario entre hoteis e campo.',
-      cont:'Contactos de Emergencia',
-      org:'Organizacao:',
-      med:'Medico:',
-      pol:'Policia: 112',
+      transtxt:'Transfers aeroporto: Aeroporto do Porto (OPO) <-> Vizela. Shuttle diário entre hotéis e campo. Confirme antecipadamente os horários de chegada/partida com a organização.',
+      cerim:'Cerimónias',
+      cerimtxt:'Cerimónia de Abertura: 12 de Outubro, a partir das 17:30 (Praça da República / Auditório Municipal Francisco Ferreira / Casa do Park). Cerimónia de Encerramento & Entrega de Prémios: 17 de Outubro, a partir das 19:00 (Quinta d\'Miranda). Recomenda-se traje smart-casual. Porta-bandeiras e representantes de delegação devem chegar 30 minutos antes da hora prevista.',
+      antidoping:'Antidopagem',
+      antidopingtxt:'O protocolo antidopagem WMF/AMA aplica-se durante todo o período de treino oficial e nos dias de competição. Os atletas podem ser selecionados para controlo em qualquer momento. Consulte a sua federação para o regulamento completo.',
+      clima:'Clima & O Que Trazer',
+      climatxt:'Vizela em Outubro tem um clima ameno, média entre 12-18ºC, com possibilidade de aguaceiros. Recomendamos calçado confortável para jogar, um corta-vento impermeável leve e roupa em camadas.',
+      localarea:'Sobre Vizela',
+      localareatxt:'Vizela é uma histórica vila termal no norte de Portugal, conhecida pelas suas águas termais e património romano, às margens do rio Vizela. Moeda: Euro (EUR). Idioma: Português. Número de emergência: 112.',
+      cont:'Contactos de Emergência & Organização',
+      org:'Organização:',
+      med:'Serviço médico disponível no local durante os dias de competição',
+      pol:'Polícia / Emergência: 112',
     },
     DE:{
       titulo:'Athleten-Leitfaden - SWC Vizela 2026',
       subtitulo:'Senioren Minigolf Weltmeisterschaft',
       bv:'Willkommen in Vizela, Portugal!',
-      bvtxt:'Wir freuen uns, Sie zur SWC Vizela 2026 begruessen zu duerfen. Dieser Leitfaden enthaelt alle wichtigen Informationen fuer Ihren Aufenthalt.',
+      bvtxt:'Wir freuen uns, Sie zur SWC Vizela 2026 begrüßen zu dürfen. Dieser Leitfaden enthält alle wichtigen Informationen für Ihren Aufenthalt.',
+      overview:'Meisterschaftsübersicht',
+      overviewtxt:'Die Seniors World Minigolf Championship (SWC) 2026 wird von Vizelgolfe organisiert, unter der Schirmherrschaft der World Minigolf Sport Federation (WMF) und der European Minigolf Sport Federation (EMF), mit Unterstützung des portugiesischen Minigolfverbands (FPM) und der Stadt Vizela.',
       evento:'Veranstaltungsdetails',
-      datas:'Datum: 14.-17. Oktober 2026',
+      datas:'Datum: 9.-17. Oktober 2026 (Anreise ab 9. Okt., Wettkampf 14.-17. Okt.)',
       local:'Veranstaltungsort: Minigolfanlage - Vizela, Portugal',
-      prog:'Programm',
-      p13:'13. Okt. - Ankunft & Offizielles Training',
-      p14:'13. Okt. - Ankunft & offizielles Training',
-      p15:'14. Okt. - Wettkampftag 1 (Stroke Play)',
-      p16:'15. Okt. - Wettkampftag 2 (Stroke Play)',
-      p17:'17. Okt. - Finale & Schlussfeier',
+      format:'Wettkampfformat',
+      formattxt:'Stroke Play: 4 Runden, Wertung nach Gesamtschlagzahl (niedrigster Wert gewinnt). Match Play: K.-o.-System (Achtelfinale, Viertelfinale, Halbfinale, Finale und Spiel um Platz 3). Mannschaftswertung: Summe der Ergebnisse pro Nationaldelegation. Kategorien: Herren (SM) und Damen (SF).',
+      prog:'Vollständiges Programm',
+      progempty:'Das detaillierte Programm wird hier veröffentlicht, sobald es vom Organisationskomitee finalisiert wurde.',
+      registo:'Anmeldung & Akkreditierung',
+      registotxt:'Athletenanmeldung: über minigolf-europe.org, Frist 31. August 2026 (Kontakt: Peter Burri, EMF). Akkreditierung vor Ort: beim Sekretariat, 10. Oktober 2026, bis 18:00 Uhr. Entry by Name (endgültige Meldeliste): 12. Oktober 2026, bis 17:00 Uhr.',
       aloj:'Unterkunft',
-      aloftxt:'Hotels H1-H5 in der Region Vizela. Max. 50 EUR/Nacht (Doppelzimmer, Fruehstueck inklusive).',
+      aloftxt:'Hotels H1-H5 in der Region Vizela. Max. 50 EUR/Nacht (Doppelzimmer, Frühstück inklusive).',
       trans:'Transport',
-      transtxt:'Flughafentransfers: Porto Flughafen (OPO) <-> Vizela. Taeglicher Shuttle zwischen Hotels und Anlage.',
-      cont:'Notfallkontakte',
+      transtxt:'Flughafentransfers: Porto Flughafen (OPO) <-> Vizela. Täglicher Shuttle zwischen Hotels und Anlage.',
+      cerim:'Zeremonien',
+      cerimtxt:'Eröffnungsfeier: 12. Oktober, ab 17:30 Uhr. Schlussfeier & Siegerehrung: 17. Oktober, ab 19:00 Uhr, Quinta d\'Miranda. Smart-Casual-Kleidung empfohlen.',
+      antidoping:'Anti-Doping',
+      antidopingtxt:'Das WMF/WADA-Anti-Doping-Protokoll gilt während der gesamten offiziellen Trainingszeit und an allen Wettkampftagen.',
+      clima:'Wetter & Ausrüstung',
+      climatxt:'Vizela hat im Oktober ein mildes Klima, durchschnittlich 12-18°C, mit gelegentlichen Regenschauern. Bequeme Schuhe und eine leichte Regenjacke werden empfohlen.',
+      localarea:'Über Vizela',
+      localareatxt:'Vizela ist eine historische Kurstadt im Norden Portugals, bekannt für ihre Thermalquellen. Währung: Euro. Sprache: Portugiesisch. Notruf: 112.',
+      cont:'Notfall- & Organisationskontakte',
       org:'Organisation:',
-      med:'Medizin:',
-      pol:'Polizei: 112',
+      med:'Medizinischer Dienst vor Ort an den Wettkampftagen',
+      pol:'Polizei / Notfall: 112',
     },
     ES:{
-      titulo:'Guia del Atleta - SWC Vizela 2026',
+      titulo:'Guía del Atleta - SWC Vizela 2026',
       subtitulo:'Campeonato Mundial de Minigolf Seniors',
-      bv:'Bienvenido a Vizela, Portugal!',
-      bvtxt:'Nos complace darle la bienvenida al SWC Vizela 2026. Esta guia contiene toda la informacion esencial para su estancia.',
+      bv:'¡Bienvenido a Vizela, Portugal!',
+      bvtxt:'Nos complace darle la bienvenida al SWC Vizela 2026. Esta guía contiene toda la información esencial para su estancia.',
+      overview:'Resumen del Campeonato',
+      overviewtxt:'El Seniors World Minigolf Championship (SWC) 2026 está organizado por Vizelgolfe, bajo la autoridad de la World Minigolf Sport Federation (WMF) y la European Minigolf Sport Federation (EMF), con el apoyo de la Federación Portuguesa de Minigolf (FPM) y el Ayuntamiento de Vizela.',
       evento:'Detalles del Evento',
-      datas:'Fechas: 14-17 Octubre 2026',
+      datas:'Fechas: 9-17 Octubre 2026 (llegadas desde el 9 Oct, competición 14-17 Oct)',
       local:'Sede: Campo de Minigolf - Vizela, Portugal',
-      prog:'Programa',
-      p13:'13 Oct - Llegadas & Entrenamiento Oficial',
-      p14:'14 Oct - Dia 1 Competicion (Stroke Play)',
-      p15:'15 Oct - Dia 2 Competicion (Stroke Play)',
-      p16:'16 Oct - Dia 3 Competicion (Match Play)',
-      p17:'17 Oct - Finales & Ceremonia de Clausura',
+      format:'Formato de Competición',
+      formattxt:'Stroke Play: 4 rondas, clasificación por total de golpes (menor puntuación gana). Match Play: eliminatorio (Octavos, Cuartos, Semifinales, Final y 3er/4º puesto). Competición por Equipos: suma de resultados por delegación nacional. Categorías: Masculina (SM) y Femenina (SF).',
+      prog:'Programa Completo',
+      progempty:'El programa detallado hora a hora se publicará aquí en cuanto sea finalizado por el Comité Organizador.',
+      registo:'Inscripción & Acreditación',
+      registotxt:'Inscripción de atletas: vía minigolf-europe.org, plazo 31 de agosto de 2026 (contacto: Peter Burri, EMF). Acreditación en el lugar: en secretaría, 10 de octubre de 2026, hasta las 18:00. Entry by Name (lista definitiva): 12 de octubre de 2026, hasta las 17:00.',
       aloj:'Alojamiento',
       aloftxt:'Hoteles H1-H5 en la zona de Vizela. Max. 50 EUR/noche (doble, desayuno incluido).',
       trans:'Transporte',
       transtxt:'Traslados aeropuerto: Aeropuerto de Porto (OPO) <-> Vizela. Shuttle diario entre hoteles y campo.',
-      cont:'Contactos de Emergencia',
-      org:'Organizacion:',
-      med:'Medico:',
-      pol:'Policia: 112',
+      cerim:'Ceremonias',
+      cerimtxt:'Ceremonia de Apertura: 12 de octubre, desde las 17:30. Ceremonia de Clausura y Entrega de Premios: 17 de octubre, desde las 19:00, Quinta d\'Miranda. Se recomienda vestimenta smart-casual.',
+      antidoping:'Antidopaje',
+      antidopingtxt:'El protocolo antidopaje WMF/AMA se aplica durante todo el período de entrenamiento oficial y los días de competición.',
+      clima:'Clima & Qué Llevar',
+      climatxt:'Vizela en octubre tiene un clima suave, entre 12-18°C, con posibilidad de lluvia. Se recomienda calzado cómodo y una chaqueta impermeable ligera.',
+      localarea:'Sobre Vizela',
+      localareatxt:'Vizela es una histórica villa termal en el norte de Portugal, conocida por sus aguas termales. Moneda: Euro. Idioma: Portugués. Emergencias: 112.',
+      cont:'Contactos de Emergencia & Organización',
+      org:'Organización:',
+      med:'Servicio médico disponible en el lugar durante los días de competición',
+      pol:'Policía / Emergencia: 112',
     }
   };
 
   const t=T[L]||T.EN;
   const hoteis=_hot.length?_hot.map(h=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="font-weight:600;color:var(--wh);">${h.codigo} - ${h.nome}</span><span style="color:var(--mu);">${h.dist||'-'} | ${h.tarifa?h.tarifa+'EUR/nt':'-'}</span></div>`).join(''):'<div style="font-size:12px;color:var(--mu);">Hoteis a definir</div>';
 
+  const progDias=progAtletaPorDia();
+  const progHtml=progDias.length?progDias.map(d=>`
+    <div style="margin-bottom:10px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--gl);background:rgba(201,168,76,.08);padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:4px;">${d.label}</div>
+      ${d.itens.map(it=>`<div style="display:flex;gap:10px;font-size:12px;color:var(--se);padding:4px 0;border-bottom:1px solid rgba(201,168,76,.06);"><span style="font-weight:700;color:var(--wh);min-width:40px;">${it.hora||'--:--'}</span><span>${it.titulo||''}</span></div>`).join('')}
+    </div>`).join(''):`<div style="font-size:12px;color:var(--mu);">${t.progempty}</div>`;
+
   el.innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${t.titulo}</div><div class="cds">${t.subtitulo}</div></div></div><div class="cdb">
     <div style="background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid var(--bds);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
       <div style="font-size:15px;font-weight:600;color:var(--wh);margin-bottom:6px;">${t.bv}</div>
       <div style="font-size:12px;color:var(--se);">${t.bvtxt}</div>
     </div>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.overview}</div>
+    <div style="font-size:12px;color:var(--se);margin-bottom:16px;">${t.overviewtxt}</div>
+
     <div class="g2" style="gap:14px;">
       <div>
         <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.evento}</div>
         <div style="font-size:12px;color:var(--se);margin-bottom:4px;">${t.datas}</div>
         <div style="font-size:12px;color:var(--se);margin-bottom:12px;">${t.local}</div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.prog}</div>
-        ${[t.p13,t.p14,t.p15,t.p16,t.p17].map(p=>`<div style="font-size:12px;color:var(--se);padding:5px 0;border-bottom:1px solid rgba(201,168,76,.06);">${p}</div>`).join('')}
+
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.format}</div>
+        <div style="font-size:12px;color:var(--se);margin-bottom:12px;">${t.formattxt}</div>
+
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.registo}</div>
+        <div style="font-size:12px;color:var(--se);margin-bottom:12px;">${t.registotxt}</div>
+
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.antidoping}</div>
+        <div style="font-size:12px;color:var(--se);margin-bottom:12px;">${t.antidopingtxt}</div>
       </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.prog}</div>
+        <div style="margin-bottom:12px;">${progHtml}</div>
+      </div>
+    </div>
+
+    <div class="g2" style="gap:14px;margin-top:6px;">
       <div>
         <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.aloj}</div>
         <div style="font-size:12px;color:var(--se);margin-bottom:8px;">${t.aloftxt}</div>
         ${hoteis}
         <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin:12px 0 8px;">${t.trans}</div>
         <div style="font-size:12px;color:var(--se);">${t.transtxt}</div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin:12px 0 8px;">${t.cont}</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.cerim}</div>
+        <div style="font-size:12px;color:var(--se);margin-bottom:12px;">${t.cerimtxt}</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.clima}</div>
+        <div style="font-size:12px;color:var(--se);">${t.climatxt}</div>
+      </div>
+    </div>
+
+    <div class="g2" style="gap:14px;margin-top:6px;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.localarea}</div>
+        <div style="font-size:12px;color:var(--se);">${t.localareatxt}</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);margin-bottom:8px;">${t.cont}</div>
         <div style="font-size:12px;color:var(--se);">${t.org} vizelgolfe@gmail.com</div>
+        <div style="font-size:12px;color:var(--se);">${t.med}</div>
         <div style="font-size:12px;color:var(--se);">${t.pol}</div>
       </div>
     </div>
@@ -4658,40 +4749,121 @@ function exportGuiaPDF(){
   const tit={'EN':'Athlete Guide','PT':'Guia do Atleta','DE':'Athleten-Leitfaden','ES':'Guia del Atleta'};
   pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 14-17 October 2026',false);
   let y=42;
-  const blocos=[
-    {titulo:{'EN':'Event Details','PT':'Detalhes do Evento','DE':'Veranstaltungsdetails','ES':'Detalles del Evento'},
-     corpo:{'EN':'Dates: 14-17 October 2026 | Venue: Minigolf Course, Vizela, Portugal | Opening Ceremony: 12 Oct 19:30 | Closing Ceremony: 17 Oct 20:00',
-            'PT':'Datas: 14-17 Outubro 2026 | Local: Campo de Minigolfe, Vizela, Portugal | Cerimonia de Abertura: 12 Out 19:30 | Cerimonia de Encerramento: 17 Out 20:00',
-            'DE':'Datum: 14.-17. Oktober 2026 | Ort: Minigolfanlage, Vizela | Eroeffnungsfeier: 12. Okt. 19:30 | Schlussfeier: 17. Okt. 20:00',
-            'ES':'Fechas: 14-17 Octubre 2026 | Sede: Campo de Minigolf, Vizela | Ceremonia Apertura: 12 Oct 19:30 | Ceremonia Clausura: 17 Oct 20:00'}},
-    {titulo:{'EN':'Accommodation','PT':'Alojamento','DE':'Unterkunft','ES':'Alojamiento'},
-     corpo:{'EN':'Hotels H1-H5 in Vizela area. Max 50 EUR/night (double room, breakfast included). All hotels within short distance of the course.',
-            'PT':'Hoteis H1-H5 na area de Vizela. Max 50 EUR/noite (quarto duplo, pequeno-almoco incluido). Todos os hoteis a curta distancia do campo.',
-            'DE':'Hotels H1-H5 in der Region Vizela. Max. 50 EUR pro Nacht (Doppelzimmer, Fruehstueck inklusive).',
-            'ES':'Hoteles H1-H5 en la zona de Vizela. Max. 50 EUR/noche (doble, desayuno incluido).'}},
-    {titulo:{'EN':'Transport','PT':'Transportes','DE':'Transport','ES':'Transporte'},
-     corpo:{'EN':'Airport transfers: Porto Airport (OPO) - Vizela. Daily shuttle service between hotels and course. Please confirm arrival/departure details with organisation.',
-            'PT':'Transfers aeroporto: Aeroporto do Porto (OPO) - Vizela. Servico de shuttle diario entre hoteis e campo. Confirme horarios com a organizacao.',
-            'DE':'Flughafentransfers: Porto Flughafen (OPO) - Vizela. Taeglicher Shuttle zwischen Hotels und Anlage.',
-            'ES':'Traslados aeropuerto: Aeropuerto de Porto (OPO) - Vizela. Shuttle diario entre hoteles y campo.'}},
-    {titulo:{'EN':'Emergency Contacts','PT':'Contactos Emergencia','DE':'Notfallkontakte','ES':'Contactos Emergencia'},
-     corpo:{'EN':'Organisation: vizelgolfe@gmail.com | Police/Emergency: 112 | Medical: available on site during competition days',
-            'PT':'Organizacao: vizelgolfe@gmail.com | Policia/Emergencia: 112 | Servico medico disponivel no local',
-            'DE':'Organisation: vizelgolfe@gmail.com | Polizei/Notfall: 112',
-            'ES':'Organizacion: vizelgolfe@gmail.com | Policia/Emergencia: 112'}},
-  ];
-  blocos.forEach(b=>{
-    if(y>240){doc.addPage();y=20;}
+
+  function bloco(tituloObj,corpoObj){
+    if(y>250){doc.addPage();y=20;}
     doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
     doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
-    doc.text(b.titulo[L]||b.titulo.EN, 105, y+5.5, {align:'center'});
+    doc.text(tituloObj[L]||tituloObj.EN, 105, y+5.5, {align:'center'});
     y+=11;
     doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
-    const txt=b.corpo[L]||b.corpo.EN;
+    const txt=corpoObj[L]||corpoObj.EN;
     const lines=doc.splitTextToSize(txt,182);
     doc.text(lines,14,y);
     y+=lines.length*5+8;
-  });
+  }
+
+  bloco(
+    {'EN':'Championship Overview','PT':'Visão Geral do Campeonato','DE':'Meisterschaftsübersicht','ES':'Resumen del Campeonato'},
+    {'EN':'Organised by Vizelgolfe - Associacao de Minigolfe de Vizela, under the authority of the World Minigolf Sport Federation (WMF) and the European Minigolf Sport Federation (EMF), with the support of the Portuguese Minigolf Federation (FPM) and Vizela City Council.',
+     'PT':'Organizado pela Vizelgolfe - Associacao de Minigolfe de Vizela, sob a autoridade da World Minigolf Sport Federation (WMF) e da European Minigolf Sport Federation (EMF), com o apoio da Federacao Portuguesa de Minigolfe (FPM) e da Camara Municipal de Vizela.',
+     'DE':'Organisiert von Vizelgolfe, unter der Schirmherrschaft der WMF und EMF, mit Unterstuetzung des portugiesischen Minigolfverbands (FPM) und der Stadt Vizela.',
+     'ES':'Organizado por Vizelgolfe, bajo la autoridad de la WMF y la EMF, con el apoyo de la Federacion Portuguesa de Minigolf (FPM) y el Ayuntamiento de Vizela.'});
+
+  bloco(
+    {'EN':'Event Details','PT':'Detalhes do Evento','DE':'Veranstaltungsdetails','ES':'Detalles del Evento'},
+    {'EN':'Dates: 9-17 October 2026 (arrivals from 9 Oct, competition 14-17 Oct) | Venue: Minigolf Course, Vizela, Portugal | Opening Ceremony: 12 Oct from 17:30 | Closing Ceremony: 17 Oct from 19:00',
+     'PT':'Datas: 9-17 Outubro 2026 (chegadas a partir de 9 Out, competicao 14-17 Out) | Local: Campo de Minigolfe, Vizela, Portugal | Cerimonia de Abertura: 12 Out a partir das 17:30 | Cerimonia de Encerramento: 17 Out a partir das 19:00',
+     'DE':'Datum: 9.-17. Oktober 2026 (Anreise ab 9. Okt., Wettkampf 14.-17. Okt.) | Ort: Minigolfanlage, Vizela | Eroeffnungsfeier: 12. Okt. ab 17:30 | Schlussfeier: 17. Okt. ab 19:00',
+     'ES':'Fechas: 9-17 Octubre 2026 (llegadas desde el 9 Oct, competicion 14-17 Oct) | Sede: Campo de Minigolf, Vizela | Ceremonia Apertura: 12 Oct desde las 17:30 | Ceremonia Clausura: 17 Oct desde las 19:00'});
+
+  bloco(
+    {'EN':'Competition Format','PT':'Formato de Competição','DE':'Wettkampfformat','ES':'Formato de Competición'},
+    {'EN':'Stroke Play: 4 rounds, ranked by total strokes. Match Play: knockout format (Round of 16, Quarter-finals, Semi-finals, Final and 3rd/4th place match). Team Competition: combined results by delegation. Categories: Men (SM) and Ladies (SF).',
+     'PT':'Stroke Play: 4 rondas, classificacao por total de pancadas. Match Play: eliminatorio (Oitavos, Quartos, Meias-finais, Final e 3º/4º lugar). Competicao por Equipas: soma dos resultados por delegacao. Categorias: Homens (SM) e Senhoras (SF).',
+     'DE':'Stroke Play: 4 Runden nach Gesamtschlagzahl. Match Play: K.-o.-System (Achtelfinale bis Finale plus Spiel um Platz 3). Mannschaftswertung nach Delegation.',
+     'ES':'Stroke Play: 4 rondas por total de golpes. Match Play: eliminatorio (Octavos a Final mas 3er/4º puesto). Competicion por equipos segun delegacion.'});
+
+  // Programa oficial (tabela real, a partir dos dados do sistema)
+  const progDias=progAtletaPorDia();
+  if(progDias.length){
+    if(y>230){doc.addPage();y=20;}
+    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    const progTit={'EN':'Full Programme','PT':'Programa Completo','DE':'Vollständiges Programm','ES':'Programa Completo'};
+    doc.text(progTit[L]||progTit.EN, 105, y+5.5, {align:'center'});
+    y+=11;
+    const rows=[];
+    progDias.forEach(d=>{ d.itens.forEach(it=>{ rows.push([d.label, it.hora||'--:--', it.titulo||'']); }); });
+    doc.autoTable({
+      startY:y, head:[['Day','Time','Activity']], body:rows,
+      theme:'striped', styles:{fontSize:8,textColor:[35,35,35],cellPadding:3},
+      headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+      columnStyles:{0:{cellWidth:60},1:{cellWidth:22,halign:'center'},2:{cellWidth:100}},
+      margin:{left:14,right:14,bottom:28},
+    });
+    y=doc.lastAutoTable.finalY+8;
+  } else {
+    const progEmpty={'EN':'The detailed programme will be published as soon as finalised.','PT':'O programa detalhado sera publicado assim que finalizado.','DE':'Das Programm wird veroeffentlicht, sobald es finalisiert ist.','ES':'El programa detallado se publicara en cuanto sea finalizado.'};
+    bloco({'EN':'Full Programme','PT':'Programa Completo','DE':'Vollständiges Programm','ES':'Programa Completo'}, progEmpty);
+  }
+
+  bloco(
+    {'EN':'Registration & Accreditation','PT':'Inscrição & Acreditação','DE':'Anmeldung & Akkreditierung','ES':'Inscripción & Acreditación'},
+    {'EN':'Athlete registration: via minigolf-europe.org, deadline 31 August 2026 (contact: Peter Burri, EMF). On-site accreditation: at the secretariat, 10 October 2026, until 18:00. Entry by Name (final squad list): 12 October 2026, until 17:00.',
+     'PT':'Inscricao de atletas: via minigolf-europe.org, prazo 31 de Agosto de 2026 (contacto: Peter Burri, EMF). Acreditacao no local: junto do secretariado, 10 de Outubro de 2026, ate as 18:00. Entry by Name (lista definitiva): 12 de Outubro de 2026, ate as 17:00.',
+     'DE':'Anmeldung: ueber minigolf-europe.org, Frist 31. August 2026 (Kontakt: Peter Burri, EMF). Akkreditierung vor Ort: 10. Oktober 2026, bis 18:00 Uhr. Entry by Name: 12. Oktober 2026, bis 17:00 Uhr.',
+     'ES':'Inscripcion: via minigolf-europe.org, plazo 31 de agosto de 2026 (contacto: Peter Burri, EMF). Acreditacion en el lugar: 10 de octubre de 2026, hasta las 18:00. Entry by Name: 12 de octubre de 2026, hasta las 17:00.'});
+
+  bloco(
+    {'EN':'Accommodation','PT':'Alojamento','DE':'Unterkunft','ES':'Alojamiento'},
+    {'EN':'Hotels H1-H5 in Vizela area. Max 50 EUR/night (double room, breakfast included). All hotels within short distance of the course.',
+     'PT':'Hoteis H1-H5 na area de Vizela. Max 50 EUR/noite (quarto duplo, pequeno-almoco incluido). Todos os hoteis a curta distancia do campo.',
+     'DE':'Hotels H1-H5 in der Region Vizela. Max. 50 EUR pro Nacht (Doppelzimmer, Fruehstueck inklusive).',
+     'ES':'Hoteles H1-H5 en la zona de Vizela. Max. 50 EUR/noche (doble, desayuno incluido).'});
+
+  bloco(
+    {'EN':'Transport','PT':'Transportes','DE':'Transport','ES':'Transporte'},
+    {'EN':'Airport transfers: Porto Airport (OPO) - Vizela. Daily shuttle service between hotels and course. Please confirm arrival/departure details with organisation.',
+     'PT':'Transfers aeroporto: Aeroporto do Porto (OPO) - Vizela. Servico de shuttle diario entre hoteis e campo. Confirme horarios com a organizacao.',
+     'DE':'Flughafentransfers: Porto Flughafen (OPO) - Vizela. Taeglicher Shuttle zwischen Hotels und Anlage.',
+     'ES':'Traslados aeropuerto: Aeropuerto de Porto (OPO) - Vizela. Shuttle diario entre hoteles y campo.'});
+
+  bloco(
+    {'EN':'Ceremonies','PT':'Cerimónias','DE':'Zeremonien','ES':'Ceremonias'},
+    {'EN':'Opening Ceremony: 12 October, from 17:30 (Praca da Republica / Auditorio Municipal Francisco Ferreira / Casa do Park). Closing Ceremony & Awards: 17 October, from 19:00 (Quinta d\'Miranda). Smart-casual dress recommended. Flag bearers and delegation representatives should arrive 30 minutes before the scheduled start.',
+     'PT':'Cerimonia de Abertura: 12 de Outubro, a partir das 17:30 (Praca da Republica / Auditorio Municipal Francisco Ferreira / Casa do Park). Cerimonia de Encerramento & Entrega de Premios: 17 de Outubro, a partir das 19:00 (Quinta d\'Miranda). Traje smart-casual recomendado. Porta-bandeiras e representantes de delegacao devem chegar 30 minutos antes.',
+     'DE':'Eroeffnungsfeier: 12. Oktober, ab 17:30 Uhr. Schlussfeier & Siegerehrung: 17. Oktober, ab 19:00 Uhr, Quinta d\'Miranda. Smart-Casual-Kleidung empfohlen.',
+     'ES':'Ceremonia de Apertura: 12 de octubre, desde las 17:30. Ceremonia de Clausura y Entrega de Premios: 17 de octubre, desde las 19:00, Quinta d\'Miranda. Se recomienda vestimenta smart-casual.'});
+
+  bloco(
+    {'EN':'Anti-Doping','PT':'Antidopagem','DE':'Anti-Doping','ES':'Antidopaje'},
+    {'EN':'WMF/WADA anti-doping protocol applies throughout the official training period and all competition days. Athletes may be selected for testing at any time. Please consult your federation for full regulations.',
+     'PT':'O protocolo antidopagem WMF/AMA aplica-se durante todo o periodo de treino oficial e nos dias de competicao. Os atletas podem ser selecionados para controlo em qualquer momento.',
+     'DE':'Das WMF/WADA-Anti-Doping-Protokoll gilt waehrend der gesamten offiziellen Trainingszeit und an allen Wettkampftagen.',
+     'ES':'El protocolo antidopaje WMF/AMA se aplica durante todo el periodo de entrenamiento oficial y los dias de competicion.'});
+
+  bloco(
+    {'EN':'Weather & What to Bring','PT':'Clima & O Que Trazer','DE':'Wetter & Ausrüstung','ES':'Clima & Qué Llevar'},
+    {'EN':'Vizela in October has a mild climate, average 12-18C, with occasional rain. Comfortable playing shoes, a light rain jacket and layered clothing are recommended.',
+     'PT':'Vizela em Outubro tem um clima ameno, media entre 12-18ºC, com possibilidade de aguaceiros. Recomenda-se calcado confortavel, corta-vento impermeavel leve e roupa em camadas.',
+     'DE':'Vizela hat im Oktober ein mildes Klima, durchschnittlich 12-18°C, mit gelegentlichen Regenschauern.',
+     'ES':'Vizela en octubre tiene un clima suave, entre 12-18°C, con posibilidad de lluvia.'});
+
+  bloco(
+    {'EN':'About Vizela','PT':'Sobre Vizela','DE':'Über Vizela','ES':'Sobre Vizela'},
+    {'EN':'Historic spa town in northern Portugal, known for its thermal waters and Roman heritage, on the banks of the river Vizela. Currency: Euro (EUR). Language: Portuguese.',
+     'PT':'Historica vila termal no norte de Portugal, conhecida pelas suas aguas termais e patrimonio romano, as margens do rio Vizela. Moeda: Euro (EUR). Idioma: Portugues.',
+     'DE':'Historische Kurstadt im Norden Portugals, bekannt fuer ihre Thermalquellen. Waehrung: Euro. Sprache: Portugiesisch.',
+     'ES':'Historica villa termal en el norte de Portugal, conocida por sus aguas termales. Moneda: Euro. Idioma: Portugues.'});
+
+  bloco(
+    {'EN':'Emergency & Organisation Contacts','PT':'Contactos de Emergência & Organização','DE':'Notfall- & Organisationskontakte','ES':'Contactos de Emergencia & Organización'},
+    {'EN':'Organisation: vizelgolfe@gmail.com | Police/Emergency: 112 | Medical: available on site during competition days',
+     'PT':'Organizacao: vizelgolfe@gmail.com | Policia/Emergencia: 112 | Servico medico disponivel no local',
+     'DE':'Organisation: vizelgolfe@gmail.com | Polizei/Notfall: 112',
+     'ES':'Organizacion: vizelgolfe@gmail.com | Policia/Emergencia: 112'});
+
   pdfFooter(doc,false);
   doc.save('SWC2026_Athlete_Guide_'+L+'.pdf');
   toast('Guia do Atleta PDF gerado ('+L+')');
@@ -5950,6 +6122,12 @@ function renderCertificados(){
   }).join('');
 }
 
+function _certNum(str){
+  let h=0; const s=String(str||'x');
+  for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; }
+  return 'SWC2026-'+String(10000+(h%89999)).padStart(5,'0');
+}
+
 function exportCertificado(atlId){
   const atl=_atl.find(a=>a.id===atlId);
   if(!atl)return;
@@ -5957,60 +6135,118 @@ function exportCertificado(atlId){
   const ranking=res?_resultados.filter(r=>r.categoria===atl.categoria).sort((a,b)=>a.total-b.total).findIndex(r=>r.nome===atl.nome)+1:null;
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const W=297,H=210;
-  // Fundo
+  const FRAME_BOTTOM=183; // termina antes do rodape oficial (que comeca aos 188mm) — nunca sobrepor
+  const medalCor = ranking===1?[212,175,55] : ranking===2?[192,192,192] : ranking===3?[176,124,80] : null;
+
+  // ---------- Fundo ----------
   doc.setFillColor(8,15,32);doc.rect(0,0,W,H,'F');
-  // Bordas decorativas
-  doc.setDrawColor(201,168,76);doc.setLineWidth(0.5);doc.rect(8,8,W-16,H-16,'S');
-  doc.setLineWidth(0.2);doc.rect(11,11,W-22,H-22,'S');
-  // Linha gold topo
-  doc.setFillColor(201,168,76);doc.rect(8,8,W-16,1.5,'F');
-  doc.rect(8,H-9.5,W-16,1.5,'F');
-  // Logo SWC
-  try{doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',W/2-15,12,30,30);}catch(e){}
-  // Titulo
-  doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
-  doc.text('VIZELGOLFE - ASSOCIAÇÃO DE MINIGOLFE DE VIZELA',W/2,50,{align:'center'});
-  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
-  doc.text('Seniors World Minigolf Championship · SWC Vizela 2026',W/2,57,{align:'center'});
-  // Certificado
-  doc.setFontSize(28);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
-  doc.text('CERTIFICADO DE PARTICIPAÇÃO',W/2,78,{align:'center'});
-  // Linha separadora
-  doc.setFillColor(201,168,76);doc.rect(W/2-40,82,80,0.5,'F');
-  // Nome atleta
-  doc.setFontSize(32);doc.setFont('helvetica','bold');doc.setTextColor(232,201,106);
-  doc.text(atl.nome||'',W/2,97,{align:'center'});
-  // País e categoria
-  doc.setFontSize(13);doc.setFont('helvetica','normal');doc.setTextColor(200,192,168);
-  doc.text((atl.pais||'')+' · '+(atl.categoria==='SM'?'Seniors Men':'Seniors Women'),W/2,107,{align:'center'});
-  // Resultado
-  if(res){
-    doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
-    doc.text('Final result: '+res.total+' strokes'+(ranking?' · Position: '+ranking+'.':''),W/2,117,{align:'center'});
-  }
-  // Texto
-  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
-  doc.text('participated in the Seniors World Minigolf Championship',W/2,128,{align:'center'});
-  doc.text('14-17 October 2026 · Vizela, Portugal',W/2,135,{align:'center'});
-  // Assinaturas -- fundo claro para maximo contraste
-  doc.setFillColor(248,245,235);
-  doc.roundedRect(14,148,W-28,46,3,3,'F');
+
+  // ---------- Moldura tripla com ornamentos de canto ----------
+  doc.setDrawColor(201,168,76);
+  doc.setLineWidth(0.6);doc.rect(8,8,W-16,FRAME_BOTTOM-8,'S');
+  doc.setLineWidth(0.2);doc.rect(11.5,11.5,W-23,FRAME_BOTTOM-19.5,'S');
+  doc.setFillColor(201,168,76);doc.rect(8,8,W-16,1.2,'F'); // barra topo
+  doc.rect(8,FRAME_BOTTOM-1.2,W-16,1.2,'F'); // barra base
+
+  // Cantos ornamentais (esquadros duplos)
+  const cornerLen=9;
+  [[8,8,1,1],[W-8,8,-1,1],[8,FRAME_BOTTOM,1,-1],[W-8,FRAME_BOTTOM,-1,-1]].forEach(([cx,cy,dx,dy])=>{
+    doc.setDrawColor(201,168,76);doc.setLineWidth(0.9);
+    doc.line(cx,cy+3*dy,cx,cy+cornerLen*dy);
+    doc.line(cx+3*dx,cy,cx+cornerLen*dx,cy);
+    doc.setFillColor(201,168,76);
+    doc.circle(cx+3.2*dx,cy+3.2*dy,0.7,'F');
+  });
+
+  // Losango decorativo centrado no topo e na base da moldura
+  [16,FRAME_BOTTOM-1].forEach(cy=>{
+    doc.setFillColor(8,15,32);
+    doc.triangle(W/2-2.2,cy,W/2,cy-2.2,W/2+2.2,cy,'F');
+    doc.triangle(W/2-2.2,cy,W/2,cy+2.2,W/2+2.2,cy,'F');
+    doc.setDrawColor(201,168,76);doc.setLineWidth(0.35);
+    doc.line(W/2-2.2,cy,W/2,cy-2.2);doc.line(W/2,cy-2.2,W/2+2.2,cy);
+    doc.line(W/2-2.2,cy,W/2,cy+2.2);doc.line(W/2,cy+2.2,W/2+2.2,cy);
+  });
+
+  // ---------- Cabecalho institucional ----------
+  try{doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',W/2-13,14,26,26);}catch(e){}
+  doc.setFontSize(10.5);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+  doc.text('VIZELGOLFE · ASSOCIAÇÃO DE MINIGOLFE DE VIZELA',W/2,46,{align:'center'});
+  doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
+  doc.text('Seniors World Minigolf Championship  ·  SWC Vizela 2026  ·  under the authority of WMF / EMF / FPM',W/2,52,{align:'center'});
+
+  // ---------- Titulo ----------
+  doc.setFontSize(25);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  doc.text('C E R T I F I C A D O   D E   P A R T I C I P A Ç Ã O',W/2,68,{align:'center'});
+
+  // Divisor decorativo com losango central
+  doc.setDrawColor(201,168,76);doc.setLineWidth(0.4);
+  doc.line(W/2-52,72.5,W/2-4,72.5);doc.line(W/2+4,72.5,W/2+52,72.5);
   doc.setFillColor(201,168,76);
-  doc.rect(14,148,W-28,1.5,'F');
-  // Linhas de assinatura -- escuras e visiveis
+  doc.triangle(W/2-2,72.5,W/2,71,W/2+2,72.5,'F');doc.triangle(W/2-2,72.5,W/2,74,W/2+2,72.5,'F');
+
+  // ---------- Nome do atleta (peca central) ----------
+  doc.setFontSize(33);doc.setFont('helvetica','bold');doc.setTextColor(232,201,106);
+  doc.text(atl.nome||'',W/2,90,{align:'center'});
+  doc.setDrawColor(201,168,76);doc.setLineWidth(0.25);
+  doc.line(W/2-60,94,W/2+60,94);
+
+  // Badge de categoria + pais
+  const catLabel=atl.categoria==='SM'?'SENIORS MEN':'SENIORS WOMEN';
+  const badgeTxt=(atl.pais||'').toUpperCase()+'   ·   '+catLabel;
+  doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(210,200,175);
+  doc.text(badgeTxt,W/2,103,{align:'center'});
+
+  // ---------- Selo de podio (se aplicavel) ou linha de participacao ----------
+  if(res && ranking){
+    const sy=118;
+    if(medalCor){
+      doc.setFillColor(medalCor[0],medalCor[1],medalCor[2]);
+      doc.circle(W/2,sy,8.5,'F');
+      doc.setDrawColor(8,15,32);doc.setLineWidth(0.4);doc.circle(W/2,sy,8.5,'S');
+      doc.setFillColor(8,15,32);doc.circle(W/2,sy,6,'F');
+      doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(medalCor[0],medalCor[1],medalCor[2]);
+      doc.text(String(ranking)+'º',W/2,sy+2.2,{align:'center'});
+      doc.setFontSize(10.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+      doc.text('FINAL RESULT: '+res.total+' STROKES  ·  '+String(ranking)+(ranking===1?'ST':ranking===2?'ND':ranking===3?'RD':'TH')+' PLACE OVERALL',W/2,sy+15,{align:'center'});
+    } else {
+      doc.setFontSize(10.5);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+      doc.text('FINAL RESULT: '+res.total+' strokes  ·  Position: '+ranking+'.',W/2,sy,{align:'center'});
+    }
+  }
+
+  // Texto de participacao
+  doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
+  doc.text('for outstanding participation in the Seniors World Minigolf Championship',W/2,140,{align:'center'});
+  doc.text('14–17 October 2026  ·  Vizela, Portugal',W/2,146,{align:'center'});
+
+  // ---------- Bloco de assinaturas com selo oficial ----------
+  doc.setFillColor(248,245,235);
+  doc.roundedRect(14,151,W-28,26,3,3,'F');
+  doc.setFillColor(201,168,76);doc.rect(14,151,W-28,1.2,'F');
   doc.setDrawColor(20,20,20);doc.setLineWidth(0.5);
-  doc.line(40,170,120,170);
-  doc.line(177,170,257,170);
-  // Titulos bold e escuros
-  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(20,20,20);
-  doc.text('President COE',80,177,{align:'center'});
-  doc.text('WMF Representative',217,177,{align:'center'});
-  // Data
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(50,40,20);
-  doc.text('Date: 17 October 2026',W/2,186,{align:'center'});
-  // Copyright
-  doc.setFontSize(7);doc.setTextColor(100,80,50);
-  doc.text('© Rui Gonçalves · Vizelgolfe · SWC Vizela 2026',W/2,193,{align:'center'});
+  doc.line(38,167,110,167);
+  doc.line(187,167,259,167);
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(20,20,20);
+  doc.text('President COE',74,173,{align:'center'});
+  doc.text('WMF Representative',223,173,{align:'center'});
+
+  // Selo circular oficial ao centro
+  doc.setFillColor(255,255,255);doc.circle(W/2,164,9.5,'F');
+  doc.setDrawColor(201,168,76);doc.setLineWidth(0.7);doc.circle(W/2,164,9.5,'S');
+  doc.setLineWidth(0.25);doc.circle(W/2,164,7.7,'S');
+  doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
+  doc.text('SWC',W/2,162,{align:'center'});
+  doc.text('VIZELA',W/2,165.3,{align:'center'});
+  doc.text('2026',W/2,168.6,{align:'center'});
+
+  // ---------- Rodape do corpo: nº certificado, data emissao, lema ----------
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(120,100,60);
+  doc.text('Cert. Nº '+_certNum(atl.id||atl.nome),18,180);
+  doc.text('Issued: 17 October 2026',W-18,180,{align:'right'});
+  doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(150,130,80);
+  doc.text('Fair Play  ·  Friendship  ·  World Minigolf',W/2,180,{align:'center'});
+
   pdfFooter(doc,true);
   doc.save('SWC2026_Cert_'+(atl.nome||'atleta').replace(/ /g,'_')+'.pdf');
   toast('Certificado gerado!');

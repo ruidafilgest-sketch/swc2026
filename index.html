@@ -4479,12 +4479,19 @@ async function delDelegacao(id){if(!canDelete()||!confirm('Eliminar delegacao?')
 
 // --- GUIA DO ATLETA ---
 function progAtletaPorDia(){
-  // Devolve o programa oficial (colecao 'programa') agrupado por dia, para uso no Guia do Atleta
+  // Devolve o programa oficial (colecao 'programa') agrupado por dia, filtrado para o que
+  // interessa ao atleta — exclui logistica interna, reunioes e notas de bastidores das cerimonias
   const dias=(typeof DIAS_EVENTO!=='undefined')?DIAS_EVENTO:['2026-10-12','2026-10-14','2026-10-15','2026-10-16','2026-10-17'];
   const labels=(typeof DIAS_LABEL!=='undefined')?DIAS_LABEL:{};
+  const TIPOS_RELEVANTES=['competicao','treino','cerimonia','social'];
+  const TITULO_EXCLUIR=/Preparação do Espaço|Momento Musical de (Encerramento do Protocolo|Transição)/i;
   return dias.map(dia=>({
     dia, label:labels[dia]||dia,
-    itens:(_prog||[]).filter(p=>p.dia===dia).sort((a,b)=>(a.hora||'').localeCompare(b.hora||''))
+    itens:(_prog||[])
+      .filter(p=>p.dia===dia)
+      .filter(p=>TIPOS_RELEVANTES.includes(p.tipo))
+      .filter(p=>!TITULO_EXCLUIR.test(p.titulo||''))
+      .sort((a,b)=>(a.hora||'').localeCompare(b.hora||''))
   })).filter(d=>d.itens.length);
 }
 
@@ -5285,7 +5292,7 @@ function exportOrcamentoPDF(){
   const totOrc=_orcamento.reduce((s,o)=>s+Number(o.valor||0),0);
   const totExec=_orcamento.reduce((s,o)=>{const exec=o.conta.startsWith('6')?_desp.filter(d=>d.conta===o.conta).reduce((a,d)=>a+Number(d.valor||0),0):_rec.filter(r=>r.conta===o.conta).reduce((a,r)=>a+Number(r.valor||0),0);return s+exec;},0);
   doc.autoTable({startY:38,head:[['Conta','Rubrica','Orcamentado','Executado','Desvio','Exec%','Estado']],body:rows.length?rows:[['','Sem rubricas definidas','','','','','']],foot:[['TOTAL','',fmtPDF(totOrc),fmtPDF(totExec),(totExec-totOrc>=0?'+':'')+fmtPDF(totExec-totOrc),(totOrc>0?Math.round(totExec/totOrc*100):0)+'%','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:18,fontStyle:'bold'},1:{cellWidth:60},2:{cellWidth:30,halign:'right'},3:{cellWidth:30,halign:'right'},4:{cellWidth:28,halign:'right'},5:{cellWidth:18,halign:'center',fontStyle:'bold'},6:{cellWidth:22,halign:'center'}},margin:{left:5,right:5,bottom:28}});
-  pdfFooter(doc,true);doc.save('SWC2026_Orcamento_vs_Real.pdf');toast('PDF orcamento gerado');
+  pdfFooter(doc,true,true);doc.save('SWC2026_Orcamento_vs_Real.pdf');toast('PDF orcamento gerado');
 }
 
 function exportFaturasPDF(){
@@ -5295,7 +5302,7 @@ function exportFaturasPDF(){
   const totPend=_faturas.filter(f=>f.estado==='Pendente').reduce((s,f)=>s+Number(f.valor||0),0);
   const totPag=_faturas.filter(f=>f.estado==='Paga').reduce((s,f)=>s+Number(f.valor||0),0);
   doc.autoTable({startY:38,head:[['Nr. Doc.','Fornecedor','Rubrica SNC','Valor','Data Fat.','Vencimento','Estado']],body:rows.length?rows:[['','Sem faturas','','','','','']],foot:[['','Pendentes: '+fmtPDF(totPend),'','Pagas: '+fmtPDF(totPag),'','','']],theme:'striped',styles:{fontSize:8,textColor:[35,35,35],cellPadding:4,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:[250,247,240]},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:25,fontStyle:'bold'},1:{cellWidth:60},2:{cellWidth:45},3:{cellWidth:28,halign:'right'},4:{cellWidth:22},5:{cellWidth:22},6:{cellWidth:22,halign:'center'}},margin:{left:5,right:5,bottom:28}});
-  pdfFooter(doc,true);doc.save('SWC2026_Faturas.pdf');toast('PDF faturas gerado');
+  pdfFooter(doc,true,true);doc.save('SWC2026_Faturas.pdf');toast('PDF faturas gerado');
 }
 
 function exportFluxoPDF(){
@@ -5306,7 +5313,7 @@ function exportFluxoPDF(){
   const totEnt=_fluxo.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+Number(f.valor||0),0);
   const totSai=_fluxo.filter(f=>f.tipo==='saida').reduce((s,f)=>s+Number(f.valor||0),0);
   doc.autoTable({startY:38,head:[['Mês','Tipo','Descrição','Prob.','Valor Previsto']],body:rows.length?rows:[['','','Sem previsoes','','']],foot:[['','Entradas prev.:','',fmtPDF(totEnt),'Saidas prev.: '+fmtPDF(totSai)+' | Saldo: '+fmtPDF(totEnt-totSai)]],theme:'striped',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:20},1:{cellWidth:22,halign:'center'},2:{cellWidth:120},3:{cellWidth:20,halign:'center'},4:{cellWidth:35,halign:'right',fontStyle:'bold'}},margin:{left:5,right:5,bottom:28}});
-  pdfFooter(doc,true);doc.save('SWC2026_Fluxo_Caixa.pdf');toast('PDF fluxo de caixa gerado');
+  pdfFooter(doc,true,true);doc.save('SWC2026_Fluxo_Caixa.pdf');toast('PDF fluxo de caixa gerado');
 }
 
 
@@ -5524,7 +5531,7 @@ function exportRelWMFFinal(){
     const rowsR=[...homens.map((r,i)=>['H - '+(i+1)+'.st',r.nome,r.pais,String(r.total)]),...senhoras.map((r,i)=>['L - '+(i+1)+'.st',r.nome,r.pais,String(r.total)])];
     doc.autoTable({startY:y,head:[['Position','Name','Country','Total']],body:rowsR.length?rowsR:[['','No results registered','','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[25,45,80],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:25},2:{cellWidth:35},3:{cellWidth:20,halign:'center',fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
   }
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_Relatorio_Final_WMF.pdf');
   toast('Relatorio Final WMF gerado');
 }
@@ -5547,7 +5554,7 @@ function exportRelAG(){
     ['Resultado liquido do evento',fmtPDF(totR-totD)],
     ['Patrocinadores confirmados',''+_pat.filter(p=>p.estado==='Confirmado'||p.estado==='Recebido').length],
   ],theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:80,fontStyle:'bold'},1:{fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_Relatorio_AG_Vizelgolfe.pdf');
   toast('Relatorio AG gerado');
 }
@@ -5570,7 +5577,7 @@ function exportRelCMV(){
   let yf=doc.lastAutoTable.finalY+10;
   doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(80,80,80);
   doc.text('A Vizelgolfe agradece o apoio da Câmara Municipal de Vizela que foi essencial para a realização deste evento mundial.',14,yf,{maxWidth:182});
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_Relatorio_Impacto_CMV.pdf');
   toast('Relatorio CMV gerado');
 }
@@ -6940,7 +6947,7 @@ function pdfHeader(doc, titulo, subtitulo, isLandscape){
   doc.rect(0,H-0.8,W,0.8,'F');
 }
 
-function pdfFooter(doc, isLandscape){
+function pdfFooter(doc, isLandscape, showIban){
   const pages = doc.internal.getNumberOfPages();
   const W = isLandscape ? 297 : 210;
   const PH = isLandscape ? 210 : 297;
@@ -6976,7 +6983,7 @@ function pdfFooter(doc, isLandscape){
     doc.setFont('helvetica','normal');
     doc.setTextColor(120,100,70);
     doc.text('SWC Vizela 2026 - Vizelgolfe - Associação de Minigolfe de Vizela - NIF 509 227 902', W/2, FY+16, {align:'center'});
-    if(_ibanEvento){
+    if(showIban && _ibanEvento){
       doc.setFont('helvetica','bold');
       doc.setTextColor(80,60,20);
       doc.text('IBAN: '+_ibanEvento+' | BIC: CGDIPTPL | Caixa Geral de Depositos', W/2, FY+20, {align:'center'});
@@ -7132,7 +7139,7 @@ function exportDR(){
   if(res>=0){doc.setTextColor(100,220,130);}else{doc.setTextColor(220,100,100);}
   doc.text(fmtPDF(res), 196, y+8, {align:'right'});
 
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_Demonstracao_Resultados.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -7200,7 +7207,7 @@ function exportBalanco(){
   if(eq){doc.setTextColor(100,220,130);}else{doc.setTextColor(220,100,100);}
   doc.text(eq?' Balanço equilibrado - Total Ativo = Total Passivo + Capital Próprio':' Diferença: '+fmtPDF(ativo-(forn+cp)), 105, yq+6.5, {align:'center'});
 
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_Balanco.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -7248,7 +7255,7 @@ function exportBalancete(){
     margin:{left:5,right:5,bottom:28},
   });
 
-  pdfFooter(doc,true);
+  pdfFooter(doc,true,true);
   doc.save('SWC2026_Balancete_'+mes+'.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -7336,7 +7343,7 @@ function exportIPDJ(){
     });
   }
 
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_Anexo_B_IPDJ.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -7386,7 +7393,7 @@ function exportWMF(){
   doc.text('Vizelgolfe - Associação de Minigolfe de Vizela', 14, yf+5);
   doc.text('Date: '+new Date().toLocaleDateString('pt-PT'), 14, yf+10);
 
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_WMF_Financial_Statement.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -7418,7 +7425,7 @@ function exportDiario(){
     margin:{left:5,right:5,bottom:28},
   });
 
-  pdfFooter(doc,true);
+  pdfFooter(doc,true,true);
   doc.save('SWC2026_Diario_Caixa_Banco.pdf');
   toast('PDF gerado com sucesso');
 }
@@ -7429,7 +7436,7 @@ function exportReceitas(){
   pdfHeader(doc,'Receitas','SWC Vizela 2026 - Valores reais registados',true);
   const rows=_rec.map(r=>[r.data||'',r.conta||'',nomC[r.conta]||'',r.desc||'',fmtPDF(r.valor),r.estado||'',r.obs||'']);
   doc.autoTable({startY:38,head:[['Data','SNC','Rubrica','Descrição','Valor','Estado','Obs.']],body:rows.length?rows:[['','','','Sem receitas','','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{4:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:40},4:{cellWidth:28,halign:'right'},5:{cellWidth:25}},margin:{left:5,right:5,bottom:28}});
-  pdfFooter(doc);doc.save('SWC2026_Receitas.pdf');toast('PDF gerado com sucesso');
+  pdfFooter(doc,false,true);doc.save('SWC2026_Receitas.pdf');toast('PDF gerado com sucesso');
 }
 
 //  DESPESAS PDF 
@@ -7438,7 +7445,7 @@ function exportDespesas(){
   pdfHeader(doc,'Despesas','SWC Vizela 2026 - Valores reais registados',true);
   const rows=_desp.map(d=>[d.data||'',d.doc||'',d.conta||'',nomC[d.conta]||'',d.desc||'',fmtPDF(d.valor),d.estado||'']);
   doc.autoTable({startY:38,head:[['Data','Doc.','SNC','Rubrica','Descrição','Valor','Estado']],body:rows.length?rows:[['','','','','Sem despesas','','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{5:{halign:'right'},0:{cellWidth:20},1:{cellWidth:15},2:{cellWidth:15},3:{cellWidth:40},5:{cellWidth:28,halign:'right'},6:{cellWidth:22}},margin:{left:5,right:5,bottom:28}});
-  pdfFooter(doc);doc.save('SWC2026_Despesas.pdf');toast('PDF gerado com sucesso');
+  pdfFooter(doc,false,true);doc.save('SWC2026_Despesas.pdf');toast('PDF gerado com sucesso');
 }
 
 //  PATROCÍNIOS PDF 
@@ -7447,7 +7454,7 @@ function exportPat(){
   pdfHeader(doc,'Patrocinios & CRM','SWC Vizela 2026 - Valores reais confirmados',true);
   const rows=_pat.map(p=>[p.empresa||'',p.tipo||'',p.contacto||'',fmtPDF(p.valor),(p.contrapartidas||'').substring(0,40),p.estado||'']);
   doc.autoTable({startY:38,head:[['Empresa','Tipo','Contacto','Valor confirmado','Contrapartidas','Estado']],body:rows.length?rows:[['','','','','Sem patrocinadores','']],theme:'striped',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{3:{halign:'right',cellWidth:35},1:{cellWidth:30},5:{cellWidth:28}},margin:{left:5,right:5,bottom:28}});
-  pdfFooter(doc);doc.save('SWC2026_Patrocinios.pdf');toast('PDF gerado com sucesso');
+  pdfFooter(doc,false,true);doc.save('SWC2026_Patrocinios.pdf');toast('PDF gerado com sucesso');
 }
 
 //  ATLETAS PDF 
@@ -8396,7 +8403,7 @@ function exportAcertoPDF(marcaId){
     doc.text('Data: ___/___/______', 14, y+23);
     doc.text('Data: ___/___/______', 120, y+23);
   }
-  pdfFooter(doc,false);
+  pdfFooter(doc,false,true);
   doc.save('SWC2026_Acerto_'+marca.nome.replace(/ /g,'_')+'.pdf');
   toast('PDF acerto de contas gerado');
 }

@@ -1172,7 +1172,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="pg" id="pg-programa">
 <div class="st"><span class="sn">PROG</span>Programa Oficial — SWC Vizela 2026<button class="hbtn" data-help="programa" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">14–17 Outubro 2026 · Hora a hora · Editável · Exportação PDF</div>
-<div class="bb" id="bar-programa"><button class="btn bp" onclick="openM('m-prog-item')">+ Adicionar item</button><button class="btn bo" onclick="exportProgramaPDF()">Exportar PDF oficial</button></div>
+<div class="bb" id="bar-programa"><button class="btn bp" onclick="openM('m-prog-item')">+ Adicionar item</button><button class="btn bo" onclick="importarProgramaCerimonias()">📥 Importar Guião de Cerimónias (Gonçalo)</button><button class="btn bo" onclick="exportProgramaPDF()">Exportar PDF oficial</button></div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">09-11 Out — Pre-chegadas</div><div class="smv" id="prog-09">—</div></div>
   <div class="sm"><div class="sml">12 Out — Abertura</div><div class="smv" id="prog-12">—</div></div>
@@ -3374,6 +3374,47 @@ async function importarDirecao2026(){
   }
   toast('Direção 2026 importada: '+ok+' director(es)'+(err?' ('+err+' erros)':''),'ok');
 }
+async function importarProgramaCerimonias(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const RESP='Gonçalo Castro (Diretor Cerimónias e Protocolos)';
+  const ITENS=[
+    // --- ABERTURA · 12 Out — Praça da República / Auditório Municipal / Casa do Park ---
+    {dia:'2026-10-12',hora:'17:30',titulo:'Concentração das Seleções',desc:'Praça da República / Jardim Manuel Faria — acolhimento das seleções, foto oficial, preparação do desfile',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-12',hora:'18:00',titulo:'Desfile das Nações',desc:'Cortejo: Praça da República → Rua Dr. Alfredo Pinto → Rua Dr. Abílio Torres → Rua Dr. Bráulio Caldas → Praça do Município → Auditório Municipal Francisco Ferreira. Ordem: Banda/Rancho/Bombos/Concertinas → Bandeira Nacional/WMF/Vizelgolfe → Entidades → Nações por ordem alfabética, Portugal fecha.',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-12',hora:'18:30',titulo:'Receção no Auditório Municipal',desc:'Galeria do Auditório Municipal Francisco Ferreira — música de fundo ambiente (Trio de Jazz)',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-12',hora:'18:45',titulo:'Cerimónia Protocolar de Abertura',desc:'Auditório Municipal — abertura com Grupo de Bombos Família Peixoto; discursos: Presidente Vizelgolfe, Presidente Federação Mundial, Presidente Câmara; sorteio da grelha de competição (2 tômbolas). Apresentadora: Liliana Faria.',tipo:'cerimonia',resp:RESP,contacto:'Apresentadora: Liliana Faria'},
+    {dia:'2026-10-12',hora:'19:40',titulo:'Momento Musical de Encerramento do Protocolo',desc:'Artista Local ou Filarmónica',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-12',hora:'19:45',titulo:'Transporte para a Casa do Park',desc:'2 viagens de autocarro da Câmara Municipal',tipo:'logistica',resp:RESP},
+    {dia:'2026-10-12',hora:'20:15',titulo:'Jantar Oficial de Abertura',desc:'Casa do Park — convívio, ementa vizelense com opções vegetarianas, distribuição de lembranças por País, animação musical local e final de dança (anos 70/80/90)',tipo:'cerimonia',resp:RESP},
+    // --- MEDALHAS NO CAMPO ---
+    {dia:'2026-10-15',hora:'17:30',titulo:'Entrega de Medalhas — Equipas (Campo)',desc:'6 medalhas Femininas (4 atletas + 2 treinadores) + 9 Masculinas (7 atletas + 2 treinadores). Hino do país vencedor. HORA PROVISÓRIA — confirmar com Gonçalo.',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-16',hora:'17:30',titulo:'Entrega de Medalhas — Stroke Play (Campo)',desc:'1 ouro/prata/bronze Feminino + 1 ouro/prata/bronze Masculino. Hino do país vencedor. HORA PROVISÓRIA — confirmar com Gonçalo.',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'17:30',titulo:'Entrega de Medalhas — Match Play (Campo)',desc:'1 ouro/prata/bronze Feminino + 1 ouro/prata/bronze Masculino. Hino do país vencedor. HORA PROVISÓRIA — confirmar com Gonçalo.',tipo:'cerimonia',resp:RESP},
+    // --- ENCERRAMENTO · 17 Out — Quinta d'Miranda ---
+    {dia:'2026-10-17',hora:'15:00',titulo:'Preparação do Espaço — Cerimónia de Encerramento',desc:'Quinta d\'Miranda, Rua de São Crau nº105, Santo Adrião — palco, pódio, cenário fotos, LED, bandeiras, mesas com miniaturas de bandeira',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'19:00',titulo:'Concentração — Praça da República (Encerramento)',desc:'Transporte das comitivas e convidados para a Quinta d\'Miranda — 2 autocarros da Câmara, 2 viagens',tipo:'logistica',resp:RESP},
+    {dia:'2026-10-17',hora:'19:30',titulo:'Receção e Drink de Boas-vindas — Encerramento',desc:'Quinta d\'Miranda — música de fundo suave (saxofonista ao vivo ou trio de jazz)',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'20:00',titulo:'Jantar Oficial de Encerramento',desc:'Abertura com grupo de dança de ginásio vizelense; banquete com gastronomia tradicional (opções vegetarianas); projeção de fotos/vídeos da competição no LED; animação musical local (cavaquinhos)',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'21:30',titulo:'Discursos Oficiais e Protocolo Inicial',desc:'Abertura solene pela apresentadora Liliana Faria e tradutora Ana Gonçalves; discursos curtos (4-5 min): Presidente Vizelgolfe, Presidente FPM, Presidente Federação Mundial, Presidente Câmara Municipal',tipo:'cerimonia',resp:RESP,contacto:'Apresentadora: Liliana Faria · Tradutora: Ana Gonçalves'},
+    {dia:'2026-10-17',hora:'21:50',titulo:'Entrega de Diplomas de Participação',desc:'Responsável de cada comitiva sobe ao palco para receber os diplomas de participação de todos os seus atletas; fotografia oficial com entidades',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'22:15',titulo:'Momento Musical de Transição',desc:'Banda vizelense — temas anos 70, 80 e 90',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'22:45',titulo:'Cerimónia de Entrega de Prémios (Momento Alto)',desc:'Equipas Femininas e Masculinas + Individual Stroke Play e Match Play (Fem/Masc) — diplomas de mérito 8ª-4ª, entrega de taças/troféus 3ª-2ª-1ª com hino nacional do vencedor em cada categoria',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'23:30',titulo:'Encerramento Solene e Brinde Final',desc:'Declaração oficial de encerramento pelo representante da WMF; passagem do testemunho (bandeira da federação) ao próximo organizador; brinde com Vinho Verde de Vizela e tema "Vinho Verde" de Paulo Alexandre',tipo:'cerimonia',resp:RESP},
+    {dia:'2026-10-17',hora:'23:35',titulo:'After Party',desc:'Até às 02:00 — abertura da pista de dança com DJ Berde, bar aberto/cocktails, cabine fotográfica (Photo Booth) temática de minigolfe',tipo:'social',resp:RESP},
+  ];
+  const jaImportados=ITENS.filter(m=>_prog.some(x=>x.titulo===m.titulo&&x.dia===m.dia));
+  const porImportar=ITENS.filter(m=>!_prog.some(x=>x.titulo===m.titulo&&x.dia===m.dia));
+  if(!porImportar.length){toast('Guião de Cerimónias já está todo importado — nada a fazer.','inf');return;}
+  if(jaImportados.length&&!confirm('Já existem '+jaImportados.length+' item(ns) do guião importado(s). Vão ser ignorados. Importar apenas os '+porImportar.length+' que faltam?'))return;
+  let ok=0,err=0;
+  toast('A importar '+porImportar.length+' item(ns) do guião de cerimónias...','inf');
+  for(const it of porImportar){
+    try{await _add('programa',{...it,contacto:it.contacto||'',ts:Date.now()});ok++;}
+    catch(e){console.error('Erro ao importar',it.titulo,e);err++;}
+  }
+  toast('Guião de Cerimónias importado: '+ok+' item(ns)'+(err?' ('+err+' erros)':''),'ok');
+}
+
 async function importarBoardEMF(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
   const BOARD_EMF=[
@@ -3728,7 +3769,7 @@ async function loadChk(){
 
 //  PROGRAMA DO EVENTO 
 let _prog = [];
-const DIAS_EVENTO = ['2026-10-14','2026-10-15','2026-10-16','2026-10-17'];
+const DIAS_EVENTO = ['2026-10-12','2026-10-14','2026-10-15','2026-10-16','2026-10-17'];
 const DIAS_LABEL = {
   '2026-10-09':'09 Out - Chegadas antecipadas','2026-10-10':'10 Out - Chegadas antecipadas','2026-10-11':'11 Out - Chegadas e treinos','2026-10-12':'12 Out - Cerimonia de Abertura',
   '2026-10-14':'14 Out - Dia 1 Competição',
@@ -3766,13 +3807,12 @@ async function saveProgItem(){
 
 function renderPrograma(){
   // Contar por dia
-  DIAS_EVENTO.forEach((dia, i) => {
-    const ids = ['prog-13','prog-14','prog-15','prog-1617'];
-    const count = _prog.filter(p=>p.dia===dia).length;
-    const elId = i < 3 ? ids[i] : ids[3];
-    const el = document.getElementById(elId);
-    if(el) el.textContent = count + ' itens';
-  });
+  const set=(id,n)=>{const el=document.getElementById(id);if(el)el.textContent=n+' itens';};
+  set('prog-12', _prog.filter(p=>p.dia==='2026-10-12').length);
+  set('prog-14', _prog.filter(p=>p.dia==='2026-10-14').length);
+  set('prog-15', _prog.filter(p=>p.dia==='2026-10-15').length);
+  set('prog-1617', _prog.filter(p=>p.dia==='2026-10-16'||p.dia==='2026-10-17').length);
+  set('prog-09', _prog.filter(p=>['2026-10-09','2026-10-10','2026-10-11'].includes(p.dia)).length);
 
   const el = document.getElementById('prog-content');
   if(!el) return;
@@ -3826,8 +3866,22 @@ function renderGuiaoCerimonia(){
       <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:2px;">${it.titulo||''}</div>
       ${it.desc?`<div style="font-size:11px;color:var(--mu);">${it.desc}</div>`:''}
       ${it.resp?`<div style="font-size:10px;color:rgba(201,168,76,.7);margin-top:3px;">Interveniente/Resp: ${it.resp}${it.contacto?(' · Contacto: '+it.contacto):''}</div>`:''}
+      ${/Entrega de Pr[eé]mios/i.test(it.titulo||'')?renderResumoPodiosInline():''}
     </div>
   </div>`).join('');
+}
+
+function renderResumoPodiosInline(){
+  const podios=getPodios();
+  const linhas=PODIO_GRUPOS.map(g=>{
+    const arr=podios[g.key]||[];
+    const ouro=arr.find(x=>x.pos===1);
+    return `<div style="font-size:10px;color:var(--wh);padding:2px 0;"><strong style="color:var(--gl);">${g.titulo}:</strong> ${ouro?('🥇 '+ouro.nome+(ouro.pais?(' — '+ouro.pais):'')):'pendente'}</div>`;
+  }).join('');
+  return `<div style="margin-top:8px;padding:8px 10px;background:rgba(201,168,76,.08);border:1px dashed var(--gl);border-radius:8px;">
+    <div style="font-size:10px;color:var(--gl);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Resumo do Pódio (automático — ver Protocolo de Medalhas para detalhe completo)</div>
+    ${linhas}
+  </div>`;
 }
 
 //  EQUIPAS (Protocolo de Medalhas) 
@@ -8147,6 +8201,7 @@ window.delMbr=delMbr;
 window.delBoardEmf=delBoardEmf;
 window.editBoardEmf=editBoardEmf;
 window.importarDirecao2026=importarDirecao2026;
+window.importarProgramaCerimonias=importarProgramaCerimonias;
 window.importarBoardEMF=importarBoardEMF;
 window.saveVol=saveVol;
 window.delVol=delVol;

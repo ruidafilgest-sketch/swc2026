@@ -910,7 +910,11 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="importVolExcel(this)">
   </label>
   <button class="btn bo" onclick="abrirGerirSeccoes()">⚙️ Secções</button>
-  <button class="btn bo" onclick="exportOrgPDF()">Exportar PDF</button>
+  <button class="btn bo" onclick="exportOrgPDF()">Exportar PDF (tudo)</button>
+  <select id="org-pdf-sel" style="padding:6px 8px;border-radius:8px;border:1px solid rgba(201,168,76,.3);background:var(--bg2,#0b1220);color:var(--wh,#fff);font-size:12px;">
+    <option value="">-- Escolher equipa/director --</option>
+  </select>
+  <button class="btn bo" onclick="const v=document.getElementById('org-pdf-sel').value;if(v)exportOrgPDF(v);else alert('Escolhe primeiro um director/equipa na lista.');">📄 PDF só desta equipa</button>
 </div>
 <div class="g2">
   <div class="cd"><div class="cdh"><div><div class="cdt">Direcção Operacional</div><div class="cds">Directores Operacionais</div></div></div><div class="cdb" id="org-coe"><div class="em"><div class="emi">◈</div><div class="emt">Sem membros da Direcção Operacional</div></div></div></div>
@@ -3226,8 +3230,9 @@ function renderOrg(){
       _mbr.forEach(m=>{
         const d=document.createElement('div');
         d.style.cssText='padding:10px 0;border-top:1px solid rgba(201,168,76,.07);';
-        const inner=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);margin-top:2px;">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);display:flex;align-items:center;gap:8px;">${m.tel||''} ${m.email?('&middot; '+m.email):''} ${m.tel?`<a href="https://wa.me/351${m.tel.replace(/\D/g,'')}" target="_blank" style="background:#25D366;color:#fff;font-size:9px;padding:2px 6px;border-radius:8px;text-decoration:none;font-weight:bold;">WhatsApp</a>`:''}</div>${m.resp?('<div style="font-size:10px;color:var(--mu);font-style:italic;">'+m.resp+'</div>'):''}</div>${isAdmin?('<div style="display:flex;gap:4px;"><button class="btn bo bsm" id="ebtn'+m.id+'">✏️</button><button class="btn bd2 bsm" id="dbtn'+m.id+'">🗑️</button></div>'):''}</div>`;
+        const inner=`<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--wh);">${m.nome||''}</div><div style="font-size:10px;color:var(--gl);margin-top:2px;">${m.funcao||''}</div><div style="font-size:10px;color:var(--mu);display:flex;align-items:center;gap:8px;">${m.tel||''} ${m.email?('&middot; '+m.email):''} ${m.tel?`<a href="https://wa.me/351${m.tel.replace(/\D/g,'')}" target="_blank" style="background:#25D366;color:#fff;font-size:9px;padding:2px 6px;border-radius:8px;text-decoration:none;font-weight:bold;">WhatsApp</a>`:''}</div>${m.resp?('<div style="font-size:10px;color:var(--mu);font-style:italic;">'+m.resp+'</div>'):''}</div><div style="display:flex;gap:4px;"><button class="btn bo bsm" id="pbtn'+m.id+'" title="Exportar PDF só desta equipa">📄</button>${isAdmin?('<button class="btn bo bsm" id="ebtn'+m.id+'">✏️</button><button class="btn bd2 bsm" id="dbtn'+m.id+'">🗑️</button>'):''}</div></div>`;
         d.innerHTML=inner;
+        d.querySelector('#pbtn'+m.id).onclick=()=>exportOrgPDF(m.id);
         if(isAdmin){
           d.querySelector('#ebtn'+m.id).onclick=()=>editMbr(m.id);
           d.querySelector('#dbtn'+m.id).onclick=()=>delMbr(m.id);
@@ -3280,6 +3285,21 @@ function renderOrg(){
       }
     });
     vlDir.value=curVal;
+  }
+
+  const pdfSel=document.getElementById('org-pdf-sel');
+  if(pdfSel){
+    const curPdfVal=pdfSel.value;
+    pdfSel.innerHTML='<option value="">-- Escolher equipa/director --</option>';
+    _mbr.forEach(m=>{
+      if(m.nome){
+        const opt=document.createElement('option');
+        opt.value=m.id;
+        opt.textContent=(m.funcao?m.funcao+' — ':'')+m.nome;
+        pdfSel.appendChild(opt);
+      }
+    });
+    pdfSel.value=curPdfVal;
   }
 
   const elVC=document.getElementById('org-vol-count');
@@ -7766,24 +7786,29 @@ function renderPrazosTable(doc, prazos, startY){
 }
 
 //  ORGANIZAÇÃO PDF 
-function exportOrgPDF(){
+function exportOrgPDF(directorId){
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-  pdfHeader(doc, 'Organograma SWC Vizela 2026', 'Direcção Operacional - Secções - Equipas');
+  const filtro = directorId ? _mbr.find(m=>m.id===directorId) : null;
+  const titulo = filtro ? 'Equipa: '+(filtro.funcao||'Director') : 'Organograma SWC Vizela 2026';
+  const subtitulo = filtro ? (filtro.nome||'') : 'Direcção Operacional - Secções - Equipas';
+  pdfHeader(doc, titulo, subtitulo);
   let y = 42;
   const W = 210;
   const pageH = 297;
 
   function checkPage(need){
-    if(y + need > pageH - 25){ doc.addPage(); pdfHeader(doc,'Organograma SWC Vizela 2026','Direcção Operacional - Secções - Equipas'); y=42; }
+    if(y + need > pageH - 25){ doc.addPage(); pdfHeader(doc,titulo,subtitulo); y=42; }
   }
 
-  if(!_mbr.length){
+  const listaMbr = filtro ? [filtro] : _mbr;
+
+  if(!listaMbr.length){
     doc.setFontSize(10); doc.setTextColor(120,100,70);
-    doc.text('Sem Directores registados', 14, y); y+=8;
+    doc.text(filtro?'Director não encontrado':'Sem Directores registados', 14, y); y+=8;
   }
 
-  _mbr.forEach(m=>{
+  listaMbr.forEach(m=>{
     checkPage(20);
     // Director
     doc.setFillColor(8,16,32);
@@ -7873,8 +7898,8 @@ function exportOrgPDF(){
     y += 5;
   });
 
-  // Voluntarios sem director
-  const semDir = (_vol||[]).filter(v=>{
+  // Voluntarios sem director (só faz sentido no export completo)
+  const semDir = filtro ? [] : (_vol||[]).filter(v=>{
     const dirs = v.directores&&v.directores.length?v.directores:(v.director?[v.director]:[]);
     return !dirs.length;
   });
@@ -7896,7 +7921,10 @@ function exportOrgPDF(){
   }
 
   pdfFooter(doc, false);
-  doc.save('SWC2026_Organograma.pdf');
+  const filename = filtro
+    ? ('SWC2026_Equipa_'+(filtro.nome||filtro.funcao||'Director').replace(/[^a-zA-Z0-9]+/g,'_')+'.pdf')
+    : 'SWC2026_Organograma.pdf';
+  doc.save(filename);
 }
 
 function exportSegPDF(){

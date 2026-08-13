@@ -482,6 +482,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(90,160,255,.6);">Abertura 12 Out · Encerramento 17 Out</div>
     </div>
   </div>
+  <div class="si" title="20 membros · estado dos convites" onclick="nav(this,'comissaohonra','Comissão de Honra')" style="">
+    <i class="ti ti-crown" style="font-size:20px;color:#5AA0FF;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Comissão de Honra</div>
+      <div class="si-sub" style="color:rgba(90,160,255,.6);">20 membros · estado dos convites</div>
+    </div>
+  </div>
   <div class="si" title="Mapa operacional do campo" onclick="nav(this,'mapa','Mapa Operacional')" style="">
     <i class="ti ti-map-pin" style="font-size:20px;color:#FF6B35;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -985,6 +992,48 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   </div>
 </div>
 </div>
+
+<!-- COMISSÃO DE HONRA -->
+<div class="pg" id="pg-comissaohonra">
+<div class="st"><span class="sn">HON</span>Comissão de Honra<button class="hbtn" data-help="comissaohonra" onclick="openHelp(this.dataset.help)">?</button></div>
+<div class="sd">Proposta de Comissão de Honra do SWC 2026 — estado dos convites, por nível protocolar</div>
+<div class="bb" id="bar-hon">
+  <button class="btn bp" onclick="const _e=document.getElementById('hon-eid');if(_e)_e.value='';openM('m-hon')">+ Novo membro</button>
+  <button class="btn bo" onclick="importarComissaoHonra()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar os 20 membros</button>
+  <button class="btn bo" onclick="exportHonPDF()">Exportar PDF</button>
+</div>
+<div class="g4" style="margin-bottom:14px;">
+  <div class="sm"><div class="sml">Total</div><div class="smv" id="h-tot">0</div></div>
+  <div class="sm"><div class="sml">Aceites</div><div class="smv" id="h-ac" style="color:var(--ok)">0</div></div>
+  <div class="sm"><div class="sml">Enviados (sem resposta)</div><div class="smv" id="h-en" style="color:var(--am,#c9a84c)">0</div></div>
+  <div class="sm"><div class="sml">Por enviar</div><div class="smv" id="h-pe" style="color:var(--wr)">0</div></div>
+</div>
+<div class="tw"><table><thead><tr><th>Grupo</th><th>Nome</th><th>Cargo / Entidade</th><th>Contacto</th><th>Estado do convite</th><th>Abertura</th><th>Encerramento</th><th id="th-hon">Ações</th></tr></thead>
+<tbody id="t-hon"><tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem membros registados — usa "Importar os 20 membros"</td></tr></tbody></table></div>
+</div>
+
+<div class="mo" id="m-hon"><div class="mdl">
+  <div class="mh"><div class="mt2">Membro da Comissão de Honra</div><button class="mc" onclick="closeM('m-hon')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="hon-eid">
+    <div class="fr"><div class="fg"><div class="fl">Nome completo / Entidade</div><input class="fi" id="hn-nm" placeholder="Nome"></div><div class="fg"><div class="fl">Cargo / Entidade</div><input class="fi" id="hn-cg" placeholder="ex: Presidente da FPM"></div></div>
+    <div class="fg"><div class="fl">Grupo / Nível protocolar</div><select class="fse" id="hn-gr">
+      <option>1. Nível Nacional</option>
+      <option>2. Nível Federativo — Minigolfe</option>
+      <option>3. Nível Regional</option>
+      <option>4. Poder Político — Nacional, Autárquico e Municipal</option>
+      <option>5. Coletividades Desportivas Locais</option>
+      <option>6. Instituições Centenárias e Associativismo de Vizela</option>
+      <option>7. Personalidades Vizelenses de Mérito</option>
+    </select></div>
+    <div class="fr"><div class="fg"><div class="fl">Email</div><input class="fi" id="hn-em" placeholder="email@exemplo.pt"></div><div class="fg"><div class="fl">Telefone</div><input class="fi" id="hn-tl" placeholder="9xxxxxxxx"></div></div>
+    <div class="fg"><div class="fl">Estado do convite</div><select class="fse" id="hn-st"><option>Por enviar</option><option>Enviado</option><option>Aceite</option><option>Recusado</option><option>Sem resposta</option></select></div>
+    <div class="fr"><div class="fg"><div class="fl">Data de envio</div><input class="fi" type="date" id="hn-de"></div><div class="fg"><div class="fl">Data de resposta</div><input class="fi" type="date" id="hn-dr"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Presença Abertura</div><select class="fse" id="hn-ab"><option value="S">Sim</option><option value="N">Não</option></select></div><div class="fg"><div class="fl">Presença Encerramento</div><select class="fse" id="hn-enc"><option value="S">Sim</option><option value="N">Não</option></select></div></div>
+    <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="hn-ob" placeholder="ex: vai enviar representante..."></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-hon')">Cancelar</button><button class="btn bp" onclick="saveHon()">Guardar</button></div>
+</div></div>
 
 <!-- DESPORTIVO -->
 <div class="pg" id="pg-desportivo">
@@ -2684,6 +2733,7 @@ function nav(el,id,title){
   if(id==='posts'){renderPost();}
   if(id==='resultados'){renderResultados();renderMatch();}
   if(id==='cerimonias'){renderGuiaoCerimonia();renderEquipas();}
+  if(id==='comissaohonra'){renderHon();}
   if(id==='diariobordo'){renderDiarioBordo();}
   if(id==='acreditacoes'){renderAccred();}
   if(id==='rooming'){renderRooming();}
@@ -2711,7 +2761,7 @@ function closeM(id){document.getElementById(id).classList.remove('op');}
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
 //  DATA 
-let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[];
+let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
@@ -2719,6 +2769,7 @@ function loadAll(){
   _snap('patrocinios',(docs)=>{_pat=docs;renderPat();renderDash();});
   _snap('atletas',(docs)=>{_atl=docs;renderAtl();renderMapaPaises();renderDash();});
   _snap('convites',(docs)=>{_conv=docs;renderConv();});
+  _snap('comissaoHonra',(docs)=>{_hon=docs;renderHon();});
   _snap('prazos',(docs)=>{_praz=docs;renderCron();},'data');
   _snap('membros',(docs)=>{_mbr=docs;renderOrg();});
   _snap('boardEmf',(docs)=>{_boardEmf=docs;renderOrg();});
@@ -3034,6 +3085,112 @@ function renderConv(){
   document.getElementById('t-conv').innerHTML=_conv.length?_conv.map(c=>`<tr><td class="vl">${c.nome||''}</td><td class="mu">${c.entidade||''}</td><td><span class="bge bg-g">${c.categoria||''}</span></td><td><span class="bge ${c.abertura==='S'?'bg-ok':'bg-er'}">${c.abertura==='S'?'Sim':'Não'}</span></td><td><span class="bge ${c.encerramento==='S'?'bg-ok':'bg-er'}">${c.encerramento==='S'?'Sim':'Não'}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editConv('${c.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delConv('${c.id}')">🗑️</button>`:''}</td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem convites</td></tr>';
 }
 async function delConv(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('convites',id);}
+
+//  COMISSÃO DE HONRA 
+async function saveHon(){
+  if(!canEdit())return;
+  const d={
+    nome:document.getElementById('hn-nm').value,
+    cargo:document.getElementById('hn-cg').value,
+    grupo:document.getElementById('hn-gr').value,
+    email:document.getElementById('hn-em').value,
+    tel:document.getElementById('hn-tl').value,
+    estado:document.getElementById('hn-st').value,
+    dataEnvio:document.getElementById('hn-de').value,
+    dataResposta:document.getElementById('hn-dr').value,
+    abertura:document.getElementById('hn-ab').value,
+    encerramento:document.getElementById('hn-enc').value,
+    obs:document.getElementById('hn-ob').value,
+    ts:Date.now()
+  };
+  const _e=document.getElementById('hon-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('comissaoHonra',_eid,d);if(_e)_e.value='';toast('Membro actualizado');}else{await _add('comissaoHonra',d);toast('Membro registado');}
+  closeM('m-hon');
+}
+function editHon(id){
+  const h=_hon.find(x=>x.id===id);if(!h)return;
+  document.getElementById('hon-eid').value=h.id;
+  document.getElementById('hn-nm').value=h.nome||'';
+  document.getElementById('hn-cg').value=h.cargo||'';
+  document.getElementById('hn-gr').value=h.grupo||'1. Nível Nacional';
+  document.getElementById('hn-em').value=h.email||'';
+  document.getElementById('hn-tl').value=h.tel||'';
+  document.getElementById('hn-st').value=h.estado||'Por enviar';
+  document.getElementById('hn-de').value=h.dataEnvio||'';
+  document.getElementById('hn-dr').value=h.dataResposta||'';
+  document.getElementById('hn-ab').value=h.abertura||'N';
+  document.getElementById('hn-enc').value=h.encerramento||'N';
+  document.getElementById('hn-ob').value=h.obs||'';
+  openM('m-hon');
+}
+async function delHon(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('comissaoHonra',id);}
+function renderHon(){
+  const totEl=document.getElementById('h-tot');if(!totEl)return;
+  totEl.textContent=_hon.length;
+  document.getElementById('h-ac').textContent=_hon.filter(h=>h.estado==='Aceite').length;
+  document.getElementById('h-en').textContent=_hon.filter(h=>h.estado==='Enviado'||h.estado==='Sem resposta').length;
+  document.getElementById('h-pe').textContent=_hon.filter(h=>!h.estado||h.estado==='Por enviar').length;
+  const ordem=['1. Nível Nacional','2. Nível Federativo — Minigolfe','3. Nível Regional','4. Poder Político — Nacional, Autárquico e Municipal','5. Coletividades Desportivas Locais','6. Instituições Centenárias e Associativismo de Vizela','7. Personalidades Vizelenses de Mérito'];
+  const lista=[..._hon].sort((a,b)=>ordem.indexOf(a.grupo)-ordem.indexOf(b.grupo));
+  const estCor=e=>e==='Aceite'?'bg-ok':(e==='Recusado'?'bg-er':(e==='Enviado'||e==='Sem resposta'?'bg-am':'bg-mu'));
+  document.getElementById('t-hon').innerHTML=lista.length?lista.map(h=>`<tr><td class="mu" style="font-size:11px;">${(h.grupo||'').replace(/^\d\.\s*/,'')}</td><td class="vl">${h.nome||''}</td><td class="mu">${h.cargo||''}</td><td class="mu" style="font-size:11px;">${h.email||''}${h.email&&h.tel?' · ':''}${h.tel||''}</td><td><span class="bge ${estCor(h.estado)}">${h.estado||'Por enviar'}</span></td><td><span class="bge ${h.abertura==='S'?'bg-ok':'bg-er'}">${h.abertura==='S'?'Sim':'Não'}</span></td><td><span class="bge ${h.encerramento==='S'?'bg-ok':'bg-er'}">${h.encerramento==='S'?'Sim':'Não'}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editHon('${h.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delHon('${h.id}')">🗑️</button>`:''}</td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem membros registados — usa "Importar os 20 membros"</td></tr>';
+}
+async function importarComissaoHonra(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const COMISSAO_HONRA=[
+    {nome:'Secretário de Estado do Desporto',cargo:'Governo de Portugal',grupo:'1. Nível Nacional'},
+    {nome:'Presidente do IPDJ',cargo:'Instituto Português do Desporto e Juventude',grupo:'1. Nível Nacional'},
+    {nome:'Vítor Dias',cargo:'Presidente do IPDJ, Direção Regional Norte',grupo:'1. Nível Nacional'},
+    {nome:'Presidente do Comité Olímpico de Portugal',cargo:'COP',grupo:'1. Nível Nacional'},
+    {nome:'Presidente da WMF',cargo:'World Minigolf Sport Federation',grupo:'2. Nível Federativo — Minigolfe'},
+    {nome:'Presidente da EMF',cargo:'European Minigolf Federation',grupo:'2. Nível Federativo — Minigolfe'},
+    {nome:'Presidente da FPM',cargo:'Federação Portuguesa de Minigolfe',grupo:'2. Nível Federativo — Minigolfe'},
+    {nome:'Presidente da CCDR-N',cargo:'Comissão de Coordenação e Desenvolvimento Regional do Norte',grupo:'3. Nível Regional'},
+    {nome:'Presidente do Turismo do Porto e Norte de Portugal',cargo:'Turismo P&N',grupo:'3. Nível Regional'},
+    {nome:'Irene Costa',cargo:'Deputada à Assembleia da República',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'Presidente da Câmara Municipal de Vizela',cargo:'C.M. Vizela',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'Presidente da Assembleia Municipal de Vizela',cargo:'C.M. Vizela',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'Vereador do Pelouro do Desporto',cargo:'Câmara Municipal de Vizela (nome a confirmar)',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'José Armando Branco',cargo:'Presidente da Junta de Freguesia de Caldas de Vizela (São Miguel e São João)',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'António Ferreira',cargo:'Presidente da Junta de Freguesia de São Paio de Vizela',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'Cristina Coelho',cargo:'Presidente da Junta de Freguesia de Tagilde',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'Hélder Magalhães',cargo:'Presidente da Junta de Freguesia de Infias',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'Pedro Martins',cargo:'Presidente da Junta de Freguesia de Santa Eulália',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'João Leite da Costa',cargo:'Presidente da Junta de Freguesia de Santo Adrião de Vizela',grupo:'4. Poder Político — Nacional, Autárquico e Municipal'},
+    {nome:'João Madureira',cargo:'Presidente do Futebol Clube de Vizela',grupo:'5. Coletividades Desportivas Locais'},
+    {nome:'João Vaz',cargo:'Presidente do Callidas Clube',grupo:'5. Coletividades Desportivas Locais'},
+    {nome:'Agostinho Guimarães',cargo:'Presidente do Clube Turístico e Desportivo de Vizela',grupo:'5. Coletividades Desportivas Locais'},
+    {nome:'Real Associação Humanitária dos Bombeiros Voluntários de Vizela',cargo:'Presidente',grupo:'6. Instituições Centenárias e Associativismo de Vizela'},
+    {nome:'Santa Casa da Misericórdia de Vizela',cargo:'',grupo:'6. Instituições Centenárias e Associativismo de Vizela'},
+    {nome:'Sociedade Filarmónica Vizelense',cargo:'',grupo:'6. Instituições Centenárias e Associativismo de Vizela'},
+    {nome:'Pedro Ribeiro',cargo:'Presidente da AIREV',grupo:'6. Instituições Centenárias e Associativismo de Vizela'},
+    {nome:'Representante da Família de Manuel Fonseca e Castro',cargo:'Fundador do minigolfe em Portugal, em Vizela, em 1968',grupo:'7. Personalidades Vizelenses de Mérito'},
+    {nome:'António Costa e Silva',cargo:'Ilustre minigolfista, sócio honorário da FPM',grupo:'7. Personalidades Vizelenses de Mérito'},
+  ];
+  const jaImportados=COMISSAO_HONRA.filter(m=>_hon.some(x=>x.nome===m.nome));
+  const porImportar=COMISSAO_HONRA.filter(m=>!_hon.some(x=>x.nome===m.nome));
+  if(!porImportar.length){toast('Comissão de Honra já está toda importada — nada a fazer.','inf');return;}
+  if(jaImportados.length&&!confirm('Já existem '+jaImportados.length+' membro(s) importado(s). Vão ser ignorados. Importar apenas os '+porImportar.length+' que faltam?'))return;
+  let ok=0,err=0;
+  toast('A importar '+porImportar.length+' membro(s)...','inf');
+  for(const m of porImportar){
+    try{await _add('comissaoHonra',{...m,email:'',tel:'',estado:'Por enviar',dataEnvio:'',dataResposta:'',abertura:'N',encerramento:'N',obs:'',ts:Date.now()});ok++;}
+    catch(e){console.error('Erro ao importar',m.nome,e);err++;}
+  }
+  toast('Comissão de Honra importada: '+ok+' membro(s)'+(err?' ('+err+' erros)':''),'ok');
+}
+function exportHonPDF(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  doc.setFontSize(14);doc.text('Comissão de Honra — SWC 2026',14,16);
+  doc.setFontSize(9);doc.text('Vizelgolfe · Seniors World Championship de Minigolfe · 14–17 outubro',14,22);
+  const ordem=['1. Nível Nacional','2. Nível Federativo — Minigolfe','3. Nível Regional','4. Poder Político — Nacional, Autárquico e Municipal','5. Coletividades Desportivas Locais','6. Instituições Centenárias e Associativismo de Vizela','7. Personalidades Vizelenses de Mérito'];
+  const lista=[..._hon].sort((a,b)=>ordem.indexOf(a.grupo)-ordem.indexOf(b.grupo));
+  const rows=lista.map(h=>[(h.grupo||'').replace(/^\d\.\s*/,''),h.nome||'',h.cargo||'',h.estado||'Por enviar',h.abertura==='S'?'Sim':'Não',h.encerramento==='S'?'Sim':'Não']);
+  doc.autoTable({startY:28,head:[['Grupo','Nome','Cargo','Estado','Abertura','Encerramento']],body:rows.length?rows:[['','Sem membros','','','','']],theme:'grid',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]}});
+  doc.save('Comissao_Honra_SWC2026.pdf');
+}
 
 //  PRAZOS 
 async function savePrazo(){
@@ -6326,6 +6483,10 @@ const HELP = {
     o:'Lista de convidados VIP para as duas cerimonias: Abertura (12 Out 19:30) e Encerramento com Medalhas (17 Out 20:00).',
     steps:['Adiciona cada convidado com nome, entidade, categoria e confirmacao para cada cerimonia.','Categorias disponiveis: Comissao de Honra, Entidade Publica, Parceiro/Patrocinador, Media, WMF/EMF/FPM.','O PDF exporta uma lista de protocolo oficial separada por cerimonia.','Usa os filtros para verificar rapidamente quem confirmou presenca em cada cerimonia.'],
     warn:'Confirmar as presenças com antecedência mínima de 2 semanas. A lista final deve ser enviada ao responsável de protocolo.'},
+  comissaohonra:{icon:'&#9819;',title:'Comissão de Honra',sub:'Estado dos convites por nível protocolar',
+    o:'Lista formal da Comissão de Honra do SWC 2026 — 7 níveis protocolares, do nacional ao local, com o estado de cada convite.',
+    steps:['Usa "Importar os 20 membros" para carregar a proposta já aprovada pela Câmara.','Actualiza o Estado do convite conforme a resposta chega: Por enviar → Enviado → Aceite/Recusado/Sem resposta.','Regista datas de envio e resposta, e observações relevantes (ex: "vai enviar representante").','Marca a presença confirmada em Abertura e Encerramento separadamente — o convite cobre os dois momentos.','O PDF exporta a lista oficial agrupada por nível protocolar.'],
+    warn:'É uma Comissão de Honra — carácter simbólico e representativo, sem compromisso financeiro ou operacional. Não confundir com os convidados gerais de Cerimónias (VIP, media, patrocinadores).'},
   desportivo:{icon:'&#9671;',title:'Desportivo & Arbitros',sub:'Equipa de arbitragem',
     o:'Registo e gestao da equipa de arbitragem do evento — arbitros nacionais e internacionais.',
     steps:['Adiciona cada arbitro com nome, pais, federacao, funcao e hotel atribuido.','Funcoes disponiveis: Arbitro Principal, Arbitro de Campo, Auxiliar, Observador WMF/EMF.','O PDF exporta a lista completa para entregar a WMF/EMF no inicio do evento.'],

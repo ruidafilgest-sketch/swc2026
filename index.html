@@ -1074,7 +1074,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mb">
     <input type="hidden" id="tro-eid">
     <div class="fg"><div class="fl">Item</div><input class="fi" id="tr-it" placeholder="ex: Medalhas Equipas Masculinas — Ouro"></div>
-    <div class="fr"><div class="fg"><div class="fl">Categoria</div><select class="fse" id="tr-ct"><option>Medalhas</option><option>Troféus</option><option>Taças</option><option>Moeda</option><option>Cunho</option></select></div><div class="fg"><div class="fl">Competição / Descrição</div><input class="fi" id="tr-cp" placeholder="ex: Team Competition 1st Place"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Grupo</div><select class="fse" id="tr-gr"><option>Equipas</option><option>Individual — Strokeplay</option><option>Individual — Matchplay</option><option>Institucional</option><option>Produção</option></select></div><div class="fg"><div class="fl">Categoria</div><select class="fse" id="tr-ct"><option>Medalhas</option><option>Troféus</option><option>Taças</option><option>Moeda</option><option>Cunho</option></select></div></div>
+    <div class="fg"><div class="fl">Competição / Descrição</div><input class="fi" id="tr-cp" placeholder="ex: Team Competition 1st Place"></div>
     <div class="fr"><div class="fg"><div class="fl">Quantidade</div><input class="fi" type="number" id="tr-qt" value="1"></div><div class="fg"><div class="fl">Preço Unitário (€)</div><input class="fi" type="number" step="0.01" id="tr-pu" value="0"></div></div>
     <div class="fg"><div class="fl">Estado</div><select class="fse" id="tr-st"><option>Por encomendar</option><option>Encomendado</option><option>Recebido</option><option>A confirmar</option></select></div>
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="tr-ob" placeholder="ex: aguarda confirmação da WMF sobre nº de jogadores"></textarea></div>
@@ -3245,12 +3246,12 @@ function exportHonPDF(){
   if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
-  doc.setFontSize(14);doc.text('Comissão de Honra — SWC 2026',14,16);
-  doc.setFontSize(9);doc.text('Vizelgolfe · Seniors World Championship de Minigolfe · 14–17 outubro',14,22);
+  pdfHeader(doc,'Comissão de Honra','Estado dos convites por nível protocolar',false);
   const ordem=['1. Nível Nacional','2. Nível Federativo — Minigolfe','3. Nível Regional','4. Poder Político — Nacional, Autárquico e Municipal','5. Coletividades Desportivas Locais','6. Instituições Centenárias e Associativismo de Vizela','7. Personalidades Vizelenses de Mérito'];
   const lista=[..._hon].sort((a,b)=>ordem.indexOf(a.grupo)-ordem.indexOf(b.grupo));
   const rows=lista.map(h=>[(h.grupo||'').replace(/^\d\.\s*/,''),h.nome||'',h.cargo||'',h.estado||'Por enviar',h.abertura==='S'?'Sim':'Não',h.encerramento==='S'?'Sim':'Não']);
-  doc.autoTable({startY:28,head:[['Grupo','Nome','Cargo','Estado','Abertura','Encerramento']],body:rows.length?rows:[['','Sem membros','','','','']],theme:'grid',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]}});
+  doc.autoTable({startY:44,head:[['Grupo','Nome','Cargo','Estado','Abertura','Encerramento']],body:rows.length?rows:[['','Sem membros','','','','']],theme:'grid',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]},margin:{bottom:26}});
+  pdfFooter(doc,false);
   doc.save('Comissao_Honra_SWC2026.pdf');
 }
 
@@ -3261,6 +3262,7 @@ async function saveTro(){
   const pu=Number(document.getElementById('tr-pu').value||0);
   const d={
     item:document.getElementById('tr-it').value,
+    grupo:document.getElementById('tr-gr').value,
     categoria:document.getElementById('tr-ct').value,
     competicao:document.getElementById('tr-cp').value,
     qtd:qt,
@@ -3278,6 +3280,7 @@ function editTro(id){
   const t=_tro.find(x=>x.id===id);if(!t)return;
   document.getElementById('tro-eid').value=t.id;
   document.getElementById('tr-it').value=t.item||'';
+  document.getElementById('tr-gr').value=t.grupo||'Equipas';
   document.getElementById('tr-ct').value=t.categoria||'Medalhas';
   document.getElementById('tr-cp').value=t.competicao||'';
   document.getElementById('tr-qt').value=t.qtd||1;
@@ -3295,50 +3298,67 @@ function renderTro(){
   document.getElementById('tr-rec').textContent=_tro.filter(t=>t.estado==='Recebido').length;
   document.getElementById('tr-conf').textContent=_tro.filter(t=>t.estado==='A confirmar').length;
   const estCor=e=>e==='Recebido'?'bg-ok':(e==='A confirmar'?'bg-am':(e==='Encomendado'?'bg-g':'bg-mu'));
-  document.getElementById('t-tro').innerHTML=_tro.length?_tro.map(t=>`<tr><td><span class="bge bg-g">${t.categoria||''}</span></td><td class="vl">${t.item||''}${t.competicao?`<div class="mu" style="font-size:11px;">${t.competicao}</div>`:''}${t.obs?`<div style="font-size:11px;color:#f0c060;">⚠ ${t.obs}</div>`:''}</td><td class="mu">${t.qtd||0}</td><td class="mu">${fmt(t.precoUnit)}</td><td class="vl">${fmt(t.precoTotal)}</td><td><span class="bge ${estCor(t.estado)}">${t.estado||'Por encomendar'}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editTro('${t.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delTro('${t.id}')">🗑️</button>`:''}</td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem itens registados — usa "Importar encomenda Metaloarte"</td></tr>';
+  const GRUPOS=['Equipas','Individual — Strokeplay','Individual — Matchplay','Institucional','Produção'];
+  const CATS=['Taças','Troféus','Medalhas','Moeda','Cunho'];
+  const gIdx=g=>{const i=GRUPOS.indexOf(g);return i<0?99:i;};
+  const cIdx=c=>{const i=CATS.indexOf(c);return i<0?99:i;};
+  const lista=[..._tro].sort((a,b)=>gIdx(a.grupo)-gIdx(b.grupo)||cIdx(a.categoria)-cIdx(b.categoria)||(a.item||'').localeCompare(b.item||''));
+  if(!lista.length){document.getElementById('t-tro').innerHTML='<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem itens registados — usa "Importar encomenda Metaloarte"</td></tr>';return;}
+  let html='';let grupoAtual=null;
+  for(const t of lista){
+    const g=t.grupo||'Outros';
+    if(g!==grupoAtual){
+      grupoAtual=g;
+      const subtotal=lista.filter(x=>(x.grupo||'Outros')===g).reduce((a,x)=>a+Number(x.precoTotal||0),0);
+      const nItens=lista.filter(x=>(x.grupo||'Outros')===g).length;
+      html+=`<tr style="background:rgba(90,160,255,.06);"><td colspan="7" style="padding:8px 10px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5AA0FF;">${g} <span class="mu" style="font-weight:400;text-transform:none;letter-spacing:0;">— ${nItens} item(ns) · ${fmt(subtotal)}</span></td></tr>`;
+    }
+    html+=`<tr><td><span class="bge bg-g">${t.categoria||''}</span></td><td class="vl">${t.item||''}${t.competicao?`<div class="mu" style="font-size:11px;">${t.competicao}</div>`:''}${t.obs?`<div style="font-size:11px;color:#f0c060;">⚠ ${t.obs}</div>`:''}</td><td class="mu">${t.qtd||0}</td><td class="mu">${fmt(t.precoUnit)}</td><td class="vl">${fmt(t.precoTotal)}</td><td><span class="bge ${estCor(t.estado)}">${t.estado||'Por encomendar'}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editTro('${t.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delTro('${t.id}')">🗑️</button>`:''}</td>`:'<td></td>'}</tr>`;
+  }
+  document.getElementById('t-tro').innerHTML=html;
 }
 async function importarTrofeusMetaloarte(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
   const ITENS=[
-    {item:'Moeda comemorativa do evento',categoria:'Moeda',competicao:'250 unidades, impressas em "dourado"',qtd:250,precoUnit:2.50,estado:'Por encomendar',obs:''},
-    {item:'Cunho para medalhas',categoria:'Cunho',competicao:'1 cunho para as medalhas',qtd:1,precoUnit:375.00,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Strokeplay — Senhoras — 1º lugar',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Strokeplay — Senhoras — 2º lugar',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Strokeplay — Senhoras — 3º lugar',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Strokeplay — Homens — 1º lugar',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Strokeplay — Homens — 2º lugar',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Strokeplay — Homens — 3º lugar',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Matchplay — Senhoras — 1º lugar',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Matchplay — Senhoras — 2º lugar',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Matchplay — Senhoras — 3º lugar',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Matchplay — Homens — 1º lugar',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Matchplay — Homens — 2º lugar',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
-    {item:'Troféu Individual Matchplay — Homens — 3º lugar',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
-    {item:'Taça Equipas — Homens — 1º lugar',categoria:'Taças',competicao:"Men's Team Competition 1st Place",qtd:1,precoUnit:305.00,estado:'Por encomendar',obs:''},
-    {item:'Taça Equipas — Senhoras — 1º lugar',categoria:'Taças',competicao:"Women's Team Competition 1st Place",qtd:1,precoUnit:305.00,estado:'Por encomendar',obs:''},
-    {item:'Taça Equipas — Homens — 2º lugar',categoria:'Taças',competicao:"Men's Team Competition 2nd Place",qtd:1,precoUnit:245.00,estado:'Por encomendar',obs:''},
-    {item:'Taça Equipas — Senhoras — 2º lugar',categoria:'Taças',competicao:"Women's Team Competition 2nd Place",qtd:1,precoUnit:245.00,estado:'Por encomendar',obs:''},
-    {item:'Taça Equipas — Homens — 3º lugar',categoria:'Taças',competicao:"Men's Team Competition 3rd Place",qtd:1,precoUnit:215.00,estado:'Por encomendar',obs:''},
-    {item:'Taça Equipas — Senhoras — 3º lugar',categoria:'Taças',competicao:"Women's Team Competition 3rd Place",qtd:1,precoUnit:215.00,estado:'Por encomendar',obs:''},
-    {item:'Medalhas Equipas — Homens — Ouro',categoria:'Medalhas',competicao:"Men's Team Competition 1st Place — 80mm, esmalte dourado",qtd:9,precoUnit:12.90,estado:'A confirmar',obs:'Nº de medalhas assume 7 jogadores + 2 treinadores — confirmar com WMF/Peter Burri se a equipa masculina é de 6 ou 7 atletas (checklist WMF prevê 8, não 9)'},
-    {item:'Medalhas Equipas — Homens — Prata',categoria:'Medalhas',competicao:"Men's Team Competition 2nd Place — 80mm, esmalte prateado",qtd:9,precoUnit:12.05,estado:'A confirmar',obs:'Ver nota acima sobre nº de jogadores'},
-    {item:'Medalhas Equipas — Homens — Bronze',categoria:'Medalhas',competicao:"Men's Team Competition 3rd Place — 80mm, esmalte bronze",qtd:9,precoUnit:9.90,estado:'A confirmar',obs:'Ver nota acima sobre nº de jogadores'},
-    {item:'Medalhas Equipas — Senhoras — Ouro',categoria:'Medalhas',competicao:"Women's Team Competition 1st Place — 80mm, esmalte dourado",qtd:6,precoUnit:12.90,estado:'Por encomendar',obs:''},
-    {item:'Medalhas Equipas — Senhoras — Prata',categoria:'Medalhas',competicao:"Women's Team Competition 2nd Place — 80mm, esmalte prateado",qtd:6,precoUnit:12.05,estado:'Por encomendar',obs:''},
-    {item:'Medalhas Equipas — Senhoras — Bronze',categoria:'Medalhas',competicao:"Women's Team Competition 3rd Place — 80mm, esmalte bronze",qtd:6,precoUnit:9.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Strokeplay — Senhoras — Ouro',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Strokeplay — Senhoras — Prata',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Strokeplay — Senhoras — Bronze',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Strokeplay — Homens — Ouro',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Strokeplay — Homens — Prata',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Strokeplay — Homens — Bronze',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Matchplay — Senhoras — Ouro',categoria:'Medalhas',competicao:"Women's Individual Matchplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Matchplay — Senhoras — Prata',categoria:'Medalhas',competicao:"Women's Individual Matchplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Matchplay — Senhoras — Bronze',categoria:'Medalhas',competicao:"Women's Individual Matchplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Matchplay — Homens — Ouro',categoria:'Medalhas',competicao:"Men's Individual Matchplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Matchplay — Homens — Prata',categoria:'Medalhas',competicao:"Men's Individual Matchplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
-    {item:'Medalha Individual Matchplay — Homens — Bronze',categoria:'Medalhas',competicao:"Men's Individual Matchplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
-    {item:'Medalhas com estojo — lembrança institucional',categoria:'Medalhas',competicao:'Estampada, 1 face, com estojo, esmalte, acabamento bronze',qtd:70,precoUnit:13.50,estado:'A confirmar',obs:'Quantidade por confirmar: 50 (675,00€) ou 70 (945,00€) — valor aqui assume 70, ajustar depois de confirmado com o Gonçalo'},
+    {item:'Taça Equipas — Homens — 1º lugar',grupo:'Equipas',categoria:'Taças',competicao:"Men's Team Competition 1st Place",qtd:1,precoUnit:305.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Senhoras — 1º lugar',grupo:'Equipas',categoria:'Taças',competicao:"Women's Team Competition 1st Place",qtd:1,precoUnit:305.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Homens — 2º lugar',grupo:'Equipas',categoria:'Taças',competicao:"Men's Team Competition 2nd Place",qtd:1,precoUnit:245.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Senhoras — 2º lugar',grupo:'Equipas',categoria:'Taças',competicao:"Women's Team Competition 2nd Place",qtd:1,precoUnit:245.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Homens — 3º lugar',grupo:'Equipas',categoria:'Taças',competicao:"Men's Team Competition 3rd Place",qtd:1,precoUnit:215.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Senhoras — 3º lugar',grupo:'Equipas',categoria:'Taças',competicao:"Women's Team Competition 3rd Place",qtd:1,precoUnit:215.00,estado:'Por encomendar',obs:''},
+    {item:'Medalhas Equipas — Homens — Ouro',grupo:'Equipas',categoria:'Medalhas',competicao:"Men's Team Competition 1st Place — 80mm, esmalte dourado",qtd:9,precoUnit:12.90,estado:'A confirmar',obs:'Nº de medalhas assume 7 jogadores + 2 treinadores — confirmar com WMF/Peter Burri se a equipa masculina é de 6 ou 7 atletas (checklist WMF prevê 8, não 9)'},
+    {item:'Medalhas Equipas — Homens — Prata',grupo:'Equipas',categoria:'Medalhas',competicao:"Men's Team Competition 2nd Place — 80mm, esmalte prateado",qtd:9,precoUnit:12.05,estado:'A confirmar',obs:'Ver nota acima sobre nº de jogadores'},
+    {item:'Medalhas Equipas — Homens — Bronze',grupo:'Equipas',categoria:'Medalhas',competicao:"Men's Team Competition 3rd Place — 80mm, esmalte bronze",qtd:9,precoUnit:9.90,estado:'A confirmar',obs:'Ver nota acima sobre nº de jogadores'},
+    {item:'Medalhas Equipas — Senhoras — Ouro',grupo:'Equipas',categoria:'Medalhas',competicao:"Women's Team Competition 1st Place — 80mm, esmalte dourado",qtd:6,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalhas Equipas — Senhoras — Prata',grupo:'Equipas',categoria:'Medalhas',competicao:"Women's Team Competition 2nd Place — 80mm, esmalte prateado",qtd:6,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalhas Equipas — Senhoras — Bronze',grupo:'Equipas',categoria:'Medalhas',competicao:"Women's Team Competition 3rd Place — 80mm, esmalte bronze",qtd:6,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Senhoras — 1º lugar',grupo:'Individual — Strokeplay',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Senhoras — 2º lugar',grupo:'Individual — Strokeplay',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Senhoras — 3º lugar',grupo:'Individual — Strokeplay',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Homens — 1º lugar',grupo:'Individual — Strokeplay',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Homens — 2º lugar',grupo:'Individual — Strokeplay',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Homens — 3º lugar',grupo:'Individual — Strokeplay',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Senhoras — Ouro',grupo:'Individual — Strokeplay',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Senhoras — Prata',grupo:'Individual — Strokeplay',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Senhoras — Bronze',grupo:'Individual — Strokeplay',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Homens — Ouro',grupo:'Individual — Strokeplay',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Homens — Prata',grupo:'Individual — Strokeplay',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Homens — Bronze',grupo:'Individual — Strokeplay',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Senhoras — 1º lugar',grupo:'Individual — Matchplay',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Senhoras — 2º lugar',grupo:'Individual — Matchplay',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Senhoras — 3º lugar',grupo:'Individual — Matchplay',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Homens — 1º lugar',grupo:'Individual — Matchplay',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Homens — 2º lugar',grupo:'Individual — Matchplay',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Homens — 3º lugar',grupo:'Individual — Matchplay',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Senhoras — Ouro',grupo:'Individual — Matchplay',categoria:'Medalhas',competicao:"Women's Individual Matchplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Senhoras — Prata',grupo:'Individual — Matchplay',categoria:'Medalhas',competicao:"Women's Individual Matchplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Senhoras — Bronze',grupo:'Individual — Matchplay',categoria:'Medalhas',competicao:"Women's Individual Matchplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Homens — Ouro',grupo:'Individual — Matchplay',categoria:'Medalhas',competicao:"Men's Individual Matchplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Homens — Prata',grupo:'Individual — Matchplay',categoria:'Medalhas',competicao:"Men's Individual Matchplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Homens — Bronze',grupo:'Individual — Matchplay',categoria:'Medalhas',competicao:"Men's Individual Matchplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalhas com estojo — lembrança institucional',grupo:'Institucional',categoria:'Medalhas',competicao:'Estampada, 1 face, com estojo, esmalte, acabamento bronze',qtd:70,precoUnit:13.50,estado:'A confirmar',obs:'Quantidade por confirmar: 50 (675,00€) ou 70 (945,00€) — valor aqui assume 70, ajustar depois de confirmado com o Gonçalo'},
+    {item:'Moeda comemorativa do evento',grupo:'Institucional',categoria:'Moeda',competicao:'250 unidades, impressas em "dourado"',qtd:250,precoUnit:2.50,estado:'Por encomendar',obs:''},
+    {item:'Cunho para medalhas',grupo:'Produção',categoria:'Cunho',competicao:'1 cunho para as medalhas',qtd:1,precoUnit:375.00,estado:'Por encomendar',obs:''},
   ];
   const jaImportados=ITENS.filter(m=>_tro.some(x=>x.item===m.item));
   const porImportar=ITENS.filter(m=>!_tro.some(x=>x.item===m.item));
@@ -3356,12 +3376,12 @@ function exportTroPDF(){
   if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
-  doc.setFontSize(14);doc.text('Troféus & Prémios — Encomenda Metaloarte — SWC 2026',14,16);
-  doc.setFontSize(9);doc.text('Vizelgolfe · Seniors World Championship de Minigolfe · 14–17 outubro',14,22);
+  pdfHeader(doc,'Troféus & Prémios','Encomenda Metaloarte',false);
   const val=_tro.reduce((a,t)=>a+Number(t.precoTotal||0),0);
-  doc.text('Valor total: '+val.toLocaleString('pt-PT',{minimumFractionDigits:2})+'€',14,28);
+  doc.setFontSize(9);doc.setTextColor(80,80,80);doc.text('Valor total: '+val.toLocaleString('pt-PT',{minimumFractionDigits:2})+'€',14,44);
   const rows=_tro.map(t=>[t.categoria||'',t.item||'',String(t.qtd||0),fmt(t.precoUnit),fmt(t.precoTotal),t.estado||'Por encomendar']);
-  doc.autoTable({startY:34,head:[['Categoria','Item','Qtd','Preço Unit.','Total','Estado']],body:rows.length?rows:[['','Sem itens','','','','']],theme:'grid',styles:{fontSize:7,cellPadding:2.5},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]}});
+  doc.autoTable({startY:48,head:[['Categoria','Item','Qtd','Preço Unit.','Total','Estado']],body:rows.length?rows:[['','Sem itens','','','','']],theme:'grid',styles:{fontSize:7,cellPadding:2.5},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]},margin:{bottom:26}});
+  pdfFooter(doc,false);
   doc.save('Trofeus_Premios_SWC2026.pdf');
 }
 async function saveTrod(){
@@ -5934,7 +5954,7 @@ function exportRelAG(){
     ['Resultado liquido do evento',fmtPDF(totR-totD)],
     ['Patrocinadores confirmados',''+_pat.filter(p=>p.estado==='Confirmado'||p.estado==='Recebido').length],
   ],theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:80,fontStyle:'bold'},1:{fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
-  pdfFooter(doc,false,true);
+  pdfFooter(doc,false);
   doc.save('SWC2026_Relatorio_AG_Vizelgolfe.pdf');
   toast('Relatorio AG gerado');
 }
@@ -5957,7 +5977,7 @@ function exportRelCMV(){
   let yf=doc.lastAutoTable.finalY+10;
   doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(80,80,80);
   doc.text('A Vizelgolfe agradece o apoio da Câmara Municipal de Vizela que foi essencial para a realização deste evento mundial.',14,yf,{maxWidth:182});
-  pdfFooter(doc,false,true);
+  pdfFooter(doc,false);
   doc.save('SWC2026_Relatorio_Impacto_CMV.pdf');
   toast('Relatorio CMV gerado');
 }

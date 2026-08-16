@@ -489,6 +489,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(90,160,255,.6);">20 membros · estado dos convites</div>
     </div>
   </div>
+  <div class="si" title="Encomenda Metaloarte · medalhas, troféus, taças" onclick="nav(this,'trofeus','Troféus &amp; Prémios')" style="">
+    <i class="ti ti-trophy" style="font-size:20px;color:#5AA0FF;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Troféus &amp; Prémios</div>
+      <div class="si-sub" style="color:rgba(90,160,255,.6);">Encomenda Metaloarte</div>
+    </div>
+  </div>
   <div class="si" title="Mapa operacional do campo" onclick="nav(this,'mapa','Mapa Operacional')" style="">
     <i class="ti ti-map-pin" style="font-size:20px;color:#FF6B35;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -1033,6 +1040,58 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="hn-ob" placeholder="ex: vai enviar representante..."></textarea></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-hon')">Cancelar</button><button class="btn bp" onclick="saveHon()">Guardar</button></div>
+</div></div>
+
+<!-- TROFÉUS & PRÉMIOS -->
+<div class="pg" id="pg-trofeus">
+<div class="st"><span class="sn">TRO</span>Troféus &amp; Prémios<button class="hbtn" data-help="trofeus" onclick="openHelp(this.dataset.help)">?</button></div>
+<div class="sd">Encomenda Metaloarte — medalhas, troféus, taças, moeda comemorativa e cunho</div>
+<div class="bb" id="bar-tro">
+  <button class="btn bp" onclick="const _e=document.getElementById('tro-eid');if(_e)_e.value='';openM('m-tro')">+ Novo item</button>
+  <button class="btn bo" onclick="importarTrofeusMetaloarte()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar encomenda Metaloarte</button>
+  <button class="btn bo" onclick="exportTroPDF()">Exportar PDF</button>
+</div>
+<div class="g4" style="margin-bottom:14px;">
+  <div class="sm"><div class="sml">Total de itens</div><div class="smv" id="tr-tot">0</div></div>
+  <div class="sm"><div class="sml">Valor total encomenda</div><div class="smv" id="tr-val">0,00€</div></div>
+  <div class="sm"><div class="sml">Recebidos</div><div class="smv" id="tr-rec" style="color:var(--ok)">0</div></div>
+  <div class="sm"><div class="sml">A confirmar</div><div class="smv" id="tr-conf" style="color:var(--am,#c9a84c)">0</div></div>
+</div>
+<div class="tw"><table><thead><tr><th>Categoria</th><th>Item</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th>Estado</th><th id="th-tro">Ações</th></tr></thead>
+<tbody id="t-tro"><tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem itens registados — usa "Importar encomenda Metaloarte"</td></tr></tbody></table></div>
+
+<div class="st" style="margin-top:26px;">Distribuição de Lembranças Institucionais</div>
+<div class="sd">Moeda comemorativa e medalhas com estojo — oferta a entidades e convidados</div>
+<div class="bb" id="bar-trod">
+  <button class="btn bp" onclick="const _e=document.getElementById('trod-eid');if(_e)_e.value='';openM('m-trod')">+ Novo registo</button>
+</div>
+<div class="tw"><table><thead><tr><th>Entidade / Pessoa</th><th>Item</th><th>Entregue</th><th>Data</th><th>Observações</th><th id="th-trod">Ações</th></tr></thead>
+<tbody id="t-trod"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem registos de distribuição</td></tr></tbody></table></div>
+</div>
+
+<div class="mo" id="m-tro"><div class="mdl">
+  <div class="mh"><div class="mt2">Item da Encomenda</div><button class="mc" onclick="closeM('m-tro')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="tro-eid">
+    <div class="fg"><div class="fl">Item</div><input class="fi" id="tr-it" placeholder="ex: Medalhas Equipas Masculinas — Ouro"></div>
+    <div class="fr"><div class="fg"><div class="fl">Categoria</div><select class="fse" id="tr-ct"><option>Medalhas</option><option>Troféus</option><option>Taças</option><option>Moeda</option><option>Cunho</option></select></div><div class="fg"><div class="fl">Competição / Descrição</div><input class="fi" id="tr-cp" placeholder="ex: Team Competition 1st Place"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Quantidade</div><input class="fi" type="number" id="tr-qt" value="1"></div><div class="fg"><div class="fl">Preço Unitário (€)</div><input class="fi" type="number" step="0.01" id="tr-pu" value="0"></div></div>
+    <div class="fg"><div class="fl">Estado</div><select class="fse" id="tr-st"><option>Por encomendar</option><option>Encomendado</option><option>Recebido</option><option>A confirmar</option></select></div>
+    <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="tr-ob" placeholder="ex: aguarda confirmação da WMF sobre nº de jogadores"></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-tro')">Cancelar</button><button class="btn bp" onclick="saveTro()">Guardar</button></div>
+</div></div>
+
+<div class="mo" id="m-trod"><div class="mdl">
+  <div class="mh"><div class="mt2">Distribuição — Lembrança Institucional</div><button class="mc" onclick="closeM('m-trod')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="trod-eid">
+    <div class="fg"><div class="fl">Entidade / Pessoa</div><input class="fi" id="trd-en" placeholder="ex: Presidente da FPM"></div>
+    <div class="fr"><div class="fg"><div class="fl">Item</div><select class="fse" id="trd-it"><option>Moeda comemorativa</option><option>Medalha com estojo</option></select></div><div class="fg"><div class="fl">Entregue</div><select class="fse" id="trd-en2"><option value="N">Não</option><option value="S">Sim</option></select></div></div>
+    <div class="fg"><div class="fl">Data de entrega</div><input class="fi" type="date" id="trd-dt"></div>
+    <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="trd-ob"></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-trod')">Cancelar</button><button class="btn bp" onclick="saveTrod()">Guardar</button></div>
 </div></div>
 
 <!-- DESPORTIVO -->
@@ -2734,6 +2793,7 @@ function nav(el,id,title){
   if(id==='resultados'){renderResultados();renderMatch();}
   if(id==='cerimonias'){renderGuiaoCerimonia();renderEquipas();}
   if(id==='comissaohonra'){renderHon();}
+  if(id==='trofeus'){renderTro();renderTrod();}
   if(id==='diariobordo'){renderDiarioBordo();}
   if(id==='acreditacoes'){renderAccred();}
   if(id==='rooming'){renderRooming();}
@@ -2761,7 +2821,7 @@ function closeM(id){document.getElementById(id).classList.remove('op');}
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
 //  DATA 
-let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[];
+let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
@@ -2770,6 +2830,8 @@ function loadAll(){
   _snap('atletas',(docs)=>{_atl=docs;renderAtl();renderMapaPaises();renderDash();});
   _snap('convites',(docs)=>{_conv=docs;renderConv();});
   _snap('comissaoHonra',(docs)=>{_hon=docs;renderHon();});
+  _snap('trofeus',(docs)=>{_tro=docs;renderTro();});
+  _snap('trofeusDistrib',(docs)=>{_trod=docs;renderTrod();});
   _snap('prazos',(docs)=>{_praz=docs;renderCron();},'data');
   _snap('membros',(docs)=>{_mbr=docs;renderOrg();});
   _snap('boardEmf',(docs)=>{_boardEmf=docs;renderOrg();});
@@ -3190,6 +3252,146 @@ function exportHonPDF(){
   const rows=lista.map(h=>[(h.grupo||'').replace(/^\d\.\s*/,''),h.nome||'',h.cargo||'',h.estado||'Por enviar',h.abertura==='S'?'Sim':'Não',h.encerramento==='S'?'Sim':'Não']);
   doc.autoTable({startY:28,head:[['Grupo','Nome','Cargo','Estado','Abertura','Encerramento']],body:rows.length?rows:[['','Sem membros','','','','']],theme:'grid',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]}});
   doc.save('Comissao_Honra_SWC2026.pdf');
+}
+
+//  TROFÉUS & PRÉMIOS 
+async function saveTro(){
+  if(!canEdit())return;
+  const qt=Number(document.getElementById('tr-qt').value||0);
+  const pu=Number(document.getElementById('tr-pu').value||0);
+  const d={
+    item:document.getElementById('tr-it').value,
+    categoria:document.getElementById('tr-ct').value,
+    competicao:document.getElementById('tr-cp').value,
+    qtd:qt,
+    precoUnit:pu,
+    precoTotal:Number((qt*pu).toFixed(2)),
+    estado:document.getElementById('tr-st').value,
+    obs:document.getElementById('tr-ob').value,
+    ts:Date.now()
+  };
+  const _e=document.getElementById('tro-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('trofeus',_eid,d);if(_e)_e.value='';toast('Item actualizado');}else{await _add('trofeus',d);toast('Item registado');}
+  closeM('m-tro');
+}
+function editTro(id){
+  const t=_tro.find(x=>x.id===id);if(!t)return;
+  document.getElementById('tro-eid').value=t.id;
+  document.getElementById('tr-it').value=t.item||'';
+  document.getElementById('tr-ct').value=t.categoria||'Medalhas';
+  document.getElementById('tr-cp').value=t.competicao||'';
+  document.getElementById('tr-qt').value=t.qtd||1;
+  document.getElementById('tr-pu').value=t.precoUnit||0;
+  document.getElementById('tr-st').value=t.estado||'Por encomendar';
+  document.getElementById('tr-ob').value=t.obs||'';
+  openM('m-tro');
+}
+async function delTro(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('trofeus',id);}
+function renderTro(){
+  const totEl=document.getElementById('tr-tot');if(!totEl)return;
+  totEl.textContent=_tro.length;
+  const val=_tro.reduce((a,t)=>a+Number(t.precoTotal||0),0);
+  document.getElementById('tr-val').textContent=val.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
+  document.getElementById('tr-rec').textContent=_tro.filter(t=>t.estado==='Recebido').length;
+  document.getElementById('tr-conf').textContent=_tro.filter(t=>t.estado==='A confirmar').length;
+  const estCor=e=>e==='Recebido'?'bg-ok':(e==='A confirmar'?'bg-am':(e==='Encomendado'?'bg-g':'bg-mu'));
+  document.getElementById('t-tro').innerHTML=_tro.length?_tro.map(t=>`<tr><td><span class="bge bg-g">${t.categoria||''}</span></td><td class="vl">${t.item||''}${t.competicao?`<div class="mu" style="font-size:11px;">${t.competicao}</div>`:''}${t.obs?`<div style="font-size:11px;color:#f0c060;">⚠ ${t.obs}</div>`:''}</td><td class="mu">${t.qtd||0}</td><td class="mu">${fmt(t.precoUnit)}</td><td class="vl">${fmt(t.precoTotal)}</td><td><span class="bge ${estCor(t.estado)}">${t.estado||'Por encomendar'}</span></td>${canEdit()?`<td><button class="btn bo bsm" onclick="editTro('${t.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delTro('${t.id}')">🗑️</button>`:''}</td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem itens registados — usa "Importar encomenda Metaloarte"</td></tr>';
+}
+async function importarTrofeusMetaloarte(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const ITENS=[
+    {item:'Moeda comemorativa do evento',categoria:'Moeda',competicao:'250 unidades, impressas em "dourado"',qtd:250,precoUnit:2.50,estado:'Por encomendar',obs:''},
+    {item:'Cunho para medalhas',categoria:'Cunho',competicao:'1 cunho para as medalhas',qtd:1,precoUnit:375.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Senhoras — 1º lugar',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Senhoras — 2º lugar',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Senhoras — 3º lugar',categoria:'Troféus',competicao:"Women's Individual Strokeplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Homens — 1º lugar',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Homens — 2º lugar',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Strokeplay — Homens — 3º lugar',categoria:'Troféus',competicao:"Men's Individual Strokeplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Senhoras — 1º lugar',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Senhoras — 2º lugar',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Senhoras — 3º lugar',categoria:'Troféus',competicao:"Women's Individual Matchplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Homens — 1º lugar',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 1st Place",qtd:1,precoUnit:27.50,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Homens — 2º lugar',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 2nd Place",qtd:1,precoUnit:25.00,estado:'Por encomendar',obs:''},
+    {item:'Troféu Individual Matchplay — Homens — 3º lugar',categoria:'Troféus',competicao:"Men's Individual Matchplay Competition 3rd Place",qtd:1,precoUnit:22.50,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Homens — 1º lugar',categoria:'Taças',competicao:"Men's Team Competition 1st Place",qtd:1,precoUnit:305.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Senhoras — 1º lugar',categoria:'Taças',competicao:"Women's Team Competition 1st Place",qtd:1,precoUnit:305.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Homens — 2º lugar',categoria:'Taças',competicao:"Men's Team Competition 2nd Place",qtd:1,precoUnit:245.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Senhoras — 2º lugar',categoria:'Taças',competicao:"Women's Team Competition 2nd Place",qtd:1,precoUnit:245.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Homens — 3º lugar',categoria:'Taças',competicao:"Men's Team Competition 3rd Place",qtd:1,precoUnit:215.00,estado:'Por encomendar',obs:''},
+    {item:'Taça Equipas — Senhoras — 3º lugar',categoria:'Taças',competicao:"Women's Team Competition 3rd Place",qtd:1,precoUnit:215.00,estado:'Por encomendar',obs:''},
+    {item:'Medalhas Equipas — Homens — Ouro',categoria:'Medalhas',competicao:"Men's Team Competition 1st Place — 80mm, esmalte dourado",qtd:9,precoUnit:12.90,estado:'A confirmar',obs:'Nº de medalhas assume 7 jogadores + 2 treinadores — confirmar com WMF/Peter Burri se a equipa masculina é de 6 ou 7 atletas (checklist WMF prevê 8, não 9)'},
+    {item:'Medalhas Equipas — Homens — Prata',categoria:'Medalhas',competicao:"Men's Team Competition 2nd Place — 80mm, esmalte prateado",qtd:9,precoUnit:12.05,estado:'A confirmar',obs:'Ver nota acima sobre nº de jogadores'},
+    {item:'Medalhas Equipas — Homens — Bronze',categoria:'Medalhas',competicao:"Men's Team Competition 3rd Place — 80mm, esmalte bronze",qtd:9,precoUnit:9.90,estado:'A confirmar',obs:'Ver nota acima sobre nº de jogadores'},
+    {item:'Medalhas Equipas — Senhoras — Ouro',categoria:'Medalhas',competicao:"Women's Team Competition 1st Place — 80mm, esmalte dourado",qtd:6,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalhas Equipas — Senhoras — Prata',categoria:'Medalhas',competicao:"Women's Team Competition 2nd Place — 80mm, esmalte prateado",qtd:6,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalhas Equipas — Senhoras — Bronze',categoria:'Medalhas',competicao:"Women's Team Competition 3rd Place — 80mm, esmalte bronze",qtd:6,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Senhoras — Ouro',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Senhoras — Prata',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Senhoras — Bronze',categoria:'Medalhas',competicao:"Women's Individual Strokeplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Homens — Ouro',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Homens — Prata',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Strokeplay — Homens — Bronze',categoria:'Medalhas',competicao:"Men's Individual Strokeplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Senhoras — Ouro',categoria:'Medalhas',competicao:"Women's Individual Matchplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Senhoras — Prata',categoria:'Medalhas',competicao:"Women's Individual Matchplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Senhoras — Bronze',categoria:'Medalhas',competicao:"Women's Individual Matchplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Homens — Ouro',categoria:'Medalhas',competicao:"Men's Individual Matchplay 1st Place",qtd:1,precoUnit:12.90,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Homens — Prata',categoria:'Medalhas',competicao:"Men's Individual Matchplay 2nd Place",qtd:1,precoUnit:12.05,estado:'Por encomendar',obs:''},
+    {item:'Medalha Individual Matchplay — Homens — Bronze',categoria:'Medalhas',competicao:"Men's Individual Matchplay 3rd Place",qtd:1,precoUnit:9.90,estado:'Por encomendar',obs:''},
+    {item:'Medalhas com estojo — lembrança institucional',categoria:'Medalhas',competicao:'Estampada, 1 face, com estojo, esmalte, acabamento bronze',qtd:70,precoUnit:13.50,estado:'A confirmar',obs:'Quantidade por confirmar: 50 (675,00€) ou 70 (945,00€) — valor aqui assume 70, ajustar depois de confirmado com o Gonçalo'},
+  ];
+  const jaImportados=ITENS.filter(m=>_tro.some(x=>x.item===m.item));
+  const porImportar=ITENS.filter(m=>!_tro.some(x=>x.item===m.item));
+  if(!porImportar.length){toast('Encomenda Metaloarte já está toda importada — nada a fazer.','inf');return;}
+  if(jaImportados.length&&!confirm('Já existem '+jaImportados.length+' item(ns) importado(s). Vão ser ignorados. Importar apenas os '+porImportar.length+' que faltam?'))return;
+  let ok=0,err=0;
+  toast('A importar '+porImportar.length+' item(ns)...','inf');
+  for(const it of porImportar){
+    try{await _add('trofeus',{...it,precoTotal:Number((it.qtd*it.precoUnit).toFixed(2)),ts:Date.now()});ok++;}
+    catch(e){console.error('Erro ao importar',it.item,e);err++;}
+  }
+  toast('Encomenda Metaloarte importada: '+ok+' item(ns)'+(err?' ('+err+' erros)':''),'ok');
+}
+function exportTroPDF(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  doc.setFontSize(14);doc.text('Troféus & Prémios — Encomenda Metaloarte — SWC 2026',14,16);
+  doc.setFontSize(9);doc.text('Vizelgolfe · Seniors World Championship de Minigolfe · 14–17 outubro',14,22);
+  const val=_tro.reduce((a,t)=>a+Number(t.precoTotal||0),0);
+  doc.text('Valor total: '+val.toLocaleString('pt-PT',{minimumFractionDigits:2})+'€',14,28);
+  const rows=_tro.map(t=>[t.categoria||'',t.item||'',String(t.qtd||0),fmt(t.precoUnit),fmt(t.precoTotal),t.estado||'Por encomendar']);
+  doc.autoTable({startY:34,head:[['Categoria','Item','Qtd','Preço Unit.','Total','Estado']],body:rows.length?rows:[['','Sem itens','','','','']],theme:'grid',styles:{fontSize:7,cellPadding:2.5},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]}});
+  doc.save('Trofeus_Premios_SWC2026.pdf');
+}
+async function saveTrod(){
+  if(!canEdit())return;
+  const d={
+    entidade:document.getElementById('trd-en').value,
+    item:document.getElementById('trd-it').value,
+    entregue:document.getElementById('trd-en2').value,
+    data:document.getElementById('trd-dt').value,
+    obs:document.getElementById('trd-ob').value,
+    ts:Date.now()
+  };
+  const _e=document.getElementById('trod-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('trofeusDistrib',_eid,d);if(_e)_e.value='';toast('Registo actualizado');}else{await _add('trofeusDistrib',d);toast('Registo criado');}
+  closeM('m-trod');
+}
+function editTrod(id){
+  const t=_trod.find(x=>x.id===id);if(!t)return;
+  document.getElementById('trod-eid').value=t.id;
+  document.getElementById('trd-en').value=t.entidade||'';
+  document.getElementById('trd-it').value=t.item||'Moeda comemorativa';
+  document.getElementById('trd-en2').value=t.entregue||'N';
+  document.getElementById('trd-dt').value=t.data||'';
+  document.getElementById('trd-ob').value=t.obs||'';
+  openM('m-trod');
+}
+async function delTrod(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('trofeusDistrib',id);}
+function renderTrod(){
+  const el=document.getElementById('t-trod');if(!el)return;
+  el.innerHTML=_trod.length?_trod.map(t=>`<tr><td class="vl">${t.entidade||''}</td><td class="mu">${t.item||''}</td><td><span class="bge ${t.entregue==='S'?'bg-ok':'bg-er'}">${t.entregue==='S'?'Sim':'Não'}</span></td><td class="mu">${t.data||''}</td><td class="mu" style="font-size:11px;">${t.obs||''}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editTrod('${t.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delTrod('${t.id}')">🗑️</button>`:''}</td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem registos de distribuição</td></tr>';
 }
 
 //  PRAZOS 
@@ -6487,6 +6689,10 @@ const HELP = {
     o:'Lista formal da Comissão de Honra do SWC 2026 — 7 níveis protocolares, do nacional ao local, com o estado de cada convite.',
     steps:['Usa "Importar os 20 membros" para carregar a proposta já aprovada pela Câmara.','Actualiza o Estado do convite conforme a resposta chega: Por enviar → Enviado → Aceite/Recusado/Sem resposta.','Regista datas de envio e resposta, e observações relevantes (ex: "vai enviar representante").','Marca a presença confirmada em Abertura e Encerramento separadamente — o convite cobre os dois momentos.','O PDF exporta a lista oficial agrupada por nível protocolar.'],
     warn:'É uma Comissão de Honra — carácter simbólico e representativo, sem compromisso financeiro ou operacional. Não confundir com os convidados gerais de Cerimónias (VIP, media, patrocinadores).'},
+  trofeus:{icon:'&#127942;',title:'Troféus & Prémios',sub:'Encomenda Metaloarte',
+    o:'Controlo da encomenda de medalhas, troféus, taças, moeda comemorativa e cunho junto da Metaloarte, e distribuição das lembranças institucionais (moeda e medalhas com estojo).',
+    steps:['Usa "Importar encomenda Metaloarte" para carregar os 39 itens já orçamentados.','Dois itens ficam marcados "A confirmar": as medalhas de equipa dos Homens (nº de jogadores a validar com a WMF) e a quantidade de medalhas com estojo (50 ou 70).','Atualiza o Estado de cada item conforme a encomenda avança: Por encomendar → Encomendado → Recebido.','Na tabela de Distribuição, regista a quem foi entregue cada moeda/medalha com estojo institucional.','O PDF exporta a lista completa da encomenda com valores.'],
+    warn:'As quantidades e valores foram confirmados com a Metaloarte, mas 2 itens aguardam decisão final antes da encomenda seguir. Não fechar a encomenda sem resolver esses dois pontos.'},
   desportivo:{icon:'&#9671;',title:'Desportivo & Arbitros',sub:'Equipa de arbitragem',
     o:'Registo e gestao da equipa de arbitragem do evento — arbitros nacionais e internacionais.',
     steps:['Adiciona cada arbitro com nome, pais, federacao, funcao e hotel atribuido.','Funcoes disponiveis: Arbitro Principal, Arbitro de Campo, Auxiliar, Observador WMF/EMF.','O PDF exporta a lista completa para entregar a WMF/EMF no inicio do evento.'],
@@ -8669,6 +8875,14 @@ window.editHon=editHon;
 window.delHon=delHon;
 window.importarComissaoHonra=importarComissaoHonra;
 window.exportHonPDF=exportHonPDF;
+window.saveTro=saveTro;
+window.editTro=editTro;
+window.delTro=delTro;
+window.importarTrofeusMetaloarte=importarTrofeusMetaloarte;
+window.exportTroPDF=exportTroPDF;
+window.saveTrod=saveTrod;
+window.editTrod=editTrod;
+window.delTrod=delTrod;
 window.savePrazo=savePrazo;
 window.concPrazo=concPrazo;
 window.saveMbr=saveMbr;

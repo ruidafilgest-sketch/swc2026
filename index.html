@@ -3379,8 +3379,48 @@ function exportTroPDF(){
   pdfHeader(doc,'Troféus & Prémios','Encomenda Metaloarte',false);
   const val=_tro.reduce((a,t)=>a+Number(t.precoTotal||0),0);
   doc.setFontSize(9);doc.setTextColor(80,80,80);doc.text('Valor total: '+val.toLocaleString('pt-PT',{minimumFractionDigits:2})+'€',14,44);
-  const rows=_tro.map(t=>[t.categoria||'',t.item||'',String(t.qtd||0),fmt(t.precoUnit),fmt(t.precoTotal),t.estado||'Por encomendar']);
-  doc.autoTable({startY:48,head:[['Categoria','Item','Qtd','Preço Unit.','Total','Estado']],body:rows.length?rows:[['','Sem itens','','','','']],theme:'grid',styles:{fontSize:7,cellPadding:2.5},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]},margin:{bottom:26}});
+
+  const GRUPOS=['Equipas','Individual — Strokeplay','Individual — Matchplay','Institucional','Produção'];
+  const CATS=['Taças','Troféus','Medalhas','Moeda','Cunho'];
+  const gIdx=g=>{const i=GRUPOS.indexOf(g);return i<0?99:i;};
+  const cIdx=c=>{const i=CATS.indexOf(c);return i<0?99:i;};
+  const lista=[..._tro].sort((a,b)=>gIdx(a.grupo)-gIdx(b.grupo)||cIdx(a.categoria)-cIdx(b.categoria)||(a.item||'').localeCompare(b.item||''));
+
+  const body=[];
+  if(!lista.length){
+    body.push([{content:'Sem itens registados',colSpan:6,styles:{halign:'center',textColor:[130,130,130]}}]);
+  } else {
+    let grupoAtual=null;
+    for(const t of lista){
+      const g=t.grupo||'Outros';
+      if(g!==grupoAtual){
+        grupoAtual=g;
+        const doGrupo=lista.filter(x=>(x.grupo||'Outros')===g);
+        const subtotal=doGrupo.reduce((a,x)=>a+Number(x.precoTotal||0),0);
+        body.push([{content:g+'   —   '+doGrupo.length+' item(ns)   ·   '+fmt(subtotal),colSpan:6,styles:{fillColor:[232,240,250],textColor:[20,50,100],fontStyle:'bold',fontSize:8,halign:'left'}}]);
+      }
+      const itemLabel=(t.item||'')+(t.competicao?('\n'+t.competicao):'')+(t.obs?('\n⚠ '+t.obs):'');
+      body.push([
+        t.categoria||'',
+        {content:itemLabel,styles:{fontStyle:'normal'}},
+        String(t.qtd||0),
+        fmt(t.precoUnit),
+        fmt(t.precoTotal),
+        t.estado||'Por encomendar'
+      ]);
+    }
+  }
+
+  doc.autoTable({
+    startY:48,
+    head:[['Categoria','Item','Qtd','Preço Unit.','Total','Estado']],
+    body,
+    theme:'grid',
+    styles:{fontSize:7,cellPadding:2.5,valign:'middle'},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76]},
+    columnStyles:{1:{cellWidth:70}},
+    margin:{bottom:26}
+  });
   pdfFooter(doc,false);
   doc.save('Trofeus_Premios_SWC2026.pdf');
 }

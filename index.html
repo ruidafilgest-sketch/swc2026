@@ -126,6 +126,19 @@ td.mu{color:var(--mu);font-style:italic;}
 .bg-bl{background:rgba(100,160,255,.08);color:#90c0ff;border:1px solid rgba(100,160,255,.18);}
 .bg-am{background:rgba(232,160,48,.1);color:#f0c060;border:1px solid rgba(232,160,48,.2);}
 .bg-mu{background:rgba(255,255,255,.05);color:var(--mu);border:1px solid rgba(255,255,255,.08);}
+.cmd-col{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px;min-height:120px;}
+.cmd-col-h{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid;margin-bottom:8px;}
+.cmd-col-body{display:flex;flex-direction:column;gap:8px;}
+.cmd-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--bd);border-radius:6px;padding:9px 10px;}
+.cmd-card.pr-Alta{border-left-color:#e05252;}
+.cmd-card.pr-Média{border-left-color:#e8a030;}
+.cmd-card.pr-Baixa{border-left-color:#5AA0FF;}
+.cmd-card-t{font-size:13px;font-weight:600;color:var(--fg,#eee);margin-bottom:3px;}
+.cmd-card-m{font-size:11px;color:var(--mu);margin-bottom:6px;}
+.cmd-card-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.cmd-mini{font-size:10.5px;padding:3px 8px;border-radius:5px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--mu);cursor:pointer;}
+.cmd-mini:hover{background:rgba(90,160,255,.12);color:#5AA0FF;}
+@media (max-width:900px){.cmd-board{grid-template-columns:1fr !important;}}
 .sm{background:rgba(15,30,56,.8);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;}
 .sml{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:4px;}
 .smv{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:500;color:var(--gl2);line-height:1;}
@@ -494,6 +507,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div style="flex:1;min-width:0;">
       <div class="si-label">Troféus &amp; Prémios</div>
       <div class="si-sub" style="color:rgba(90,160,255,.6);">Encomenda Metaloarte</div>
+    </div>
+  </div>
+  <div class="si" title="Marcos grandes do evento, de relance" onclick="nav(this,'salacomando','Sala de Comando')" style="">
+    <i class="ti ti-target" style="font-size:20px;color:#5AA0FF;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Sala de Comando</div>
+      <div class="si-sub" style="color:rgba(90,160,255,.6);">Visão geral · marcos do evento</div>
     </div>
   </div>
   <div class="si" title="Mapa operacional do campo" onclick="nav(this,'mapa','Mapa Operacional')" style="">
@@ -1093,6 +1113,52 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="trd-ob"></textarea></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-trod')">Cancelar</button><button class="btn bp" onclick="saveTrod()">Guardar</button></div>
+</div></div>
+
+<!-- SALA DE COMANDO -->
+<div class="pg" id="pg-salacomando">
+<div class="st"><span class="sn">CMD</span>Sala de Comando<button class="hbtn" data-help="salacomando" onclick="openHelp(this.dataset.help)">?</button></div>
+<div class="sd">Os grandes marcos do SWC 2026, de relance — move cada um à medida que avança</div>
+<div class="bb" id="bar-cmd">
+  <button class="btn bp" onclick="const _e=document.getElementById('cmd-eid');if(_e)_e.value='';openM('m-cmd')">+ Novo marco</button>
+  <button class="btn bo" onclick="exportCmdPDF()">Exportar PDF</button>
+  <button class="btn bo" onclick="exportCmdWallPDF()" style="background:linear-gradient(135deg,#7c5cd1,#4a3a8a);">🖨️ Cartaz de Parede (A4)</button>
+</div>
+<div class="g4" style="margin-bottom:10px;">
+  <div class="sm"><div class="sml">Total de marcos</div><div class="smv" id="cmd-tot">0</div></div>
+  <div class="sm"><div class="sml">Por Fazer</div><div class="smv" id="cmd-pf" style="color:var(--wr)">0</div></div>
+  <div class="sm"><div class="sml">Em Curso</div><div class="smv" id="cmd-ec" style="color:var(--am,#c9a84c)">0</div></div>
+  <div class="sm"><div class="sml">Concluído</div><div class="smv" id="cmd-cc" style="color:var(--ok)">0</div></div>
+</div>
+<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;height:10px;overflow:hidden;margin-bottom:20px;">
+  <div id="cmd-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#4ab87a,#6ee4a0);transition:width .4s;"></div>
+</div>
+<div class="cmd-board" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+  <div class="cmd-col">
+    <div class="cmd-col-h" style="color:#ff9090;border-color:rgba(224,82,82,.25);">🚩 Por Fazer</div>
+    <div id="cmd-col-pf" class="cmd-col-body"></div>
+  </div>
+  <div class="cmd-col">
+    <div class="cmd-col-h" style="color:#f0c060;border-color:rgba(232,160,48,.25);">⚔️ Em Curso</div>
+    <div id="cmd-col-ec" class="cmd-col-body"></div>
+  </div>
+  <div class="cmd-col">
+    <div class="cmd-col-h" style="color:#6ee4a0;border-color:rgba(74,184,122,.25);">🏁 Concluído</div>
+    <div id="cmd-col-cc" class="cmd-col-body"></div>
+  </div>
+</div>
+</div>
+
+<div class="mo" id="m-cmd"><div class="mdl">
+  <div class="mh"><div class="mt2">Marco da Sala de Comando</div><button class="mc" onclick="closeM('m-cmd')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="cmd-eid">
+    <div class="fg"><div class="fl">Título do marco</div><input class="fi" id="cm-ti" placeholder="ex: Fechar contrato com todos os hotéis"></div>
+    <div class="fr"><div class="fg"><div class="fl">Área</div><input class="fi" id="cm-ar" placeholder="ex: Alojamento, Financeiro, Cerimónias..."></div><div class="fg"><div class="fl">Prioridade</div><select class="fse" id="cm-pr"><option>Alta</option><option>Média</option><option>Baixa</option></select></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Estado</div><select class="fse" id="cm-st"><option value="Por Fazer">Por Fazer</option><option value="Em Curso">Em Curso</option><option value="Concluído">Concluído</option></select></div><div class="fg"><div class="fl">Prazo</div><input class="fi" type="date" id="cm-pz"></div></div>
+    <div class="fg"><div class="fl">Notas</div><textarea class="fta" id="cm-no" placeholder="ex: falta só assinar o H4, já confirmado por email"></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-cmd')">Cancelar</button><button class="btn bp" onclick="saveCmd()">Guardar</button></div>
 </div></div>
 
 <!-- DESPORTIVO -->
@@ -2795,6 +2861,7 @@ function nav(el,id,title){
   if(id==='cerimonias'){renderGuiaoCerimonia();renderEquipas();}
   if(id==='comissaohonra'){renderHon();}
   if(id==='trofeus'){renderTro();renderTrod();}
+  if(id==='salacomando'){renderCmd();}
   if(id==='diariobordo'){renderDiarioBordo();}
   if(id==='acreditacoes'){renderAccred();}
   if(id==='rooming'){renderRooming();}
@@ -2822,7 +2889,7 @@ function closeM(id){document.getElementById(id).classList.remove('op');}
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
 //  DATA 
-let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[];
+let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
@@ -2833,6 +2900,7 @@ function loadAll(){
   _snap('comissaoHonra',(docs)=>{_hon=docs;renderHon();});
   _snap('trofeus',(docs)=>{_tro=docs;renderTro();});
   _snap('trofeusDistrib',(docs)=>{_trod=docs;renderTrod();});
+  _snap('salaComando',(docs)=>{_cmd=docs;renderCmd();});
   _snap('prazos',(docs)=>{_praz=docs;renderCron();},'data');
   _snap('membros',(docs)=>{_mbr=docs;renderOrg();});
   _snap('boardEmf',(docs)=>{_boardEmf=docs;renderOrg();});
@@ -3227,7 +3295,7 @@ async function importarComissaoHonra(){
     {nome:'Santa Casa da Misericórdia de Vizela',cargo:'',grupo:'6. Instituições Centenárias e Associativismo de Vizela'},
     {nome:'Sociedade Filarmónica Vizelense',cargo:'',grupo:'6. Instituições Centenárias e Associativismo de Vizela'},
     {nome:'Pedro Ribeiro',cargo:'Presidente da AIREV',grupo:'6. Instituições Centenárias e Associativismo de Vizela'},
-    {nome:'Representante da Família de Manuel Fonseca e Castro',cargo:'Fundador do minigolfe em Portugal, em Vizela, em 1968',grupo:'7. Personalidades Vizelenses de Mérito'},
+    {nome:'Manuel Rui Freitas Bravo da Fonseca e Castro',cargo:'Representante da Família de Manuel Fonseca e Castro — fundador do minigolfe em Portugal, em Vizela, em 1968',grupo:'7. Personalidades Vizelenses de Mérito',obs:'Contacto apenas por correio postal — Rua Álvaro Gomes, n.º 15, 2.º Esq., 4150-064 Porto'},
     {nome:'António Costa e Silva',cargo:'Ilustre minigolfista, sócio honorário da FPM',grupo:'7. Personalidades Vizelenses de Mérito'},
   ];
   const jaImportados=COMISSAO_HONRA.filter(m=>_hon.some(x=>x.nome===m.nome));
@@ -3237,7 +3305,7 @@ async function importarComissaoHonra(){
   let ok=0,err=0;
   toast('A importar '+porImportar.length+' membro(s)...','inf');
   for(const m of porImportar){
-    try{await _add('comissaoHonra',{...m,email:'',tel:'',estado:'Por enviar',dataEnvio:'',dataResposta:'',abertura:'N',encerramento:'N',obs:'',ts:Date.now()});ok++;}
+    try{await _add('comissaoHonra',{...m,email:'',tel:'',estado:'Por enviar',dataEnvio:'',dataResposta:'',abertura:'N',encerramento:'N',obs:m.obs||'',ts:Date.now()});ok++;}
     catch(e){console.error('Erro ao importar',m.nome,e);err++;}
   }
   toast('Comissão de Honra importada: '+ok+' membro(s)'+(err?' ('+err+' erros)':''),'ok');
@@ -3452,6 +3520,168 @@ async function delTrod(id){if(!canDelete()||!confirm('Eliminar?'))return;await _
 function renderTrod(){
   const el=document.getElementById('t-trod');if(!el)return;
   el.innerHTML=_trod.length?_trod.map(t=>`<tr><td class="vl">${t.entidade||''}</td><td class="mu">${t.item||''}</td><td><span class="bge ${t.entregue==='S'?'bg-ok':'bg-er'}">${t.entregue==='S'?'Sim':'Não'}</span></td><td class="mu">${t.data||''}</td><td class="mu" style="font-size:11px;">${t.obs||''}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editTrod('${t.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delTrod('${t.id}')">🗑️</button>`:''}</td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem registos de distribuição</td></tr>';
+}
+
+//  SALA DE COMANDO 
+async function saveCmd(){
+  if(!canEdit())return;
+  const d={
+    titulo:document.getElementById('cm-ti').value,
+    area:document.getElementById('cm-ar').value,
+    prioridade:document.getElementById('cm-pr').value,
+    estado:document.getElementById('cm-st').value,
+    prazo:document.getElementById('cm-pz').value,
+    notas:document.getElementById('cm-no').value,
+    ts:Date.now()
+  };
+  const _e=document.getElementById('cmd-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('salaComando',_eid,d);if(_e)_e.value='';toast('Marco actualizado');}else{await _add('salaComando',d);toast('Marco registado');}
+  closeM('m-cmd');
+}
+function editCmd(id){
+  const c=_cmd.find(x=>x.id===id);if(!c)return;
+  document.getElementById('cmd-eid').value=c.id;
+  document.getElementById('cm-ti').value=c.titulo||'';
+  document.getElementById('cm-ar').value=c.area||'';
+  document.getElementById('cm-pr').value=c.prioridade||'Média';
+  document.getElementById('cm-st').value=c.estado||'Por Fazer';
+  document.getElementById('cm-pz').value=c.prazo||'';
+  document.getElementById('cm-no').value=c.notas||'';
+  openM('m-cmd');
+}
+async function delCmd(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('salaComando',id);}
+async function moveCmd(id,novoEstado){
+  if(!canEdit())return;
+  await _upd('salaComando',id,{estado:novoEstado});
+}
+function renderCmd(){
+  const totEl=document.getElementById('cmd-tot');if(!totEl)return;
+  totEl.textContent=_cmd.length;
+  const pf=_cmd.filter(c=>c.estado==='Por Fazer').length;
+  const ec=_cmd.filter(c=>c.estado==='Em Curso').length;
+  const cc=_cmd.filter(c=>c.estado==='Concluído').length;
+  document.getElementById('cmd-pf').textContent=pf;
+  document.getElementById('cmd-ec').textContent=ec;
+  document.getElementById('cmd-cc').textContent=cc;
+  const pct=_cmd.length?Math.round(cc/_cmd.length*100):0;
+  const bar=document.getElementById('cmd-bar');if(bar)bar.style.width=pct+'%';
+  const prOrd=p=>p==='Alta'?0:(p==='Média'?1:2);
+  const ordenado=[..._cmd].sort((a,b)=>prOrd(a.prioridade)-prOrd(b.prioridade)||(a.prazo||'9999').localeCompare(b.prazo||'9999'));
+  const card=c=>{
+    const acts=[];
+    if(canEdit()){
+      if(c.estado!=='Por Fazer')acts.push(`<button class="cmd-mini" onclick="moveCmd('${c.id}','Por Fazer')">← Por Fazer</button>`);
+      if(c.estado!=='Em Curso')acts.push(`<button class="cmd-mini" onclick="moveCmd('${c.id}','Em Curso')">${c.estado==='Concluído'?'← ':'→ '}Em Curso</button>`);
+      if(c.estado!=='Concluído')acts.push(`<button class="cmd-mini" onclick="moveCmd('${c.id}','Concluído')">→ Concluído</button>`);
+      acts.push(`<button class="cmd-mini" onclick="editCmd('${c.id}')">✏️</button>`);
+      if(canDelete())acts.push(`<button class="cmd-mini" onclick="delCmd('${c.id}')">🗑️</button>`);
+    }
+    return `<div class="cmd-card pr-${c.prioridade||'Média'}">
+      <div class="cmd-card-t">${c.titulo||''}</div>
+      <div class="cmd-card-m">${c.area?c.area+' · ':''}${c.prioridade||'Média'}${c.prazo?' · até '+c.prazo:''}</div>
+      ${c.notas?`<div class="cmd-card-m" style="font-style:italic;">${c.notas}</div>`:''}
+      <div class="cmd-card-actions">${acts.join('')}</div>
+    </div>`;
+  };
+  const colPF=document.getElementById('cmd-col-pf');
+  const colEC=document.getElementById('cmd-col-ec');
+  const colCC=document.getElementById('cmd-col-cc');
+  if(!colPF)return;
+  const listaPF=ordenado.filter(c=>c.estado==='Por Fazer');
+  const listaEC=ordenado.filter(c=>c.estado==='Em Curso');
+  const listaCC=ordenado.filter(c=>c.estado==='Concluído');
+  colPF.innerHTML=listaPF.length?listaPF.map(card).join(''):'<div class="mu" style="font-size:12px;text-align:center;padding:14px;">Sem marcos</div>';
+  colEC.innerHTML=listaEC.length?listaEC.map(card).join(''):'<div class="mu" style="font-size:12px;text-align:center;padding:14px;">Sem marcos</div>';
+  colCC.innerHTML=listaCC.length?listaCC.map(card).join(''):'<div class="mu" style="font-size:12px;text-align:center;padding:14px;">Sem marcos</div>';
+}
+function exportCmdPDF(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  pdfHeader(doc,'Sala de Comando','Marcos gerais do evento',false);
+  const prOrd=p=>p==='Alta'?0:(p==='Média'?1:2);
+  const estOrd=e=>e==='Por Fazer'?0:(e==='Em Curso'?1:2);
+  const lista=[..._cmd].sort((a,b)=>estOrd(a.estado)-estOrd(b.estado)||prOrd(a.prioridade)-prOrd(b.prioridade));
+  const rows=lista.map(c=>[c.estado||'Por Fazer',c.prioridade||'Média',c.titulo||'',c.area||'',c.prazo||'',c.notas||'']);
+  doc.autoTable({startY:44,head:[['Estado','Prioridade','Marco','Área','Prazo','Notas']],body:rows.length?rows:[['','','Sem marcos','','','']],theme:'grid',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]},margin:{bottom:26}});
+  pdfFooter(doc,false);
+  doc.save('Sala_Comando_SWC2026.pdf');
+}
+function exportCmdWallPDF(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const pageW=297,pageH=210,marginX=12;
+
+  doc.setFillColor(11,46,79);
+  doc.rect(0,0,pageW,26,'F');
+  doc.setFontSize(20);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  doc.text('SALA DE COMANDO — SWC 2026',pageW/2,13,{align:'center'});
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(201,168,76);
+  const hoje=new Date();
+  const dataStr=hoje.toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
+  doc.text('Vizelgolfe · Seniors World Championship de Minigolfe · atualizado a '+dataStr,pageW/2,20,{align:'center'});
+
+  const total=_cmd.length;
+  const cc=_cmd.filter(c=>c.estado==='Concluído').length;
+  const pct=total?Math.round(cc/total*100):0;
+  const barY=31,barH=5,barW=pageW-marginX*2;
+  doc.setFillColor(235,235,235);doc.roundedRect(marginX,barY,barW,barH,2,2,'F');
+  doc.setFillColor(74,184,122);doc.roundedRect(marginX,barY,barW*pct/100,barH,2,2,'F');
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(60,60,60);
+  doc.text(pct+'% concluído  ·  '+cc+' de '+total+' marcos',marginX,barY+barH+5);
+
+  const colGap=6;
+  const colW=(pageW-marginX*2-colGap*2)/3;
+  const colsY=46;
+  const cols=[
+    {titulo:'■ POR FAZER',estado:'Por Fazer',cor:[224,82,82],x:marginX},
+    {titulo:'▲ EM CURSO',estado:'Em Curso',cor:[232,160,48],x:marginX+colW+colGap},
+    {titulo:'✓ CONCLUÍDO',estado:'Concluído',cor:[74,184,122],x:marginX+2*(colW+colGap)},
+  ];
+  const prOrd2=p=>p==='Alta'?0:(p==='Média'?1:2);
+  const prCor=p=>p==='Alta'?[224,82,82]:(p==='Média'?[232,160,48]:[90,160,255]);
+
+  cols.forEach(col=>{
+    doc.setFillColor(...col.cor);
+    doc.roundedRect(col.x,colsY,colW,9,1.5,1.5,'F');
+    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+    const nCol=_cmd.filter(c=>c.estado===col.estado).length;
+    doc.text(col.titulo+'  ('+nCol+')',col.x+colW/2,colsY+6,{align:'center'});
+
+    let y=colsY+14;
+    let omitidos=0;
+    const lista=[..._cmd].filter(c=>c.estado===col.estado).sort((a,b)=>prOrd2(a.prioridade)-prOrd2(b.prioridade));
+    if(!lista.length){
+      doc.setFontSize(8.5);doc.setFont('helvetica','italic');doc.setTextColor(150,150,150);
+      doc.text('Sem marcos',col.x+colW/2,y+6,{align:'center'});
+      return;
+    }
+    lista.forEach(c=>{
+      const titleLines=doc.splitTextToSize(c.titulo||'',colW-8);
+      const metaTxt=(c.area?c.area+'  ·  ':'')+(c.prioridade||'Média')+(c.prazo?'  ·  até '+c.prazo:'');
+      const metaLines=doc.splitTextToSize(metaTxt,colW-8);
+      const cardH=6+titleLines.length*4.6+metaLines.length*3.6+4;
+      if(y+cardH>pageH-22){omitidos++;return;}
+      doc.setFillColor(250,250,248);
+      doc.setDrawColor(220,220,215);
+      doc.roundedRect(col.x,y,colW,cardH,1.2,1.2,'FD');
+      doc.setFillColor(...prCor(c.prioridade));
+      doc.roundedRect(col.x,y,1.6,cardH,0.8,0.8,'F');
+      doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(30,30,30);
+      doc.text(titleLines,col.x+4,y+5.5);
+      doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(120,120,120);
+      doc.text(metaLines,col.x+4,y+5.5+titleLines.length*4.6);
+      y+=cardH+3;
+    });
+    if(omitidos>0){
+      doc.setFontSize(7.5);doc.setFont('helvetica','italic');doc.setTextColor(180,90,40);
+      doc.text('+ '+omitidos+' marco(s) não coube(ram) — usa "Exportar PDF" para a lista completa',col.x+2,pageH-18,{maxWidth:colW-4});
+    }
+  });
+
+  pdfFooter(doc,true);
+  doc.save('Sala_Comando_Cartaz_A4_SWC2026.pdf');
 }
 
 //  PRAZOS 
@@ -6753,6 +6983,10 @@ const HELP = {
     o:'Controlo da encomenda de medalhas, troféus, taças, moeda comemorativa e cunho junto da Metaloarte, e distribuição das lembranças institucionais (moeda e medalhas com estojo).',
     steps:['Usa "Importar encomenda Metaloarte" para carregar os 39 itens já orçamentados.','Dois itens ficam marcados "A confirmar": as medalhas de equipa dos Homens (nº de jogadores a validar com a WMF) e a quantidade de medalhas com estojo (50 ou 70).','Atualiza o Estado de cada item conforme a encomenda avança: Por encomendar → Encomendado → Recebido.','Na tabela de Distribuição, regista a quem foi entregue cada moeda/medalha com estojo institucional.','O PDF exporta a lista completa da encomenda com valores.'],
     warn:'As quantidades e valores foram confirmados com a Metaloarte, mas 2 itens aguardam decisão final antes da encomenda seguir. Não fechar a encomenda sem resolver esses dois pontos.'},
+  salacomando:{icon:'&#127919;',title:'Sala de Comando',sub:'Os grandes marcos do evento, de relance',
+    o:'Uma vista de topo com os marcos grandes do SWC 2026 — não substitui os separadores detalhados (Financeiro, Cerimónias, etc.), é para veres rapidamente o que falta, o que está em curso, e o que já está fechado.',
+    steps:['Usa "+ Novo marco" para escreveres tu próprio os grandes objetivos (ex: "Fechar contrato com todos os hotéis", "Confirmar Comissão de Honra completa").','Cada marco tem Prioridade (Alta/Média/Baixa) e um Prazo opcional.','Move o marco entre colunas com os botões dentro do cartão — Por Fazer → Em Curso → Concluído.','A barra de progresso no topo mostra a % de marcos já concluídos.','"Exportar PDF" dá a lista completa em tabela; "Cartaz de Parede (A4)" dá uma versão visual, em 3 colunas, pronta a imprimir e pregar na parede — repete sempre que quiseres uma versão atualizada.'],
+    warn:'É uma lista manual — não vai automaticamente buscar dados aos outros separadores. Os números aqui são só o que tu escreveres e marcares.'},
   desportivo:{icon:'&#9671;',title:'Desportivo & Arbitros',sub:'Equipa de arbitragem',
     o:'Registo e gestao da equipa de arbitragem do evento — arbitros nacionais e internacionais.',
     steps:['Adiciona cada arbitro com nome, pais, federacao, funcao e hotel atribuido.','Funcoes disponiveis: Arbitro Principal, Arbitro de Campo, Auxiliar, Observador WMF/EMF.','O PDF exporta a lista completa para entregar a WMF/EMF no inicio do evento.'],
@@ -8943,6 +9177,12 @@ window.exportTroPDF=exportTroPDF;
 window.saveTrod=saveTrod;
 window.editTrod=editTrod;
 window.delTrod=delTrod;
+window.saveCmd=saveCmd;
+window.editCmd=editCmd;
+window.delCmd=delCmd;
+window.moveCmd=moveCmd;
+window.exportCmdPDF=exportCmdPDF;
+window.exportCmdWallPDF=exportCmdWallPDF;
 window.savePrazo=savePrazo;
 window.concPrazo=concPrazo;
 window.saveMbr=saveMbr;

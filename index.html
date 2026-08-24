@@ -138,7 +138,22 @@ td.mu{color:var(--mu);font-style:italic;}
 .cmd-card-actions{display:flex;gap:6px;flex-wrap:wrap;}
 .cmd-mini{font-size:10.5px;padding:3px 8px;border-radius:5px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--mu);cursor:pointer;}
 .cmd-mini:hover{background:rgba(90,160,255,.12);color:#5AA0FF;}
-@media (max-width:900px){.cmd-board{grid-template-columns:1fr !important;}}
+@media (max-width:900px){.cmd-board{grid-template-columns:1fr !important;}#cmd-radar{grid-template-columns:1fr !important;}}
+.radar-card{border-radius:8px;padding:12px 14px;border:1px solid;display:flex;gap:12px;align-items:flex-start;}
+.radar-card.rc-crit{background:rgba(224,82,82,.08);border-color:rgba(224,82,82,.3);}
+.radar-card.rc-warn{background:rgba(232,160,48,.08);border-color:rgba(232,160,48,.3);}
+.radar-card.rc-info{background:rgba(90,160,255,.07);border-color:rgba(90,160,255,.25);}
+.radar-card.rc-ok{background:rgba(74,184,122,.07);border-color:rgba(74,184,122,.25);}
+.radar-icon{font-size:22px;line-height:1;flex-shrink:0;}
+.radar-body{flex:1;min-width:0;}
+.radar-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+.radar-card.rc-crit .radar-title{color:#ff9090;}
+.radar-card.rc-warn .radar-title{color:#f0c060;}
+.radar-card.rc-info .radar-title{color:#5AA0FF;}
+.radar-card.rc-ok .radar-title{color:#6ee4a0;}
+.radar-desc{font-size:13px;color:var(--fg,#eee);line-height:1.4;}
+.radar-go{margin-top:8px;display:inline-block;font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:var(--mu);cursor:pointer;}
+.radar-go:hover{background:rgba(90,160,255,.15);color:#5AA0FF;}
 .sm{background:rgba(15,30,56,.8);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;}
 .sml{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:4px;}
 .smv{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:500;color:var(--gl2);line-height:1;}
@@ -1118,7 +1133,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <!-- SALA DE COMANDO -->
 <div class="pg" id="pg-salacomando">
 <div class="st"><span class="sn">CMD</span>Sala de Comando<button class="hbtn" data-help="salacomando" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">Os grandes marcos do SWC 2026, de relance — move cada um à medida que avança</div>
+<div class="sd">Radar automático dos módulos do sistema, mais os marcos que quiseres acrescentar à mão</div>
+
+<div class="st" style="font-size:15px;margin-top:4px;">📡 Radar Automático</div>
+<div class="sd" style="margin-bottom:10px;">Gerado sozinho a partir dos dados reais do sistema — atualiza-se cada vez que abres esta página</div>
+<div id="cmd-radar-summary" style="margin-bottom:12px;font-size:13px;color:var(--mu);"></div>
+<div id="cmd-radar" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:26px;"></div>
+
+<div class="st" style="font-size:15px;">🗒️ Marcos Adicionais (manual)</div>
+<div class="sd">Para tudo o que não seja capturado pelo radar automático — escreves e marcas tu</div>
 <div class="bb" id="bar-cmd">
   <button class="btn bp" onclick="const _e=document.getElementById('cmd-eid');if(_e)_e.value='';openM('m-cmd')">+ Novo marco</button>
   <button class="btn bo" onclick="exportCmdPDF()">Exportar PDF</button>
@@ -1148,6 +1171,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   </div>
 </div>
 </div>
+
 
 <div class="mo" id="m-cmd"><div class="mdl">
   <div class="mh"><div class="mt2">Marco da Sala de Comando</div><button class="mc" onclick="closeM('m-cmd')">✕</button></div>
@@ -2833,7 +2857,7 @@ function nav(el,id,title){
   document.querySelectorAll('.si').forEach(s=>s.classList.remove('act'));
   closeSb();
   document.getElementById('pg-'+id).classList.add('act');
-  el.classList.add('act');
+  if(el)el.classList.add('act');
   document.getElementById('pgt').textContent=title;
   if(id==='mapa'){setTimeout(()=>{carregarMarcadoresMapa();initMapaClique();},200);}
   if(id==='balancete')renderBal();
@@ -2861,7 +2885,7 @@ function nav(el,id,title){
   if(id==='cerimonias'){renderGuiaoCerimonia();renderEquipas();}
   if(id==='comissaohonra'){renderHon();}
   if(id==='trofeus'){renderTro();renderTrod();}
-  if(id==='salacomando'){renderCmd();}
+  if(id==='salacomando'){renderCmd();renderRadar();}
   if(id==='diariobordo'){renderDiarioBordo();}
   if(id==='acreditacoes'){renderAccred();}
   if(id==='rooming'){renderRooming();}
@@ -3607,6 +3631,68 @@ function exportCmdPDF(){
   pdfFooter(doc,false);
   doc.save('Sala_Comando_SWC2026.pdf');
 }
+function navTo(id,title){nav(null,id,title);}
+window.navTo=navTo;
+//  RADAR AUTOMÁTICO 
+function renderRadar(){
+  const box=document.getElementById('cmd-radar');if(!box)return;
+  const hoje=new Date().toISOString().slice(0,10);
+  const daqui14=new Date(Date.now()+14*24*3600*1000).toISOString().slice(0,10);
+  const alerts=[];
+
+  // Comissão de Honra
+  const honPend=(_hon||[]).filter(h=>!h.estado||h.estado==='Por enviar').length;
+  const honSemResp=(_hon||[]).filter(h=>h.estado==='Enviado'||h.estado==='Sem resposta').length;
+  if(honPend>0)alerts.push({sev:'crit',icon:'👑',titulo:'Comissão de Honra',desc:honPend+' convite(s) ainda por enviar',tab:'comissaohonra',tabLabel:'Comissão de Honra'});
+  if(honSemResp>0)alerts.push({sev:'warn',icon:'👑',titulo:'Comissão de Honra',desc:honSemResp+' convite(s) enviados, ainda sem resposta',tab:'comissaohonra',tabLabel:'Comissão de Honra'});
+
+  // Troféus & Prémios
+  const troConf=(_tro||[]).filter(t=>t.estado==='A confirmar').length;
+  const troPend=(_tro||[]).filter(t=>t.estado==='Por encomendar').length;
+  if(troConf>0)alerts.push({sev:'crit',icon:'🏆',titulo:'Troféus & Prémios',desc:troConf+' item(ns) da encomenda Metaloarte por confirmar antes de fechar',tab:'trofeus',tabLabel:'Troféus & Prémios'});
+  if(troPend>0)alerts.push({sev:'warn',icon:'🏆',titulo:'Troféus & Prémios',desc:troPend+' item(ns) ainda por encomendar',tab:'trofeus',tabLabel:'Troféus & Prémios'});
+
+  // Patrocínios
+  const patProp=(_pat||[]).filter(p=>p.estado==='Proposta enviada');
+  if(patProp.length>0){
+    const val=patProp.reduce((a,p)=>a+Number(p.valor||0),0);
+    alerts.push({sev:'warn',icon:'🤝',titulo:'Patrocínios',desc:patProp.length+' proposta(s) enviada(s) aguardam resposta ('+fmt(val)+')',tab:'patrocinios',tabLabel:'Patrocínios & CRM'});
+  }
+
+  // Alojamento
+  const hotVerificar=(_hot||[]).filter(h=>h.wmf==='P').length;
+  const hotFora=(_hot||[]).filter(h=>h.wmf&&h.wmf!=='S'&&h.wmf!=='P').length;
+  if(hotVerificar>0)alerts.push({sev:'warn',icon:'🏨',titulo:'Alojamento',desc:hotVerificar+' hotel(éis) por verificar enquadramento WMF',tab:'alojamento',tabLabel:'Alojamento & Logística'});
+  if(hotFora>0)alerts.push({sev:'crit',icon:'🏨',titulo:'Alojamento',desc:hotFora+' hotel(éis) fora dos critérios WMF',tab:'alojamento',tabLabel:'Alojamento & Logística'});
+
+  // Prazos WMF
+  if((_praz||[]).length>0){
+    const atrasados=_praz.filter(p=>p.estado!=='concluido'&&p.estado!=='concluído'&&p.data&&p.data<hoje);
+    const proximos=_praz.filter(p=>p.estado!=='concluido'&&p.estado!=='concluído'&&p.data&&p.data>=hoje&&p.data<=daqui14);
+    if(atrasados.length>0)alerts.push({sev:'crit',icon:'⏰',titulo:'Prazos WMF',desc:atrasados.length+' prazo(s) WMF já ultrapassado(s) sem estarem concluídos',tab:'cronologia',tabLabel:'Cronologia & Prazos WMF'});
+    if(proximos.length>0)alerts.push({sev:'warn',icon:'⏰',titulo:'Prazos WMF',desc:proximos.length+' prazo(s) WMF a vencer nos próximos 14 dias',tab:'cronologia',tabLabel:'Cronologia & Prazos WMF'});
+  } else {
+    alerts.push({sev:'info',icon:'⏰',titulo:'Prazos WMF',desc:'Sem prazos carregados — visita "Cronologia & Prazos WMF" para ativares este alerta automático',tab:'cronologia',tabLabel:'Cronologia & Prazos WMF'});
+  }
+
+  const nCrit=alerts.filter(a=>a.sev==='crit').length;
+  const nWarn=alerts.filter(a=>a.sev==='warn').length;
+  const summary=document.getElementById('cmd-radar-summary');
+  if(summary){
+    summary.innerHTML=nCrit>0||nWarn>0
+      ? `<b style="color:#ff9090;">${nCrit} crítico(s)</b> &nbsp;·&nbsp; <b style="color:#f0c060;">${nWarn} a monitorizar</b>`
+      : `<b style="color:#6ee4a0;">Sem alertas pendentes nos módulos monitorizados 🎉</b>`;
+  }
+
+  if(!alerts.length){
+    box.innerHTML='<div class="radar-card rc-ok"><div class="radar-icon">🎉</div><div class="radar-body"><div class="radar-title">Tudo em dia</div><div class="radar-desc">Sem alertas nos módulos monitorizados de momento.</div></div></div>';
+    return;
+  }
+  const ordem={crit:0,warn:1,info:2,ok:3};
+  alerts.sort((a,b)=>ordem[a.sev]-ordem[b.sev]);
+  box.innerHTML=alerts.map(a=>`<div class="radar-card rc-${a.sev}"><div class="radar-icon">${a.icon}</div><div class="radar-body"><div class="radar-title">${a.titulo}</div><div class="radar-desc">${a.desc}</div><span class="radar-go" onclick="navTo('${a.tab}','${a.tabLabel}')">Ver módulo →</span></div></div>`).join('');
+}
+
 function exportCmdWallPDF(){
   if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
   const {jsPDF}=window.jspdf;

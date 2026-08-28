@@ -332,6 +332,7 @@ td.mu{color:var(--mu);font-style:italic;}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5/build/index.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" />
 <script>
 // Funções de acesso global — chamadas antes do module carregar
 function doLogin(){if(window._doLogin)window._doLogin();else setTimeout(doLogin,100);}
@@ -497,11 +498,11 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(90,160,255,.6);">Registo · Categorias · Taxas · Países</div>
     </div>
   </div>
-  <div class="si" title="Hotéis H1-H5 · Transfers OPO-Vizela" onclick="nav(this,'alojamento','Alojamento &amp; Logística')" style="">
+  <div class="si" title="Hotéis parceiros · Transfers OPO-Vizela" onclick="nav(this,'alojamento','Alojamento &amp; Logística')" style="">
     <i class="ti ti-building" style="font-size:20px;color:#5AA0FF;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
       <div class="si-label">Alojamento &amp; Logística</div>
-      <div class="si-sub" style="color:rgba(90,160,255,.6);">Hotéis H1-H5 · Transfers OPO-Vizela</div>
+      <div class="si-sub" style="color:rgba(90,160,255,.6);">Hotéis parceiros · Transfers OPO-Vizela</div>
     </div>
   </div>
   <div class="si" title="Abertura 12 Out · Encerramento 17 Out" onclick="nav(this,'cerimonias','Cerimónias &amp; Protocolo')" style="">
@@ -1011,6 +1012,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   </div>
 </div>
 <div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
+<div class="fg" style="max-width:320px;margin-bottom:14px;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total inscritos</div><div class="smv" id="a-tot">0</div></div>
   <div class="sm"><div class="sml">Taxas pagas</div><div class="smv" id="a-pg" style="color:var(--ok)">0</div></div>
@@ -1024,11 +1026,11 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <!-- ALOJAMENTO -->
 <div class="pg" id="pg-alojamento">
 <div class="st"><span class="sn">ALO</span>Alojamento &amp; Logística<button class="hbtn" data-help="alojamento" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">5 hotéis · Rooming lists · Transfers OPO ↔ Vizela · Shuttle local diário</div>
+<div class="sd">Hotéis parceiros · Rooming lists · Transfers OPO ↔ Vizela · Shuttle local diário</div>
 <div class="av"><strong>Requisito WMF obrigatório:</strong> máx. 50€/noite duplo (incl. pequeno-almoço) · mín. 15m² · chuveiro privativo. Incumprimento = perda das taxas de participação.</div>
-<div class="bb" id="bar-alo"><button class="btn bp" onclick="openM('m-hot')">+ Registar hotel</button><button class="btn bo" onclick="openM('m-trn')">+ Transfer / Shuttle</button></div>
+<div class="bb" id="bar-alo"><button class="btn bp" onclick="openM('m-hot')">+ Registar hotel</button><button class="btn bo" onclick="importarHoteisReais()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar hotéis confirmados</button><button class="btn bo" onclick="openM('m-trn')">+ Transfer / Shuttle</button></div>
 <div class="g2">
-  <div class="cd"><div class="cdh"><div><div class="cdt">Unidades Hoteleiras H1–H5</div><div class="cds">Contratos-quadro · Requisitos WMF</div></div></div><div class="cdb" id="lst-hot"><div class="em"><div class="emi">◫</div><div class="emt">Sem hotéis registados</div></div></div></div>
+  <div class="cd"><div class="cdh"><div><div class="cdt">Hotéis Parceiros</div><div class="cds">Contratos-quadro · Requisitos WMF</div></div></div><div class="cdb" id="lst-hot"><div class="em"><div class="emi">◫</div><div class="emt">Sem hotéis registados</div></div></div></div>
   <div class="cd"><div class="cdh"><div><div class="cdt">Transfers &amp; Shuttle</div><div class="cds">OPO ↔ Vizela · Local diário</div></div></div><div class="cdb" id="lst-trn"><div class="em"><div class="emi">◉</div><div class="emt">Sem transfers</div></div></div></div>
 </div>
 </div>
@@ -1800,7 +1802,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="bb" style="margin-bottom:12px;">
   <select class="fse" id="rm-filtro-hotel" style="width:180px;" onchange="renderRooming()">
     <option value="">Todos os hoteis</option>
-    <option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option>
+    <option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option>
   </select>
   <select class="fse" id="rm-filtro-tipo" style="width:160px;" onchange="renderRooming()">
     <option value="">Todos os tipos</option>
@@ -2380,7 +2382,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="at-nm" placeholder="Nome do atleta"></div><div class="fg"><div class="fl">País / Nação</div><input class="fi" id="at-ps" placeholder="País"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Federação nacional</div><input class="fi" id="at-fd" placeholder="Federação"></div><div class="fg"><div class="fl">Categoria WMF</div><select class="fse" id="at-ct"><option value="SM">Séniores Masculinos</option><option value="SF">Séniores Femininas</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Taxa inscrição (€) — valor real</div><input class="fi" type="number" step="0.01" id="at-tx" placeholder="0,00"></div><div class="fg"><div class="fl">Estado taxa</div><select class="fse" id="at-st"><option value="Pago">Pago</option><option value="Pendente">Pendente</option></select></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Hotel atribuído</div><select class="fse" id="at-ht"><option value="">— Sem atribuição —</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div><div class="fg"><div class="fl">Email / Contacto</div><input class="fi" id="at-em" placeholder="email@federacao.xx"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Hotel atribuído</div><select class="fse" id="at-ht"><option value="">— Sem atribuição —</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div><div class="fg"><div class="fl">Email / Contacto</div><input class="fi" id="at-em" placeholder="email@federacao.xx"></div></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-atl')">Cancelar</button><button class="btn bp" onclick="saveAtl()">Guardar atleta</button></div>
 </div></div>
@@ -2441,7 +2443,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="mo" id="m-hot"><div class="mdl">
   <div class="mh"><div class="mt2">Registar Hotel</div><button class="mc" onclick="closeM('m-hot')">✕</button></div>
   <div class="mb">
-    <div class="fr"><div class="fg"><div class="fl">Código</div><select class="fse" id="ht-cd"><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div><div class="fg"><div class="fl">Nome do hotel</div><input class="fi" id="ht-nm" placeholder="Nome da unidade hoteleira"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Código</div><select class="fse" id="ht-cd"><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div><div class="fg"><div class="fl">Nome do hotel</div><input class="fi" id="ht-nm" placeholder="Nome da unidade hoteleira"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Distância ao campo</div><input class="fi" id="ht-dist" placeholder="ex: 1,5 km"></div><div class="fg"><div class="fl">Tarifa/noite duplo (€) — real</div><input class="fi" type="number" id="ht-tar" placeholder="0,00 (máx. 50€ WMF)"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Quartos reservados</div><input class="fi" type="number" id="ht-qts" placeholder="0"></div><div class="fg"><div class="fl">Contacto</div><input class="fi" id="ht-ct" placeholder="Nome e telefone"></div></div>
     <div class="fg"><div class="fl">Requisitos WMF cumpridos</div><select class="fse" id="ht-wmf"><option value="S">Sim — cumpre todos os requisitos</option><option value="P">Parcial — verificar detalhes</option><option value="N">Não — fora das condições WMF</option></select></div>
@@ -2465,7 +2467,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mb">
     <div class="fr"><div class="fg"><div class="fl">Nome</div><input class="fi" id="ar-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">País / Federação</div><input class="fi" id="ar-ps" placeholder="País"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Função</div><select class="fse" id="ar-fn"><option>Diretor do Torneio WMF</option><option>Árbitro EMF</option><option>Juíz de campo</option><option>Secretariado técnico</option></select></div><div class="fg"><div class="fl">Custo (€) — real</div><input class="fi" type="number" id="ar-vl" placeholder="0,00"></div></div>
-    <div class="fg"><div class="fl">Alojamento atribuído</div><select class="fse" id="ar-ht"><option value="">— A definir —</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div>
+    <div class="fg"><div class="fl">Alojamento atribuído</div><select class="fse" id="ar-ht"><option value="">— A definir —</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-arb')">Cancelar</button><button class="btn bp" onclick="saveArb()">Guardar</button></div>
 </div></div>
@@ -2594,7 +2596,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     </div>
     <div class="fr">
       <div class="fg"><div class="fl">Tipo</div><select class="fse" id="rm-tipo"><option value="Atleta">Atleta</option><option value="Arbitro">Arbitro</option><option value="Staff">Staff / COE</option></select></div>
-      <div class="fg"><div class="fl">Hotel</div><select class="fse" id="rm-hotel"><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div>
+      <div class="fg"><div class="fl">Hotel</div><select class="fse" id="rm-hotel"><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div>
     </div>
     <div class="fr">
       <div class="fg"><div class="fl">Numero do quarto</div><input class="fi" id="rm-quarto" placeholder="ex: 101, 202A..."></div>
@@ -2623,7 +2625,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     </div>
     <div class="fr">
       <div class="fg"><div class="fl">Nr. atletas</div><input class="fi" type="number" id="del-natl" placeholder="0"></div>
-      <div class="fg"><div class="fl">Hotel atribuido</div><select class="fse" id="del-hotel"><option value="">-- A definir --</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option></select></div>
+      <div class="fg"><div class="fl">Hotel atribuido</div><select class="fse" id="del-hotel"><option value="">-- A definir --</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div>
     </div>
     <div class="fg"><div class="fl">Voo chegada (info)</div><input class="fi" id="del-voo" placeholder="ex: TP1234 - 12 Out 14:30 OPO"></div>
     <div class="fg"><div class="fl">Voo partida (info)</div><input class="fi" id="del-voosai" placeholder="ex: FR5678 - 18 Out 09:00 OPO"></div>
@@ -3070,12 +3072,15 @@ function tick(){const n=new Date();document.getElementById('clk').textContent=n.
 //  UTILS 
 const fmt=v=>Number(v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
 const PAIS_BANDEIRA={
-  'Alemanha':'🇩🇪','Bélgica':'🇧🇪','China':'🇨🇳','Dinamarca':'🇩🇰','Eslováquia':'🇸🇰',
-  'Finlândia':'🇫🇮','França':'🇫🇷','Holanda':'🇳🇱','Itália':'🇮🇹','Letónia':'🇱🇻',
-  'Noruega':'🇳🇴','Portugal':'🇵🇹','Reino Unido':'🇬🇧','República Checa':'🇨🇿',
-  'Suécia':'🇸🇪','Suíça':'🇨🇭','Áustria':'🇦🇹',
+  'Alemanha':'de','Bélgica':'be','China':'cn','Dinamarca':'dk','Eslováquia':'sk',
+  'Finlândia':'fi','França':'fr','Holanda':'nl','Itália':'it','Letónia':'lv',
+  'Noruega':'no','Portugal':'pt','Reino Unido':'gb','República Checa':'cz',
+  'Suécia':'se','Suíça':'ch','Áustria':'at',
 };
-function bandeira(pais){return PAIS_BANDEIRA[pais]?PAIS_BANDEIRA[pais]+' ':'';}
+function bandeira(pais){
+  const iso=PAIS_BANDEIRA[pais];
+  return iso?`<span class="fi fi-${iso}" style="margin-right:6px;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.15);"></span>`:'';
+}
 function openM(id){const el=document.getElementById(id);if(el)el.classList.add('op');else console.error('Modal não existe:',id);}
 function abrirNovoItemCerimonia(){
   const _e=document.getElementById('prog-eid');if(_e)_e.value='';
@@ -3274,11 +3279,31 @@ async function saveAtl(){
   closeM('m-atl');
 }
 function renderAtl(){
-  document.getElementById('a-tot').textContent=_atl.length;
-  document.getElementById('a-pg').textContent=_atl.filter(a=>a.estado==='Pago').length;
-  document.getElementById('a-pn').textContent=_atl.filter(a=>a.estado==='Pendente').length;
+  const selEl=document.getElementById('a-filtro-pais');
+  if(selEl){
+    const atual=selEl.value;
+    const paises=[...new Set(_atl.map(a=>a.pais).filter(Boolean))].sort();
+    selEl.innerHTML='<option value="">— Todos os países —</option>'+paises.map(p=>`<option value="${p}" ${p===atual?'selected':''}>${p}</option>`).join('');
+  }
+  const filtro=selEl?selEl.value:'';
+  const lista=filtro?_atl.filter(a=>a.pais===filtro):_atl;
+
+  document.getElementById('a-tot').textContent=lista.length;
+  document.getElementById('a-pg').textContent=lista.filter(a=>a.estado==='Pago').length;
+  document.getElementById('a-pn').textContent=lista.filter(a=>a.estado==='Pendente').length;
   document.getElementById('a-ps').textContent=new Set(_atl.map(a=>a.pais)).size;
-  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
+
+  document.getElementById('t-atl').innerHTML=lista.length?lista.map(a=>{
+    const isRef=a.estado==='Ref.2024';
+    const estCor=isRef?'bg-mu':(a.estado==='Pago'?'bg-ok':'bg-am');
+    const confirmBtn=isRef&&canEdit()?`<button class="btn bp bsm" onclick="confirmarAtleta2026('${a.id}')" title="Marcar esta pessoa como confirmada para 2026">✓ Confirmar 2026</button>`:'';
+    return `<tr${isRef?' style="opacity:.65;"':''}><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${estCor}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td style="white-space:nowrap;">${confirmBtn}<button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+  }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas'+(filtro?' registados para '+filtro:'')+'</td></tr>';
+}
+async function confirmarAtleta2026(id){
+  if(!canEdit())return;
+  await _upd('atletas',id,{estado:'Pendente'});
+  toast('Confirmado para 2026 — atualiza a taxa e o estado de pagamento quando souberes');
 }
 async function delAtl(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
 async function importarAtletas2024(){
@@ -4286,8 +4311,14 @@ function renderIns(){
     <td class="vl">${r.total||0}</td>
     <td class="mu" style="font-size:12px;">${r.fonte||''}</td>
     <td><span class="bge ${estCor(r.estado)}">${r.estado||'Confirmado'}</span></td>
-    ${canEdit()?`<td><button class="btn bo bsm" onclick="editIns('${r.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delIns('${r.id}')">🗑️</button>`:''}</td>`:'<td></td>'}
+    <td style="white-space:nowrap;"><button class="btn bo bsm" onclick="verAtletasPais('${r.pais}')" title="Ver/gerir atletas deste país">👥 Ver atletas</button>${canEdit()?`<button class="btn bo bsm" onclick="editIns('${r.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delIns('${r.id}')">🗑️</button>`:''}`:''}</td>
   </tr>`).join(''):'<tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem registos — usa "Importar dados atuais"</td></tr>';
+}
+function verAtletasPais(pais){
+  const sel=document.getElementById('a-filtro-pais');
+  if(sel)sel.value=pais;
+  renderAtl();
+  navTo('atletas','Atletas & Inscrições');
 }
 async function importarInscricoesEMF(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
@@ -4790,6 +4821,28 @@ function renderAlo(){
 }
 async function delHot(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('hoteis',id);}
 async function delTrn(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('transfers',id);}
+async function importarHoteisReais(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const HOTEIS=[
+    {codigo:'H1',nome:'Hotel Bienestar Termas de Vizela',dist:'Rua Dr. Abílio Torres, 855 — União de Freguesias de Caldas de Vizela (S. Miguel e S. João)',tarifa:0,quartos:'',contacto:'Tel: 253 589 150 · www.hotelbienestartermasvizela.com',wmf:''},
+    {codigo:'H2',nome:'Hotel das Termas',dist:'Rua Dr. Abílio Torres, 1236 — União de Freguesias de Caldas de Vizela (S. Miguel e S. João)',tarifa:0,quartos:'',contacto:'Tel: 253 481 275 / 253 481 287 · www.hoteltermasvizela.com',wmf:''},
+    {codigo:'H3',nome:'Casa das Carpas',dist:'Ladeira dos Impedidos, 39 — Santa Eulália',tarifa:0,quartos:'',contacto:'Tel: 910 466 717 / 963 472 466 · www.casadascarpas.com',wmf:''},
+    {codigo:'H4',nome:'Quinta das Lavandeiras',dist:'Travessa da Lavandeira — Santa Eulália',tarifa:0,quartos:'',contacto:'Tel: 919 166 230 · www.quintadaslavandeiras.pt',wmf:''},
+    {codigo:'H5',nome:'Quinta de Santa Ana',dist:'Travessa da Barrela, 130 — Infias',tarifa:0,quartos:'',contacto:'Tel: 919 464 440 · www.quintadesantaana.pt',wmf:''},
+    {codigo:'H6',nome:'São Bento Guest House',dist:'Rua Pereirinhas, 436 — União de Freguesias de Caldas de Vizela (S. Miguel e S. João)',tarifa:0,quartos:'',contacto:'Tel: 969 784 624',wmf:''},
+  ];
+  const jaImportados=HOTEIS.filter(h=>_hot.some(x=>x.nome===h.nome));
+  const porImportar=HOTEIS.filter(h=>!_hot.some(x=>x.nome===h.nome));
+  if(!porImportar.length){toast('Estes hotéis já estão todos importados — nada a fazer.','inf');return;}
+  if(jaImportados.length&&!confirm('Já existem '+jaImportados.length+' hotel(éis) importado(s). Vão ser ignorados. Importar apenas os '+porImportar.length+' que faltam?'))return;
+  let ok=0,err=0;
+  toast('A importar '+porImportar.length+' hotel(éis)...','inf');
+  for(const h of porImportar){
+    try{await _add('hoteis',{...h,ts:Date.now()});ok++;}
+    catch(e){console.error('Erro ao importar',h.nome,e);err++;}
+  }
+  toast('Hotéis importados: '+ok+(err?' ('+err+' erros)':'')+' — falta preencher tarifa, nº de quartos e estado WMF em cada um','ok');
+}
 
 //  ÁRBITROS 
 async function saveArb(){
@@ -7610,10 +7663,10 @@ const HELP = {
     o:'Registo hora a hora dos 5 dias do evento. Cada item tem dia, hora, título, local/descrição, tipo de actividade e responsável.',
     steps:['Clica "+ Adicionar item" para criar um novo item no programa.','Escolhe o dia, hora e tipo de actividade (Competicao, Cerimonia, Treino, etc.).','Os itens aparecem automaticamente ordenados por hora em cada dia.','O PDF oficial inclui todos os dias com cabecalho e 5 logos institucionais.'],
     warn:'O Programa e usado pelo Modo Evento para determinar a sessao actual. Introduz as horas com precisao.'},
-  atletas:{icon:'&#9675;',title:'Atletas & Inscrições',sub:'Gestao de participantes',
-    o:'Registo completo de todos os atletas inscritos no SWC Vizela 2026 — dados pessoais, categoria, taxa de inscrição, hotel e estado de confirmação.',
-    steps:['Clica "+ Novo atleta" para adicionar um participante.','Campos obrigatorios: Nome, Pais, Categoria (Homens/Senhoras).','O campo Taxa de inscrição (conta SNC 729) alimenta automaticamente o Relatório WMF/EMF.','Para que os dados aparecam no Relatorio WMF, a taxa deve ser tambem lancada nas Receitas com conta 729.'],
-    warn:'Nunca usar "FP Minigolfe" — usar sempre "FPM". O sistema de resultados usa o nome exacto do atleta para cruzar dados.'},
+  atletas:{icon:'&#9675;',title:'Atletas & Inscrições',sub:'Ensaio (2024) + confirmação real caso a caso',
+    o:'Esta lista arranca com 101 nomes de referência de 2024 — um ensaio para testares o sistema (diplomas, hotéis, taxas), não a lista real de 2026. A lista real só chega no "Entry by Name" da EMF, agendado para 12 de outubro de 2026 (ver Cronologia). Até lá, usa o filtro por país para ires confirmando pessoa a pessoa, à medida que souberes quem vem de cada país.',
+    steps:['Vem do separador "Inscrições Confirmadas" — clica "👥 Ver atletas" numa linha de país para chegares aqui já filtrado por esse país.','As entradas cinzentas com "Ref.2024" são só o ensaio — se essa pessoa vier mesmo em 2026, clica "✓ Confirmar 2026" (fica com estado Pendente, editável depois).','Se souberes que alguém de 2024 NÃO vem em 2026, apaga essa entrada (🗑️).','Se vier alguém que não esteve em 2024, usa "+ Novo atleta" — o país já fica pré-selecionado se vieres do filtro.','Quando a EMF mandar o Entry by Name real (12 out.), substitui tudo: apaga o que sobrar de Ref.2024 por confirmar, e garante que só ficam nomes reais.'],
+    warn:'Os números do separador "Inscrições Confirmadas" (por país) são a fonte fiável agora — esta lista de nomes só fica fiável depois de confirmares pessoa a pessoa, ou depois do Entry by Name real da EMF. Nota à parte: nunca usar "FP Minigolfe" no campo Federação — usar sempre "FPM", o sistema de resultados cruza dados pelo nome exato.'},
   organizacao:{icon:'&#9670;',title:'Organização & COE',sub:'Comite Organizador Executivo e voluntarios',
     o:'Gestao dos membros do COE e da equipa de voluntarios de apoio ao evento.',
     steps:['Adiciona os membros do COE com nome, funcao, contacto e responsabilidade.','Para voluntarios: usa "Importar Excel" para carregar o ficheiro da equipa de apoio de uma vez.','Apos importacao, clica "Editar" em cada voluntario para atribuir a funcao no evento e seccao.','O responsável máximo decide e atribui as funções — o sistema guarda tudo em tempo real.'],
@@ -7648,7 +7701,7 @@ const HELP = {
     warn:'A ferramenta poupa-te o trabalho repetitivo (cabeçalho, formatação, assinatura, carimbo) — mas o texto específico de cada pedido continua a precisar de ti. Revê sempre antes de enviar.'},
   inscricoes:{icon:'&#127937;',title:'Inscrições Confirmadas',sub:'EMF, hotéis e outras fontes — por país',
     o:'Registo de país a país de todas as confirmações reais de participação no SWC 2026, vindas de qualquer fonte — não só da EMF oficial. É esta lista, não a de Atletas (baseada em 2024), que deve orientar decisões de logística, alojamento e transportes a partir de agora.',
-    steps:['Usa "Importar dados atuais" para carregar os 14 países já confirmados pela EMF, mais a Áustria (confirmada por reserva de hotel) e a China/Bélgica (só expectativa, sem número real ainda).','Cada país tem uma "Fonte" (EMF Oficial, Reserva de Hotel, Contacto Direto, Expectativa) — usa sempre a fonte real, não presumas.','O "Estado" distingue Confirmado (dados completos) de Detalhe Pendente (sabes o total mas não a quebra) de Por Confirmar (ainda sem número real).','Se só souberes o total de um país (ex: Áustria), preenche só o campo "Total" e deixa as categorias a 0 — o sistema não tenta inventar a quebra.'],
+    steps:['Usa "Importar dados atuais" para carregar os 14 países já confirmados pela EMF, mais a Áustria (confirmada por reserva de hotel) e a China/Bélgica (só expectativa, sem número real ainda).','Cada país tem uma "Fonte" (EMF Oficial, Reserva de Hotel, Contacto Direto, Expectativa) — usa sempre a fonte real, não presumas.','O "Estado" distingue Confirmado (dados completos) de Detalhe Pendente (sabes o total mas não a quebra) de Por Confirmar (ainda sem número real).','Se só souberes o total de um país (ex: Áustria), preenche só o campo "Total" e deixa as categorias a 0 — o sistema não tenta inventar a quebra.','Clica "👥 Ver atletas" numa linha de país para ires ao separador Atletas já filtrado por esse país, e confirmares pessoa a pessoa quem vem, com base no ensaio de 2024 ou de raiz.'],
     warn:'Esta lista pode e deve divergir da lista de Atletas (separador Atletas, baseada em inscrições de 2024) — são fontes diferentes, propositadamente. Usa esta para logística real; a de Atletas é só uma base de trabalho a validar.'},
   desportivo:{icon:'&#9671;',title:'Desportivo & Arbitros',sub:'Equipa de arbitragem',
     o:'Registo e gestao da equipa de arbitragem do evento — arbitros nacionais e internacionais.',
@@ -9865,6 +9918,7 @@ window.savePat=savePat;
 window.delPat=delPat;
 window.saveAtl=saveAtl;
 window.delAtl=delAtl;
+window.confirmarAtleta2026=confirmarAtleta2026;
 window.importarAtletas2024=importarAtletas2024;
 window.saveConv=saveConv;
 window.delConv=delConv;
@@ -9900,6 +9954,7 @@ window.editIns=editIns;
 window.delIns=delIns;
 window.importarInscricoesEMF=importarInscricoesEMF;
 window.exportInscricoesPDF=exportInscricoesPDF;
+window.verAtletasPais=verAtletasPais;
 window.savePrazo=savePrazo;
 window.concPrazo=concPrazo;
 window.saveMbr=saveMbr;
@@ -9915,6 +9970,7 @@ window.saveHot=saveHot;
 window.delHot=delHot;
 window.saveTrn=saveTrn;
 window.delTrn=delTrn;
+window.importarHoteisReais=importarHoteisReais;
 window.saveArb=saveArb;
 window.delArb=delArb;
 window.saveInv=saveInv;

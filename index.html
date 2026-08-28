@@ -3069,6 +3069,13 @@ function tick(){const n=new Date();document.getElementById('clk').textContent=n.
 
 //  UTILS 
 const fmt=v=>Number(v||0).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+'€';
+const PAIS_BANDEIRA={
+  'Alemanha':'🇩🇪','Bélgica':'🇧🇪','China':'🇨🇳','Dinamarca':'🇩🇰','Eslováquia':'🇸🇰',
+  'Finlândia':'🇫🇮','França':'🇫🇷','Holanda':'🇳🇱','Itália':'🇮🇹','Letónia':'🇱🇻',
+  'Noruega':'🇳🇴','Portugal':'🇵🇹','Reino Unido':'🇬🇧','República Checa':'🇨🇿',
+  'Suécia':'🇸🇪','Suíça':'🇨🇭','Áustria':'🇦🇹',
+};
+function bandeira(pais){return PAIS_BANDEIRA[pais]?PAIS_BANDEIRA[pais]+' ':'';}
 function openM(id){const el=document.getElementById(id);if(el)el.classList.add('op');else console.error('Modal não existe:',id);}
 function abrirNovoItemCerimonia(){
   const _e=document.getElementById('prog-eid');if(_e)_e.value='';
@@ -3271,7 +3278,7 @@ function renderAtl(){
   document.getElementById('a-pg').textContent=_atl.filter(a=>a.estado==='Pago').length;
   document.getElementById('a-pn').textContent=_atl.filter(a=>a.estado==='Pendente').length;
   document.getElementById('a-ps').textContent=new Set(_atl.map(a=>a.pais)).size;
-  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
+  document.getElementById('t-atl').innerHTML=_atl.length?_atl.map(a=>`<tr><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${a.estado==='Pago'?'bg-ok':'bg-am'}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas</td></tr>';
 }
 async function delAtl(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('atletas',id);toast('Eliminado','er');}
 async function importarAtletas2024(){
@@ -4270,7 +4277,7 @@ function renderIns(){
   const estCor=e=>e==='Confirmado'?'bg-ok':(e==='Detalhe Pendente'?'bg-am':'bg-wr');
   const lista=[..._ins].sort((a,b)=>(a.pais||'').localeCompare(b.pais||''));
   el.innerHTML=lista.length?lista.map(r=>`<tr>
-    <td class="vl">${r.pais||''}${r.obs?`<div class="mu" style="font-size:11px;">${r.obs}</div>`:''}</td>
+    <td class="vl">${bandeira(r.pais)}${r.pais||''}${r.obs?`<div class="mu" style="font-size:11px;">${r.obs}</div>`:''}</td>
     <td class="mu">${r.teamW||0}</td>
     <td class="mu">${r.teamM||0}</td>
     <td class="mu">${r.iWoman||0}</td>

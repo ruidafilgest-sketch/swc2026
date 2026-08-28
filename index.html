@@ -546,6 +546,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(90,160,255,.6);">Gerar cartas Word, já assinadas e carimbadas</div>
     </div>
   </div>
+  <div class="si" title="Confirmações reais por país, de todas as fontes" onclick="nav(this,'inscricoes','Inscrições Confirmadas')" style="">
+    <i class="ti ti-flag-check" style="font-size:20px;color:#5AA0FF;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Inscrições Confirmadas</div>
+      <div class="si-sub" style="color:rgba(90,160,255,.6);">EMF, hotéis e outras fontes — por país</div>
+    </div>
+  </div>
   <div class="si" title="Mapa operacional do campo" onclick="nav(this,'mapa','Mapa Operacional')" style="">
     <i class="ti ti-map-pin" style="font-size:20px;color:#FF6B35;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -996,6 +1003,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="pg" id="pg-atletas">
 <div class="st"><span class="sn">ATL</span>Atletas &amp; Inscrições<button class="hbtn" data-help="atletas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Registo por país/federação — taxas reais, estado, credenciação, alojamento atribuído</div>
+<div class="radar-card rc-crit" style="margin-bottom:18px;">
+  <div class="radar-icon">⚠️</div>
+  <div class="radar-body">
+    <div class="radar-title">Lista provisória — nomes ainda não confirmados para 2026</div>
+    <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
+  </div>
+</div>
 <div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total inscritos</div><div class="smv" id="a-tot">0</div></div>
@@ -1298,6 +1312,42 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="tw"><table><thead><tr><th>Data</th><th>Categoria</th><th>Destinatário</th><th>Cargo / Entidade</th><th>Assunto</th><th id="th-correio">Ações</th></tr></thead>
 <tbody id="t-correio"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem cartas geradas ainda</td></tr></tbody></table></div>
 </div>
+
+<!-- INSCRIÇÕES CONFIRMADAS -->
+<div class="pg" id="pg-inscricoes">
+<div class="st"><span class="sn">REG</span>Inscrições Confirmadas<button class="hbtn" data-help="inscricoes" onclick="openHelp(this.dataset.help)">?</button></div>
+<div class="sd">Confirmações reais por país, de todas as fontes — EMF oficial, reservas de hotel, contactos diretos</div>
+
+<div class="g4" style="margin-bottom:14px;">
+  <div class="sm"><div class="sml">Países confirmados</div><div class="smv" id="ins-npaises">0</div></div>
+  <div class="sm"><div class="sml">Total de participantes</div><div class="smv" id="ins-total">0</div></div>
+  <div class="sm"><div class="sml">Com detalhe pendente</div><div class="smv" id="ins-pendente" style="color:var(--am,#c9a84c)">0</div></div>
+  <div class="sm"><div class="sml">Por confirmar</div><div class="smv" id="ins-porconf" style="color:var(--wr)">0</div></div>
+</div>
+
+<div class="bb" id="bar-inscricoes">
+  <button class="btn bp" onclick="const _e=document.getElementById('ins-eid');if(_e)_e.value='';openM('m-ins')">+ Novo registo</button>
+  <button class="btn bo" onclick="importarInscricoesEMF()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar dados atuais</button>
+  <button class="btn bo" onclick="exportInscricoesPDF()">Exportar PDF</button>
+</div>
+
+<div class="tw"><table><thead><tr><th>País</th><th>Equipa F</th><th>Equipa M</th><th>Ind. F</th><th>Ind. M</th><th>Treinadores</th><th>Total</th><th>Fonte</th><th>Estado</th><th id="th-inscricoes">Ações</th></tr></thead>
+<tbody id="t-inscricoes"><tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem registos — usa "Importar dados atuais"</td></tr></tbody></table></div>
+</div>
+
+<div class="mo" id="m-ins"><div class="mdl">
+  <div class="mh"><div class="mt2">Registo de Inscrição — País</div><button class="mc" onclick="closeM('m-ins')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="ins-eid">
+    <div class="fg"><div class="fl">País</div><input class="fi" id="in-pais" placeholder="ex: Áustria"></div>
+    <div class="fr"><div class="fg"><div class="fl">Equipa Feminina</div><input class="fi" type="number" id="in-tw" value="0"></div><div class="fg"><div class="fl">Equipa Masculina</div><input class="fi" type="number" id="in-tm" value="0"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Individual Feminino</div><input class="fi" type="number" id="in-iw" value="0"></div><div class="fg"><div class="fl">Individual Masculino</div><input class="fi" type="number" id="in-im" value="0"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Treinadores</div><input class="fi" type="number" id="in-co" value="0"></div><div class="fg"><div class="fl">Total (se só souberes o total)</div><input class="fi" type="number" id="in-tot" placeholder="deixa em branco se preencheres as categorias acima"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Fonte da confirmação</div><select class="fse" id="in-fonte"><option>EMF Oficial</option><option>Reserva de Hotel</option><option>Contacto Direto da Federação</option><option>Expectativa (histórico)</option><option>Outro</option></select></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="in-estado"><option>Confirmado</option><option>Detalhe Pendente</option><option>Por Confirmar</option></select></div></div>
+    <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="in-obs" placeholder="ex: confirmado por reserva de hotel em 27/08, detalhe de equipas/individuais ainda por vir"></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-ins')">Cancelar</button><button class="btn bp" onclick="saveIns()">Guardar</button></div>
+</div></div>
 
 <!-- DESPORTIVO -->
 <div class="pg" id="pg-desportivo">
@@ -3002,6 +3052,7 @@ function nav(el,id,title){
   if(id==='salacomando'){renderCmd();renderRadar();}
   if(id==='goldwmf'){renderGld();}
   if(id==='correio'){renderCorreio();aplicarModeloCorreio();}
+  if(id==='inscricoes'){renderIns();}
   if(id==='diariobordo'){renderDiarioBordo();}
   if(id==='acreditacoes'){renderAccred();}
   if(id==='rooming'){renderRooming();}
@@ -3029,7 +3080,7 @@ function closeM(id){document.getElementById(id).classList.remove('op');}
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
 //  DATA 
-let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[];
+let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[],_ins=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
@@ -3043,6 +3094,7 @@ function loadAll(){
   _snap('salaComando',(docs)=>{_cmd=docs;renderCmd();});
   _snap('goldSponsorsWMF',(docs)=>{_gld=docs;renderGld();});
   _snap('correspondencia',(docs)=>{_cor=docs;renderCorreio();});
+  _snap('inscricoesConfirmadas',(docs)=>{_ins=docs;renderIns();});
   _snap('prazos',(docs)=>{_praz=docs;renderCron();},'data');
   _snap('membros',(docs)=>{_mbr=docs;renderOrg();});
   _snap('boardEmf',(docs)=>{_boardEmf=docs;renderOrg();});
@@ -3776,6 +3828,12 @@ function computeRadarAlerts(){
     alerts.push({sev:'warn',icon:'🤝',titulo:'Patrocínios',desc:patProp.length+' proposta(s) enviada(s) aguardam resposta ('+fmt(val)+')',tab:'patrocinios',tabLabel:'Patrocínios & CRM'});
   }
 
+  // Inscrições Confirmadas
+  const insPendente=(_ins||[]).filter(r=>r.estado==='Detalhe Pendente').length;
+  const insPorConf=(_ins||[]).filter(r=>r.estado==='Por Confirmar').length;
+  if(insPendente>0)alerts.push({sev:'warn',icon:'🏳️',titulo:'Inscrições Confirmadas',desc:insPendente+' país(es) confirmado(s) só com total, sem quebra por categoria',tab:'inscricoes',tabLabel:'Inscrições Confirmadas'});
+  if(insPorConf>0)alerts.push({sev:'crit',icon:'🏳️',titulo:'Inscrições Confirmadas',desc:insPorConf+' país(es) esperado(s) sem número real confirmado — logística em risco',tab:'inscricoes',tabLabel:'Inscrições Confirmadas'});
+
   // Alojamento
   const hotVerificar=(_hot||[]).filter(h=>h.wmf==='P').length;
   const hotFora=(_hot||[]).filter(h=>h.wmf&&h.wmf!=='S'&&h.wmf!=='P').length;
@@ -4158,6 +4216,116 @@ function renderCorreio(){
     const d=c.ts?new Date(c.ts).toLocaleDateString('pt-PT'):'';
     return `<tr><td class="mu">${d}</td><td><span class="bge bg-g">${c.categoria||''}</span></td><td class="vl">${c.nome||''}</td><td class="mu">${c.entidade||''}</td><td class="mu" style="font-size:12px;">${c.assunto||''}</td>${canDelete()?`<td><button class="btn bd2 bsm" onclick="delCorreio('${c.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join(''):'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem cartas geradas ainda</td></tr>';
+}
+
+//  INSCRIÇÕES CONFIRMADAS 
+async function saveIns(){
+  if(!canEdit())return;
+  const tw=Number(document.getElementById('in-tw').value||0);
+  const tm=Number(document.getElementById('in-tm').value||0);
+  const iw=Number(document.getElementById('in-iw').value||0);
+  const im=Number(document.getElementById('in-im').value||0);
+  const co=Number(document.getElementById('in-co').value||0);
+  const totManual=document.getElementById('in-tot').value;
+  const somaCategorias=tw+tm+iw+im+co;
+  const total=totManual!==''?Number(totManual):somaCategorias;
+  const d={
+    pais:document.getElementById('in-pais').value,
+    teamW:tw,teamM:tm,iWoman:iw,iMen:im,coaches:co,
+    total:total,
+    fonte:document.getElementById('in-fonte').value,
+    estado:document.getElementById('in-estado').value,
+    obs:document.getElementById('in-obs').value,
+    ts:Date.now()
+  };
+  const _e=document.getElementById('ins-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('inscricoesConfirmadas',_eid,d);if(_e)_e.value='';toast('Registo actualizado');}else{await _add('inscricoesConfirmadas',d);toast('Registo criado');}
+  closeM('m-ins');
+}
+function editIns(id){
+  const r=_ins.find(x=>x.id===id);if(!r)return;
+  document.getElementById('ins-eid').value=r.id;
+  document.getElementById('in-pais').value=r.pais||'';
+  document.getElementById('in-tw').value=r.teamW||0;
+  document.getElementById('in-tm').value=r.teamM||0;
+  document.getElementById('in-iw').value=r.iWoman||0;
+  document.getElementById('in-im').value=r.iMen||0;
+  document.getElementById('in-co').value=r.coaches||0;
+  document.getElementById('in-tot').value='';
+  document.getElementById('in-fonte').value=r.fonte||'EMF Oficial';
+  document.getElementById('in-estado').value=r.estado||'Confirmado';
+  document.getElementById('in-obs').value=r.obs||'';
+  openM('m-ins');
+}
+async function delIns(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('inscricoesConfirmadas',id);}
+function renderIns(){
+  const totEl=document.getElementById('ins-npaises');if(!totEl)return;
+  totEl.textContent=_ins.length;
+  const totalPart=_ins.reduce((a,r)=>a+Number(r.total||0),0);
+  document.getElementById('ins-total').textContent=totalPart;
+  document.getElementById('ins-pendente').textContent=_ins.filter(r=>r.estado==='Detalhe Pendente').length;
+  document.getElementById('ins-porconf').textContent=_ins.filter(r=>r.estado==='Por Confirmar').length;
+
+  const el=document.getElementById('t-inscricoes');if(!el)return;
+  const estCor=e=>e==='Confirmado'?'bg-ok':(e==='Detalhe Pendente'?'bg-am':'bg-wr');
+  const lista=[..._ins].sort((a,b)=>(a.pais||'').localeCompare(b.pais||''));
+  el.innerHTML=lista.length?lista.map(r=>`<tr>
+    <td class="vl">${r.pais||''}${r.obs?`<div class="mu" style="font-size:11px;">${r.obs}</div>`:''}</td>
+    <td class="mu">${r.teamW||0}</td>
+    <td class="mu">${r.teamM||0}</td>
+    <td class="mu">${r.iWoman||0}</td>
+    <td class="mu">${r.iMen||0}</td>
+    <td class="mu">${r.coaches||0}</td>
+    <td class="vl">${r.total||0}</td>
+    <td class="mu" style="font-size:12px;">${r.fonte||''}</td>
+    <td><span class="bge ${estCor(r.estado)}">${r.estado||'Confirmado'}</span></td>
+    ${canEdit()?`<td><button class="btn bo bsm" onclick="editIns('${r.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delIns('${r.id}')">🗑️</button>`:''}</td>`:'<td></td>'}
+  </tr>`).join(''):'<tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem registos — usa "Importar dados atuais"</td></tr>';
+}
+async function importarInscricoesEMF(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const ITENS=[
+    {pais:'República Checa',teamW:4,teamM:7,iWoman:0,iMen:0,coaches:4,total:15,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Dinamarca',teamW:4,teamM:6,iWoman:0,iMen:0,coaches:1,total:11,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Finlândia',teamW:0,teamM:0,iWoman:1,iMen:3,coaches:2,total:6,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'França',teamW:0,teamM:0,iWoman:0,iMen:3,coaches:0,total:3,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Reino Unido',teamW:0,teamM:0,iWoman:1,iMen:3,coaches:0,total:4,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Alemanha',teamW:4,teamM:7,iWoman:0,iMen:0,coaches:5,total:16,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Itália',teamW:3,teamM:7,iWoman:0,iMen:0,coaches:4,total:14,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Letónia',teamW:0,teamM:0,iWoman:0,iMen:1,coaches:0,total:1,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Holanda',teamW:0,teamM:7,iWoman:1,iMen:0,coaches:2,total:10,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Noruega',teamW:0,teamM:0,iWoman:0,iMen:2,coaches:0,total:2,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Portugal',teamW:4,teamM:7,iWoman:0,iMen:0,coaches:4,total:15,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Suíça',teamW:4,teamM:7,iWoman:0,iMen:0,coaches:5,total:16,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Eslováquia',teamW:0,teamM:7,iWoman:0,iMen:0,coaches:1,total:8,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Suécia',teamW:0,teamM:6,iWoman:1,iMen:0,coaches:1,total:8,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
+    {pais:'Áustria',teamW:0,teamM:0,iWoman:0,iMen:0,coaches:0,total:16,fonte:'Reserva de Hotel',estado:'Detalhe Pendente',obs:'Confirmado por reserva de hotel (visita 27/08) — quebra por equipas/individuais/treinadores ainda por vir'},
+    {pais:'China',teamW:0,teamM:0,iWoman:0,iMen:0,coaches:0,total:0,fonte:'Expectativa (histórico)',estado:'Por Confirmar',obs:'Presença esperada com base em 2024 — sem número real confirmado'},
+    {pais:'Bélgica',teamW:0,teamM:0,iWoman:0,iMen:0,coaches:0,total:0,fonte:'Expectativa (histórico)',estado:'Por Confirmar',obs:'Presença esperada com base em 2024 — sem número real confirmado'},
+  ];
+  const jaImportados=ITENS.filter(m=>_ins.some(x=>x.pais===m.pais));
+  const porImportar=ITENS.filter(m=>!_ins.some(x=>x.pais===m.pais));
+  if(!porImportar.length){toast('Dados já estão todos importados — nada a fazer.','inf');return;}
+  if(jaImportados.length&&!confirm('Já existem '+jaImportados.length+' país(es) importado(s). Vão ser ignorados. Importar apenas os '+porImportar.length+' que faltam?'))return;
+  let ok=0,err=0;
+  toast('A importar '+porImportar.length+' país(es)...','inf');
+  for(const it of porImportar){
+    try{await _add('inscricoesConfirmadas',{...it,ts:Date.now()});ok++;}
+    catch(e){console.error('Erro ao importar',it.pais,e);err++;}
+  }
+  toast('Importado: '+ok+' país(es)'+(err?' ('+err+' erros)':''),'ok');
+}
+function exportInscricoesPDF(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Inscrições Confirmadas','Todas as fontes — EMF, hotéis e outras confirmações',true);
+  const lista=[..._ins].sort((a,b)=>(a.pais||'').localeCompare(b.pais||''));
+  const rows=lista.map(r=>[r.pais||'',String(r.teamW||0),String(r.teamM||0),String(r.iWoman||0),String(r.iMen||0),String(r.coaches||0),String(r.total||0),r.fonte||'',r.estado||'']);
+  const totalGeral=lista.reduce((a,r)=>a+Number(r.total||0),0);
+  doc.autoTable({startY:44,head:[['País','Eq.F','Eq.M','Ind.F','Ind.M','Treinadores','Total','Fonte','Estado']],body:rows.length?rows:[['Sem registos','','','','','','','','']],foot:[['TOTAL','','','','','',String(totalGeral),'','']],theme:'grid',styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76]},footStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},margin:{bottom:26}});
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Inscricoes_Confirmadas.pdf');
 }
 
 //  PRAZOS 
@@ -7471,6 +7639,10 @@ const HELP = {
     o:'Gera cartas profissionais em formato Word (.docx), com texto de partida já adaptado à categoria do destinatário, e com a assinatura do Rui Granja da Cunha e o carimbo da Vizelgolfe já inseridos — a mesma qualidade das cartas feitas à mão ao longo deste projeto.',
     steps:['Escolhe a categoria (Comissão de Honra, Patrocinador, Federação, Fornecedor, Escola/Escuteiros, Autarquia, ou Outro) — o texto sugerido muda automaticamente.','Preenche o nome e/ou a entidade do destinatário, e o tratamento (Exmo./Exma./neutro).','Revê e ajusta o "Corpo da carta" à vontade — o texto sugerido é só um ponto de partida.','Clica em "Gerar carta em Word" — o ficheiro .docx é transferido automaticamente para o teu computador.','Cada carta gerada fica registada no histórico, com data, categoria e destinatário.'],
     warn:'A ferramenta poupa-te o trabalho repetitivo (cabeçalho, formatação, assinatura, carimbo) — mas o texto específico de cada pedido continua a precisar de ti. Revê sempre antes de enviar.'},
+  inscricoes:{icon:'&#127937;',title:'Inscrições Confirmadas',sub:'EMF, hotéis e outras fontes — por país',
+    o:'Registo de país a país de todas as confirmações reais de participação no SWC 2026, vindas de qualquer fonte — não só da EMF oficial. É esta lista, não a de Atletas (baseada em 2024), que deve orientar decisões de logística, alojamento e transportes a partir de agora.',
+    steps:['Usa "Importar dados atuais" para carregar os 14 países já confirmados pela EMF, mais a Áustria (confirmada por reserva de hotel) e a China/Bélgica (só expectativa, sem número real ainda).','Cada país tem uma "Fonte" (EMF Oficial, Reserva de Hotel, Contacto Direto, Expectativa) — usa sempre a fonte real, não presumas.','O "Estado" distingue Confirmado (dados completos) de Detalhe Pendente (sabes o total mas não a quebra) de Por Confirmar (ainda sem número real).','Se só souberes o total de um país (ex: Áustria), preenche só o campo "Total" e deixa as categorias a 0 — o sistema não tenta inventar a quebra.'],
+    warn:'Esta lista pode e deve divergir da lista de Atletas (separador Atletas, baseada em inscrições de 2024) — são fontes diferentes, propositadamente. Usa esta para logística real; a de Atletas é só uma base de trabalho a validar.'},
   desportivo:{icon:'&#9671;',title:'Desportivo & Arbitros',sub:'Equipa de arbitragem',
     o:'Registo e gestao da equipa de arbitragem do evento — arbitros nacionais e internacionais.',
     steps:['Adiciona cada arbitro com nome, pais, federacao, funcao e hotel atribuido.','Funcoes disponiveis: Arbitro Principal, Arbitro de Campo, Auxiliar, Observador WMF/EMF.','O PDF exporta a lista completa para entregar a WMF/EMF no inicio do evento.'],
@@ -9716,6 +9888,11 @@ window.exportGoldWMFPDF=exportGoldWMFPDF;
 window.aplicarModeloCorreio=aplicarModeloCorreio;
 window.gerarCartaCorreio=gerarCartaCorreio;
 window.delCorreio=delCorreio;
+window.saveIns=saveIns;
+window.editIns=editIns;
+window.delIns=delIns;
+window.importarInscricoesEMF=importarInscricoesEMF;
+window.exportInscricoesPDF=exportInscricoesPDF;
 window.savePrazo=savePrazo;
 window.concPrazo=concPrazo;
 window.saveMbr=saveMbr;

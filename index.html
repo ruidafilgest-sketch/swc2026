@@ -7561,7 +7561,8 @@ function renderCertificados(){
         <div style="font-size:11px;color:var(--mu);">${a.pais||''} · ${a.categoria==='SM'?'Séniores Masc.':'Séniores Fem.'}</div>
         ${res?`<div style="font-size:10px;color:var(--gl);margin-top:2px;">Total: ${res.total} · Pos. ${_resultados.filter(r=>r.categoria===a.categoria).sort((x,y)=>x.total-y.total).findIndex(r=>r.nome===a.nome)+1}.</div>`:''}
       </div>
-      <button class="btn bo bsm" onclick="exportCertificado('${a.id}')">PDF</button>
+      <button class="btn bo bsm" onclick="exportCertificado('${a.id}','PT')">PT</button>
+      <button class="btn bo bsm" onclick="exportCertificado('${a.id}','EN')">EN</button>
     </div>`;
   }).join('');
 }
@@ -7572,130 +7573,124 @@ function _certNum(str){
   return 'SWC2026-'+String(10000+(h%89999)).padStart(5,'0');
 }
 
-function exportCertificado(atlId){
+const PAIS_DEMONIMO_PT={
+  'Alemanha':'da Alemanha','Bélgica':'da Bélgica','China':'da China','Dinamarca':'da Dinamarca',
+  'Eslováquia':'da Eslováquia','Finlândia':'da Finlândia','França':'da França','Holanda':'da Holanda',
+  'Itália':'da Itália','Letónia':'da Letónia','Noruega':'da Noruega','Portugal':'de Portugal',
+  'Reino Unido':'do Reino Unido','República Checa':'da República Checa','Suécia':'da Suécia',
+  'Suíça':'da Suíça','Áustria':'da Áustria',
+};
+const PAIS_EN={
+  'Alemanha':'Germany','Bélgica':'Belgium','China':'China','Dinamarca':'Denmark',
+  'Eslováquia':'Slovakia','Finlândia':'Finland','França':'France','Holanda':'Netherlands',
+  'Itália':'Italy','Letónia':'Latvia','Noruega':'Norway','Portugal':'Portugal',
+  'Reino Unido':'United Kingdom','República Checa':'Czech Republic','Suécia':'Sweden',
+  'Suíça':'Switzerland','Áustria':'Austria',
+};
+function exportCertificado(atlId, lang){
+  lang = lang || 'PT';
   const atl=_atl.find(a=>a.id===atlId);
   if(!atl)return;
-  const res=_resultados.find(r=>r.nome===atl.nome&&r.categoria===atl.categoria);
-  const ranking=res?_resultados.filter(r=>r.categoria===atl.categoria).sort((a,b)=>a.total-b.total).findIndex(r=>r.nome===atl.nome)+1:null;
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  const W=297,H=210;
-  const FRAME_BOTTOM=183; // termina antes do rodape oficial (que comeca aos 188mm) — nunca sobrepor
-  const medalCor = ranking===1?[212,175,55] : ranking===2?[192,192,192] : ranking===3?[176,124,80] : null;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,H=297;
+  const NAVY=[14,30,60], GOLD=[196,158,74], GRAY=[100,100,105];
 
-  // ---------- Fundo ----------
-  doc.setFillColor(8,15,32);doc.rect(0,0,W,H,'F');
+  // Fundo e moldura
+  doc.setFillColor(250,248,244);doc.rect(0,0,W,H,'F');
+  doc.setDrawColor(...GOLD);doc.setLineWidth(2.2);doc.rect(5,5,W-10,H-10,'S');
+  doc.setDrawColor(...NAVY);doc.setLineWidth(0.5);doc.rect(9,9,W-18,H-18,'S');
 
-  // ---------- Moldura tripla com ornamentos de canto ----------
-  doc.setDrawColor(201,168,76);
-  doc.setLineWidth(0.6);doc.rect(8,8,W-16,FRAME_BOTTOM-8,'S');
-  doc.setLineWidth(0.2);doc.rect(11.5,11.5,W-23,FRAME_BOTTOM-19.5,'S');
-  doc.setFillColor(201,168,76);doc.rect(8,8,W-16,1.2,'F'); // barra topo
-  doc.rect(8,FRAME_BOTTOM-1.2,W-16,1.2,'F'); // barra base
+  // Flourish navy nos cantos (superior-esquerdo e inferior-direito)
+  doc.setFillColor(...NAVY);
+  doc.triangle(5,5,45,5,5,45,'F');
+  doc.triangle(W-5,H-5,W-45,H-5,W-5,H-45,'F');
+  doc.setDrawColor(...GOLD);doc.setLineWidth(0.5);
+  doc.line(5,38,38,5);
+  doc.line(W-5,H-38,W-38,H-5);
 
-  // Cantos ornamentais (esquadros duplos)
-  const cornerLen=9;
-  [[8,8,1,1],[W-8,8,-1,1],[8,FRAME_BOTTOM,1,-1],[W-8,FRAME_BOTTOM,-1,-1]].forEach(([cx,cy,dx,dy])=>{
-    doc.setDrawColor(201,168,76);doc.setLineWidth(0.9);
-    doc.line(cx,cy+3*dy,cx,cy+cornerLen*dy);
-    doc.line(cx+3*dx,cy,cx+cornerLen*dx,cy);
-    doc.setFillColor(201,168,76);
-    doc.circle(cx+3.2*dx,cy+3.2*dy,0.7,'F');
-  });
+  // Logotipo SWC
+  try{doc.addImage(_LOGO_B64,'JPEG',W/2-19,14,38,24);}catch(e){}
 
-  // Losango decorativo centrado no topo e na base da moldura
-  [16,FRAME_BOTTOM-1].forEach(cy=>{
-    doc.setFillColor(8,15,32);
-    doc.triangle(W/2-2.2,cy,W/2,cy-2.2,W/2+2.2,cy,'F');
-    doc.triangle(W/2-2.2,cy,W/2,cy+2.2,W/2+2.2,cy,'F');
-    doc.setDrawColor(201,168,76);doc.setLineWidth(0.35);
-    doc.line(W/2-2.2,cy,W/2,cy-2.2);doc.line(W/2,cy-2.2,W/2+2.2,cy);
-    doc.line(W/2-2.2,cy,W/2,cy+2.2);doc.line(W/2,cy+2.2,W/2+2.2,cy);
-  });
+  let y=50;
+  // Titulo
+  doc.setFont('times','bold');doc.setTextColor(...NAVY);
+  doc.setFontSize(30);
+  doc.text(lang==='EN'?'CERTIFICATE':'CERTIFICADO',W/2,y,{align:'center'});
+  y+=11;
+  doc.setFontSize(19);
+  doc.text(lang==='EN'?'OF PARTICIPATION':'DE PARTICIPAÇÃO',W/2,y,{align:'center'});
+  y+=7;
 
-  // ---------- Cabecalho institucional ----------
-  try{doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',W/2-13,14,26,26);}catch(e){}
-  doc.setFontSize(10.5);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
-  doc.text('VIZELGOLFE · ASSOCIAÇÃO DE MINIGOLFE DE VIZELA',W/2,46,{align:'center'});
-  doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
-  doc.text('Seniors World Minigolf Championship  ·  SWC Vizela 2026  ·  under the authority of WMF / EMF / FPM',W/2,52,{align:'center'});
+  // Divisor com losango
+  doc.setDrawColor(...GOLD);doc.setLineWidth(0.3);
+  doc.line(W/2-32,y,W/2-4,y);doc.line(W/2+4,y,W/2+32,y);
+  doc.setFillColor(...GOLD);
+  doc.triangle(W/2-1.2,y-1.2,W/2,y-2.4,W/2+1.2,y-1.2,'F');
+  doc.triangle(W/2-1.2,y+1.2,W/2,y+2.4,W/2+1.2,y+1.2,'F');
+  y+=10;
 
-  // ---------- Titulo ----------
-  doc.setFontSize(25);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
-  doc.text('C E R T I F I C A D O   D E   P A R T I C I P A Ç Ã O',W/2,68,{align:'center'});
+  doc.setFont('times','normal');doc.setFontSize(13);doc.setTextColor(...NAVY);
+  doc.text(lang==='EN'?'This is to certify that':'Certifica-se que',W/2,y,{align:'center'});
+  y+=8;
 
-  // Divisor decorativo com losango central
-  doc.setDrawColor(201,168,76);doc.setLineWidth(0.4);
-  doc.line(W/2-52,72.5,W/2-4,72.5);doc.line(W/2+4,72.5,W/2+52,72.5);
-  doc.setFillColor(201,168,76);
-  doc.triangle(W/2-2,72.5,W/2,71,W/2+2,72.5,'F');doc.triangle(W/2-2,72.5,W/2,74,W/2+2,72.5,'F');
-
-  // ---------- Nome do atleta (peca central) ----------
-  doc.setFontSize(33);doc.setFont('helvetica','bold');doc.setTextColor(232,201,106);
-  doc.text(atl.nome||'',W/2,90,{align:'center'});
-  doc.setDrawColor(201,168,76);doc.setLineWidth(0.25);
-  doc.line(W/2-60,94,W/2+60,94);
-
-  // Badge de categoria + pais
-  const catLabel=atl.categoria==='SM'?'SENIORS MEN':'SENIORS WOMEN';
-  const badgeTxt=(atl.pais||'').toUpperCase()+'   ·   '+catLabel;
-  doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(210,200,175);
-  doc.text(badgeTxt,W/2,103,{align:'center'});
-
-  // ---------- Selo de podio (se aplicavel) ou linha de participacao ----------
-  if(res && ranking){
-    const sy=118;
-    if(medalCor){
-      doc.setFillColor(medalCor[0],medalCor[1],medalCor[2]);
-      doc.circle(W/2,sy,8.5,'F');
-      doc.setDrawColor(8,15,32);doc.setLineWidth(0.4);doc.circle(W/2,sy,8.5,'S');
-      doc.setFillColor(8,15,32);doc.circle(W/2,sy,6,'F');
-      doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(medalCor[0],medalCor[1],medalCor[2]);
-      doc.text(String(ranking)+'º',W/2,sy+2.2,{align:'center'});
-      doc.setFontSize(10.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
-      doc.text('FINAL RESULT: '+res.total+' STROKES  ·  '+String(ranking)+(ranking===1?'ST':ranking===2?'ND':ranking===3?'RD':'TH')+' PLACE OVERALL',W/2,sy+15,{align:'center'});
-    } else {
-      doc.setFontSize(10.5);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
-      doc.text('FINAL RESULT: '+res.total+' strokes  ·  Position: '+ranking+'.',W/2,sy,{align:'center'});
-    }
+  // Caixa nome + bandeira
+  const boxH=22;
+  doc.setDrawColor(...GOLD);doc.setLineWidth(0.4);
+  doc.roundedRect(30,y,W-60,boxH,1.5,1.5,'S');
+  const iso=PAIS_BANDEIRA[atl.pais];
+  if(iso&&BANDEIRA_PNG[iso]){
+    try{doc.addImage(BANDEIRA_PNG[iso],'PNG',35,y+4.5,20,14);}catch(e){}
   }
+  doc.setFont('times','bold');doc.setFontSize(20);doc.setTextColor(...NAVY);
+  doc.text((atl.nome||'').toUpperCase(),W/2+8,y+boxH/2+3,{align:'center'});
+  y+=boxH+10;
 
   // Texto de participacao
-  doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(150,130,80);
-  doc.text('for outstanding participation in the Seniors World Minigolf Championship',W/2,140,{align:'center'});
-  doc.text('14–17 October 2026  ·  Vizela, Portugal',W/2,146,{align:'center'});
+  doc.setFont('times','normal');doc.setFontSize(11.5);doc.setTextColor(...NAVY);
+  const demo=lang==='EN'?(PAIS_EN[atl.pais]||atl.pais||''):(PAIS_DEMONIMO_PT[atl.pais]||atl.pais||'');
+  const txt1=lang==='EN'
+    ? `officially participated in the Seniors World Championship of Minigolf, representing the National Team of ${demo}.`
+    : `participou oficialmente no Campeonato do Mundo de Seniores de Minigolfe, representando a Seleção Nacional ${demo}.`;
+  const lines1=doc.splitTextToSize(txt1,W-56);
+  lines1.forEach(l=>{doc.text(l,W/2,y,{align:'center'});y+=6.5;});
+  y+=4;
 
-  // ---------- Bloco de assinaturas com selo oficial ----------
-  doc.setFillColor(248,245,235);
-  doc.roundedRect(14,151,W-28,26,3,3,'F');
-  doc.setFillColor(201,168,76);doc.rect(14,151,W-28,1.2,'F');
-  doc.setDrawColor(20,20,20);doc.setLineWidth(0.5);
-  doc.line(38,167,110,167);
-  doc.line(187,167,259,167);
-  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(20,20,20);
-  doc.text('President COE',74,173,{align:'center'});
-  doc.text('WMF Representative',223,173,{align:'center'});
+  doc.setDrawColor(...GOLD);doc.setLineWidth(0.3);
+  doc.line(W/2-32,y,W/2-4,y);doc.line(W/2+4,y,W/2+32,y);
+  doc.setFillColor(...GOLD);
+  doc.triangle(W/2-1.2,y-1.2,W/2,y-2.4,W/2+1.2,y-1.2,'F');
+  doc.triangle(W/2-1.2,y+1.2,W/2,y+2.4,W/2+1.2,y+1.2,'F');
+  y+=9;
 
-  // Selo circular oficial ao centro
-  doc.setFillColor(255,255,255);doc.circle(W/2,164,9.5,'F');
-  doc.setDrawColor(201,168,76);doc.setLineWidth(0.7);doc.circle(W/2,164,9.5,'S');
-  doc.setLineWidth(0.25);doc.circle(W/2,164,7.7,'S');
-  doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);
-  doc.text('SWC',W/2,162,{align:'center'});
-  doc.text('VIZELA',W/2,165.3,{align:'center'});
-  doc.text('2026',W/2,168.6,{align:'center'});
+  const txt2=lang==='EN'
+    ? `This prestigious World Championship took place at the Fonseca e Castro Course, Parque das Termas, in the city of Vizela, Portugal, from 14 to 17 October 2026.`
+    : `Este prestigiado Campeonato do Mundo realizou-se no Campo Fonseca e Castro, Parque das Termas, na Cidade de Vizela, Portugal, de 14 a 17 de outubro de 2026.`;
+  const lines2=doc.splitTextToSize(txt2,W-56);
+  lines2.forEach(l=>{doc.text(l,W/2,y,{align:'center'});y+=6.5;});
 
-  // ---------- Rodape do corpo: nº certificado, data emissao, lema ----------
-  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(120,100,60);
-  doc.text('Cert. Nº '+_certNum(atl.id||atl.nome),18,180);
-  doc.text('Issued: 17 October 2026',W-18,180,{align:'right'});
-  doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(150,130,80);
-  doc.text('Fair Play  ·  Friendship  ·  World Minigolf',W/2,180,{align:'center'});
+  // Assinaturas
+  const sigY=205;
+  const col1=W/2-46, col2=W/2+46;
+  doc.setDrawColor(...GRAY);doc.setLineWidth(0.25);
+  doc.line(col1-24,sigY,col1+24,sigY);
+  doc.line(col2-24,sigY,col2+24,sigY);
+  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...NAVY);
+  doc.text('Rui Granja da Cunha',col1,sigY+5,{align:'center'});
+  doc.text('Ermes Franchini',col2,sigY+5,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...GRAY);
+  doc.text(lang==='EN'?'President of Vizelgolfe':'Presidente da Vizelgolfe',col1,sigY+10,{align:'center'});
+  doc.text(lang==='EN'?'President of EMF':'Presidente da EMF',col2,sigY+10,{align:'center'});
 
-  pdfFooterGoldSponsors(doc,true);
-  doc.save('SWC2026_Cert_'+(atl.nome||'atleta').replace(/ /g,'_')+'.pdf');
-  toast('Certificado gerado!');
+  // Selo Vizelgolfe junto a assinatura do Rui
+  try{doc.addImage(_CARIMBO_VZG,'PNG',col1+26,sigY-24,20,20);}catch(e){}
+
+  // Banner Gold Sponsors no fundo — com folga do canto decorativo
+  const bw=150, bh=bw*107/1005;
+  try{doc.addImage(_GOLD_BANNER,'JPEG',W/2-bw/2,H-50-bh,bw,bh);}catch(e){}
+
+  doc.save('SWC2026_Cert_'+lang+'_'+(atl.nome||'atleta').replace(/ /g,'_')+'.pdf');
+  toast(lang==='EN'?'Certificate generated!':'Certificado gerado!');
 }
-
 function exportCertificadoExemplo(){
   const exemplo={id:'ex',nome:'João Silva',pais:'Portugal',categoria:'SM'};
   const _atlBak=_atl;

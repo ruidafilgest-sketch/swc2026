@@ -1334,7 +1334,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 
 <div class="bb" id="bar-inscricoes">
-  <button class="btn bp" onclick="const _e=document.getElementById('ins-eid');if(_e)_e.value='';openM('m-ins')">+ Novo registo</button>
+  <button class="btn bp" onclick="const _e=document.getElementById('ins-eid');if(_e)_e.value='';popularSelectPais('');openM('m-ins')">+ Novo registo</button>
   <button class="btn bo" onclick="importarInscricoesEMF()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar dados atuais</button>
   <button class="btn bo" onclick="exportInscricoesPDF()">Exportar PDF</button>
 </div>
@@ -1347,11 +1347,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mh"><div class="mt2">Registo de Inscrição — País</div><button class="mc" onclick="closeM('m-ins')">✕</button></div>
   <div class="mb">
     <input type="hidden" id="ins-eid">
-    <div class="fg"><div class="fl">País</div><input class="fi" id="in-pais" placeholder="ex: Áustria"></div>
-    <div class="fr"><div class="fg"><div class="fl">Equipa Feminina</div><input class="fi" type="number" id="in-tw" value="0"></div><div class="fg"><div class="fl">Equipa Masculina</div><input class="fi" type="number" id="in-tm" value="0"></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Individual Feminino</div><input class="fi" type="number" id="in-iw" value="0"></div><div class="fg"><div class="fl">Individual Masculino</div><input class="fi" type="number" id="in-im" value="0"></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Treinadores</div><input class="fi" type="number" id="in-co" value="0"></div><div class="fg"><div class="fl">Total (se só souberes o total)</div><input class="fi" type="number" id="in-tot" placeholder="deixa em branco se preencheres as categorias acima"></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Fonte da confirmação</div><select class="fse" id="in-fonte"><option>EMF Oficial</option><option>Reserva de Hotel</option><option>Contacto Direto da Federação</option><option>Expectativa (histórico)</option><option>Outro</option></select></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="in-estado"><option>Confirmado</option><option>Detalhe Pendente</option><option>Por Confirmar</option></select></div></div>
+    <div class="fg"><div class="fl">País</div><select class="fse" id="in-pais"></select></div>
+    <div class="fg"><div class="fl">Equipa Feminina</div><input class="fi" type="number" id="in-tw" value="0"></div>
+    <div class="fg"><div class="fl">Equipa Masculina</div><input class="fi" type="number" id="in-tm" value="0"></div>
+    <div class="fg"><div class="fl">Individual Feminino</div><input class="fi" type="number" id="in-iw" value="0"></div>
+    <div class="fg"><div class="fl">Individual Masculino</div><input class="fi" type="number" id="in-im" value="0"></div>
+    <div class="fg"><div class="fl">Treinadores</div><input class="fi" type="number" id="in-co" value="0"></div>
+    <div class="fg"><div class="fl">Total (se só souberes o total)</div><input class="fi" type="number" id="in-tot" placeholder="deixa em branco se preencheres as categorias acima"></div>
+    <div class="fg"><div class="fl">Fonte da confirmação</div><select class="fse" id="in-fonte"><option>EMF Oficial</option><option>Reserva de Hotel</option><option>Contacto Direto da Federação</option><option>Expectativa (histórico)</option><option>Outro</option></select></div>
+    <div class="fg"><div class="fl">Estado</div><select class="fse" id="in-estado"><option>Confirmado</option><option>Detalhe Pendente</option><option>Por Confirmar</option></select></div>
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="in-obs" placeholder="ex: confirmado por reserva de hotel em 27/08, detalhe de equipas/individuais ainda por vir"></textarea></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-ins')">Cancelar</button><button class="btn bp" onclick="saveIns()">Guardar</button></div>
@@ -3107,6 +3111,12 @@ const BANDEIRA_PNG={
   at:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAA8CAIAAAB+RarbAAAABmJLR0QA/wD/AP+gvaeTAAAAcElEQVRoge3aUQ2AMBAFQYoClOBfAq6KizbZzih4m/u98T3vdZJ794DVBNcJrhNcJ7hOcJ3gOsF1gusE14055+4NSx13YcF1gusE1wmuE1wnuE5wneA6wXXDn1ac4DrBdYLrBNcJrhNcJ7hOcJ3guh/a8AV/xghCXQAAAABJRU5ErkJggg==',
 };
 function openM(id){const el=document.getElementById(id);if(el)el.classList.add('op');else console.error('Modal não existe:',id);}
+function popularSelectPais(selecionado){
+  const sel=document.getElementById('in-pais');if(!sel)return;
+  const paises=Object.keys(PAIS_BANDEIRA).sort();
+  const vazio=selecionado?'':'<option value="">— Selecionar país —</option>';
+  sel.innerHTML=vazio+paises.map(p=>`<option value="${p}" ${p===selecionado?'selected':''}>${p}</option>`).join('');
+}
 function abrirNovoItemCerimonia(){
   const _e=document.getElementById('prog-eid');if(_e)_e.value='';
   ['pi-dia','pi-hora','pi-titulo','pi-desc','pi-resp','pi-contacto'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='pi-hora'?'09:00':'';});
@@ -4279,6 +4289,8 @@ function renderCorreio(){
 //  INSCRIÇÕES CONFIRMADAS 
 async function saveIns(){
   if(!canEdit())return;
+  const pais=document.getElementById('in-pais').value;
+  if(!pais){toast('Escolhe um país antes de guardar','er');return;}
   const tw=Number(document.getElementById('in-tw').value||0);
   const tm=Number(document.getElementById('in-tm').value||0);
   const iw=Number(document.getElementById('in-iw').value||0);
@@ -4288,7 +4300,7 @@ async function saveIns(){
   const somaCategorias=tw+tm+iw+im+co;
   const total=totManual!==''?Number(totManual):somaCategorias;
   const d={
-    pais:document.getElementById('in-pais').value,
+    pais:pais,
     teamW:tw,teamM:tm,iWoman:iw,iMen:im,coaches:co,
     total:total,
     fonte:document.getElementById('in-fonte').value,
@@ -4303,7 +4315,7 @@ async function saveIns(){
 function editIns(id){
   const r=_ins.find(x=>x.id===id);if(!r)return;
   document.getElementById('ins-eid').value=r.id;
-  document.getElementById('in-pais').value=r.pais||'';
+  popularSelectPais(r.pais||'');
   document.getElementById('in-tw').value=r.teamW||0;
   document.getElementById('in-tm').value=r.teamM||0;
   document.getElementById('in-iw').value=r.iWoman||0;
@@ -4363,7 +4375,7 @@ async function importarInscricoesEMF(){
     {pais:'Suíça',teamW:4,teamM:7,iWoman:0,iMen:0,coaches:5,total:16,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
     {pais:'Eslováquia',teamW:0,teamM:7,iWoman:0,iMen:0,coaches:1,total:8,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
     {pais:'Suécia',teamW:0,teamM:6,iWoman:1,iMen:0,coaches:1,total:8,fonte:'EMF Oficial',estado:'Confirmado',obs:''},
-    {pais:'Áustria',teamW:0,teamM:0,iWoman:0,iMen:0,coaches:0,total:16,fonte:'Reserva de Hotel',estado:'Detalhe Pendente',obs:'Confirmado por reserva de hotel (visita 27/08) — quebra por equipas/individuais/treinadores ainda por vir'},
+    {pais:'Áustria',teamW:4,teamM:7,iWoman:0,iMen:0,coaches:4,total:15,fonte:'EMF Oficial',estado:'Confirmado',obs:'Atualizado a 01/09/2026 — confirmação oficial EMF substitui a estimativa anterior por reserva de hotel (16→15)'},
     {pais:'China',teamW:0,teamM:0,iWoman:0,iMen:0,coaches:0,total:0,fonte:'Expectativa (histórico)',estado:'Por Confirmar',obs:'Presença esperada com base em 2024 — sem número real confirmado'},
     {pais:'Bélgica',teamW:0,teamM:0,iWoman:0,iMen:0,coaches:0,total:0,fonte:'Expectativa (histórico)',estado:'Por Confirmar',obs:'Presença esperada com base em 2024 — sem número real confirmado'},
   ];
@@ -10007,6 +10019,7 @@ window.exportGoldWMFPDF=exportGoldWMFPDF;
 window.aplicarModeloCorreio=aplicarModeloCorreio;
 window.gerarCartaCorreio=gerarCartaCorreio;
 window.delCorreio=delCorreio;
+window.popularSelectPais=popularSelectPais;
 window.saveIns=saveIns;
 window.editIns=editIns;
 window.delIns=delIns;

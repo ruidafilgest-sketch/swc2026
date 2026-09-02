@@ -1011,7 +1011,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
 <div class="fr" style="max-width:680px;margin-bottom:14px;">
   <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
   <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
@@ -3161,7 +3161,14 @@ function abrirNovoItemCerimonia(){
   const tipo=document.getElementById('pi-tipo');if(tipo)tipo.value='cerimonia';
   openM('m-prog-item');
 }
-function closeM(id){document.getElementById(id).classList.remove('op');}
+function closeM(id){
+  const modal=document.getElementById(id);
+  if(!modal)return;
+  modal.classList.remove('op');
+  // Limpa sempre qualquer campo oculto de edição (id a terminar em "-eid") dentro deste modal,
+  // para nunca ficar "preso" a editar um registo antigo da próxima vez que o modal abrir para um novo.
+  modal.querySelectorAll('[id$="-eid"]').forEach(el=>{el.value='';});
+}
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
 //  DATA 
@@ -3343,6 +3350,14 @@ function renderPat(){
 async function delPat(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
 
 //  ATLETAS 
+function abrirNovoAtleta(){
+  const hid=document.getElementById('atl-eid');if(hid)hid.value='';
+  ['at-nm','at-ps','at-fd','at-ct','at-tx','at-st','at-ht','at-em'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  atualizarSelectsHoteis();
+  openM('m-atl');
+}
 async function saveAtl(){
   if(!canEdit())return;
   const d={nome:document.getElementById('at-nm').value,pais:document.getElementById('at-ps').value,federacao:document.getElementById('at-fd').value,categoria:document.getElementById('at-ct').value,taxa:parseFloat(document.getElementById('at-tx').value)||0,estado:document.getElementById('at-st').value,hotel:document.getElementById('at-ht').value,email:document.getElementById('at-em').value,ts:Date.now()};
@@ -10071,6 +10086,7 @@ window.saveDesp=saveDesp;
 window.delDesp=delDesp;
 window.savePat=savePat;
 window.delPat=delPat;
+window.abrirNovoAtleta=abrirNovoAtleta;
 window.saveAtl=saveAtl;
 window.delAtl=delAtl;
 window.confirmarAtleta2026=confirmarAtleta2026;

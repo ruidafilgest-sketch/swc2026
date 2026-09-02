@@ -89,7 +89,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 .fg{margin-bottom:13px;min-width:0;}
 .fl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gl);margin-bottom:5px;display:block;}
-.fi,.fse,.fta{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;color:var(--wh);font-family:'Montserrat',sans-serif;font-size:12px;outline:none;transition:border-color .2s;}
+.fi,.fse,.fta{width:100% !important;min-width:180px !important;box-sizing:border-box !important;display:block;background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;color:var(--wh);font-family:'Montserrat',sans-serif;font-size:12px;outline:none;transition:border-color .2s;}
 .fi:focus,.fse:focus,.fta:focus{border-color:var(--gl);}
 .fi::placeholder,.fta::placeholder{color:var(--mu);}
 .fse option{background:#112240;color:var(--wh);}
@@ -1012,7 +1012,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   </div>
 </div>
 <div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
-<div class="fg" style="max-width:320px;margin-bottom:14px;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
+<div class="fr" style="max-width:680px;margin-bottom:14px;">
+  <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
+  <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
+    <option value="">— Todos —</option>
+    <option value="reais">Só confirmados (2026)</option>
+    <option value="ref2024">Só referência 2024 (por validar)</option>
+  </select></div>
+</div>
+<div id="a-aviso-ref2024" class="av" style="display:none;margin-bottom:14px;"></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total inscritos</div><div class="smv" id="a-tot">0</div></div>
   <div class="sm"><div class="sml">Taxas pagas</div><div class="smv" id="a-pg" style="color:var(--ok)">0</div></div>
@@ -1028,7 +1036,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">ALO</span>Alojamento &amp; Logística<button class="hbtn" data-help="alojamento" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Hotéis parceiros · Rooming lists · Viatura C.M. Vizela · Transfers locais</div>
 <div class="av"><strong>Requisito WMF obrigatório:</strong> máx. 50€/noite duplo (incl. pequeno-almoço) · mín. 15m² · chuveiro privativo. Incumprimento = perda das taxas de participação.</div>
-<div class="bb" id="bar-alo"><button class="btn bp" onclick="openM('m-hot')">+ Registar hotel</button><button class="btn bo" onclick="importarHoteisReais()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar hotéis confirmados</button><button class="btn bo" onclick="openM('m-trn')">+ Registar transfer local</button></div>
+<div class="bb" id="bar-alo"><button class="btn bp" onclick="sugerirCodigoHotel();openM('m-hot')">+ Registar hotel</button><button class="btn bo" onclick="importarHoteisReais()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar hotéis confirmados</button><button class="btn bo" onclick="openM('m-trn')">+ Registar transfer local</button></div>
 <div class="g3">
   <div class="cd"><div class="cdh"><div><div class="cdt">Hotéis Parceiros</div><div class="cds">Contratos-quadro · Requisitos WMF</div></div></div><div class="cdb" id="lst-hot"><div class="em"><div class="emi">◫</div><div class="emt">Sem hotéis registados</div></div></div></div>
   <div class="cd"><div class="cdh"><div><div class="cdt">Viatura C.M. Vizela</div><div class="cds">Recurso fixo · 7 a 9 lugares</div></div></div><div class="cdb">
@@ -1812,7 +1820,6 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="bb" style="margin-bottom:12px;">
   <select class="fse" id="rm-filtro-hotel" style="width:180px;" onchange="renderRooming()">
     <option value="">Todos os hoteis</option>
-    <option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option>
   </select>
   <select class="fse" id="rm-filtro-tipo" style="width:160px;" onchange="renderRooming()">
     <option value="">Todos os tipos</option>
@@ -2392,7 +2399,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="at-nm" placeholder="Nome do atleta"></div><div class="fg"><div class="fl">País / Nação</div><input class="fi" id="at-ps" placeholder="País"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Federação nacional</div><input class="fi" id="at-fd" placeholder="Federação"></div><div class="fg"><div class="fl">Categoria WMF</div><select class="fse" id="at-ct"><option value="SM">Séniores Masculinos</option><option value="SF">Séniores Femininas</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Taxa inscrição (€) — valor real</div><input class="fi" type="number" step="0.01" id="at-tx" placeholder="0,00"></div><div class="fg"><div class="fl">Estado taxa</div><select class="fse" id="at-st"><option value="Pago">Pago</option><option value="Pendente">Pendente</option></select></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Hotel atribuído</div><select class="fse" id="at-ht"><option value="">— Sem atribuição —</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div><div class="fg"><div class="fl">Email / Contacto</div><input class="fi" id="at-em" placeholder="email@federacao.xx"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Hotel atribuído</div><select class="fse" id="at-ht"><option value="">— Sem atribuição —</option></select></div><div class="fg"><div class="fl">Email / Contacto</div><input class="fi" id="at-em" placeholder="email@federacao.xx"></div></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-atl')">Cancelar</button><button class="btn bp" onclick="saveAtl()">Guardar atleta</button></div>
 </div></div>
@@ -2453,7 +2460,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="mo" id="m-hot"><div class="mdl">
   <div class="mh"><div class="mt2">Registar Hotel</div><button class="mc" onclick="closeM('m-hot')">✕</button></div>
   <div class="mb">
-    <div class="fr"><div class="fg"><div class="fl">Código</div><select class="fse" id="ht-cd"><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div><div class="fg"><div class="fl">Nome do hotel</div><input class="fi" id="ht-nm" placeholder="Nome da unidade hoteleira"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Código (livre — ex: H7, Casa Ferreira, Apt.3)</div><input class="fi" id="ht-cd" placeholder="Código ou referência"></div><div class="fg"><div class="fl">Nome do hotel</div><input class="fi" id="ht-nm" placeholder="Nome da unidade hoteleira"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Distância ao campo</div><input class="fi" id="ht-dist" placeholder="ex: 1,5 km"></div><div class="fg"><div class="fl">Tarifa/noite duplo (€) — real</div><input class="fi" type="number" id="ht-tar" placeholder="0,00 (máx. 50€ WMF)"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Quartos reservados</div><input class="fi" type="number" id="ht-qts" placeholder="0"></div><div class="fg"><div class="fl">Contacto</div><input class="fi" id="ht-ct" placeholder="Nome e telefone"></div></div>
     <div class="fg"><div class="fl">Requisitos WMF cumpridos</div><select class="fse" id="ht-wmf"><option value="S">Sim — cumpre todos os requisitos</option><option value="P">Parcial — verificar detalhes</option><option value="N">Não — fora das condições WMF</option></select></div>
@@ -2477,7 +2484,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mb">
     <div class="fr"><div class="fg"><div class="fl">Nome</div><input class="fi" id="ar-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">País / Federação</div><input class="fi" id="ar-ps" placeholder="País"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Função</div><select class="fse" id="ar-fn"><option>Diretor do Torneio WMF</option><option>Árbitro EMF</option><option>Juíz de campo</option><option>Secretariado técnico</option></select></div><div class="fg"><div class="fl">Custo (€) — real</div><input class="fi" type="number" id="ar-vl" placeholder="0,00"></div></div>
-    <div class="fg"><div class="fl">Alojamento atribuído</div><select class="fse" id="ar-ht"><option value="">— A definir —</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div>
+    <div class="fg"><div class="fl">Alojamento atribuído</div><select class="fse" id="ar-ht"><option value="">— A definir —</option></select></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-arb')">Cancelar</button><button class="btn bp" onclick="saveArb()">Guardar</button></div>
 </div></div>
@@ -2606,7 +2613,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     </div>
     <div class="fr">
       <div class="fg"><div class="fl">Tipo</div><select class="fse" id="rm-tipo"><option value="Atleta">Atleta</option><option value="Arbitro">Arbitro</option><option value="Staff">Staff / COE</option></select></div>
-      <div class="fg"><div class="fl">Hotel</div><select class="fse" id="rm-hotel"><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div>
+      <div class="fg"><div class="fl">Hotel</div><select class="fse" id="rm-hotel"></select></div>
     </div>
     <div class="fr">
       <div class="fg"><div class="fl">Numero do quarto</div><input class="fi" id="rm-quarto" placeholder="ex: 101, 202A..."></div>
@@ -2635,7 +2642,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     </div>
     <div class="fr">
       <div class="fg"><div class="fl">Nr. atletas</div><input class="fi" type="number" id="del-natl" placeholder="0"></div>
-      <div class="fg"><div class="fl">Hotel atribuido</div><select class="fse" id="del-hotel"><option value="">-- A definir --</option><option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H5</option><option>H6</option></select></div>
+      <div class="fg"><div class="fl">Hotel atribuido</div><select class="fse" id="del-hotel"><option value="">-- A definir --</option></select></div>
     </div>
     <div class="fg"><div class="fl">Voo chegada (info)</div><input class="fi" id="del-voo" placeholder="ex: TP1234 - 12 Out 14:30 OPO"></div>
     <div class="fg"><div class="fl">Voo partida (info)</div><input class="fi" id="del-voosai" placeholder="ex: FR5678 - 18 Out 09:00 OPO"></div>
@@ -3117,6 +3124,37 @@ function popularSelectPais(selecionado){
   const vazio=selecionado?'':'<option value="">— Selecionar país —</option>';
   sel.innerHTML=vazio+paises.map(p=>`<option value="${p}" ${p===selecionado?'selected':''}>${p}</option>`).join('');
 }
+// Atualiza todos os menus de seleção de hotel do sistema, a partir dos hotéis reais registados.
+// Sem limite de quantidade — funciona com 1 hotel ou com 100. Corre sempre que os dados de hotéis mudam.
+function sugerirCodigoHotel(){
+  const _e=document.getElementById('hot-eid');if(_e)_e.value='';
+  const nums=_hot.map(h=>{const m=(h.codigo||'').match(/^H(\d+)$/);return m?parseInt(m[1],10):0;});
+  const proximo='H'+(nums.length?Math.max(...nums)+1:1);
+  const cd=document.getElementById('ht-cd');if(cd)cd.value=proximo;
+  const nm=document.getElementById('ht-nm');if(nm)nm.value='';
+  const dist=document.getElementById('ht-dist');if(dist)dist.value='';
+  const tar=document.getElementById('ht-tar');if(tar)tar.value='';
+  const qts=document.getElementById('ht-qts');if(qts)qts.value='';
+  const ct=document.getElementById('ht-ct');if(ct)ct.value='';
+  const wmf=document.getElementById('ht-wmf');if(wmf)wmf.value='';
+}
+function atualizarSelectsHoteis(){
+  const codigos=[..._hot].map(h=>h.codigo).filter(Boolean).sort();
+  const alvos=[
+    {id:'at-ht',vazio:'— Sem atribuição —'},
+    {id:'ar-ht',vazio:'— A definir —'},
+    {id:'rm-hotel',vazio:''},
+    {id:'del-hotel',vazio:'-- A definir --'},
+    {id:'rm-filtro-hotel',vazio:'Todos os hoteis'},
+  ];
+  alvos.forEach(({id,vazio})=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    const atual=sel.value;
+    const opVazia=vazio?`<option value="">${vazio}</option>`:'';
+    sel.innerHTML=opVazia+codigos.map(c=>`<option value="${c}" ${c===atual?'selected':''}>${c}</option>`).join('');
+    if(codigos.includes(atual))sel.value=atual;
+  });
+}
 function abrirNovoItemCerimonia(){
   const _e=document.getElementById('prog-eid');if(_e)_e.value='';
   ['pi-dia','pi-hora','pi-titulo','pi-desc','pi-resp','pi-contacto'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='pi-hora'?'09:00':'';});
@@ -3148,7 +3186,7 @@ function loadAll(){
   _snap('voluntarios',(docs)=>{_vol=docs;renderOrg();});
   _snap('equipas',(docs)=>{_equipas=docs;renderEquipas();});
   _snap('seccoes',(docs)=>{_seccoes=docs;renderOrg();renderSeccoes();},'ordem');
-  _snap('hoteis',(docs)=>{_hot=docs;renderAlo();});
+  _snap('hoteis',(docs)=>{_hot=docs;renderAlo();atualizarSelectsHoteis();});
   carregarViaturaCMV();
   _snap('transfers',(docs)=>{_trn=docs;renderAlo();},'data');
   _snap('arbitros',(docs)=>{_arb=docs;renderArb();});
@@ -3321,20 +3359,36 @@ function renderAtl(){
     const paises=[...new Set(_atl.map(a=>a.pais).filter(Boolean))].sort();
     selEl.innerHTML='<option value="">— Todos os países —</option>'+paises.map(p=>`<option value="${p}" ${p===atual?'selected':''}>${p}</option>`).join('');
   }
-  const filtro=selEl?selEl.value:'';
-  const lista=filtro?_atl.filter(a=>a.pais===filtro):_atl;
+  const filtroPais=selEl?selEl.value:'';
+  const filtroEstadoEl=document.getElementById('a-filtro-estado');
+  const filtroEstado=filtroEstadoEl?filtroEstadoEl.value:'';
+
+  let lista=filtroPais?_atl.filter(a=>a.pais===filtroPais):_atl;
+  if(filtroEstado==='reais')lista=lista.filter(a=>a.estado!=='Ref.2024');
+  else if(filtroEstado==='ref2024')lista=lista.filter(a=>a.estado==='Ref.2024');
 
   document.getElementById('a-tot').textContent=lista.length;
   document.getElementById('a-pg').textContent=lista.filter(a=>a.estado==='Pago').length;
   document.getElementById('a-pn').textContent=lista.filter(a=>a.estado==='Pendente').length;
   document.getElementById('a-ps').textContent=new Set(_atl.map(a=>a.pais)).size;
 
+  const avEl=document.getElementById('a-aviso-ref2024');
+  if(avEl){
+    const nRef=_atl.filter(a=>a.estado==='Ref.2024').length;
+    if(nRef>0&&filtroEstado!=='ref2024'){
+      avEl.style.display='block';
+      avEl.innerHTML='<strong>'+nRef+' nome(s) de 2024 ainda por validar.</strong> Usa o filtro "Mostrar → Só referência 2024" para os isolares, e confirma (✓) ou apaga (🗑️) cada um.';
+    }else{
+      avEl.style.display='none';
+    }
+  }
+
   document.getElementById('t-atl').innerHTML=lista.length?lista.map(a=>{
     const isRef=a.estado==='Ref.2024';
     const estCor=isRef?'bg-mu':(a.estado==='Pago'?'bg-ok':'bg-am');
     const confirmBtn=isRef&&canEdit()?`<button class="btn bp bsm" onclick="confirmarAtleta2026('${a.id}')" title="Marcar esta pessoa como confirmada para 2026">✓ Confirmar 2026</button>`:'';
     return `<tr${isRef?' style="opacity:.65;"':''}><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${estCor}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td style="white-space:nowrap;">${confirmBtn}<button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
-  }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas'+(filtro?' registados para '+filtro:'')+'</td></tr>';
+  }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas'+(filtroPais?' registados para '+filtroPais:'')+'</td></tr>';
 }
 async function confirmarAtleta2026(id){
   if(!canEdit())return;
@@ -4377,6 +4431,8 @@ function renderIns(){
 function verAtletasPais(pais){
   const sel=document.getElementById('a-filtro-pais');
   if(sel)sel.value=pais;
+  const selEstado=document.getElementById('a-filtro-estado');
+  if(selEstado)selEstado.value='';
   renderAtl();
   navTo('atletas','Atletas & Inscrições');
 }
@@ -10064,6 +10120,8 @@ window.importarBoardEMF=importarBoardEMF;
 window.saveVol=saveVol;
 window.delVol=delVol;
 window.salvarViaturaCMV=salvarViaturaCMV;
+window.sugerirCodigoHotel=sugerirCodigoHotel;
+window.atualizarSelectsHoteis=atualizarSelectsHoteis;
 window.saveHot=saveHot;
 window.delHot=delHot;
 window.saveTrn=saveTrn;

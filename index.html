@@ -1011,7 +1011,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
 <div class="fr" style="max-width:680px;margin-bottom:14px;">
   <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
   <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
@@ -9068,15 +9068,25 @@ function exportPat(){
 
 //  ATLETAS PDF 
 function exportAtletasPDF(){
+  const filtroPaisEl=document.getElementById('a-filtro-pais');
+  const filtroPais=filtroPaisEl?filtroPaisEl.value:'';
+  const filtroEstadoEl=document.getElementById('a-filtro-estado');
+  const filtroEstado=filtroEstadoEl?filtroEstadoEl.value:'';
+
+  let lista=filtroPais?_atl.filter(a=>a.pais===filtroPais):_atl;
+  if(filtroEstado==='reais')lista=lista.filter(a=>a.estado!=='Ref.2024');
+  else if(filtroEstado==='ref2024')lista=lista.filter(a=>a.estado==='Ref.2024');
+
+  const sufixoTitulo=(filtroPais?' — '+filtroPais:'')+(filtroEstado==='reais'?' (confirmados 2026)':filtroEstado==='ref2024'?' (referência 2024)':'');
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  pdfHeader(doc,'Atletas & Inscrições','SWC Vizela 2026 - Lista oficial de participantes',true);
-  const rows = _atl.map(a=>[a.nome||'',a.pais||'',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-',a.email||'']);
-  const totTaxas = _atl.reduce((s,a)=>s+Number(a.taxa||0),0);
+  pdfHeader(doc,'Atletas & Inscrições'+sufixoTitulo,'SWC Vizela 2026 - Lista oficial de participantes',true);
+  const rows = lista.map(a=>[a.nome||'',a.pais||'',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-',a.email||'']);
+  const totTaxas = lista.reduce((s,a)=>s+Number(a.taxa||0),0);
   doc.autoTable({
     startY:38,
     head:[['Nome','País','Federação','Categoria','Taxa (EUR)','Estado','Hotel','Email']],
     body:rows.length?rows:[['','','','','Sem atletas registados','','','']],
-    foot:[['Total: '+_atl.length+' atletas','','','',fmtPDF(totTaxas),'','','']],
+    foot:[['Total: '+lista.length+' atletas','','','',fmtPDF(totTaxas),'','','']],
     theme:'striped',
     styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[200,190,170],lineWidth:0.15},
     headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,cellPadding:4},
@@ -9086,8 +9096,9 @@ function exportAtletasPDF(){
     margin:{left:5,right:5,bottom:28},
   });
   pdfFooter(doc,true);
-  doc.save('SWC2026_Atletas_Inscricoes.pdf');
-  toast('PDF gerado com sucesso');
+  const nomeFicheiro='SWC2026_Atletas'+(filtroPais?'_'+filtroPais.replace(/\s+/g,''):'_Inscricoes')+(filtroEstado==='reais'?'_Confirmados':filtroEstado==='ref2024'?'_Ref2024':'')+'.pdf';
+  doc.save(nomeFicheiro);
+  toast('PDF gerado com sucesso'+(filtroPais?' — '+filtroPais:''));
 }
 
 //  CERIMONIAS PDF 

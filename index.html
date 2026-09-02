@@ -1011,7 +1011,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="openM('m-atl')">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()">Exportar PDF</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button></div>
 <div class="fg" style="max-width:320px;margin-bottom:14px;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total inscritos</div><div class="smv" id="a-tot">0</div></div>
@@ -3460,6 +3460,28 @@ async function importarAtletas2024(){
     }
   }
   toast('Importação concluída: '+ok+' atletas'+( err?' ('+err+' erros)':''),'ok');
+}
+async function importarSelecaoPortugal(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const HOMENS=['João Ferreira','André Silva','Domingos Silva','Carlos Ferreira','Belarmino Soares','João Fidalgo','Manuel Simões'];
+  const SENHORAS=['Fernanda Costa','Juventina Silva','Fernanda Manso','Anunciação Almeida'];
+  const TREINADORES=['Abílio Meneses','Ananias Quintano','Eduardo Salazar','Joaquim Batista'];
+  const LISTA=[
+    ...HOMENS.map(nome=>({nome,pais:'Portugal',federacao:'FPM',categoria:'SM',taxa:0,estado:'Pendente',hotel:'',email:''})),
+    ...SENHORAS.map(nome=>({nome,pais:'Portugal',federacao:'FPM',categoria:'SF',taxa:0,estado:'Pendente',hotel:'',email:''})),
+    ...TREINADORES.map(nome=>({nome,pais:'Portugal',federacao:'FPM',categoria:'TR',taxa:0,estado:'Pendente',hotel:'',email:''})),
+  ];
+  const jaExistem=LISTA.filter(p=>_atl.some(x=>x.nome===p.nome&&x.pais==='Portugal'));
+  const porImportar=LISTA.filter(p=>!_atl.some(x=>x.nome===p.nome&&x.pais==='Portugal'));
+  if(!porImportar.length){toast('A Seleção Portugal já está toda importada — nada a fazer.','inf');return;}
+  if(jaExistem.length&&!confirm(jaExistem.length+' nome(s) já existe(m) no sistema para Portugal (ex: '+jaExistem[0].nome+') — não serão duplicados. Importar os restantes '+porImportar.length+'?'))return;
+  let ok=0,err=0;
+  toast('A importar '+porImportar.length+' pessoa(s) da Seleção Portugal...','inf');
+  for(const p of porImportar){
+    try{await _add('atletas',{...p,ts:Date.now()});ok++;}
+    catch(e){console.error('Erro ao importar',p.nome,e);err++;}
+  }
+  toast('Seleção Portugal importada: '+ok+' pessoa(s)'+(err?' ('+err+' erros)':'')+(jaExistem.length?' — '+jaExistem.length+' já existiam, não duplicadas':''),'ok');
 }
 
 //  CONVITES 
@@ -7570,7 +7592,7 @@ function renderCertificados(){
     return `<div style="background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
       <div>
         <div style="font-size:13px;font-weight:600;color:var(--wh);">${a.nome||''}</div>
-        <div style="font-size:11px;color:var(--mu);">${a.pais||''} · ${a.categoria==='SM'?'Séniores Masc.':'Séniores Fem.'}</div>
+        <div style="font-size:11px;color:var(--mu);">${a.pais||''} · ${a.categoria==='SM'?'Séniores Masc.':(a.categoria==='TR'?'Treinador(a)':'Séniores Fem.')}</div>
         ${res?`<div style="font-size:10px;color:var(--gl);margin-top:2px;">Total: ${res.total} · Pos. ${_resultados.filter(r=>r.categoria===a.categoria).sort((x,y)=>x.total-y.total).findIndex(r=>r.nome===a.nome)+1}.</div>`:''}
       </div>
       <button class="btn bo bsm" onclick="exportCertificado('${a.id}','PT')">PT</button>
@@ -9993,6 +10015,7 @@ window.saveAtl=saveAtl;
 window.delAtl=delAtl;
 window.confirmarAtleta2026=confirmarAtleta2026;
 window.importarAtletas2024=importarAtletas2024;
+window.importarSelecaoPortugal=importarSelecaoPortugal;
 window.saveConv=saveConv;
 window.delConv=delConv;
 window.saveHon=saveHon;

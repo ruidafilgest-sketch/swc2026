@@ -45,11 +45,11 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 
 
 .sbs{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:14px 12px 5px;display:flex;align-items:center;gap:6px;}
-.sbcat-h{cursor:pointer;user-select:none;transition:background .15s;}
+.sbcat-h{cursor:pointer;user-select:none;transition:background .15s;flex-shrink:0;}
 .sbcat-h:hover{background:rgba(255,255,255,.04);}
 .sbcat-chev{font-size:11px;opacity:.55;transition:transform .2s ease;flex-shrink:0;}
 .sbcat-h.sb-closed .sbcat-chev{transform:rotate(-90deg);}
-.sb-cat-body{max-height:2200px;overflow:hidden;transition:max-height .28s ease;}
+.sb-cat-body{max-height:2200px;overflow:hidden;transition:max-height .28s ease;flex-shrink:0;}
 .sb-cat-body.sb-closed{max-height:0;}
 .si{display:flex;align-items:center;gap:12px;padding:11px 13px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;margin:3px 10px;border-radius:9px;}
 .si:hover{background:rgba(255,255,255,.05);color:var(--wh);}

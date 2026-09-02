@@ -2099,7 +2099,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <!-- MAPA DE PAISES -->
 <div class="pg" id="pg-mapapaises">
 <div class="st"><span class="sn">MAP</span>Mapa de Países Participantes<button class="hbtn" data-help="mapapaises" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">Visualização mundial das nações participantes - Actualizado automaticamente</div>
+<div class="sd">Visualização mundial das nações participantes — atualizado automaticamente · exclui nomes de referência 2024 por validar</div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Países confirmados</div><div class="smv" id="mp-npaises" style="color:var(--gl2)">0</div></div>
   <div class="sm"><div class="sml">Atletas inscritos</div><div class="smv" id="mp-natl">0</div></div>
@@ -2110,7 +2110,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div id="mp-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;"></div>
 <!-- Lista detalhada -->
 <div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">LIST</span>Detalhado por Pais</div>
-<div class="tw"><table><thead><tr><th>Pais / Nacao</th><th>Atletas H</th><th>Atletas S</th><th>Total</th><th>Hotel</th><th>Chefe Delegacao</th></tr></thead>
+<div class="tw"><table><thead><tr><th>Pais / Nacao</th><th>Atletas H</th><th>Atletas S</th><th>Treinadores</th><th>Total</th><th>Hotel</th><th>Chefe Delegacao</th></tr></thead>
 <tbody id="t-mapapaises"></tbody></table></div>
 </div>
 
@@ -7191,11 +7191,13 @@ function exportTodosRelatorios(){
 // ═══ MAPA DE PAISES ═══
 function renderMapaPaises(){
   const paises={};
-  _atl.forEach(a=>{
+  const reais=_atl.filter(a=>a.estado!=='Ref.2024');
+  reais.forEach(a=>{
     if(!a.pais)return;
-    if(!paises[a.pais])paises[a.pais]={h:0,s:0,hotel:'',chefe:''};
+    if(!paises[a.pais])paises[a.pais]={h:0,s:0,tr:0,hotel:'',chefe:''};
     if(a.categoria==='SM')paises[a.pais].h++;
-    else paises[a.pais].s++;
+    else if(a.categoria==='SF')paises[a.pais].s++;
+    else if(a.categoria==='TR')paises[a.pais].tr++;
   });
   // Cruzar com delegacoes para hotel e chefe
   _delegacoes.forEach(d=>{
@@ -7211,23 +7213,24 @@ function renderMapaPaises(){
   const elO=document.getElementById('mp-out');
   const EUROPA=['Portugal','Alemanha','Áustria','Suíça','Suécia','Finlândia','Dinamarca','Noruega','Holanda','Bélgica','França','Itália','Espanha','República Checa','Eslováquia','Hungria','Polónia','Eslovénia','Croácia','Letónia','Estónia','Lituânia'];
   const nEur=lista.filter(p=>EUROPA.includes(p)).length;
+  const totalAtletas=lista.reduce((acc,p)=>acc+paises[p].h+paises[p].s,0);
   if(elN)elN.textContent=lista.length;
-  if(elA)elA.textContent=_atl.length;
+  if(elA)elA.textContent=totalAtletas;
   if(elE)elE.textContent=nEur;
   if(elO)elO.textContent=lista.length-nEur;
   // Grid visual
   const grid=document.getElementById('mp-grid');
   if(grid){
     if(!lista.length){
-      grid.innerHTML='<div class="em"><div class="emi">&#9758;</div><div class="emt">Sem países registados ainda</div><div class="emd">Os paises aparecem automaticamente quando atletas forem inscritos</div></div>';
+      grid.innerHTML='<div class="em"><div class="emi">&#9758;</div><div class="emt">Sem países registados ainda</div><div class="emd">Os paises aparecem automaticamente quando atletas confirmados forem inscritos</div></div>';
     } else {
       grid.innerHTML=lista.map(p=>{
-        const tot=(paises[p].h||0)+(paises[p].s||0);
+        const tot=paises[p].h+paises[p].s+paises[p].tr;
         return `<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.15);border-radius:8px;transition:all .2s;" onmouseover="this.style.background='rgba(201,168,76,.14)'" onmouseout="this.style.background='rgba(201,168,76,.07)'">
-          <span style="font-size:18px;">&#127757;</span>
+          ${bandeira(p)}
           <div>
             <div style="font-size:12px;font-weight:600;color:var(--wh);">${p}</div>
-            <div style="font-size:10px;color:var(--mu);">${tot} atleta${tot!==1?'s':''}</div>
+            <div style="font-size:10px;color:var(--mu);">${paises[p].h+paises[p].s} atleta${paises[p].h+paises[p].s!==1?'s':''}${paises[p].tr?' · '+paises[p].tr+' treinador'+(paises[p].tr!==1?'es':''):''}</div>
           </div>
         </div>`;
       }).join('');
@@ -7236,14 +7239,15 @@ function renderMapaPaises(){
   // Tabela detalhada
   const tbody=document.getElementById('t-mapapaises');
   if(tbody){
-    if(!lista.length){tbody.innerHTML='<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem paises registados</td></tr>';return;}
+    if(!lista.length){tbody.innerHTML='<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem paises registados</td></tr>';return;}
     tbody.innerHTML=lista.map(p=>{
       const d=paises[p];
-      const tot=(d.h||0)+(d.s||0);
+      const tot=d.h+d.s+d.tr;
       return `<tr>
-        <td class="vl" style="font-weight:600;">&#127757; ${p}</td>
+        <td class="vl" style="font-weight:600;">${bandeira(p)} ${p}</td>
         <td style="text-align:center;">${d.h||0}</td>
         <td style="text-align:center;">${d.s||0}</td>
+        <td style="text-align:center;">${d.tr||0}</td>
         <td style="text-align:center;font-weight:700;color:var(--gl2);">${tot}</td>
         <td style="text-align:center;">${d.hotel||'—'}</td>
         <td class="mu">${d.chefe||'—'}</td>

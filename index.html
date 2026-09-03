@@ -45,6 +45,12 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 
 
 .sbs{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:14px 12px 5px;display:flex;align-items:center;gap:6px;}
+.sbcat-h{cursor:pointer;user-select:none;transition:background .15s;flex-shrink:0;}
+.sbcat-h:hover{background:rgba(255,255,255,.04);}
+.sbcat-chev{font-size:11px;opacity:.55;transition:transform .2s ease;flex-shrink:0;}
+.sbcat-h.sb-closed .sbcat-chev{transform:rotate(-90deg);}
+.sb-cat-body{max-height:2200px;overflow:hidden;transition:max-height .28s ease;flex-shrink:0;}
+.sb-cat-body.sb-closed{max-height:0;}
 .si{display:flex;align-items:center;gap:12px;padding:11px 13px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;margin:3px 10px;border-radius:9px;}
 .si:hover{background:rgba(255,255,255,.05);color:var(--wh);}
 .si.act{background:rgba(255,255,255,.07);border-left-color:var(--gl);font-weight:600;}
@@ -459,11 +465,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div id="search-results" style="display:none;margin-top:6px;background:var(--cd);border:1px solid var(--bds);border-radius:8px;max-height:260px;overflow-y:auto;"></div>
   </div>
 
-  <div class="sbs" style="color:#C9A84C;">
+  <div class="sbs sbcat-h" data-cat="dashboard" onclick="toggleCat(this)" style="color:#C9A84C;cursor:pointer;">
     <span style="flex:1;height:0.5px;background:rgba(201,168,76,.22);"></span>
     DASHBOARD
     <span style="flex:1;height:0.5px;background:rgba(201,168,76,.22);"></span>
+    <i class="ti ti-chevron-down sbcat-chev" aria-hidden="true"></i>
   </div>
+  <div class="sb-cat-body" data-cat="dashboard">
   <div class="si" title="KPIs · Alertas · Clima Vizela" onclick="nav(this,'dashboard','Dashboard')" style="">
     <i class="ti ti-layout-dashboard" style="font-size:20px;color:#C9A84C;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -485,12 +493,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(201,168,76,.55);">6 gráficos · Atletas · Financeiro</div>
     </div>
   </div>
+  </div>
 
-  <div class="sbs" style="color:#5AA0FF;">
+  <div class="sbs sbcat-h" data-cat="pre-evento" onclick="toggleCat(this)" style="color:#5AA0FF;cursor:pointer;">
     <span style="flex:1;height:0.5px;background:rgba(90,160,255,.28);"></span>
     PRÉ-EVENTO
     <span style="flex:1;height:0.5px;background:rgba(90,160,255,.28);"></span>
+    <i class="ti ti-chevron-down sbcat-chev" aria-hidden="true"></i>
   </div>
+  <div class="sb-cat-body" data-cat="pre-evento">
   <div class="si" title="Registo · Categorias · Taxas · Países" onclick="nav(this,'atletas','Atletas &amp; Inscrições')" style="">
     <i class="ti ti-users" style="font-size:20px;color:#5AA0FF;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -603,12 +614,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(90,160,255,.6);">Hora a hora · 9 a 17 Outubro 2026</div>
     </div>
   </div>
+  </div>
 
-  <div class="sbs" style="color:#4AB87A;">
+  <div class="sbs sbcat-h sb-closed" data-cat="live-evento" onclick="toggleCat(this)" style="color:#4AB87A;cursor:pointer;">
     <span style="flex:1;height:0.5px;background:rgba(74,184,122,.3);"></span>
     <span style="width:6px;height:6px;border-radius:50%;background:#4AB87A;flex-shrink:0;"></span>LIVE · EVENTO
     <span style="flex:1;height:0.5px;background:rgba(74,184,122,.3);"></span>
+    <i class="ti ti-chevron-down sbcat-chev" aria-hidden="true"></i>
   </div>
+  <div class="sb-cat-body sb-closed" data-cat="live-evento">
   <div class="si" title="Painel ao vivo para sala COE" onclick="nav(this,'modo-evento','Modo Evento Live')" style="">
     <i class="ti ti-device-tv" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -686,12 +700,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(74,184,122,.58);">Stock · Vendas · Acerto de contas</div>
     </div>
   </div>
+  </div>
 
-  <div class="sbs" style="color:#FFA03C;">
+  <div class="sbs sbcat-h sb-closed" data-cat="financeiro" onclick="toggleCat(this)" style="color:#FFA03C;cursor:pointer;">
     <span style="flex:1;height:0.5px;background:rgba(255,160,60,.28);"></span>
     FINANCEIRO SNC-ESNL
     <span style="flex:1;height:0.5px;background:rgba(255,160,60,.28);"></span>
+    <i class="ti ti-chevron-down sbcat-chev" aria-hidden="true"></i>
   </div>
+  <div class="sb-cat-body sb-closed" data-cat="financeiro">
   <div class="si" title="Movimentos reais · Entradas · Saídas" onclick="nav(this,'diario','Diário Caixa &amp; Banco')" style="">
     <i class="ti ti-cash" style="font-size:20px;color:#FFA03C;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -783,12 +800,15 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(255,160,60,.6);">PDF elegante pós-evento por empresa</div>
     </div>
   </div>
+  </div>
 
-  <div class="sbs" style="color:#B478FF;">
+  <div class="sbs sbcat-h sb-closed" data-cat="administrativo" onclick="toggleCat(this)" style="color:#B478FF;cursor:pointer;">
     <span style="flex:1;height:0.5px;background:rgba(180,120,255,.28);"></span>
     ADMINISTRATIVO
     <span style="flex:1;height:0.5px;background:rgba(180,120,255,.28);"></span>
+    <i class="ti ti-chevron-down sbcat-chev" aria-hidden="true"></i>
   </div>
+  <div class="sb-cat-body sb-closed" data-cat="administrativo">
   <div class="si" title="Reuniões · Deliberações formais" onclick="nav(this,'actas','Actas &amp; Convocatórias COE')" style="">
     <i class="ti ti-file-text" style="font-size:20px;color:#B478FF;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -851,6 +871,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-label">Log de Actividade</div>
       <div class="si-sub" style="color:rgba(180,120,255,.6);">Histórico · Auditoria completa</div>
     </div>
+  </div>
   </div>
 
   <div class="sbf">
@@ -3034,11 +3055,48 @@ function setAdminBars(){
   });
 }
 
-//  NAV 
+//  ACORDEAO DO MENU LATERAL
+function toggleCat(headerEl){
+  const cat=headerEl.dataset.cat;
+  const body=document.querySelector('.sb-cat-body[data-cat="'+cat+'"]');
+  if(!body)return;
+  const closed=body.classList.toggle('sb-closed');
+  headerEl.classList.toggle('sb-closed',closed);
+  try{localStorage.setItem('swc_sbcat_'+cat,closed?'0':'1');}catch(e){}
+}
+function openCatFor(id){
+  if(!id)return;
+  const item=document.querySelector('.si[onclick*="\''+id+'\'"]');
+  if(!item)return;
+  const body=item.closest('.sb-cat-body');
+  if(!body||!body.classList.contains('sb-closed'))return;
+  body.classList.remove('sb-closed');
+  const cat=body.dataset.cat;
+  const head=document.querySelector('.sbcat-h[data-cat="'+cat+'"]');
+  if(head)head.classList.remove('sb-closed');
+  try{localStorage.setItem('swc_sbcat_'+cat,'1');}catch(e){}
+}
+function initSbAccordion(){
+  document.querySelectorAll('.sb-cat-body').forEach(body=>{
+    const cat=body.dataset.cat;
+    let closed=body.classList.contains('sb-closed');
+    try{
+      const saved=localStorage.getItem('swc_sbcat_'+cat);
+      if(saved==='0')closed=true; else if(saved==='1')closed=false;
+    }catch(e){}
+    const head=document.querySelector('.sbcat-h[data-cat="'+cat+'"]');
+    body.classList.toggle('sb-closed',closed);
+    if(head)head.classList.toggle('sb-closed',closed);
+  });
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initSbAccordion);}else{initSbAccordion();}
+
+//  NAV
 function nav(el,id,title){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
   document.querySelectorAll('.si').forEach(s=>s.classList.remove('act'));
   closeSb();
+  openCatFor(id);
   document.getElementById('pg-'+id).classList.add('act');
   if(el)el.classList.add('act');
   document.getElementById('pgt').textContent=title;
@@ -10079,11 +10137,13 @@ function exportConsigPDF(){
 }
 
 
-//  EXPOR FUNCÕES AO HTML 
+//  EXPOR FUNCÕES AO HTML
 window.doLogin=doLogin;
 window._doLogin=doLogin;
 window.doLogout=doLogout;
 window.nav=nav;
+window.toggleCat=toggleCat;
+window.openCatFor=openCatFor;
 window.openM=openM;
 window.closeM=closeM;
 window.saveLan=saveLan;

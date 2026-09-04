@@ -1755,6 +1755,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bp" onclick="openM('m-marca')">+ Nova marca</button>
   <button class="btn bo" onclick="openM('m-artigo')">+ Artigo / Referência</button>
   <button class="btn bo" id="btn-import-funsports" onclick="importarFunSports3D()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar Fun-Sports 3D (132 refs)</button>
+  <button class="btn bo" id="btn-import-bola3d" onclick="importarBolaOficial3D()" style="background:linear-gradient(135deg,#8a6a2c,#5c4620);">📥 Importar só 100 Bolas Oficiais (3D)</button>
   <button class="btn bo" id="btn-import-reisinger" onclick="importarBolasReisinger()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar 150 Bolas Reisinger</button>
   <button class="btn bo" onclick="openM('m-venda')">+ Registar venda</button>
   <button class="btn bo" onclick="exportConsigPDF()">Exportar PDF acerto contas</button>
@@ -10022,15 +10023,16 @@ async function importarFunSports3D(){
     const ref=await _add('cs_marcas',{nome:'Fun-Sports',contacto:'Pasi Aho',email:'info@fun-sports-germany.com',pct:0,data:new Date().toISOString().slice(0,10),notas:'Fun-Sports Freizeitanlagen und Zubehörteile GmbH, Bamberg (Alemanha). Comissão (%) a preencher — não definida nos documentos de encomenda.',ts:Date.now()});
     marcaId=ref.id;
   }
-  let ok=0,err=0;
+  let ok=0,err=0,saltados=0;
   toast('A importar '+CATALOGO.length+' referências Fun-Sports 3D...','inf');
   for(const item of CATALOGO){
+    if(item.ref==='BOLA-SWC2026-3D'&&_artigos.some(a=>a.ref==='BOLA-SWC2026-3D')){saltados++;continue;}
     try{
       await _add('cs_artigos',{marcaId,marcaNome:'Fun-Sports',ref:item.ref,desc:item.desc,preco:(item.ref==='BOLA-SWC2026-3D'?25:23),qtyEntrou:item.qty,notas:(item.ref==='BOLA-SWC2026-3D'?'Bola Oficial SWC 2026 — 100 unidades da 3D, compradas pela Vizelgolfe para venda no evento (sem consignação). Small / 3D-Uppsala-lacquer, amarela, logo SWC 2026 gravado (encomenda específica Fun-Sports, entrega prevista fim Set 2026). Preço de venda: 25€.':'Importado do catálogo Fun-Sports 3D (encomenda Consignação SWC 2026). Preço €23 provisório — a confirmar com o Pasi.'),ts:Date.now()});
       ok++;
     }catch(e){console.error('Erro ao importar',item.ref,e);err++;}
   }
-  toast('Catálogo Fun-Sports importado: '+ok+' referências'+(err?' ('+err+' erros)':''),'ok');
+  toast('Catálogo Fun-Sports importado: '+ok+' referências'+(err?' ('+err+' erros)':'')+(saltados?' ('+saltados+' já existia, não duplicada)':''),'ok');
 }
 // Esconde os botões "Importar X" assim que essa importação já tiver sido feita,
 // para a barra de botões não acumular ações que já não servem para nada.
@@ -10039,8 +10041,27 @@ function atualizarBotoesImportacao(){
     const btn=document.getElementById(btnId);if(!btn)return;
     btn.outerHTML='<span class="bge bg-ok" id="'+btnId+'" style="align-self:center;">✓ '+label+'</span>';
   };
-  if(_artigos.some(a=>a.ref==='BOLA-SWC2026-3D'))trocarPorFeito('btn-import-funsports','Fun-Sports 3D importado');
+  const totalFunSports=_artigos.filter(a=>a.marcaNome==='Fun-Sports').length;
+  if(totalFunSports>=100)trocarPorFeito('btn-import-funsports','Fun-Sports 3D importado');
+  if(_artigos.some(a=>a.ref==='BOLA-SWC2026-3D'))trocarPorFeito('btn-import-bola3d','100 Bolas Oficiais (3D) importadas');
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-REISINGER'))trocarPorFeito('btn-import-reisinger','150 Bolas Reisinger importadas');
+}
+// Importação isolada, só das 100 Bolas Oficiais SWC 2026 da 3D — independente do catálogo
+// grande de 132 referências, para conseguires garantir só esta sem mexer nas outras 131.
+async function importarBolaOficial3D(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const jaExiste=_artigos.some(a=>a.ref==='BOLA-SWC2026-3D');
+  if(jaExiste&&!confirm('A Bola Oficial SWC 2026 (3D) já parece existir na marca Fun-Sports.\\nDeseja importar na mesma (pode criar duplicado)?'))return;
+  let marcaId;
+  const marcaExistente=_marcas.find(m=>m.nome==='Fun-Sports');
+  if(marcaExistente){
+    marcaId=marcaExistente.id;
+  }else{
+    const ref=await _add('cs_marcas',{nome:'Fun-Sports',contacto:'Pasi Aho',email:'info@fun-sports-germany.com',pct:0,data:new Date().toISOString().slice(0,10),notas:'Fun-Sports Freizeitanlagen und Zubehörteile GmbH, Bamberg (Alemanha). Comissão (%) a preencher — não definida nos documentos de encomenda.',ts:Date.now()});
+    marcaId=ref.id;
+  }
+  await _add('cs_artigos',{marcaId,marcaNome:'Fun-Sports',ref:'BOLA-SWC2026-3D',desc:'Bola Oficial SWC 2026',preco:25,qtyEntrou:100,notas:'Bola Oficial SWC 2026 — 100 unidades da 3D, compradas pela Vizelgolfe para venda no evento (sem consignação). Small / 3D-Uppsala-lacquer, amarela, logo SWC 2026 gravado.',ts:Date.now()});
+  toast('100 Bolas Oficiais SWC 2026 (3D) importadas','ok');
 }
 async function importarBolasReisinger(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
@@ -10369,6 +10390,7 @@ window.editEquipa=editEquipa;
 window.exportComunicadosPDF=exportComunicadosPDF;
 window.saveMarca=saveMarca;
 window.importarFunSports3D=importarFunSports3D;
+window.importarBolaOficial3D=importarBolaOficial3D;
 window.importarBolasReisinger=importarBolasReisinger;
 window.saveArtigo=saveArtigo;
 window.saveVenda=saveVenda;

@@ -6094,6 +6094,46 @@ function renderDelegacoes(){
 async function delDelegacao(id){if(!canDelete()||!confirm('Eliminar delegacao?'))return;await _del('delegacoes',id);toast('Eliminada','er');}
 
 // --- GUIA DO ATLETA ---
+// Tradução dos itens fixos do Programa Oficial, usada só na apresentação do Guia do Atleta
+// (ecrã e PDF) — os dados reais em 'programa' continuam em português, isto so traduz a exibicao.
+const PROG_MESES_TRAD={'Out':{EN:'Oct',DE:'Okt',ES:'Oct'}};
+const PROG_DIALABEL_TRAD={
+  'Cerimonia de Abertura':{EN:'Opening Ceremony',DE:'Eröffnungsfeier',ES:'Ceremonia de Apertura'},
+  'Dia 1 Competição':{EN:'Day 1 - Competition',DE:'Tag 1 - Wettkampf',ES:'Día 1 - Competición'},
+  'Dia 2 Competição':{EN:'Day 2 - Competition',DE:'Tag 2 - Wettkampf',ES:'Día 2 - Competición'},
+  'Dia 3 Competição':{EN:'Day 3 - Competition',DE:'Tag 3 - Wettkampf',ES:'Día 3 - Competición'},
+  'Final & Encerramento':{EN:'Final & Closing',DE:'Finale & Abschluss',ES:'Final & Clausura'},
+};
+const PROG_ITEM_TRAD={
+  'Concentração das Seleções':{EN:'Assembly of Delegations',DE:'Versammlung der Delegationen',ES:'Concentración de Delegaciones'},
+  'Desfile das Nações':{EN:'Parade of Nations',DE:'Nationenparade',ES:'Desfile de Naciones'},
+  'Receção no Auditório Municipal':{EN:'Reception at the Municipal Auditorium',DE:'Empfang im Stadtauditorium',ES:'Recepción en el Auditorio Municipal'},
+  'Cerimónia Protocolar de Abertura':{EN:'Official Opening Ceremony',DE:'Offizielle Eröffnungszeremonie',ES:'Ceremonia Oficial de Apertura'},
+  'Jantar Oficial de Abertura':{EN:'Official Opening Dinner',DE:'Offizielles Eröffnungsessen',ES:'Cena Oficial de Apertura'},
+  'Entrega de Medalhas — Equipas (Campo)':{EN:'Medal Ceremony — Teams (Course)',DE:'Medaillenzeremonie — Mannschaften (Platz)',ES:'Entrega de Medallas — Equipos (Campo)'},
+  'Entrega de Medalhas — Stroke Play (Campo)':{EN:'Medal Ceremony — Stroke Play (Course)',DE:'Medaillenzeremonie — Stroke Play (Platz)',ES:'Entrega de Medallas — Stroke Play (Campo)'},
+  'Entrega de Medalhas — Match Play (Campo)':{EN:'Medal Ceremony — Match Play (Course)',DE:'Medaillenzeremonie — Match Play (Platz)',ES:'Entrega de Medallas — Match Play (Campo)'},
+  'Receção e Drink de Boas-vindas — Encerramento':{EN:'Reception & Welcome Drink — Closing',DE:'Empfang & Begrüßungsgetränk — Abschluss',ES:'Recepción y Bebida de Bienvenida — Clausura'},
+  'Jantar Oficial de Encerramento':{EN:'Official Closing Dinner',DE:'Offizielles Abschlussessen',ES:'Cena Oficial de Clausura'},
+  'Discursos Oficiais e Protocolo Inicial':{EN:'Official Speeches & Opening Protocol',DE:'Offizielle Reden & Eröffnungsprotokoll',ES:'Discursos Oficiales y Protocolo Inicial'},
+  'Entrega de Diplomas de Participação':{EN:'Presentation of Certificates of Participation',DE:'Überreichung der Teilnahmeurkunden',ES:'Entrega de Diplomas de Participación'},
+  'Cerimónia de Entrega de Prémios (Momento Alto)':{EN:'Awards Ceremony (Highlight)',DE:'Preisverleihung (Höhepunkt)',ES:'Ceremonia de Entrega de Premios (Momento Culminante)'},
+  'Encerramento Solene e Brinde Final':{EN:'Solemn Closing & Final Toast',DE:'Feierlicher Abschluss & Schlusstoast',ES:'Clausura Solemne y Brindis Final'},
+};
+function traduzirItemPrograma(texto,lang){
+  if(!texto||lang==='PT'||lang==='PT-PT')return texto;
+  const t=PROG_ITEM_TRAD[texto];
+  return (t&&t[lang])?t[lang]:texto;
+}
+function traduzirDiaLabel(label,lang){
+  if(!label||lang==='PT'||lang==='PT-PT')return label;
+  const m=label.match(/^(\d{1,2}) Out - (.+)$/);
+  if(!m)return label;
+  const dia=m[1], sufixo=m[2];
+  const mesTrad=(PROG_MESES_TRAD['Out']&&PROG_MESES_TRAD['Out'][lang])||'Out';
+  const sufixoTrad=(PROG_DIALABEL_TRAD[sufixo]&&PROG_DIALABEL_TRAD[sufixo][lang])||sufixo;
+  return dia+' '+mesTrad+' - '+sufixoTrad;
+}
 function progAtletaPorDia(){
   // Devolve o programa oficial (colecao 'programa') agrupado por dia, filtrado para o que
   // interessa ao atleta — exclui logistica interna, reunioes e notas de bastidores das cerimonias
@@ -6297,8 +6337,8 @@ function renderGuia(){
   const progDias=progAtletaPorDia();
   const progHtml=progDias.length?progDias.map(d=>`
     <div style="margin-bottom:10px;">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--gl);background:rgba(201,168,76,.08);padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:4px;">${d.label}</div>
-      ${d.itens.map(it=>`<div style="display:flex;gap:10px;font-size:12px;color:var(--se);padding:4px 0;border-bottom:1px solid rgba(201,168,76,.06);"><span style="font-weight:700;color:var(--wh);min-width:40px;">${it.hora||'--:--'}</span><span>${it.titulo||''}</span></div>`).join('')}
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--gl);background:rgba(201,168,76,.08);padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:4px;">${traduzirDiaLabel(d.label,L)}</div>
+      ${d.itens.map(it=>`<div style="display:flex;gap:10px;font-size:12px;color:var(--se);padding:4px 0;border-bottom:1px solid rgba(201,168,76,.06);"><span style="font-weight:700;color:var(--wh);min-width:40px;">${it.hora||'--:--'}</span><span>${traduzirItemPrograma(it.titulo,L)}</span></div>`).join('')}
     </div>`).join(''):`<div style="font-size:12px;color:var(--mu);">${t.progempty}</div>`;
 
   el.innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${t.titulo}</div><div class="cds">${t.subtitulo}</div></div></div><div class="cdb">
@@ -6436,15 +6476,45 @@ function exportChegadasPDF(){
 function exportGuiaPDF(){
   const L=document.getElementById('guia-lang')?.value||'EN';
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,H=297;
+  const NAVY=[11,30,50], GOLD=[201,168,76];
+
+  // ===== CAPA =====
+  doc.setFillColor(...NAVY);
+  doc.rect(0,0,W,H,'F');
+  try{doc.addImage(_LOGO_B64,'JPEG',W/2-30,55,60,44);}catch(e){}
+  doc.setFont('helvetica','bold');doc.setFontSize(30);doc.setTextColor(255,255,255);
+  const guideTit={'EN':'ATHLETE GUIDE','PT':'GUIA DO ATLETA','DE':'ATHLETEN-LEITFADEN','ES':'GUÍA DEL ATLETA'};
+  doc.text(guideTit[L]||guideTit.EN,W/2,128,{align:'center'});
+  doc.setDrawColor(...GOLD);doc.setLineWidth(0.6);
+  doc.line(W/2-45,138,W/2+45,138);
+  doc.setFontSize(13);doc.setTextColor(...GOLD);
+  doc.text('14 – 17 OCTOBER 2026',W/2,148,{align:'center'});
+  doc.line(W/2-45,153,W/2+45,153);
+  doc.setFont('helvetica','italic');doc.setFontSize(10.5);doc.setTextColor(230,230,230);
+  const covTag={'EN':'The first Minigolf World Championship ever held in Portugal','PT':'O primeiro Campeonato do Mundo de Minigolfe realizado em Portugal','DE':'Die erste Minigolf-Weltmeisterschaft, die jemals in Portugal ausgetragen wird','ES':'El primer Campeonato del Mundo de Minigolf celebrado en Portugal'};
+  doc.text(covTag[L]||covTag.EN,W/2,163,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(200,200,200);
+  doc.text('Campo Fonseca e Castro · Parque das Termas · Vizela',W/2,170,{align:'center'});
+  try{doc.addImage(_LOGO_VZG,'JPEG',W/2-11,H-58,22,22);}catch(e){}
+  doc.setFontSize(9);doc.setTextColor(210,210,210);
+  doc.text('Organised by Vizelgolfe — Associação de Minigolfe de Vizela',W/2,H-30,{align:'center'});
+  doc.setFontSize(8);doc.setTextColor(160,175,190);
+  doc.text('Under the authority of WMF and EMF · With the support of FPM and Vizela City Council',W/2,H-25,{align:'center'});
+
+  // ===== PAGINAS DE CONTEUDO =====
+  doc.addPage();
   const tit={'EN':'Athlete Guide','PT':'Guia do Atleta','DE':'Athleten-Leitfaden','ES':'Guia del Atleta'};
   pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 14-17 October 2026',false);
   let y=42;
+  let secNum=0;
 
   function bloco(tituloObj,corpoObj){
-    if(y>250){doc.addPage();y=20;}
-    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
-    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
-    doc.text(tituloObj[L]||tituloObj.EN, 105, y+5.5, {align:'center'});
+    secNum++;
+    if(y>250){doc.addPage();pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 14-17 October 2026',false);y=42;}
+    doc.setFillColor(...NAVY);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...GOLD);
+    doc.text(secNum+'.  '+(tituloObj[L]||tituloObj.EN), 105, y+5.5, {align:'center'});
     y+=11;
     doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
     const txt=corpoObj[L]||corpoObj.EN;
@@ -6454,6 +6524,13 @@ function exportGuiaPDF(){
   }
 
   bloco(
+    {'EN':'Welcome','PT':'Boas-vindas','DE':'Willkommen','ES':'Bienvenida'},
+    {'EN':'On behalf of Vizelgolfe, it is our great honour to welcome you to SWC Vizela 2026. This guide brings together everything you and your delegation need to know for your stay. Please read it carefully, and do not hesitate to contact the Organising Committee with any questions. We wish every delegation a memorable championship, filled with sport, fair play and friendship. — Rui Granja da Cunha, President, Vizelgolfe.',
+     'PT':'Em nome da Vizelgolfe, é uma grande honra dar-lhe as boas-vindas ao SWC Vizela 2026. Este guia reúne tudo o que a sua delegação precisa de saber para a estadia. Não hesite em contactar o Comité Organizador com qualquer questão. Desejamos a todas as delegações um campeonato memorável, cheio de desporto, fair play e amizade. — Rui Granja da Cunha, Presidente, Vizelgolfe.',
+     'DE':'Im Namen von Vizelgolfe heißen wir Sie herzlich bei der SWC Vizela 2026 willkommen. Dieser Leitfaden enthält alle wichtigen Informationen für Ihren Aufenthalt. — Rui Granja da Cunha, Präsident, Vizelgolfe.',
+     'ES':'En nombre de Vizelgolfe, es un gran honor darle la bienvenida al SWC Vizela 2026. Esta guía reúne todo lo que su delegación necesita saber para su estancia. — Rui Granja da Cunha, Presidente, Vizelgolfe.'});
+
+  bloco(
     {'EN':'Championship Overview & History','PT':'Visão Geral & História do Campeonato','DE':'Meisterschaftsübersicht & Geschichte','ES':'Resumen & Historia del Campeonato'},
     {'EN':'Organised by Vizelgolfe - Associacao de Minigolfe de Vizela, under the authority of the World Minigolf Sport Federation (WMF) and the European Minigolf Sport Federation (EMF), with the support of the Portuguese Minigolf Federation (FPM) and Vizela City Council. This is the first Minigolf World Championship ever held in Portugal. In 1968, Manuel Fonseca e Castro built the very first minigolf course in the country, right here in Vizela — that same historic ground, now expanded to 6,800 sqm with 18 minigolf and 18 eternit ("peter golf") lanes, is where SWC 2026 will be played.',
      'PT':'Organizado pela Vizelgolfe - Associacao de Minigolfe de Vizela, sob a autoridade da World Minigolf Sport Federation (WMF) e da European Minigolf Sport Federation (EMF), com o apoio da Federacao Portuguesa de Minigolfe (FPM) e da Camara Municipal de Vizela. Este e o primeiro Campeonato do Mundo de Minigolfe realizado em Portugal. Em 1968, Manuel Fonseca e Castro construiu o primeiro campo de minigolfe do pais, aqui mesmo em Vizela — esse mesmo campo histórico, hoje com 6.800 m² e 18 pistas de minigolfe e 18 pistas eternit ("peter golf"), é onde se vai disputar o SWC 2026.',
@@ -6461,32 +6538,24 @@ function exportGuiaPDF(){
      'ES':'Organizado por Vizelgolfe, bajo la autoridad de la WMF y la EMF, con el apoyo de la Federacion Portuguesa de Minigolf (FPM) y el Ayuntamiento de Vizela. Este es el primer Campeonato del Mundo de Minigolf celebrado en Portugal. En 1968, Manuel Fonseca e Castro construyó aquí, en Vizela, el primer campo de minigolf del país.'});
 
   bloco(
-    {'EN':'Event Details','PT':'Detalhes do Evento','DE':'Veranstaltungsdetails','ES':'Detalles del Evento'},
-    {'EN':'Dates: 9-17 October 2026 (arrivals from 9 Oct, competition 14-17 Oct) | Venue: Minigolf Course, Vizela, Portugal | Opening Ceremony: 12 Oct from 17:30 | Closing Ceremony: 17 Oct from 19:00',
-     'PT':'Datas: 9-17 Outubro 2026 (chegadas a partir de 9 Out, competicao 14-17 Out) | Local: Campo de Minigolfe, Vizela, Portugal | Cerimonia de Abertura: 12 Out a partir das 17:30 | Cerimonia de Encerramento: 17 Out a partir das 19:00',
-     'DE':'Datum: 9.-17. Oktober 2026 (Anreise ab 9. Okt., Wettkampf 14.-17. Okt.) | Ort: Minigolfanlage, Vizela | Eroeffnungsfeier: 12. Okt. ab 17:30 | Schlussfeier: 17. Okt. ab 19:00',
-     'ES':'Fechas: 9-17 Octubre 2026 (llegadas desde el 9 Oct, competicion 14-17 Oct) | Sede: Campo de Minigolf, Vizela | Ceremonia Apertura: 12 Oct desde las 17:30 | Ceremonia Clausura: 17 Oct desde las 19:00'});
+    {'EN':'Event Schedule at a Glance','PT':'Programa em Resumo','DE':'Programmübersicht','ES':'Programa a Simple Vista'},
+    {'EN':'9-13 October: Arrivals and official training. 12 October: Opening Ceremony. 14-17 October: Competition days (Stroke Play, Match Play, Team event). 17 October: Closing Ceremony, Awards & Certificates of Participation.',
+     'PT':'9-13 de Outubro: Chegadas e treino oficial. 12 de Outubro: Cerimónia de Abertura. 14-17 de Outubro: Dias de competição (Stroke Play, Match Play, Equipas). 17 de Outubro: Cerimónia de Encerramento, Prémios e Diplomas de Participação.',
+     'DE':'9.-13. Oktober: Anreise und offizielles Training. 12. Oktober: Eröffnungsfeier. 14.-17. Oktober: Wettkampftage. 17. Oktober: Schlussfeier, Siegerehrung und Teilnahmeurkunden.',
+     'ES':'9-13 de octubre: Llegadas y entrenamiento oficial. 12 de octubre: Ceremonia de Apertura. 14-17 de octubre: Días de competición. 17 de octubre: Ceremonia de Clausura, Premios y Diplomas de Participación.'});
 
-  bloco(
-    {'EN':'Competition Format','PT':'Formato de Competição','DE':'Wettkampfformat','ES':'Formato de Competición'},
-    {'EN':'Stroke Play: 4 rounds, ranked by total strokes. Match Play: knockout format (Round of 16, Quarter-finals, Semi-finals, Final and 3rd/4th place match). Team Competition: combined results by delegation. Categories: Men (SM) and Ladies (SF).',
-     'PT':'Stroke Play: 4 rondas, classificacao por total de pancadas. Match Play: eliminatorio (Oitavos, Quartos, Meias-finais, Final e 3º/4º lugar). Competicao por Equipas: soma dos resultados por delegacao. Categorias: Homens (SM) e Senhoras (SF).',
-     'DE':'Stroke Play: 4 Runden nach Gesamtschlagzahl. Match Play: K.-o.-System (Achtelfinale bis Finale plus Spiel um Platz 3). Mannschaftswertung nach Delegation.',
-     'ES':'Stroke Play: 4 rondas por total de golpes. Match Play: eliminatorio (Octavos a Final mas 3er/4º puesto). Competicion por equipos segun delegacion.'});
-
-  // Programa oficial (tabela real, a partir dos dados do sistema)
   const progDias=progAtletaPorDia();
   if(progDias.length){
-    if(y>230){doc.addPage();y=20;}
-    doc.setFillColor(10,22,40);doc.roundedRect(14,y,182,8,2,2,'F');
-    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(201,168,76);
+    if(y>230){doc.addPage();pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 14-17 October 2026',false);y=42;}
+    doc.setFillColor(...NAVY);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...GOLD);
     const progTit={'EN':'Full Programme','PT':'Programa Completo','DE':'Vollständiges Programm','ES':'Programa Completo'};
     doc.text(progTit[L]||progTit.EN, 105, y+5.5, {align:'center'});
     y+=11;
     const rows=[];
-    progDias.forEach(d=>{ d.itens.forEach(it=>{ rows.push([d.label, it.hora||'--:--', it.titulo||'']); }); });
+    progDias.forEach(d=>{ d.itens.forEach(it=>{ rows.push([traduzirDiaLabel(d.label,L), it.hora||'--:--', traduzirItemPrograma(it.titulo,L)]); }); });
     doc.autoTable({
-      startY:y, head:[['Day','Time','Activity']], body:rows,
+      startY:y, head:[[{'EN':'Day','PT':'Dia','DE':'Tag','ES':'Día'}[L]||'Day',{'EN':'Time','PT':'Hora','DE':'Uhrzeit','ES':'Hora'}[L]||'Time',{'EN':'Activity','PT':'Atividade','DE':'Programmpunkt','ES':'Actividad'}[L]||'Activity']], body:rows,
       theme:'striped', styles:{fontSize:8,textColor:[35,35,35],cellPadding:3},
       headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
       columnStyles:{0:{cellWidth:60},1:{cellWidth:22,halign:'center'},2:{cellWidth:100}},
@@ -6494,12 +6563,28 @@ function exportGuiaPDF(){
     });
     y=doc.lastAutoTable.finalY+8;
   } else {
+    if(y>250){doc.addPage();pdfHeader(doc,tit[L]+' - SWC Vizela 2026','Seniors World Minigolf Championship - 14-17 October 2026',false);y=42;}
+    doc.setFillColor(...NAVY);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...GOLD);
+    const progTit={'EN':'Full Programme','PT':'Programa Completo','DE':'Vollständiges Programm','ES':'Programa Completo'};
+    doc.text(progTit[L]||progTit.EN, 105, y+5.5, {align:'center'});
+    y+=11;
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
     const progEmpty={'EN':'The detailed programme will be published as soon as finalised.','PT':'O programa detalhado sera publicado assim que finalizado.','DE':'Das Programm wird veroeffentlicht, sobald es finalisiert ist.','ES':'El programa detallado se publicara en cuanto sea finalizado.'};
-    bloco({'EN':'Full Programme','PT':'Programa Completo','DE':'Vollständiges Programm','ES':'Programa Completo'}, progEmpty);
+    const lines=doc.splitTextToSize(progEmpty[L]||progEmpty.EN,182);
+    doc.text(lines,14,y);
+    y+=lines.length*5+8;
   }
 
   bloco(
-    {'EN':'Registration & Accreditation','PT':'Inscrição & Acreditação','DE':'Anmeldung & Akkreditierung','ES':'Inscripción & Acreditación'},
+    {'EN':'Venue','PT':'Local','DE':'Veranstaltungsort','ES':'Sede'},
+    {'EN':'Campo Fonseca e Castro, Parque das Termas, Vizela, Portugal — the historic minigolf course of Vizela, within walking distance of the town centre and its thermal park.',
+     'PT':'Campo Fonseca e Castro, Parque das Termas, Vizela, Portugal — o histórico campo de minigolfe de Vizela, a curta distância a pé do centro da vila e do seu parque termal.',
+     'DE':'Campo Fonseca e Castro, Parque das Termas, Vizela, Portugal — die historische Minigolfanlage von Vizela, in Gehweite vom Ortszentrum und dem Thermalpark.',
+     'ES':'Campo Fonseca e Castro, Parque das Termas, Vizela, Portugal — el histórico campo de minigolf de Vizela, a poca distancia a pie del centro y del parque termal.'});
+
+  bloco(
+    {'EN':'Registration, Accreditation & Entry by Name','PT':'Inscrição, Acreditação & Entry by Name','DE':'Anmeldung, Akkreditierung & Entry by Name','ES':'Inscripción, Acreditación & Entry by Name'},
     {'EN':'Athlete registration: via minigolf-europe.org, deadline 31 August 2026 (contact: Peter Burri, EMF). On-site accreditation: at the secretariat, 10 October 2026, until 18:00. Entry by Name (final squad list): 12 October 2026, until 17:00.',
      'PT':'Inscricao de atletas: via minigolf-europe.org, prazo 31 de Agosto de 2026 (contacto: Peter Burri, EMF). Acreditacao no local: junto do secretariado, 10 de Outubro de 2026, ate as 18:00. Entry by Name (lista definitiva): 12 de Outubro de 2026, ate as 17:00.',
      'DE':'Anmeldung: ueber minigolf-europe.org, Frist 31. August 2026 (Kontakt: Peter Burri, EMF). Akkreditierung vor Ort: 10. Oktober 2026, bis 18:00 Uhr. Entry by Name: 12. Oktober 2026, bis 17:00 Uhr.',
@@ -6513,18 +6598,32 @@ function exportGuiaPDF(){
      'ES':'Hoteles asociados en la zona de Vizela, todos a corta distancia del campo, cumpliendo el requisito de la WMF de maximo 50 EUR/noche por habitacion doble, desayuno incluido, minimo 15 m², con ducha privada.'});
 
   bloco(
-    {'EN':'Transport','PT':'Transportes','DE':'Transport','ES':'Transporte'},
-    {'EN':'Local transport: the organisation does not provide a scheduled airport shuttle. Athletes arrange their own transport to/from Porto Airport (OPO) and their hotel. A support vehicle is available on-site for occasional local assistance.',
-     'PT':'Transporte local: a organizacao nao assegura um shuttle regular ao aeroporto. Cada atleta organiza o seu proprio transporte de/para o Aeroporto do Porto (OPO) e o hotel. Existe uma viatura de apoio no local para situacoes pontuais.',
+    {'EN':'Transport & Arrival','PT':'Transportes & Chegada','DE':'Transport & Anreise','ES':'Transporte & Llegada'},
+    {'EN':'Local transport: the organisation does not provide a scheduled airport shuttle. Athletes arrange their own transport to/from Porto Airport (OPO) and their hotel. A support vehicle is available on-site for occasional local assistance. Porto Airport is approximately 40 minutes by road from Vizela.',
+     'PT':'Transporte local: a organizacao nao assegura um shuttle regular ao aeroporto. Cada atleta organiza o seu proprio transporte de/para o Aeroporto do Porto (OPO) e o hotel. Existe uma viatura de apoio no local para situacoes pontuais. O Aeroporto do Porto fica a cerca de 40 minutos de Vizela.',
      'DE':'Lokaler Transport: Die Organisation bietet keinen regelmaessigen Flughafen-Shuttle an. Athleten organisieren ihren eigenen Transport von/zum Flughafen Porto (OPO) und zum Hotel. Vor Ort steht ein Unterstuetzungsfahrzeug fuer Ausnahmefaelle zur Verfuegung.',
      'ES':'Transporte local: la organizacion no ofrece un shuttle regular al aeropuerto. Cada atleta organiza su propio transporte desde/hacia el Aeropuerto de Porto (OPO) y el hotel. Hay un vehiculo de apoyo en el lugar para situaciones puntuales.'});
 
   bloco(
-    {'EN':'Ceremonies','PT':'Cerimónias','DE':'Zeremonien','ES':'Ceremonias'},
-    {'EN':'Opening Ceremony: 12 October, from 17:30 (Praca da Republica / Auditorio Municipal Francisco Ferreira / Casa do Park). Closing Ceremony & Awards: 17 October, from 19:00 (Quinta d\'Miranda). Smart-casual dress recommended. Flag bearers and delegation representatives should arrive 30 minutes before the scheduled start.',
-     'PT':'Cerimonia de Abertura: 12 de Outubro, a partir das 17:30 (Praca da Republica / Auditorio Municipal Francisco Ferreira / Casa do Park). Cerimonia de Encerramento & Entrega de Premios: 17 de Outubro, a partir das 19:00 (Quinta d\'Miranda). Traje smart-casual recomendado. Porta-bandeiras e representantes de delegacao devem chegar 30 minutos antes.',
-     'DE':'Eroeffnungsfeier: 12. Oktober, ab 17:30 Uhr. Schlussfeier & Siegerehrung: 17. Oktober, ab 19:00 Uhr, Quinta d\'Miranda. Smart-Casual-Kleidung empfohlen.',
-     'ES':'Ceremonia de Apertura: 12 de octubre, desde las 17:30. Ceremonia de Clausura y Entrega de Premios: 17 de octubre, desde las 19:00, Quinta d\'Miranda. Se recomienda vestimenta smart-casual.'});
+    {'EN':'Competition Format & Categories','PT':'Formato de Competição & Categorias','DE':'Wettkampfformat & Kategorien','ES':'Formato de Competición & Categorías'},
+    {'EN':'Stroke Play: 4 rounds, ranked by total strokes. Match Play: knockout format (Round of 16, Quarter-finals, Semi-finals, Final and 3rd/4th place match). Team Competition: combined results by delegation. Categories: Men (SM) and Ladies (SF).',
+     'PT':'Stroke Play: 4 rondas, classificacao por total de pancadas. Match Play: eliminatorio (Oitavos, Quartos, Meias-finais, Final e 3º/4º lugar). Competicao por Equipas: soma dos resultados por delegacao. Categorias: Homens (SM) e Senhoras (SF).',
+     'DE':'Stroke Play: 4 Runden nach Gesamtschlagzahl. Match Play: K.-o.-System (Achtelfinale bis Finale plus Spiel um Platz 3). Mannschaftswertung nach Delegation. Kategorien: Herren (SM) und Damen (SF).',
+     'ES':'Stroke Play: 4 rondas por total de golpes. Match Play: eliminatorio (Octavos a Final mas 3er/4º puesto). Competicion por equipos segun delegacion. Categorías: Masculina (SM) y Femenina (SF).'});
+
+  bloco(
+    {'EN':'Ceremonies & Protocol','PT':'Cerimónias & Protocolo','DE':'Zeremonien & Protokoll','ES':'Ceremonias & Protocolo'},
+    {'EN':'Opening Ceremony: 12 October, from 17:30 (Praca da Republica / Auditorio Municipal Francisco Ferreira / Casa do Park). Closing Ceremony & Awards: 17 October, from 19:00 (Quinta d\'Miranda); Certificates of Participation presented at approximately 21:50, same venue. Smart-casual dress recommended. Flag bearers and delegation representatives should arrive 30 minutes before the scheduled start.',
+     'PT':'Cerimonia de Abertura: 12 de Outubro, a partir das 17:30 (Praca da Republica / Auditorio Municipal Francisco Ferreira / Casa do Park). Cerimonia de Encerramento & Premios: 17 de Outubro, a partir das 19:00 (Quinta d\'Miranda); Diplomas de Participacao entregues por volta das 21:50, no mesmo local. Traje smart-casual recomendado. Porta-bandeiras e representantes de delegacao devem chegar 30 minutos antes.',
+     'DE':'Eroeffnungsfeier: 12. Oktober, ab 17:30 Uhr. Schlussfeier & Siegerehrung: 17. Oktober, ab 19:00 Uhr, Quinta d\'Miranda; Teilnahmeurkunden gegen 21:50 Uhr. Smart-Casual-Kleidung empfohlen.',
+     'ES':'Ceremonia de Apertura: 12 de octubre, desde las 17:30. Ceremonia de Clausura y Entrega de Premios: 17 de octubre, desde las 19:00, Quinta d\'Miranda; Diplomas de Participación sobre las 21:50. Se recomienda vestimenta smart-casual.'});
+
+  bloco(
+    {'EN':'Code of Conduct & Fair Play','PT':'Código de Conduta & Fair Play','DE':'Verhaltenskodex & Fair Play','ES':'Código de Conducta & Fair Play'},
+    {'EN':'All athletes, officials and delegation members are expected to conduct themselves with the highest standards of sportsmanship, respect and fair play, on and off the course. Decisions made by Referees and the Jury are to be respected; any formal protest must follow the official WMF/EMF protest procedure. For the full and binding regulations, please consult your national federation or the WMF/EMF official rulebooks.',
+     'PT':'Espera-se de todos os atletas, oficiais e membros de delegacao os mais elevados padroes de desportivismo, respeito e fair play, dentro e fora do campo. As decisoes dos Arbitros e do Juri devem ser respeitadas; qualquer reclamacao formal deve seguir o procedimento oficial de protesto WMF/EMF.',
+     'DE':'Von allen Athleten, Offiziellen und Delegationsmitgliedern wird hoechste Sportlichkeit, Respekt und Fair Play erwartet. Entscheidungen der Schiedsrichter und der Jury sind zu respektieren; ein formeller Protest muss dem offiziellen WMF/EMF-Protestverfahren folgen.',
+     'ES':'Se espera de todos los atletas, oficiales y miembros de delegacion los mas altos estandares de deportividad, respeto y fair play. Las decisiones de los Arbitros y del Jurado deben ser respetadas; cualquier protesta formal debe seguir el procedimiento oficial WMF/EMF.'});
 
   bloco(
     {'EN':'Anti-Doping','PT':'Antidopagem','DE':'Anti-Doping','ES':'Antidopaje'},
@@ -6532,6 +6631,13 @@ function exportGuiaPDF(){
      'PT':'O protocolo antidopagem WMF/AMA aplica-se durante todo o periodo de treino oficial e nos dias de competicao. Os atletas podem ser selecionados para controlo em qualquer momento.',
      'DE':'Das WMF/WADA-Anti-Doping-Protokoll gilt waehrend der gesamten offiziellen Trainingszeit und an allen Wettkampftagen.',
      'ES':'El protocolo antidopaje WMF/AMA se aplica durante todo el periodo de entrenamiento oficial y los dias de competicion.'});
+
+  bloco(
+    {'EN':'Insurance, Health & Medical Services','PT':'Seguros, Saúde & Serviço Médico','DE':'Versicherung, Gesundheit & Medizinischer Dienst','ES':'Seguro, Salud & Servicio Médico'},
+    {'EN':'Each athlete and delegation member is responsible for arranging their own travel, health and personal accident insurance for the full duration of their stay. Cover should include medical treatment, repatriation and liability. A medical service is available on-site during all competition days. Emergency number: 112.',
+     'PT':'Cada atleta e membro de delegacao e responsavel por contratar o seu proprio seguro de viagem, saude e acidentes pessoais para toda a duracao da estadia. Existe servico medico disponivel no local durante todos os dias de competicao. Numero de emergencia: 112.',
+     'DE':'Jeder Athlet und jedes Delegationsmitglied ist selbst fuer Reise-, Kranken- und Unfallversicherung waehrend des gesamten Aufenthalts verantwortlich. Vor Ort steht waehrend aller Wettkampftage ein medizinischer Dienst zur Verfuegung. Notruf: 112.',
+     'ES':'Cada atleta y miembro de delegacion es responsable de contratar su propio seguro de viaje, salud y accidentes personales durante toda la estancia. Hay servicio medico disponible en el lugar durante todos los dias de competicion. Emergencias: 112.'});
 
   bloco(
     {'EN':'Weather & What to Bring','PT':'Clima & O Que Trazer','DE':'Wetter & Ausrüstung','ES':'Clima & Qué Llevar'},
@@ -6542,24 +6648,10 @@ function exportGuiaPDF(){
 
   bloco(
     {'EN':'About Vizela','PT':'Sobre Vizela','DE':'Über Vizela','ES':'Sobre Vizela'},
-    {'EN':'Historic spa town in northern Portugal, known for its thermal waters and Roman heritage, on the banks of the river Vizela. Currency: Euro (EUR). Language: Portuguese.',
-     'PT':'Historica vila termal no norte de Portugal, conhecida pelas suas aguas termais e patrimonio romano, as margens do rio Vizela. Moeda: Euro (EUR). Idioma: Portugues.',
-     'DE':'Historische Kurstadt im Norden Portugals, bekannt fuer ihre Thermalquellen. Waehrung: Euro. Sprache: Portugiesisch.',
-     'ES':'Historica villa termal en el norte de Portugal, conocida por sus aguas termales. Moneda: Euro. Idioma: Portugues.'});
-
-  bloco(
-    {'EN':'Code of Conduct & Fair Play','PT':'Código de Conduta & Fair Play','DE':'Verhaltenskodex & Fair Play','ES':'Código de Conducta & Fair Play'},
-    {'EN':'All athletes, officials and delegation members are expected to conduct themselves with the highest standards of sportsmanship, respect and fair play, on and off the course. Decisions made by Referees and the Jury are to be respected; any formal protest must follow the official WMF/EMF protest procedure. For the full and binding regulations, please consult your national federation or the WMF/EMF official rulebooks.',
-     'PT':'Espera-se de todos os atletas, oficiais e membros de delegacao os mais elevados padroes de desportivismo, respeito e fair play, dentro e fora do campo. As decisoes dos Arbitros e do Juri devem ser respeitadas; qualquer reclamacao formal deve seguir o procedimento oficial de protesto WMF/EMF.',
-     'DE':'Von allen Athleten, Offiziellen und Delegationsmitgliedern wird hoechste Sportlichkeit, Respekt und Fair Play erwartet. Entscheidungen der Schiedsrichter und der Jury sind zu respektieren; ein formeller Protest muss dem offiziellen WMF/EMF-Protestverfahren folgen.',
-     'ES':'Se espera de todos los atletas, oficiales y miembros de delegacion los mas altos estandares de deportividad, respeto y fair play. Las decisiones de los Arbitros y del Jurado deben ser respetadas; cualquier protesta formal debe seguir el procedimiento oficial WMF/EMF.'});
-
-  bloco(
-    {'EN':'Insurance, Health & Medical','PT':'Seguros, Saúde & Serviço Médico','DE':'Versicherung, Gesundheit & Medizinischer Dienst','ES':'Seguro, Salud & Servicio Médico'},
-    {'EN':'Each athlete and delegation member is responsible for arranging their own travel, health and personal accident insurance for the full duration of their stay. Cover should include medical treatment, repatriation and liability. A medical service is available on-site during all competition days.',
-     'PT':'Cada atleta e membro de delegacao e responsavel por contratar o seu proprio seguro de viagem, saude e acidentes pessoais para toda a duracao da estadia. A cobertura deve incluir tratamento medico, repatriamento e responsabilidade civil. Existe servico medico disponivel no local durante todos os dias de competicao.',
-     'DE':'Jeder Athlet und jedes Delegationsmitglied ist selbst fuer Reise-, Kranken- und Unfallversicherung waehrend des gesamten Aufenthalts verantwortlich. Vor Ort steht waehrend aller Wettkampftage ein medizinischer Dienst zur Verfuegung.',
-     'ES':'Cada atleta y miembro de delegacion es responsable de contratar su propio seguro de viaje, salud y accidentes personales durante toda la estancia. Hay servicio medico disponible en el lugar durante todos los dias de competicion.'});
+    {'EN':'Historic spa town in northern Portugal, known for its thermal waters and Roman heritage, on the banks of the river Vizela. Currency: Euro (EUR). Language: Portuguese. Emergency number: 112.',
+     'PT':'Historica vila termal no norte de Portugal, conhecida pelas suas aguas termais e patrimonio romano, as margens do rio Vizela. Moeda: Euro (EUR). Idioma: Portugues. Numero de emergencia: 112.',
+     'DE':'Historische Kurstadt im Norden Portugals, bekannt fuer ihre Thermalquellen. Waehrung: Euro. Sprache: Portugiesisch. Notruf: 112.',
+     'ES':'Historica villa termal en el norte de Portugal, conocida por sus aguas termales. Moneda: Euro. Idioma: Portugues. Emergencias: 112.'});
 
   bloco(
     {'EN':'Official Merchandise','PT':'Merchandise Oficial','DE':'Offizielles Merchandise','ES':'Merchandising Oficial'},
@@ -6583,11 +6675,11 @@ function exportGuiaPDF(){
      'ES':'Los datos personales enviados durante el registro se procesan exclusivamente para la organizacion del SWC 2026, de acuerdo con la legislacion de proteccion de datos aplicable. Podran captarse fotografias y videos oficiales durante el campeonato con fines promocionales y de archivo.'});
 
   bloco(
-    {'EN':'Emergency & Organisation Contacts','PT':'Contactos de Emergência & Organização','DE':'Notfall- & Organisationskontakte','ES':'Contactos de Emergencia & Organización'},
-    {'EN':'Organisation: vizelgolfe@gmail.com | Police/Emergency: 112 | Medical: available on site during competition days',
-     'PT':'Organizacao: vizelgolfe@gmail.com | Policia/Emergencia: 112 | Servico medico disponivel no local',
-     'DE':'Organisation: vizelgolfe@gmail.com | Polizei/Notfall: 112',
-     'ES':'Organizacion: vizelgolfe@gmail.com | Policia/Emergencia: 112'});
+    {'EN':'Official Contacts','PT':'Contactos Oficiais','DE':'Offizielle Kontakte','ES':'Contactos Oficiales'},
+    {'EN':'Organisation: vizelgolfe@gmail.com | 916 198 144 | Police/Emergency: 112 | Medical: available on site during competition days',
+     'PT':'Organizacao: vizelgolfe@gmail.com | 916 198 144 | Policia/Emergencia: 112 | Servico medico disponivel no local',
+     'DE':'Organisation: vizelgolfe@gmail.com | 916 198 144 | Polizei/Notfall: 112',
+     'ES':'Organizacion: vizelgolfe@gmail.com | 916 198 144 | Policia/Emergencia: 112'});
 
   pdfFooter(doc,false);
   doc.save('SWC2026_Athlete_Guide_'+L+'.pdf');

@@ -1637,6 +1637,14 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="pg" id="pg-bar">
 <div class="st"><span class="sn">BAR</span>Bar &mdash; Caixa</div>
 <div class="sd">Caixa do bar: toca nos artigos, soma a conta e regista a venda &mdash; o stock baixa automaticamente.</div>
+<div class="av" style="margin-bottom:14px;"><strong>Dois pontos de venda, dois stocks separados:</strong> escolhe abaixo em qual estás a vender. Cada local só vende do stock que lhe foi atribuído — nunca há conflito entre os dois caixas.</div>
+<div class="fg" style="max-width:340px;margin-bottom:16px;">
+  <div class="fl">A vender em</div>
+  <select class="fse" id="bar-local-ativo" onchange="mudarLocalBar()">
+    <option value="campo">Campo (Fonseca e Castro)</option>
+    <option value="aldeia">Aldeia Olímpica</option>
+  </select>
+</div>
 <div class="bb gestao-only" id="bar-bar">
   <button class="btn bp" onclick="openM('m-bar-art')">+ Novo artigo</button>
 </div>
@@ -1662,7 +1670,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 <div class="gestao-only"><div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">ARTIGOS</span>Gestao de artigos &amp; stock</div>
 <div class="tbl-wrap tw" style="margin-bottom:20px;"><table>
-  <thead><tr><th>Artigo</th><th>Categoria</th><th>Preco</th><th>Stock inicial</th><th>Stock atual</th><th id="th-bar-a">Acoes</th></tr></thead>
+  <thead><tr><th>Artigo</th><th>Categoria</th><th>Preco</th><th>Campo (atual/inicial)</th><th>Aldeia (atual/inicial)</th><th id="th-bar-a">Acoes</th></tr></thead>
   <tbody id="t-bar-art"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr></tbody>
 </table></div>
 </div><div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">VENDAS</span>Registo de vendas do bar</div>
@@ -2367,7 +2375,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mh"><div class="mt2">Artigo do Bar</div><button class="mc" onclick="closeM('m-bar-art')">&#10005;</button></div>
   <div class="mb">
     <div class="fr"><div class="fg"><div class="fl">Nome do artigo</div><input class="fi" id="ba-nome" placeholder="Ex.: Agua 0,5L"></div><div class="fg"><div class="fl">Categoria</div><input class="fi" id="ba-cat" placeholder="Bebidas / Snacks..."></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Preço de venda (EUR)</div><input class="fi" type="number" step="0.01" id="ba-preco" placeholder="0,00"></div><div class="fg"><div class="fl">Stock (unidades)</div><input class="fi" type="number" step="1" id="ba-qty" placeholder="0"></div></div>
+    <div class="fg"><div class="fl">Preço de venda (EUR)</div><input class="fi" type="number" step="0.01" id="ba-preco" placeholder="0,00"></div>
+    <div class="fr"><div class="fg"><div class="fl">Stock inicial — Campo</div><input class="fi" type="number" step="1" id="ba-qty-campo" placeholder="0"></div><div class="fg"><div class="fl">Stock inicial — Aldeia Olímpica</div><input class="fi" type="number" step="1" id="ba-qty-aldeia" placeholder="0"></div></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-bar-art')">Cancelar</button><button class="btn bp" onclick="saveBarArtigo()">Guardar artigo</button></div>
 </div></div>
@@ -9612,13 +9621,44 @@ let _marcas=[], _artigos=[], _vendas_cs=[];
 
 //  BAR (Caixa) 
 let _barArt=[], _barVen=[], _barCart={};
+let _barLocal=(function(){try{return localStorage.getItem('swc_bar_local')||'campo';}catch(e){return 'campo';}})();
 function loadBar(){
   _snap('bar_artigos',(d)=>{_barArt=d;renderBarGrid();renderBarArtigos();renderBarKPIs();});
   _snap('bar_vendas',(d)=>{_barVen=d;renderBarVendas();renderBarArtigos();renderBarGrid();renderBarKPIs();});
+  const sel=document.getElementById('bar-local-ativo');if(sel)sel.value=_barLocal;
 }
-function barStock(id){const a=_barArt.find(x=>x.id===id);if(!a)return 0;let s=0;_barVen.forEach(v=>(v.items||[]).forEach(it=>{if(it.artigoId===id)s+=Number(it.qty||0);}));return Number(a.qtyEntrou||0)-s;}
+function mudarLocalBar(){
+  const sel=document.getElementById('bar-local-ativo');
+  _barLocal=sel?sel.value:'campo';
+  try{localStorage.setItem('swc_bar_local',_barLocal);}catch(e){}
+  barLimpar();
+  renderBarGrid();renderBarKPIs();
+  toast('A vender em: '+(_barLocal==='aldeia'?'Aldeia Olímpica':'Campo'));
+}
+// Quantidade que entrou para um artigo, num local especifico.
+// Compatibilidade: artigos antigos so tem 'qtyEntrou' (sem local) — esse valor conta como Campo.
+function barEntrouLoc(a,loc){
+  if(loc==='aldeia')return Number(a.qtyEntrouAldeia||0);
+  return Number(a.qtyEntrouCampo!==undefined?a.qtyEntrouCampo:(a.qtyEntrou||0));
+}
+function barVendidoLoc(id,loc){
+  let s=0;
+  _barVen.forEach(v=>{if((v.local||'campo')!==loc)return;(v.items||[]).forEach(it=>{if(it.artigoId===id)s+=Number(it.qty||0);});});
+  return s;
+}
+// Stock de um artigo num local (por defeito, o local ativo). Usado para vender.
+function barStock(id,local){
+  const a=_barArt.find(x=>x.id===id);if(!a)return 0;
+  const loc=local||_barLocal;
+  return barEntrouLoc(a,loc)-barVendidoLoc(id,loc);
+}
+// Stock combinado dos dois locais — para visao geral (KPIs e tabela de gestao).
+function barStockTotal(id){
+  const a=_barArt.find(x=>x.id===id);if(!a)return 0;
+  return (barEntrouLoc(a,'campo')+barEntrouLoc(a,'aldeia'))-(barVendidoLoc(id,'campo')+barVendidoLoc(id,'aldeia'));
+}
 function renderBarKPIs(){
-  const stock=_barArt.reduce((s,a)=>s+barStock(a.id),0);let vend=0,rec=0;
+  const stock=_barArt.reduce((s,a)=>s+barStockTotal(a.id),0);let vend=0,rec=0;
   _barVen.forEach(v=>{rec+=Number(v.total||0);(v.items||[]).forEach(it=>vend+=Number(it.qty||0));});
   (document.getElementById('bar-k-art')||{}).textContent=_barArt.length;
   (document.getElementById('bar-k-stock')||{}).textContent=stock+' un.';
@@ -9630,10 +9670,10 @@ function renderBarGrid(){
   if(!_barArt.length){g.innerHTML='<div class="mu" style="grid-column:1/-1;text-align:center;padding:22px;">Sem artigos disponiveis.</div>';return;}
   g.innerHTML=_barArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
     const st=barStock(a.id);const out=st<=0;
-    return '<button onclick="barAdd(\''+a.id+'\')" '+(out?'disabled':'')+' style="text-align:left;border:1px solid rgba(201,168,76,'+(out?'.1':'.28')+');background:rgba(255,255,255,'+(out?'.02':'.05')+');border-radius:10px;padding:11px;cursor:'+(out?'not-allowed':'pointer')+';opacity:'+(out?'.4':'1')+';color:var(--wh);font-family:inherit;"><div style="font-weight:700;font-size:13px;margin-bottom:4px;line-height:1.2;">'+(a.nome||'')+'</div><div style="font-size:16px;font-weight:800;color:var(--gl2);">'+fmt(a.preco)+'</div><div style="font-size:10px;color:'+(st<=3?'var(--er)':'var(--mu)')+';margin-top:3px;">stock: '+st+'</div></button>';
+    return '<button onclick="barAdd(\''+a.id+'\')" '+(out?'disabled':'')+' style="text-align:left;border:1px solid rgba(201,168,76,'+(out?'.1':'.28')+');background:rgba(255,255,255,'+(out?'.02':'.05')+');border-radius:10px;padding:11px;cursor:'+(out?'not-allowed':'pointer')+';opacity:'+(out?'.4':'1')+';color:var(--wh);font-family:inherit;"><div style="font-weight:700;font-size:13px;margin-bottom:4px;line-height:1.2;">'+(a.nome||'')+'</div><div style="font-size:16px;font-weight:800;color:var(--gl2);">'+fmt(a.preco)+'</div><div style="font-size:10px;color:'+(st<=3?'var(--er)':'var(--mu)')+';margin-top:3px;">stock aqui: '+st+'</div></button>';
   }).join('');
 }
-function barAdd(id){const st=barStock(id);const inc=_barCart[id]||0;if(inc>=st){toast('Sem stock suficiente','er');return;}_barCart[id]=inc+1;renderBarCart();}
+function barAdd(id){const st=barStock(id);const inc=_barCart[id]||0;if(inc>=st){toast('Sem stock suficiente neste local','er');return;}_barCart[id]=inc+1;renderBarCart();}
 function barInc(id){barAdd(id);}
 function barDec(id){if(!_barCart[id])return;_barCart[id]--;if(_barCart[id]<=0)delete _barCart[id];renderBarCart();}
 function barDelLine(id){delete _barCart[id];renderBarCart();}
@@ -9650,9 +9690,9 @@ async function barRegistar(){
   if(!canEdit()){toast('Sem permissao','er');return;}
   const ids=Object.keys(_barCart);if(!ids.length){toast('Talao vazio','er');return;}
   const items=[];let total=0;
-  for(const id of ids){const a=_barArt.find(x=>x.id===id);if(!a)continue;const q=_barCart[id];if(q>barStock(id)){toast('Stock insuficiente: '+(a.nome||''),'er');return;}const lt=Number(a.preco||0)*q;total+=lt;items.push({artigoId:id,nome:a.nome||'',qty:q,precoUnit:Number(a.preco||0),total:lt});}
-  const _bref=await _add('bar_vendas',{items,total,dt:new Date().toLocaleString('pt-PT'),ts:Date.now()});
-  const _bdesc='Bar: '+items.map(it=>it.qty+'x '+(it.nome||'')).join(', ');
+  for(const id of ids){const a=_barArt.find(x=>x.id===id);if(!a)continue;const q=_barCart[id];if(q>barStock(id)){toast('Stock insuficiente neste local: '+(a.nome||''),'er');return;}const lt=Number(a.preco||0)*q;total+=lt;items.push({artigoId:id,nome:a.nome||'',qty:q,precoUnit:Number(a.preco||0),total:lt});}
+  const _bref=await _add('bar_vendas',{items,total,local:_barLocal,dt:new Date().toLocaleString('pt-PT'),ts:Date.now()});
+  const _bdesc='Bar ('+(_barLocal==='aldeia'?'Aldeia Olímpica':'Campo')+'): '+items.map(it=>it.qty+'x '+(it.nome||'')).join(', ');
   await lancarVendaContab('bar','788',_bdesc,total,_bref&&_bref.id);
   _barCart={};renderBarCart();toast('Venda registada '+fmt(total));
 }
@@ -9661,21 +9701,22 @@ function renderBarArtigos(){
   const tb=document.getElementById('t-bar-art');if(!tb)return;
   if(!_barArt.length){tb.innerHTML='<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem artigos registados</td></tr>';return;}
   tb.innerHTML=_barArt.slice().sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).map(a=>{
-    const st=barStock(a.id);
-    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="mu">'+(a.categoria||'')+'</td><td style="text-align:right;">'+fmt(a.preco)+'</td><td style="text-align:center;">'+(a.qtyEntrou||0)+'</td><td style="text-align:center;font-weight:700;color:'+(st<=3?'var(--er)':'var(--wh)')+';">'+st+'</td>'+(canEdit()?'<td><button class="btn bo bsm" onclick="editBarArtigo(\''+a.id+'\')">&#9999;</button>'+(canDelete()?'<button class="btn bd2 bsm" onclick="delBarArtigo(\''+a.id+'\')">&#128465;</button>':'')+'</td>':'<td></td>')+'</tr>';
+    const stC=barStock(a.id,'campo'), inC=barEntrouLoc(a,'campo');
+    const stA=barStock(a.id,'aldeia'), inA=barEntrouLoc(a,'aldeia');
+    return '<tr><td class="vl">'+(a.nome||'')+'</td><td class="mu">'+(a.categoria||'')+'</td><td style="text-align:right;">'+fmt(a.preco)+'</td><td style="text-align:center;font-weight:700;color:'+(stC<=3?'var(--er)':'var(--wh)')+';">'+stC+' / '+inC+'</td><td style="text-align:center;font-weight:700;color:'+(stA<=3?'var(--er)':'var(--wh)')+';">'+stA+' / '+inA+'</td>'+(canEdit()?'<td><button class="btn bo bsm" onclick="editBarArtigo(\''+a.id+'\')">&#9999;</button>'+(canDelete()?'<button class="btn bd2 bsm" onclick="delBarArtigo(\''+a.id+'\')">&#128465;</button>':'')+'</td>':'<td></td>')+'</tr>';
   }).join('');
 }
 function renderBarVendas(){
   const tb=document.getElementById('t-bar-vendas');if(!tb)return;
   const sorted=[..._barVen].sort((a,b)=>b.ts-a.ts);
   if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
-  tb.innerHTML=sorted.map(v=>{const desc=(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');
-    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoBarVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
+  tb.innerHTML=sorted.map(v=>{const desc=(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');const loc=v.local==='aldeia'?'Aldeia':'Campo';
+    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+' · <span style="color:var(--gl);">'+loc+'</span></td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoBarVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
   }).join('');
 }
 async function saveBarArtigo(){
   if(!canEdit())return;
-  const d={nome:document.getElementById('ba-nome').value,categoria:document.getElementById('ba-cat').value,preco:parseFloat(document.getElementById('ba-preco').value)||0,qtyEntrou:parseInt(document.getElementById('ba-qty').value)||0,ts:Date.now()};
+  const d={nome:document.getElementById('ba-nome').value,categoria:document.getElementById('ba-cat').value,preco:parseFloat(document.getElementById('ba-preco').value)||0,qtyEntrouCampo:parseInt(document.getElementById('ba-qty-campo').value)||0,qtyEntrouAldeia:parseInt(document.getElementById('ba-qty-aldeia').value)||0,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
   const _e=document.getElementById('ba-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('bar_artigos',_eid,d);if(_e)_e.value='';toast('Artigo actualizado');}else{await _add('bar_artigos',d);toast('Artigo registado');}
@@ -9687,12 +9728,13 @@ function editBarArtigo(id){
   if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='ba-eid';const mb=document.querySelector('#m-bar-art .mb');if(mb)mb.prepend(hid);}
   hid.value=id;
   const set=(i,v)=>{const e=document.getElementById(i);if(e)e.value=v;};
-  set('ba-nome',a.nome||'');set('ba-cat',a.categoria||'');set('ba-preco',a.preco||'');set('ba-qty',a.qtyEntrou||0);
+  set('ba-nome',a.nome||'');set('ba-cat',a.categoria||'');set('ba-preco',a.preco||'');
+  set('ba-qty-campo',barEntrouLoc(a,'campo'));set('ba-qty-aldeia',barEntrouLoc(a,'aldeia'));
   openM('m-bar-art');
 }
 async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
 async function delBarVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await removerVendaContab(id);await _del('bar_vendas',id);toast('Anulada','er');}
-window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;
+window.mudarLocalBar=mudarLocalBar;window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;
 //  ACESSOS POR SECCAO (Fase 2) 
 let _acessos=[];
 const MODULOS_GATEAVEIS=[

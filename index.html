@@ -1647,6 +1647,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 <div class="bb gestao-only" id="bar-bar">
   <button class="btn bp" onclick="openM('m-bar-art')">+ Novo artigo</button>
+  <button class="btn bo" onclick="copiarStockCampoParaAldeia()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📋 Copiar stock Campo → Aldeia</button>
 </div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Artigos</div><div class="smv" id="bar-k-art">0</div></div>
@@ -9739,8 +9740,22 @@ function editBarArtigo(id){
   openM('m-bar-art');
 }
 async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
+// Copia, de uma vez, a quantidade de stock inicial "Campo" de cada artigo do Bar para "Aldeia Olimpica" —
+// atalho para nao teres de reescrever tudo a mao. Substitui o que ja estiver na Aldeia.
+async function copiarStockCampoParaAldeia(){
+  if(!canEdit()){toast('Sem permissão','er');return;}
+  if(!_barArt.length){toast('Sem artigos do Bar registados ainda.','er');return;}
+  if(!confirm('Isto vai copiar a quantidade de stock do Campo para a Aldeia Olímpica, em TODOS os '+_barArt.length+' artigos do Bar — substituindo o que já lá estiver na Aldeia.\\n\\nConfirmar?'))return;
+  let ok=0,err=0;
+  for(const a of _barArt){
+    const qtyCampo=barEntrouLoc(a,'campo');
+    try{await _upd('bar_artigos',a.id,{qtyEntrouCampo:qtyCampo,qtyEntrouAldeia:qtyCampo});ok++;}
+    catch(e){console.error('Erro ao copiar stock',a.nome,e);err++;}
+  }
+  toast('Stock copiado para '+ok+' artigo(s)'+(err?' ('+err+' erros)':''),'ok');
+}
 async function delBarVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await removerVendaContab(id);await _del('bar_vendas',id);toast('Anulada','er');}
-window.mudarLocalBar=mudarLocalBar;window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;
+window.mudarLocalBar=mudarLocalBar;window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;window.copiarStockCampoParaAldeia=copiarStockCampoParaAldeia;
 //  ACESSOS POR SECCAO (Fase 2) 
 let _acessos=[];
 const MODULOS_GATEAVEIS=[

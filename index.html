@@ -572,6 +572,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub">Campo · Postos · Equipa</div>
     </div>
   </div>
+  <div class="si" title="Alergias · Intolerâncias · Dietas especiais" onclick="nav(this,'alergias','Alergias &amp; Restrições Alimentares')" style="">
+    <i class="ti ti-alert-triangle" style="font-size:20px;color:#FF6B6B;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Alergias &amp; Dietas</div>
+      <div class="si-sub" style="color:rgba(255,107,107,.6);">Alergias · Intolerâncias · Dietas especiais</div>
+    </div>
+  </div>
   <div class="si" title="Inventário WMF · Seguros do evento" onclick="nav(this,'seguranca','Segurança &amp; Seguros')" style="">
     <i class="ti ti-shield" style="font-size:20px;color:#5AA0FF;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -1458,6 +1465,47 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="bb" id="bar-inv"><button class="btn bp bsm" onclick="openM('m-inv')">+ Item equipamento</button><button class="btn bo" onclick="exportSegPDF()">Exportar PDF</button></div>
       <div id="lst-inv"><div class="em"><div class="emi">◆</div><div class="emt">Sem itens</div><div style="font-size:11px;color:var(--mu);">Registe o equipamento enviado pela WMF à chegada</div></div></div>
     </div>
+  </div>
+</div>
+</div>
+
+<!-- ALERGIAS & RESTRIÇÕES ALIMENTARES -->
+<div class="pg" id="pg-alergias">
+<div class="st"><span class="sn">AL</span>Alergias &amp; Restrições Alimentares<button class="hbtn" data-help="alergias" onclick="openHelp(this.dataset.help)">?</button></div>
+<div class="sd">Registo de segurança — alergias, intolerâncias e dietas especiais de atletas e staff, para alerta da equipa de catering</div>
+<div class="av" style="margin-bottom:14px;"><strong>Segurança alimentar:</strong> este registo deve ser consultado pela equipa de catering antes e durante o evento. Em caso de alergia severa, confirme sempre os ingredientes com a pessoa antes de servir.</div>
+
+<div class="g2">
+  <div class="cd"><div class="cdh"><div><div class="cdt">Registar Atleta / Staff</div><div class="cds">Alergia, intolerância ou dieta especial</div></div></div>
+    <div class="cdb">
+      <div class="fr"><div class="fg"><div class="fl">Nome</div><input class="fi" id="al-nome" placeholder="Ex.: Raphael Fischer"></div><div class="fg"><div class="fl">País / Equipa</div><input class="fi" id="al-pais" placeholder="Ex.: França"></div></div>
+      <div class="fr"><div class="fg"><div class="fl">Tipo</div><select class="fse" id="al-tipo"><option value="Alergia">Alergia</option><option value="Intolerância">Intolerância</option><option value="Vegan">Vegan</option><option value="Vegetariano">Vegetariano</option><option value="Outro">Outro</option></select></div><div class="fg"><div class="fl">Gravidade</div><select class="fse" id="al-gravidade"><option value="Ligeira">Ligeira</option><option value="Moderada">Moderada</option><option value="Severa">Severa (risco de vida)</option><option value="N/A">N/A (dieta, não alergia)</option></select></div></div>
+      <div class="fg"><div class="fl">Alimentos / Detalhe</div><input class="fi" id="al-detalhe" placeholder="Ex.: Amendoim, marisco"></div>
+      <div class="fg"><div class="fl">Notas adicionais</div><textarea class="fta" id="al-notas" rows="2" placeholder="Ex.: Traz sempre EpiPen consigo"></textarea></div>
+      <button class="btn bp" onclick="saveAlergia()">+ Registar</button>
+    </div>
+  </div>
+
+  <div class="cd"><div class="cdh"><div><div class="cdt">Resumo</div><div class="cds">Panorama geral do registo</div></div></div>
+    <div class="cdb">
+      <div class="g4" style="gap:10px;">
+        <div class="sm"><div class="sml">Total registos</div><div class="smv" id="al-k-total">0</div></div>
+        <div class="sm"><div class="sml">Severas</div><div class="smv" id="al-k-severa" style="color:var(--er);">0</div></div>
+        <div class="sm"><div class="sml">Alergias</div><div class="smv" id="al-k-alergia">0</div></div>
+        <div class="sm"><div class="sml">Dietas (vegan/veg.)</div><div class="smv" id="al-k-dieta">0</div></div>
+      </div>
+      <div class="av" style="margin-top:12px;"><strong>Para a equipa de catering:</strong> exporte o PDF e entregue uma cópia impressa na cozinha/bar de apoio, antes do início da competição.</div>
+    </div>
+  </div>
+</div>
+
+<div class="cd" style="margin-top:16px;"><div class="cdh"><div><div class="cdt">Registo Completo</div><div class="cds">Todos os atletas e staff com alergias, intolerâncias ou dietas especiais</div></div></div>
+  <div class="cdb">
+    <div class="bb" id="bar-alergias"><button class="btn bo" onclick="exportAlergiasPDF()">📄 Exportar PDF (para a cozinha)</button></div>
+    <div class="tbl-wrap tw"><table>
+      <thead><tr><th>Nome</th><th>País/Equipa</th><th>Tipo</th><th>Alimentos/Detalhe</th><th>Gravidade</th><th>Notas</th><th>Ações</th></tr></thead>
+      <tbody id="t-alergias"><tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem registos ainda</td></tr></tbody>
+    </table></div>
   </div>
 </div>
 </div>
@@ -3246,7 +3294,7 @@ function closeM(id){
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
 //  DATA 
-let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[],_ins=[];
+let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[],_ins=[],_alg=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
@@ -3255,6 +3303,7 @@ function loadAll(){
   _snap('atletas',(docs)=>{_atl=docs;renderAtl();renderMapaPaises();renderDash();});
   _snap('convites',(docs)=>{_conv=docs;renderConv();});
   _snap('comissaoHonra',(docs)=>{_hon=docs;renderHon();});
+  _snap('alergias',(docs)=>{_alg=docs;renderAlergias();});
   _snap('trofeus',(docs)=>{_tro=docs;renderTro();});
   _snap('trofeusDistrib',(docs)=>{_trod=docs;renderTrod();});
   _snap('salaComando',(docs)=>{_cmd=docs;renderCmd();});
@@ -3682,6 +3731,64 @@ function editHon(id){
   openM('m-hon');
 }
 async function delHon(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('comissaoHonra',id);}
+async function saveAlergia(){
+  if(!canEdit()){toast('Sem permissão','er');return;}
+  const d={
+    nome:document.getElementById('al-nome').value,
+    pais:document.getElementById('al-pais').value,
+    tipo:document.getElementById('al-tipo').value,
+    gravidade:document.getElementById('al-gravidade').value,
+    detalhe:document.getElementById('al-detalhe').value,
+    notas:document.getElementById('al-notas').value,
+    ts:Date.now()
+  };
+  if(!d.nome||!d.detalhe){toast('Nome e alimentos/detalhe são obrigatórios','er');return;}
+  await _add('alergias',d);
+  toast('Registado');
+  document.getElementById('al-nome').value='';
+  document.getElementById('al-pais').value='';
+  document.getElementById('al-detalhe').value='';
+  document.getElementById('al-notas').value='';
+}
+async function delAlergia(id){if(!canDelete()||!confirm('Eliminar este registo?'))return;await _del('alergias',id);toast('Eliminado','er');}
+function renderAlergias(){
+  const tb=document.getElementById('t-alergias');if(!tb)return;
+  (document.getElementById('al-k-total')||{}).textContent=_alg.length;
+  (document.getElementById('al-k-severa')||{}).textContent=_alg.filter(a=>a.gravidade==='Severa').length;
+  (document.getElementById('al-k-alergia')||{}).textContent=_alg.filter(a=>a.tipo==='Alergia').length;
+  (document.getElementById('al-k-dieta')||{}).textContent=_alg.filter(a=>a.tipo==='Vegan'||a.tipo==='Vegetariano').length;
+  const gravCor=g=>g==='Severa'?'bg-er':(g==='Moderada'?'bg-am':(g==='Ligeira'?'bg-ok':'bg-mu'));
+  const lista=[..._alg].sort((a,b)=>{
+    const ordem={'Severa':0,'Moderada':1,'Ligeira':2,'N/A':3};
+    return (ordem[a.gravidade]??4)-(ordem[b.gravidade]??4);
+  });
+  tb.innerHTML=lista.length?lista.map(a=>`<tr><td class="vl">${a.nome||''}</td><td class="mu">${a.pais||''}</td><td class="mu">${a.tipo||''}</td><td class="vl" style="font-weight:600;">${a.detalhe||''}</td><td><span class="bge ${gravCor(a.gravidade)}">${a.gravidade||'N/A'}</span></td><td class="mu" style="font-size:11px;">${a.notas||''}</td>${canDelete()?`<td><button class="btn bd2 bsm" onclick="delAlergia('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">Sem registos ainda</td></tr>';
+}
+function exportAlergiasPDF(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Alergias & Restrições Alimentares','SWC Vizela 2026 - Documento de segurança para a equipa de catering',false);
+  let y=42;
+  const gravOrdem={'Severa':0,'Moderada':1,'Ligeira':2,'N/A':3};
+  const lista=[..._alg].sort((a,b)=>(gravOrdem[a.gravidade]??4)-(gravOrdem[b.gravidade]??4));
+  const rows=lista.map(a=>[a.nome||'',a.pais||'',a.tipo||'',a.detalhe||'',a.gravidade||'N/A',a.notas||'']);
+  doc.autoTable({
+    startY:y, head:[['Nome','País/Equipa','Tipo','Alimentos/Detalhe','Gravidade','Notas']], body:rows,
+    theme:'striped', styles:{fontSize:9,textColor:[35,35,35],cellPadding:3},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+    didParseCell:function(data){
+      if(data.section==='body'&&data.column.index===4){
+        const v=data.cell.raw;
+        if(v==='Severa'){data.cell.styles.textColor=[180,30,30];data.cell.styles.fontStyle='bold';}
+        else if(v==='Moderada'){data.cell.styles.textColor=[160,120,20];}
+      }
+    },
+    margin:{left:14,right:14,bottom:28},
+  });
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Alergias_Restricoes_Alimentares.pdf');
+  toast('PDF gerado');
+}
+window.saveAlergia=saveAlergia;window.delAlergia=delAlergia;window.exportAlergiasPDF=exportAlergiasPDF;
 function renderHon(){
   const totEl=document.getElementById('h-tot');if(!totEl)return;
   totEl.textContent=_hon.length;

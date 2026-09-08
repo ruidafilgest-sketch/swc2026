@@ -1372,11 +1372,12 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="bb" id="bar-inscricoes">
   <button class="btn bp" onclick="const _e=document.getElementById('ins-eid');if(_e)_e.value='';popularSelectPais('');openM('m-ins')">+ Novo registo</button>
   <button class="btn bo" onclick="importarInscricoesEMF()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar dados atuais</button>
+  <button class="btn bo" id="btn-import-grupos" onclick="importarGruposTreino()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar Grupos de Treino A/B</button>
   <button class="btn bo" onclick="exportInscricoesPDF()">Exportar PDF</button>
 </div>
 
-<div class="tw"><table><thead><tr><th>País</th><th>Equipa F</th><th>Equipa M</th><th>Ind. F</th><th>Ind. M</th><th>Treinadores</th><th>Total</th><th>Fonte</th><th>Estado</th><th id="th-inscricoes">Ações</th></tr></thead>
-<tbody id="t-inscricoes"><tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem registos — usa "Importar dados atuais"</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>País</th><th>Equipa F</th><th>Equipa M</th><th>Ind. F</th><th>Ind. M</th><th>Treinadores</th><th>Total</th><th>Grupo</th><th>Fonte</th><th>Estado</th><th id="th-inscricoes">Ações</th></tr></thead>
+<tbody id="t-inscricoes"><tr><td colspan="11" class="mu" style="text-align:center;padding:22px;">Sem registos — usa "Importar dados atuais"</td></tr></tbody></table></div>
 </div>
 
 <div class="mo" id="m-ins"><div class="mdl">
@@ -1390,6 +1391,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Individual Masculino</div><input class="fi" type="number" id="in-im" value="0"></div>
     <div class="fg"><div class="fl">Treinadores</div><input class="fi" type="number" id="in-co" value="0"></div>
     <div class="fg"><div class="fl">Total (se só souberes o total)</div><input class="fi" type="number" id="in-tot" placeholder="deixa em branco se preencheres as categorias acima"></div>
+    <div class="fg"><div class="fl">Grupo de Treino (EMF)</div><select class="fse" id="in-grupo"><option value="">— Sem grupo atribuído —</option><option value="A">Grupo A</option><option value="B">Grupo B</option></select></div>
     <div class="fg"><div class="fl">Fonte da confirmação</div><select class="fse" id="in-fonte"><option>EMF Oficial</option><option>Reserva de Hotel</option><option>Contacto Direto da Federação</option><option>Expectativa (histórico)</option><option>Outro</option></select></div>
     <div class="fg"><div class="fl">Estado</div><select class="fse" id="in-estado"><option>Confirmado</option><option>Detalhe Pendente</option><option>Por Confirmar</option></select></div>
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="in-obs" placeholder="ex: confirmado por reserva de hotel em 27/08, detalhe de equipas/individuais ainda por vir"></textarea></div>
@@ -4575,6 +4577,7 @@ async function saveIns(){
     pais:pais,
     teamW:tw,teamM:tm,iWoman:iw,iMen:im,coaches:co,
     total:total,
+    grupo:document.getElementById('in-grupo').value,
     fonte:document.getElementById('in-fonte').value,
     estado:document.getElementById('in-estado').value,
     obs:document.getElementById('in-obs').value,
@@ -4594,6 +4597,7 @@ function editIns(id){
   document.getElementById('in-im').value=r.iMen||0;
   document.getElementById('in-co').value=r.coaches||0;
   document.getElementById('in-tot').value='';
+  document.getElementById('in-grupo').value=r.grupo||'';
   document.getElementById('in-fonte').value=r.fonte||'EMF Oficial';
   document.getElementById('in-estado').value=r.estado||'Confirmado';
   document.getElementById('in-obs').value=r.obs||'';
@@ -4619,10 +4623,11 @@ function renderIns(){
     <td class="mu">${r.iMen||0}</td>
     <td class="mu">${r.coaches||0}</td>
     <td class="vl">${r.total||0}</td>
+    <td>${r.grupo?`<span class="bge ${r.grupo==='A'?'bg-ok':'bg-am'}">Grupo ${r.grupo}</span>`:'<span class="mu">—</span>'}</td>
     <td class="mu" style="font-size:12px;">${r.fonte||''}</td>
     <td><span class="bge ${estCor(r.estado)}">${r.estado||'Confirmado'}</span></td>
     <td style="white-space:nowrap;"><button class="btn bo bsm" onclick="verAtletasPais('${r.pais}')" title="Ver/gerir atletas deste país">👥 Ver atletas</button>${canEdit()?`<button class="btn bo bsm" onclick="editIns('${r.id}')">✏️</button>${canDelete()?`<button class="btn bd2 bsm" onclick="delIns('${r.id}')">🗑️</button>`:''}`:''}</td>
-  </tr>`).join(''):'<tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem registos — usa "Importar dados atuais"</td></tr>';
+  </tr>`).join(''):'<tr><td colspan="11" class="mu" style="text-align:center;padding:22px;">Sem registos — usa "Importar dados atuais"</td></tr>';
 }
 function verAtletasPais(pais){
   const sel=document.getElementById('a-filtro-pais');
@@ -10324,6 +10329,24 @@ function populateMarcaSelects(){
   });
 }
 
+// Atribui o Grupo de Treino (A/B) a cada país já registado em Inscrições Confirmadas,
+// a partir da lista oficial EMF (Training Groups, update 06.09.2026). So actualiza
+// paises que ja existem no registo -- nao cria paises novos.
+async function importarGruposTreino(){
+  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  const GRUPOS={
+    'Dinamarca':'A','Finlândia':'A','Reino Unido':'A','Itália':'A','Letónia':'A','Noruega':'A','Holanda':'A','Suécia':'A','Portugal':'A',
+    'República Checa':'B','Áustria':'B','França':'B','Alemanha':'B','Suíça':'B','Eslováquia':'B',
+  };
+  let ok=0,naoEncontrados=[];
+  for(const pais in GRUPOS){
+    const reg=_ins.find(r=>r.pais===pais);
+    if(reg){ await _upd('inscricoesConfirmadas',reg.id,{grupo:GRUPOS[pais]}); ok++; }
+    else{ naoEncontrados.push(pais); }
+  }
+  toast(ok+' país(es) atualizados com o Grupo de Treino'+(naoEncontrados.length?' — não encontrados: '+naoEncontrados.join(', '):''),'ok');
+}
+window.importarGruposTreino=importarGruposTreino;
 async function importarFunSports3D(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
   const jaExisteMarca=_marcas.some(m=>m.nome==='Fun-Sports');

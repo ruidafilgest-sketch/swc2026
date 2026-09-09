@@ -2483,7 +2483,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="mo" id="m-atl"><div class="mdl">
   <div class="mh"><div class="mt2">Novo Atleta</div><button class="mc" onclick="closeM('m-atl')">✕</button></div>
   <div class="mb">
-    <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="at-nm" placeholder="Nome do atleta"></div><div class="fg"><div class="fl">País / Nação</div><input class="fi" id="at-ps" placeholder="País"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="at-nm" placeholder="Nome do atleta"></div><div class="fg"><div class="fl">País / Nação</div><select class="fse" id="at-ps"><option value="">— Selecionar país —</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Federação nacional</div><input class="fi" id="at-fd" placeholder="Federação"></div><div class="fg"><div class="fl">Categoria WMF</div><select class="fse" id="at-ct"><option value="SM">Séniores Masculinos</option><option value="SF">Séniores Femininas</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Taxa inscrição (€) — valor real</div><input class="fi" type="number" step="0.01" id="at-tx" placeholder="0,00"></div><div class="fg"><div class="fl">Estado taxa</div><select class="fse" id="at-st"><option value="Pago">Pago</option><option value="Pendente">Pendente</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Hotel atribuído</div><select class="fse" id="at-ht"><option value="">— Sem atribuição —</option></select></div><div class="fg"><div class="fl">Email / Contacto</div><input class="fi" id="at-em" placeholder="email@federacao.xx"></div></div>
@@ -3475,11 +3475,18 @@ function renderPat(){
 async function delPat(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('patrocinios',id);toast('Eliminado','er');}
 
 //  ATLETAS 
+function popularSelectPaisAtleta(selecionado){
+  const sel=document.getElementById('at-ps');if(!sel)return;
+  const paises=Object.keys(PAIS_BANDEIRA).sort();
+  const vazio=selecionado?'':'<option value="">— Selecionar país —</option>';
+  sel.innerHTML=vazio+paises.map(p=>`<option value="${p}" ${p===selecionado?'selected':''}>${p}</option>`).join('');
+}
 function abrirNovoAtleta(){
   const hid=document.getElementById('atl-eid');if(hid)hid.value='';
-  ['at-nm','at-ps','at-fd','at-ct','at-tx','at-st','at-ht','at-em'].forEach(id=>{
+  ['at-nm','at-fd','at-ct','at-tx','at-st','at-ht','at-em'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
+  popularSelectPaisAtleta('');
   atualizarSelectsHoteis();
   openM('m-atl');
 }
@@ -10909,7 +10916,7 @@ async function editAtl(id){
     const mb=document.querySelector('#m-atl .mb');if(mb)mb.prepend(hid);}
   hid.value=id;
   const _eat_nm=document.getElementById('at-nm');if(_eat_nm)_eat_nm.value=item.nome||'';
-  const _eat_ps=document.getElementById('at-ps');if(_eat_ps)_eat_ps.value=item.pais||'';
+  popularSelectPaisAtleta(item.pais||'');
   const _eat_fd=document.getElementById('at-fd');if(_eat_fd)_eat_fd.value=item.federacao||'';
   const _eat_ct=document.getElementById('at-ct');if(_eat_ct)_eat_ct.value=item.categoria||'';
   const _eat_tx=document.getElementById('at-tx');if(_eat_tx)_eat_tx.value=item.taxa||'';

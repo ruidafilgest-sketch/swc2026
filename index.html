@@ -1803,11 +1803,12 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">CONS</span>Consignação & Merchandise<button class="hbtn" data-help="consignacao" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Stock em consignação por marca · Entradas · Vendas · Devoluções · Acerto de contas</div>
 <div class="bb" id="bar-consig">
-  <button class="btn bp" onclick="openM('m-marca')">+ Nova marca</button>
-  <button class="btn bo" onclick="openM('m-artigo')">+ Artigo / Referência</button>
+  <button class="btn bp" id="btn-nova-marca" onclick="openM('m-marca')">+ Nova marca</button>
+  <button class="btn bo" id="btn-novo-artigo" onclick="openM('m-artigo')">+ Artigo / Referência</button>
   <button class="btn bo" id="btn-import-funsports" onclick="importarFunSports3D()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar Fun-Sports 3D (132 refs)</button>
   <button class="btn bo" id="btn-import-bola3d" onclick="importarBolaOficial3D()" style="background:linear-gradient(135deg,#8a6a2c,#5c4620);">📥 Importar só 100 Bolas Oficiais (3D)</button>
   <button class="btn bo" id="btn-import-reisinger" onclick="importarBolasReisinger()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar 150 Bolas Reisinger</button>
+  <button class="btn bp" id="btn-restruturacao-merch" onclick="resetTotalMerchandise()" style="background:linear-gradient(135deg,#B84A3E,#7a2e26);">⚠️ Reset Total + Reestruturação (Set/2026)</button>
   <button class="btn bo" onclick="openM('m-venda')">+ Registar venda</button>
   <button class="btn bo" onclick="exportConsigPDF()">Exportar PDF acerto contas</button>
 </div>
@@ -3014,6 +3015,9 @@ let isAdmin=false;
 let isSWC=false; let isSecao=false, _secAtual=null;
 function canEdit(){ return isAdmin||isSWC||isSecao; }
 function canDelete(){ return isAdmin||isSecao; }
+// Edição do catálogo de artigos/marcas (preços, quantidades, referências) — só Admin.
+// Vender (registar uma venda) continua a usar canEdit(), como sempre.
+function canEditCatalogo(){ return isAdmin; }
 
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 
@@ -10355,7 +10359,7 @@ async function importarGruposTreino(){
 }
 window.importarGruposTreino=importarGruposTreino;
 async function importarFunSports3D(){
-  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode importar/editar o catálogo.','er');return;}
   const jaExisteMarca=_marcas.some(m=>m.nome==='Fun-Sports');
   const jaExisteArtigos=_artigos.some(a=>a.notas&&a.notas.indexOf('Fun-Sports 3D')>=0);
   if((jaExisteMarca||jaExisteArtigos)&&!confirm('A marca Fun-Sports e/ou artigos já parecem existir.\\nDeseja importar na mesma (podem criar duplicados)?'))return;
@@ -10391,11 +10395,17 @@ function atualizarBotoesImportacao(){
   if(totalFunSports>=100)trocarPorFeito('btn-import-funsports','Fun-Sports 3D importado');
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-3D'))trocarPorFeito('btn-import-bola3d','100 Bolas Oficiais (3D) importadas');
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-REISINGER'))trocarPorFeito('btn-import-reisinger','150 Bolas Reisinger importadas');
+  // Botões de gestão do catálogo (criar marca/artigo) — visíveis só ao Admin
+  const podeEditarCatalogo=canEditCatalogo();
+  ['btn-nova-marca','btn-novo-artigo','btn-restruturacao-merch'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=podeEditarCatalogo?'':'none';
+  });
 }
 // Importação isolada, só das 100 Bolas Oficiais SWC 2026 da 3D — independente do catálogo
 // grande de 132 referências, para conseguires garantir só esta sem mexer nas outras 131.
 async function importarBolaOficial3D(){
-  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode importar/editar o catálogo.','er');return;}
   const jaExiste=_artigos.some(a=>a.ref==='BOLA-SWC2026-3D');
   if(jaExiste&&!confirm('A Bola Oficial SWC 2026 (3D) já parece existir na marca Fun-Sports.\\nDeseja importar na mesma (pode criar duplicado)?'))return;
   let marcaId;
@@ -10410,7 +10420,7 @@ async function importarBolaOficial3D(){
   toast('100 Bolas Oficiais SWC 2026 (3D) importadas','ok');
 }
 async function importarBolasReisinger(){
-  if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode importar/editar o catálogo.','er');return;}
   const jaExisteMarca=_marcas.some(m=>m.nome==='Sport Reisinger');
   const jaExisteArtigo=_artigos.some(a=>a.marcaNome==='Sport Reisinger'&&a.desc==='Bola Oficial SWC 2026');
   if((jaExisteMarca&&jaExisteArtigo)&&!confirm('A marca Sport Reisinger e o artigo já parecem existir.\\nDeseja importar na mesma (pode criar duplicado)?'))return;
@@ -10426,8 +10436,57 @@ async function importarBolasReisinger(){
   toast('150 Bolas Oficiais SWC 2026 (Sport Reisinger) importadas','ok');
 }
 
+// ===== Reestruturação Merchandise — Setembro 2026 (reunião) =====
+// Apaga TODAS as marcas e artigos de Consignação/Merchandise, e recria tudo de raiz.
+// Não apaga o histórico de vendas (cs_vendas) — isso fica como registo, mesmo órfão.
+async function resetTotalMerchandise(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
+  const totalMarcas=_marcas.length, totalArtigos=_artigos.length;
+  if(!confirm('⚠️ ATENÇÃO — Isto vai APAGAR PERMANENTEMENTE:\\n\\n'+totalMarcas+' marca(s)\\n'+totalArtigos+' artigo(s)\\n\\nToda a Consignação & Merchandise fica vazia, e depois é recriada de raiz com a reestruturação combinada (Vizelgolfe, 3D Bola Oficial SWC 2026, Reisinger Bola Oficial SWC 2026, e Reisinger Bolas Sortidas — esta última vazia por agora).\\n\\nEsta ação NÃO pode ser desfeita. Tem a certeza?'))return;
+  if(!confirm('Última confirmação: vai apagar '+totalMarcas+' marcas e '+totalArtigos+' artigos, sem hipótese de recuperar. Continuar?'))return;
+
+  for(const a of [..._artigos])await _del('cs_artigos',a.id);
+  for(const m of [..._marcas])await _del('cs_marcas',m.id);
+
+  let criados=0;
+  async function novaMarca(nome, notas){
+    const ref=await _add('cs_marcas',{nome,contacto:'',email:'',pct:0,data:new Date().toISOString().slice(0,10),notas:notas||'',ts:Date.now()});
+    return ref.id;
+  }
+  async function item(marcaId, marcaNome, ref, desc, preco, qty, notas){
+    await _add('cs_artigos',{marcaId,marcaNome,ref,desc,preco,qtyEntrou:qty,notas:notas||'',ts:Date.now()});
+    criados++;
+  }
+
+  // ---- Marca Vizelgolfe (merchandise geral, sem consignação) ----
+  const vzgId=await novaMarca('Vizelgolfe','Merchandise geral do evento, produzido/comprado pela própria Vizelgolfe — sem consignação.');
+  await item(vzgId,'Vizelgolfe','BONE-SWC2026','Boné SWC 2026',10,40,'Reestruturação Set/2026.');
+  await item(vzgId,'Vizelgolfe','IMA-SWC2026','Íman SWC 2026',2,100,'Reestruturação Set/2026.');
+  await item(vzgId,'Vizelgolfe','CANETA-SWC2026','Caneta Colorida SWC 2026',1,180,'Reestruturação Set/2026.');
+  await item(vzgId,'Vizelgolfe','ABRELATAS-SWC2026','Abre-Latas SWC 2026',1,210,'Reestruturação Set/2026.');
+  await item(vzgId,'Vizelgolfe','TSHIRT-AZUL-SWC2026','T-Shirt SWC 2026 — Azul (vários tamanhos)',20,100,'Reestruturação Set/2026 — só Azul e Branca a partir de agora.');
+  await item(vzgId,'Vizelgolfe','TSHIRT-BRANCA-SWC2026','T-Shirt SWC 2026 — Branca (vários tamanhos)',20,100,'Reestruturação Set/2026 — só Azul e Branca a partir de agora.');
+  await item(vzgId,'Vizelgolfe','HOODIE-VERDE-SWC2026','Hoodie SWC 2026 — Verde (vários tamanhos)',30,100,'Reestruturação Set/2026 — só Verde e Azul a partir de agora.');
+  await item(vzgId,'Vizelgolfe','HOODIE-AZUL-SWC2026','Hoodie SWC 2026 — Azul (vários tamanhos)',30,100,'Reestruturação Set/2026 — só Verde e Azul a partir de agora.');
+
+  // ---- Marca "3D Bola Oficial SWC 2026" ----
+  const funId=await novaMarca('3D Bola Oficial SWC 2026','Distribuidor 3D. Compradas pela Vizelgolfe para venda no evento — sem consignação.');
+  await item(funId,'3D Bola Oficial SWC 2026','BOLA-3D-UKL-SWC2026','Bola Oficial SWC 2026 (3D UKL)',24,100,'Reestruturação Set/2026.');
+  await item(funId,'3D Bola Oficial SWC 2026','BOLA-3D-UKX-RUGOSA-SWC2026','Bola Oficial SWC 2026 Rugosa (3D UKX)',24,24,'Reestruturação Set/2026 — superfície rugosa.');
+
+  // ---- Marca "Reisinger Bola Oficial SWC 2026" (só a bola oficial, 150 unidades) ----
+  const reiId=await novaMarca('Reisinger Bola Oficial SWC 2026','150 Bolas Oficiais SWC 2026 compradas à Reisinger para venda no evento — sem consignação.');
+  await item(reiId,'Reisinger Bola Oficial SWC 2026','BOLA-SWC2026-REISINGER','Bola Oficial SWC 2026',25,150,'Confirmado em reunião Set/2026 — 150 unidades.');
+
+  // ---- Marca "Reisinger Bolas Sortidas" (grupo próprio, vazio por agora — 252 bolas a acrescentar quando houver referências) ----
+  await novaMarca('Reisinger Bolas Sortidas','252 bolas sortidas Reisinger, vindas à consignação — ainda sem referências/preços definidos. Regra já combinada: pequenas a 24€, médias e grandes a 25€. Ficam aqui quando a lista chegar.');
+
+  toast('Reset completo: '+criados+' artigo(s) criado(s) em 4 marcas (1 delas ainda vazia — Bolas Sortidas)','ok');
+}
+window.resetTotalMerchandise=resetTotalMerchandise;
+
 async function saveMarca(){
-  if(!canEdit())return;
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode editar marcas','er');return;}
   const d={nome:document.getElementById('mk-nome').value,contacto:document.getElementById('mk-ct').value,email:document.getElementById('mk-email').value,pct:parseFloat(document.getElementById('mk-pct').value)||0,data:document.getElementById('mk-data').value,notas:document.getElementById('mk-notas').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
   const _e=document.getElementById('mrc-eid');const _eid=_e&&_e.value?_e.value:'';
@@ -10436,7 +10495,7 @@ async function saveMarca(){
 }
 
 async function saveArtigo(){
-  if(!canEdit())return;
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode editar artigos','er');return;}
   const marcaId=document.getElementById('art-marca').value;
   const marca=_marcas.find(m=>m.id===marcaId);
   const d={marcaId,marcaNome:marca?marca.nome:'',ref:document.getElementById('art-ref').value,desc:document.getElementById('art-desc').value,preco:parseFloat(document.getElementById('art-preco').value)||0,qtyEntrou:parseInt(document.getElementById('art-qty').value)||0,notas:document.getElementById('art-notas').value,ts:Date.now()};
@@ -10510,7 +10569,7 @@ function renderMarcas(){
     const totE=arts.reduce((s,a)=>s+Number(a.qtyEntrou||0),0);
     const totV=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.qty||0),0);
     const receita=_vendas_cs.filter(v=>v.marcaId===m.id).reduce((s,v)=>s+Number(v.comissao||0),0);
-    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td>${canEdit()?`<td style="display:flex;gap:4px;"><button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button><button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td class="vl">${m.nome||''}</td><td class="mu">${m.contacto||''}</td><td style="text-align:center;font-weight:600;color:var(--gl2);">${m.pct||0}%</td><td style="text-align:center;">${totE}</td><td style="text-align:center;color:var(--ok);">${totV}</td><td style="text-align:center;color:var(--wr);">${totE-totV}</td><td class="tok">${fmt(receita)}</td><td><span class="bge ${totV>0?'bg-ok':'bg-mu'}">${totV>0?'Em curso':'Aguarda'}</span></td><td style="display:flex;gap:4px;">${canEdit()?`<button class="btn bo bsm" onclick="exportAcertoPDF('${m.id}')">PDF</button>`:''}${canEditCatalogo()?`<button class="btn bo bsm" onclick="editMarca('${m.id}')">✏️</button><button class="btn bd2 bsm" onclick="delMarca('${m.id}')">🗑️</button>`:''}</td></tr>`;
   }).join('');
 }
 
@@ -10522,7 +10581,7 @@ function renderArtigos(){
     const vendido=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.qty||0),0);
     const stock=Number(a.qtyEntrou||0)-vendido;
     const totalVendas=_vendas_cs.filter(v=>v.artigoId===a.id).reduce((s,v)=>s+Number(v.total||0),0);
-    return `<tr><td class="go">${a.marcaNome||''}</td><td style="font-weight:600;font-family:monospace;font-size:11px;">${a.ref||''}</td><td>${a.desc||''}</td><td style="text-align:right;">${fmt(a.preco)}</td><td style="text-align:center;">${a.qtyEntrou||0}</td><td style="text-align:center;color:var(--ok);">${vendido}</td><td style="text-align:center;font-weight:700;color:${stock<=2?'var(--er)':stock<=5?'var(--wr)':'var(--wh)'};">${stock}</td><td class="tok">${fmt(totalVendas)}</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editArtigo('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArtigo('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    return `<tr><td class="go">${a.marcaNome||''}</td><td style="font-weight:600;font-family:monospace;font-size:11px;">${a.ref||''}</td><td>${a.desc||''}</td><td style="text-align:right;">${fmt(a.preco)}</td><td style="text-align:center;">${a.qtyEntrou||0}</td><td style="text-align:center;color:var(--ok);">${vendido}</td><td style="text-align:center;font-weight:700;color:${stock<=2?'var(--er)':stock<=5?'var(--wr)':'var(--wh)'};">${stock}</td><td class="tok">${fmt(totalVendas)}</td>${canEditCatalogo()?`<td><button class="btn bo bsm" onclick="editArtigo('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArtigo('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join('');
 }
 
@@ -10534,8 +10593,8 @@ function renderVendas(){
   tbody.innerHTML=sorted.map(v=>`<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editVenda('${v.id}')">✏️</button><button class="btn bd2 bsm" onclick="delVendaCS('${v.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join('');
 }
 
-async function delMarca(id){if(!canDelete()||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
-async function delArtigo(id){if(!canDelete()||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
+async function delMarca(id){if(!canEditCatalogo()||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
+async function delArtigo(id){if(!canEditCatalogo()||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
 async function delVendaCS(id){if(!canDelete()||!confirm('Anular venda?'))return;await removerVendaContab(id);await _del('cs_vendas',id);toast('Anulada','er');}
 
 function exportAcertoPDF(marcaId){

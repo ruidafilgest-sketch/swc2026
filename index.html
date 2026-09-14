@@ -1810,6 +1810,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" id="btn-import-reisinger" onclick="importarBolasReisinger()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar 150 Bolas Reisinger</button>
   <button class="btn bo" id="btn-import-reisinger-sortidas" onclick="importarReisingerBolasSortidas()" style="background:linear-gradient(135deg,#2c5f7a,#183a4a);">📥 Importar 252 Bolas Sortidas Reisinger</button>
   <button class="btn bo" id="btn-corrigir-hoodie-tshirt" onclick="corrigirQtdHoodiesTshirtsSet2026()" style="background:linear-gradient(135deg,#7a5c2c,#4a3618);">🔧 Corrigir Qtd. Hoodies/T-shirts (encomenda real)</button>
+  <button class="btn bo" id="btn-corrigir-precos-rbs" onclick="corrigirPrecosDecorativasRBS()" style="background:linear-gradient(135deg,#7a2c5c,#4a1832);">💰 Corrigir Preços Decorativas/Klicker/Caixa</button>
   <button class="btn bp" id="btn-restruturacao-merch" onclick="resetTotalMerchandise()" style="background:linear-gradient(135deg,#B84A3E,#7a2e26);">⚠️ Reset Total + Reestruturação (Set/2026)</button>
   <button class="btn bo" onclick="openM('m-venda')">+ Registar venda</button>
   <button class="btn bo" onclick="exportConsigPDF()">Exportar PDF acerto contas</button>
@@ -10439,6 +10440,33 @@ async function importarBolasReisinger(){
   toast('150 Bolas Oficiais SWC 2026 (Sport Reisinger) importadas','ok');
 }
 
+// ===== Correção Preços de Venda — Bolas Decorativas + Klicker + Caixa (Reisinger Bolas Sortidas) =====
+// Corrige o preço de venda de RBS-108 a RBS-121 e limpa duplicados criados pelo bug do botão editar (já corrigido acima).
+async function corrigirPrecosDecorativasRBS(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode editar o catálogo.','er');return;}
+  const precos={
+    'RBS-108':20,'RBS-109':20,'RBS-110':20,'RBS-111':20,'RBS-112':20,'RBS-113':20,
+    'RBS-114':20,'RBS-115':20,
+    'RBS-116':21,'RBS-117':21,'RBS-119':21,
+    'RBS-118':15,
+    'RBS-120':20,
+    'RBS-121':0
+  };
+  let atualizados=0, duplicadosRemovidos=0, naoEncontrados=[];
+  for(const ref in precos){
+    const existentes=_artigos.filter(a=>a.ref===ref);
+    if(existentes.length===0){naoEncontrados.push(ref);continue;}
+    await _upd('cs_artigos',existentes[0].id,{preco:precos[ref]});
+    atualizados++;
+    for(let i=1;i<existentes.length;i++){
+      await _del('cs_artigos',existentes[i].id);
+      duplicadosRemovidos++;
+    }
+  }
+  toast('Preços: '+atualizados+' atualizado(s)'+(duplicadosRemovidos?', '+duplicadosRemovidos+' duplicado(s) removido(s)':'')+(naoEncontrados.length?' — não encontrados: '+naoEncontrados.join(', '):''),'ok');
+}
+window.corrigirPrecosDecorativasRBS=corrigirPrecosDecorativasRBS;
+
 // ===== Correção Hoodies/T-shirts Vizelgolfe — encomenda real confirmada com o fabricante (Set/2026) =====
 // Atualiza as quantidades (estavam a 100 cada, provisórias) para os números reais da encomenda,
 // e cria o Hoodie Bege que não existia. Não apaga nada — só corrige/acrescenta pelo ref.
@@ -11326,8 +11354,8 @@ async function editInv(id){
 window.editInv=editInv;
 async function editArtigo(id){
   const item=(_artigos||[]).find(x=>x.id===id);if(!item)return;
-  let hid=document.getElementById('artigos-eid');
-  if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='artigos-eid';
+  let hid=document.getElementById('art-eid');
+  if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='art-eid';
     const mb=document.querySelector('#m-artigo .mb');if(mb)mb.prepend(hid);}
   hid.value=id;
   const _eart_marca=document.getElementById('art-marca');if(_eart_marca)_eart_marca.value=item.marcaId||'';

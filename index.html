@@ -1808,6 +1808,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" id="btn-import-funsports" onclick="importarFunSports3D()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar Fun-Sports 3D (132 refs)</button>
   <button class="btn bo" id="btn-import-bola3d" onclick="importarBolaOficial3D()" style="background:linear-gradient(135deg,#8a6a2c,#5c4620);">📥 Importar só 100 Bolas Oficiais (3D)</button>
   <button class="btn bo" id="btn-import-reisinger" onclick="importarBolasReisinger()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar 150 Bolas Reisinger</button>
+  <button class="btn bo" id="btn-import-reisinger-sortidas" onclick="importarReisingerBolasSortidas()" style="background:linear-gradient(135deg,#2c5f7a,#183a4a);">📥 Importar 252 Bolas Sortidas Reisinger</button>
   <button class="btn bp" id="btn-restruturacao-merch" onclick="resetTotalMerchandise()" style="background:linear-gradient(135deg,#B84A3E,#7a2e26);">⚠️ Reset Total + Reestruturação (Set/2026)</button>
   <button class="btn bo" onclick="openM('m-venda')">+ Registar venda</button>
   <button class="btn bo" onclick="exportConsigPDF()">Exportar PDF acerto contas</button>
@@ -10395,6 +10396,7 @@ function atualizarBotoesImportacao(){
   if(totalFunSports>=100)trocarPorFeito('btn-import-funsports','Fun-Sports 3D importado');
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-3D'))trocarPorFeito('btn-import-bola3d','100 Bolas Oficiais (3D) importadas');
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-REISINGER'))trocarPorFeito('btn-import-reisinger','150 Bolas Reisinger importadas');
+  if(_artigos.filter(a=>a.marcaNome==='Reisinger Bolas Sortidas').length>=121)trocarPorFeito('btn-import-reisinger-sortidas','252 Bolas Sortidas importadas');
   // Botões de gestão do catálogo (criar marca/artigo) — visíveis só ao Admin
   const podeEditarCatalogo=canEditCatalogo();
   ['btn-nova-marca','btn-novo-artigo','btn-restruturacao-merch'].forEach(id=>{
@@ -10435,6 +10437,161 @@ async function importarBolasReisinger(){
   await _add('cs_artigos',{marcaId,marcaNome:'Sport Reisinger',ref:'BOLA-SWC2026-REISINGER',desc:'Bola Oficial SWC 2026',preco:25,qtyEntrou:150,notas:'150 unidades compradas à Sport Reisinger, sem consignação. Preço de venda: 25€.',ts:Date.now()});
   toast('150 Bolas Oficiais SWC 2026 (Sport Reisinger) importadas','ok');
 }
+
+// ===== Import Reisinger Bolas Sortidas — 252 bolas, Delivery Note 491 Fun-Sports (Set/2026) =====
+// Idempotente: se a marca já existir usa-a, se um artigo já existir (pelo ref) actualiza-o em vez de duplicar.
+async function importarReisingerBolasSortidas(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode importar/editar o catálogo.','er');return;}
+  const jaTemArtigos=_artigos.some(a=>a.marcaNome==='Reisinger Bolas Sortidas');
+  if(jaTemArtigos&&!confirm('A marca "Reisinger Bolas Sortidas" já parece ter artigos.\\nIsto vai atualizar os que já existem (pelo mesmo ref) e criar os que faltam. Continuar?'))return;
+
+  let marcaId;
+  const marcaExistente=_marcas.find(m=>m.nome==='Reisinger Bolas Sortidas');
+  if(marcaExistente){
+    marcaId=marcaExistente.id;
+  }else{
+    const ref=await _add('cs_marcas',{nome:'Reisinger Bolas Sortidas',contacto:'',email:'',pct:0,data:new Date().toISOString().slice(0,10),notas:'252 bolas sortidas Reisinger, vindas à consignação (Fun-Sports Delivery Note 491, 01.09.2026). Preço de venda: Pequena (K) 24€, Média/Grande (M/G) 25€, sem tamanho identificado 25€.',ts:Date.now()});
+    marcaId=ref.id;
+  }
+
+  let criados=0, atualizados=0;
+  async function item(marcaId, marcaNome, ref, desc, preco, qty, notas){
+    const existente=_artigos.find(a=>a.ref===ref);
+    const d={marcaId,marcaNome,ref,desc,preco,qtyEntrou:qty,notas:notas||'',ts:Date.now()};
+    if(existente){
+      await _upd('cs_artigos',existente.id,d);
+      atualizados++;
+    }else{
+      await _add('cs_artigos',d);
+      criados++;
+    }
+  }
+
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-001','3D type 073 M',25,1,'Item 1 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-002','3D type 123 K',24,3,'Item 2 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-003','3D type 154 K',24,3,'Item 3 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-004','3D type 222 KX',24,2,'Item 4 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-005','3D type 222 K',24,4,'Item 5 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-006','3D type 223 KX',24,2,'Item 6 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-007','3D type 252 M',25,2,'Item 7 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-008','3D type 313 GX',25,2,'Item 8 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-009','3D type 355 GL',25,3,'Item 9 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-010','3D type 374 GL',25,2,'Item 10 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-011','3D type 383 ML',25,2,'Item 11 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-012','3D type 385 KL',24,2,'Item 12 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-013','3D type 424 GL',25,3,'Item 13 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-014','3D type 424 GX',25,2,'Item 14 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-015','3D type 483 KL',24,2,'Item 15 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-016','3D type 486 KL',24,3,'Item 16 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-017','3D type 526 KL',24,4,'Item 17 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-018','3D type 545 KL',24,3,'Item 18 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-019','3D type 593 KL',24,3,'Item 19 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-020','3D type 593 KR',24,2,'Item 20 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-021','3D type 644 KL',24,3,'Item 21 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-022','3D type 664 KL',24,3,'Item 22 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-023','3D type 766 KL',24,3,'Item 23 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-024','3D type 773 KL',24,3,'Item 24 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-025','3D type 813 KL',24,3,'Item 25 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-026','3D type 836 ML',25,3,'Item 26 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-027','3D type 846 ML',25,3,'Item 27 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-028','3D type 874 GL',25,2,'Item 28 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-029','3D type 884 ML',25,3,'Item 29 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-030','3D type 912 KR',24,3,'Item 30 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-031','3D type 974 KL',24,2,'Item 31 da guia Fun-Sports (Delivery Note 491, 01.09.2026).');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-032','3D 30 Anos MC Lamego 2010',25,2,'Item 32 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-033','3D ball of fame BJM 2020 Mia Mockel',25,2,'Item 33 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-034','3D ball of fame BJM 2020 Mia Mockel rough',25,2,'Item 34 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-035','3D ball of fame DJM 2006 Ch. Lohmann rough',25,2,'Item 35 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-036','3D ball of fame DkM 2024 indoor Simon Junker rough',25,2,'Item 36 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-037','3D ball of fame DkM 2025 indoor Allan Schwab',25,2,'Item 37 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-038','3D ball of fame DM 2001 Nicole Warnecke',25,2,'Item 38 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-039','3D ball of fame DM 2001 Nicole Warnecke rough',25,2,'Item 39 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-040','3D ball of fame DM 2017 Sebastian "Brezel" Heine',25,2,'Item 40 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-041','3D ball of fame DM 2019 Anne Dippel rough',25,2,'Item 41 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-042','3D ball of fame DMM 2002 Ostheim/Schüler',25,2,'Item 42 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-043','3D ball of fame DSM 2019 Dirk Czerwek rough',25,2,'Item 43 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-044','3D ball of fame FiM 2014 Aki Sillman rough',25,2,'Item 44 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-045','3D ball of fame GBRO 2009 Torgny Kjellström',25,1,'Item 45 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-046','3D ball of fame GBRO 2009 T. Kjellström rough',25,1,'Item 46 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-047','3D ball of fame GTC 2022 MGC Mainz',25,2,'Item 47 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-048','3D ball of fame GTC 2022 MGC Mainz rough',25,2,'Item 48 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-049','3D ball of fame ICup 2010 F. Cecio Leuci',25,3,'Item 49 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-050','3D ball of fame NLJM 03+04 M. Ciesielski',25,2,'Item 50 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-051','3D ball of fame NLSM 2023 Marcel van den Bosch UKL',25,2,'Item 51 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-052','3D ball of fame PJM 2014 J. Miguel rough',25,2,'Item 52 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-053','3D ball of fame PM 2004 Joao Nabais rough',25,2,'Item 53 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-054','3D ball of fame PM 2006 André Manuel rough',25,2,'Item 54 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-055','3D ball of fame PM 2014 Pedro Carvalho RL',25,2,'Item 55 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-056','3D ball of fame PSM 2013 Sebastiao Campos rough',25,1,'Item 56 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-057','3D ball of fame SJM 2007-08 Bettina Bürki',25,3,'Item 57 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-058','3D ball of fame SSM 2017 Roger Weber',25,1,'Item 58 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-059','3D ball of fame SSM 2017 Daniel Büttiker',25,1,'Item 59 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-060','3D ball of fame SwSchM 2014 S. Andersson',25,2,'Item 60 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-061','3D ball of fame WDMC 2017 Karin Hansson',25,2,'Item 61 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-062','3D ball of fame ÖM 2023 Stroke+Matchplay Sandra Schwarz UKL',25,3,'Item 62 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-063','3D BM 2012 Bamberg',25,2,'Item 63 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-064','3D BM 2022 Neutraubling big',25,1,'Item 64 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-065','3D Boninsenga Brothers 2015',25,2,'Item 65 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-066','3D DBJM 2004 Bamberg',25,2,'Item 66 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-067','3D DM 2006 Schweinfurt',25,2,'Item 67 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-068','3D DM 2013 Trappenkamp',25,2,'Item 68 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-069','3D DM 2023 Bad Münder UKL',25,2,'Item 69 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-070','3D DM 2024 Neutraubling UKL',25,2,'Item 70 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-071','3D EC 2013 Holesov',25,2,'Item 71 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-072','3D EC 2016 Neutraubling',25,2,'Item 72 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-073','3D EC 2018 Porto',25,2,'Item 73 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-074','3D EM 2014 Neutraubling',25,2,'Item 74 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-075','3D Grumi 4 Estilomoda',25,4,'Item 75 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-076','3D Merry Christmas 2010',25,2,'Item 76 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-077','3D Merry Christmas 2011',25,2,'Item 77 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-078','3D Merry Christmas 2012',25,2,'Item 78 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-079','3D NC 2007 Italy',25,1,'Item 79 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-080','3D NC 2013 Bad Münder',25,1,'Item 80 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-081','3D NC 2016 Vizela',25,1,'Item 81 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-082','3D NM 2022 Tampere Finland',25,2,'Item 82 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-083','3D Nybro MGK 2019',25,1,'Item 83 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-084','3D Nybro MGK 2021',25,1,'Item 84 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-085','3D Pasi\'s Selection #21',25,2,'Item 85 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-086','3D Pasi\'s Selection #26',25,2,'Item 86 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-087','3D Pasi\'s Selection #29',25,2,'Item 87 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-088','3D Pasi\'s Selection 12',25,2,'Item 88 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-089','3D Peter\'s best #19',25,2,'Item 89 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-090','3D Peter\'s best #29',25,2,'Item 90 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-091','3D SM 2012 Kalmar',25,1,'Item 91 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-092','3D SM 2013 Gullbergsbro',25,2,'Item 92 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-093','3D SM 2015 Guld Asarum',25,1,'Item 93 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-094','3D SM 2019 Malmö',25,2,'Item 94 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-095','3D SM 2020 Skoghall',25,2,'Item 95 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-096','3D SNC 2009 Lamego',25,1,'Item 96 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-097','3D SNC 2015 Askim',25,2,'Item 97 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-098','3D Taca Portugal 2017',25,2,'Item 98 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-099','3D Taca Portugal 2020',25,2,'Item 99 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-100','3D Taca Portugal 2022',25,2,'Item 100 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-101','3D Team 2014 Neutraubling',25,1,'Item 101 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-102','3D WC 2017 Zaton',25,2,'Item 102 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-103','3D YEC 2013 Portel',25,2,'Item 103 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-104','3D YNC 2013 Portel',25,2,'Item 104 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-105','3D YWC 2008 Budapest',25,1,'Item 105 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-106','3D WM 2013 Bad Münder',25,1,'Item 106 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-107','3D ÖM 2013 Wiener Neustadt',25,2,'Item 107 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-108','Acryl ball light blue 37,5 mm',25,2,'Item 108 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-109','Acryl ball yellow 37,5 mm',25,2,'Item 109 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-110','Acryl ball honey yellow 37,5 mm',25,2,'Item 110 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-111','Acryl ball pink 37,5 mm',25,2,'Item 111 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-112','Acryl ball transparent 37,5 mm',25,2,'Item 112 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-113','Acryl ball purple 37,5 mm',25,2,'Item 113 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-114','Glass ball Fun-Sports 40 mm',25,3,'Item 114 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-115','Glass ball 3D 37,5 mm',25,3,'Item 115 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-116','Glass ball red matted',25,3,'Item 116 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-117','Glass ball blue matted',25,3,'Item 117 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-118','Klicker',0,4,'Item 118 da guia Fun-Sports (Delivery Note 491, 01.09.2026). SEM VALOR DE VENDA DEFINIDO — não vender antes de decidir preço.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-119','Glass ball green matted',25,3,'Item 119 da guia Fun-Sports (Delivery Note 491, 01.09.2026). Sem tamanho identificado no código — preço de venda por defeito 25€.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-120','selling box for 84 balls',0,3,'Item 120 da guia Fun-Sports (Delivery Note 491, 01.09.2026). SEM VALOR DE VENDA DEFINIDO — não vender antes de decidir preço.');
+  await item(marcaId,'Reisinger Bolas Sortidas','RBS-121','Cap for selling box 84 balls',0,1,'Item 121 da guia Fun-Sports (Delivery Note 491, 01.09.2026). SEM VALOR DE VENDA DEFINIDO — não vender antes de decidir preço.');
+
+  toast('Reisinger Bolas Sortidas: '+criados+' criado(s), '+atualizados+' atualizado(s)','ok');
+}
+window.importarReisingerBolasSortidas=importarReisingerBolasSortidas;
 
 // ===== Reestruturação Merchandise — Setembro 2026 (reunião) =====
 // Apaga TODAS as marcas e artigos de Consignação/Merchandise, e recria tudo de raiz.

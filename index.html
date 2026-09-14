@@ -1809,6 +1809,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" id="btn-import-bola3d" onclick="importarBolaOficial3D()" style="background:linear-gradient(135deg,#8a6a2c,#5c4620);">📥 Importar só 100 Bolas Oficiais (3D)</button>
   <button class="btn bo" id="btn-import-reisinger" onclick="importarBolasReisinger()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar 150 Bolas Reisinger</button>
   <button class="btn bo" id="btn-import-reisinger-sortidas" onclick="importarReisingerBolasSortidas()" style="background:linear-gradient(135deg,#2c5f7a,#183a4a);">📥 Importar 252 Bolas Sortidas Reisinger</button>
+  <button class="btn bo" id="btn-corrigir-hoodie-tshirt" onclick="corrigirQtdHoodiesTshirtsSet2026()" style="background:linear-gradient(135deg,#7a5c2c,#4a3618);">🔧 Corrigir Qtd. Hoodies/T-shirts (encomenda real)</button>
   <button class="btn bp" id="btn-restruturacao-merch" onclick="resetTotalMerchandise()" style="background:linear-gradient(135deg,#B84A3E,#7a2e26);">⚠️ Reset Total + Reestruturação (Set/2026)</button>
   <button class="btn bo" onclick="openM('m-venda')">+ Registar venda</button>
   <button class="btn bo" onclick="exportConsigPDF()">Exportar PDF acerto contas</button>
@@ -10397,6 +10398,7 @@ function atualizarBotoesImportacao(){
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-3D'))trocarPorFeito('btn-import-bola3d','100 Bolas Oficiais (3D) importadas');
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-REISINGER'))trocarPorFeito('btn-import-reisinger','150 Bolas Reisinger importadas');
   if(_artigos.filter(a=>a.marcaNome==='Reisinger Bolas Sortidas').length>=121)trocarPorFeito('btn-import-reisinger-sortidas','252 Bolas Sortidas importadas');
+  if(_artigos.some(a=>a.ref==='HOODIE-BEGE-SWC2026'))trocarPorFeito('btn-corrigir-hoodie-tshirt','Qtd. Hoodies/T-shirts corrigida');
   // Botões de gestão do catálogo (criar marca/artigo) — visíveis só ao Admin
   const podeEditarCatalogo=canEditCatalogo();
   ['btn-nova-marca','btn-novo-artigo','btn-restruturacao-merch'].forEach(id=>{
@@ -10437,6 +10439,40 @@ async function importarBolasReisinger(){
   await _add('cs_artigos',{marcaId,marcaNome:'Sport Reisinger',ref:'BOLA-SWC2026-REISINGER',desc:'Bola Oficial SWC 2026',preco:25,qtyEntrou:150,notas:'150 unidades compradas à Sport Reisinger, sem consignação. Preço de venda: 25€.',ts:Date.now()});
   toast('150 Bolas Oficiais SWC 2026 (Sport Reisinger) importadas','ok');
 }
+
+// ===== Correção Hoodies/T-shirts Vizelgolfe — encomenda real confirmada com o fabricante (Set/2026) =====
+// Atualiza as quantidades (estavam a 100 cada, provisórias) para os números reais da encomenda,
+// e cria o Hoodie Bege que não existia. Não apaga nada — só corrige/acrescenta pelo ref.
+async function corrigirQtdHoodiesTshirtsSet2026(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode editar o catálogo.','er');return;}
+  if(!confirm('Isto vai corrigir as quantidades dos Hoodies e T-shirts Vizelgolfe para os números reais da encomenda (substitui os 100 provisórios), e cria o Hoodie Bege. Continuar?'))return;
+
+  const marcaVzg=_marcas.find(m=>m.nome==='Vizelgolfe');
+  if(!marcaVzg){toast('Marca Vizelgolfe não encontrada — importa primeiro o merchandise base.','er');return;}
+  const marcaId=marcaVzg.id;
+
+  let criados=0, atualizados=0;
+  async function item(ref, desc, preco, qty, notas){
+    const existente=_artigos.find(a=>a.ref===ref);
+    const d={marcaId,marcaNome:'Vizelgolfe',ref,desc,preco,qtyEntrou:qty,notas:notas||'',ts:Date.now()};
+    if(existente){
+      await _upd('cs_artigos',existente.id,d);
+      atualizados++;
+    }else{
+      await _add('cs_artigos',d);
+      criados++;
+    }
+  }
+
+  await item('HOODIE-VERDE-SWC2026','Hoodie SWC 2026 — Verde (vários tamanhos)',30,20,'Encomenda real confirmada com o fabricante (Set/2026): 5M, 5L, 5XL, 5XXL. Corrigido — estava provisoriamente a 100.');
+  await item('HOODIE-AZUL-SWC2026','Hoodie SWC 2026 — Azul (vários tamanhos)',30,10,'Encomenda real confirmada com o fabricante (Set/2026): 3M, 2L, 3XL, 2XXL. Corrigido — estava provisoriamente a 100.');
+  await item('HOODIE-BEGE-SWC2026','Hoodie SWC 2026 — Bege (vários tamanhos)',30,20,'Encomenda real confirmada com o fabricante (Set/2026): 5M, 5L, 5XL, 5XXL. Cor nova, não existia no sistema.');
+  await item('TSHIRT-BRANCA-SWC2026','T-Shirt SWC 2026 — Branca (vários tamanhos)',20,50,'Encomenda real confirmada com o fabricante (Set/2026): 15M, 15L, 10XL, 10XXL. Corrigido — estava provisoriamente a 100.');
+  await item('TSHIRT-AZUL-SWC2026','T-Shirt SWC 2026 — Azul Marinho (vários tamanhos)',20,50,'Encomenda real confirmada com o fabricante (Set/2026): 15M, 15L, 10XL, 10XXL. Corrigido — estava provisoriamente a 100. Assumido que "Azul" = "Azul Marinho"; confirmar se forem cores diferentes.');
+
+  toast('Hoodies/T-shirts: '+criados+' criado(s), '+atualizados+' atualizado(s)','ok');
+}
+window.corrigirQtdHoodiesTshirtsSet2026=corrigirQtdHoodiesTshirtsSet2026;
 
 // ===== Import Reisinger Bolas Sortidas — 252 bolas, Delivery Note 491 Fun-Sports (Set/2026) =====
 // Idempotente: se a marca já existir usa-a, se um artigo já existir (pelo ref) actualiza-o em vez de duplicar.

@@ -10398,7 +10398,6 @@ function atualizarBotoesImportacao(){
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-3D'))trocarPorFeito('btn-import-bola3d','100 Bolas Oficiais (3D) importadas');
   if(_artigos.some(a=>a.ref==='BOLA-SWC2026-REISINGER'))trocarPorFeito('btn-import-reisinger','150 Bolas Reisinger importadas');
   if(_artigos.filter(a=>a.marcaNome==='Reisinger Bolas Sortidas').length>=121)trocarPorFeito('btn-import-reisinger-sortidas','252 Bolas Sortidas importadas');
-  if(_artigos.some(a=>a.ref==='HOODIE-BEGE-SWC2026'))trocarPorFeito('btn-corrigir-hoodie-tshirt','Qtd. Hoodies/T-shirts corrigida');
   // Botões de gestão do catálogo (criar marca/artigo) — visíveis só ao Admin
   const podeEditarCatalogo=canEditCatalogo();
   ['btn-nova-marca','btn-novo-artigo','btn-restruturacao-merch'].forEach(id=>{
@@ -10451,13 +10450,17 @@ async function corrigirQtdHoodiesTshirtsSet2026(){
   if(!marcaVzg){toast('Marca Vizelgolfe não encontrada — importa primeiro o merchandise base.','er');return;}
   const marcaId=marcaVzg.id;
 
-  let criados=0, atualizados=0;
+  let criados=0, atualizados=0, duplicadosRemovidos=0;
   async function item(ref, desc, preco, qty, notas){
-    const existente=_artigos.find(a=>a.ref===ref);
+    const existentes=_artigos.filter(a=>a.ref===ref);
     const d={marcaId,marcaNome:'Vizelgolfe',ref,desc,preco,qtyEntrou:qty,notas:notas||'',ts:Date.now()};
-    if(existente){
-      await _upd('cs_artigos',existente.id,d);
+    if(existentes.length>0){
+      await _upd('cs_artigos',existentes[0].id,d);
       atualizados++;
+      for(let i=1;i<existentes.length;i++){
+        await _del('cs_artigos',existentes[i].id);
+        duplicadosRemovidos++;
+      }
     }else{
       await _add('cs_artigos',d);
       criados++;
@@ -10470,7 +10473,7 @@ async function corrigirQtdHoodiesTshirtsSet2026(){
   await item('TSHIRT-BRANCA-SWC2026','T-Shirt SWC 2026 — Branca (vários tamanhos)',20,50,'Encomenda real confirmada com o fabricante (Set/2026): 15M, 15L, 10XL, 10XXL. Corrigido — estava provisoriamente a 100.');
   await item('TSHIRT-AZUL-SWC2026','T-Shirt SWC 2026 — Azul Marinho (vários tamanhos)',20,50,'Encomenda real confirmada com o fabricante (Set/2026): 15M, 15L, 10XL, 10XXL. Corrigido — estava provisoriamente a 100. Assumido que "Azul" = "Azul Marinho"; confirmar se forem cores diferentes.');
 
-  toast('Hoodies/T-shirts: '+criados+' criado(s), '+atualizados+' atualizado(s)','ok');
+  toast('Hoodies/T-shirts: '+criados+' criado(s), '+atualizados+' atualizado(s)'+(duplicadosRemovidos?', '+duplicadosRemovidos+' duplicado(s) removido(s)':''),'ok');
 }
 window.corrigirQtdHoodiesTshirtsSet2026=corrigirQtdHoodiesTshirtsSet2026;
 

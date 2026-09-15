@@ -707,6 +707,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(74,184,122,.58);">Stock · Vendas · Acerto de contas</div>
     </div>
   </div>
+  <div class="si" title="Taxa diária 6€ · 1 a 8 Outubro" onclick="nav(this,'treinos','Treinos Livres — Taxa Diária')" style="">
+    <i class="ti ti-golf" style="font-size:20px;color:#C9A84C;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Treinos Livres</div>
+      <div class="si-sub" style="color:rgba(201,168,76,.58);">Taxa diária 6€ · 1-8 Out</div>
+    </div>
+  </div>
   </div>
 
   <div class="sbs sbcat-h sb-closed" data-cat="financeiro" onclick="toggleCat(this)" style="color:#FFA03C;cursor:pointer;">
@@ -1846,6 +1853,44 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </table></div>
 </div>
 
+  <!-- TREINOS LIVRES -->
+<div class="pg" id="pg-treinos">
+<div class="st"><span class="sn" style="background:linear-gradient(135deg,#C9A84C,#8a7030);">TREI</span>Treinos Livres — Taxa Diária</div>
+<div class="sd">1 a 8 de Outubro 2026 · 6€ por jogador/treinador presente no campo, por dia</div>
+<div class="bb" id="bar-treinos">
+  <button class="btn bp" onclick="abrirNovoTreino()">+ Registar Pagamento</button>
+  <button class="btn bo" onclick="exportComprovativoTreino()">📄 Emitir Comprovativo do Dia</button>
+  <button class="btn bo" onclick="exportRelatorioTreinos()">Exportar Relatório Total (PDF)</button>
+</div>
+<div class="g4" style="margin-bottom:16px;">
+  <div class="sm"><div class="sml">Registos totais</div><div class="smv" id="tl-kpi-reg">0</div></div>
+  <div class="sm"><div class="sml">Receita total</div><div class="smv" id="tl-kpi-receita">0,00€</div></div>
+  <div class="sm"><div class="sml">Dias com registos</div><div class="smv" id="tl-kpi-dias">0</div></div>
+  <div class="sm"><div class="sml">Delegações registadas</div><div class="smv" id="tl-kpi-deleg">0</div></div>
+</div>
+
+<!-- EMITIR COMPROVATIVO -->
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">PDF</span>Emitir Comprovativo</div>
+<div class="fr" style="margin-bottom:20px;">
+  <div class="fg"><div class="fl">Dia</div><input class="fi" type="date" id="tl-export-data" min="2026-10-01" max="2026-10-08"></div>
+  <div class="fg"><div class="fl">Delegação (opcional)</div><select class="fse" id="tl-export-delegacao" style="width:100%;"><option value="">-- Todas as delegações --</option></select></div>
+</div>
+
+<!-- RESUMO POR DIA -->
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">RESUMO</span>Resumo por Dia</div>
+<div class="tbl-wrap tw" style="margin-bottom:20px;"><table>
+  <thead><tr><th>Data</th><th>Jogadores</th><th>Treinadores</th><th>Total pessoas</th><th>Receita</th></tr></thead>
+  <tbody id="t-treinos-resumo"><tr><td colspan="5" class="mu" style="text-align:center;padding:22px;">Sem dados</td></tr></tbody>
+</table></div>
+
+<!-- TABELA REGISTOS -->
+<div class="st" style="font-size:16px;margin-bottom:10px;"><span class="sn">REG</span>Todos os Registos</div>
+<div class="tbl-wrap tw"><table>
+  <thead><tr><th>Data</th><th>Nome</th><th>Delegação/País</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead>
+  <tbody id="t-treinos"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem registos de treino livre</td></tr></tbody>
+</table></div>
+</div>
+
   <!-- ACREDITACOES -->
 <div class="pg" id="pg-acreditacoes">
 <div class="st"><span class="sn">ACCRED</span>Acreditações & QR Code<button class="hbtn" data-help="acreditacoes" onclick="openHelp(this.dataset.help)">?</button></div>
@@ -2669,6 +2714,22 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mf"><button class="btn bo" onclick="closeM('m-artigo')">Cancelar</button><button class="btn bp" onclick="saveArtigo()">Guardar artigo</button></div>
 </div></div>
 
+<!-- MODAL TREINO LIVRE -->
+<div class="mo" id="m-treino"><div class="mdl">
+  <div class="mh"><div class="mt2">Registar Pagamento — Treino Livre</div><button class="mc" onclick="closeM('m-treino')">X</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Data do treino</div><input class="fi" type="date" id="tl-data" min="2026-10-01" max="2026-10-08"></div>
+      <div class="fg"><div class="fl">Tipo</div><select class="fse" id="tl-tipo" style="width:100%;"><option value="">-- Selecionar --</option><option value="Jogador">Jogador</option><option value="Treinador">Treinador</option></select></div>
+    </div>
+    <div class="fg"><div class="fl">Nome</div><input class="fi" id="tl-nome" placeholder="Nome completo"></div>
+    <div class="fg"><div class="fl">Delegação / País</div><input class="fi" id="tl-delegacao" placeholder="ex: Portugal, Suécia, Alemanha..."></div>
+    <div class="fg"><div class="fl">Notas (opcional)</div><input class="fi" id="tl-notas" placeholder="Observações..."></div>
+    <div class="fg"><div class="fl">Valor a pagar</div><div style="font-size:18px;font-weight:700;color:var(--ok);">6,00€ / dia</div></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-treino')">Cancelar</button><button class="btn bp" onclick="saveTreino()">Guardar registo</button></div>
+</div></div>
+
 <!-- MODAL VENDA -->
 <div class="mo" id="m-venda"><div class="mdl">
   <div class="mh"><div class="mt2">Registar Venda</div><button class="mc" onclick="closeM('m-venda')">X</button></div>
@@ -3074,7 +3135,7 @@ function startApp(role){
   const elBadge=document.getElementById('role-badge');
   if(elBadge){elBadge.textContent=role;elBadge.className='sbrole '+cls;}
   setAdminBars();setTimeout(aplicarAcessos,150);if(isAdmin)setTimeout(loadAcessos,400);tick();setInterval(tick,60000);
-  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadBar();loadMerch();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
+  wrapFirebaseFns();loadAll();loadChk();loadConsig();loadTreinos();loadBar();loadMerch();loadBlocoB();loadBlocoC();loadBlocoD();loadBlocoE();loadLog();initChecklist();setTimeout(startCountdown,800);setTimeout(loadClima,1000);startModeEvento();setTimeout(checkEmailAlertas,5000);setInterval(loadClima,600000);startWelcomeCountdown();setTimeout(carregarConfigEmail,1500);setTimeout(checkSeccoesPredefinidas,2500);setTimeout(carregarResendKey,1500);setTimeout(carregarIBAN,1500);
 }
 function doLogout(){try{signOut(_auth);}catch(e){}isAdmin=false;isSWC=false;isSecao=false;_secAtual=null;document.querySelectorAll('.si').forEach(si=>si.style.display='');document.getElementById('ls').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('lerr').textContent='';}
 function setAdminBars(){
@@ -9944,7 +10005,7 @@ function exportChkPDF(){
 }
 
 // === CONSIGNACAO & MERCHANDISE ===
-let _marcas=[], _artigos=[], _vendas_cs=[];
+let _marcas=[], _artigos=[], _vendas_cs=[], _treinos=[];
 
 //  BAR (Caixa) 
 let _barArt=[], _barVen=[], _barCart={};
@@ -10332,6 +10393,181 @@ function loadConsig(){
   _snap('cs_artigos',(docs)=>{_artigos=docs;renderArtigos();renderConsigKPIs();atualizarBotoesImportacao();if(typeof merchRefresh==='function')merchRefresh();});
   _snap('cs_vendas',(docs)=>{_vendas_cs=docs;renderVendas();renderConsigKPIs();if(typeof merchRefresh==='function')merchRefresh();if(typeof renderCaixaResumo==='function')renderCaixaResumo();});
 }
+
+// ===== Treinos Livres — taxa diária (1 a 8 Out 2026) =====
+function loadTreinos(){
+  _snap('treinos_livres',(docs)=>{_treinos=docs;renderTreinos();});
+}
+const TL_VALOR=6;
+const TL_INICIO='2026-10-01', TL_FIM='2026-10-08';
+async function saveTreino(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode registar.','er');return;}
+  const data=document.getElementById('tl-data').value;
+  const nome=document.getElementById('tl-nome').value.trim();
+  const delegacao=document.getElementById('tl-delegacao').value.trim();
+  const tipo=document.getElementById('tl-tipo').value;
+  const notas=document.getElementById('tl-notas').value.trim();
+  if(!data||!nome||!delegacao||!tipo){toast('Preenche data, nome, delegação e tipo.','er');return;}
+  const d={data,nome,delegacao,tipo,valor:TL_VALOR,notas,ts:Date.now()};
+  const _e=document.getElementById('tl-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('treinos_livres',_eid,d);if(_e)_e.value='';toast('Registo atualizado');}
+  else{await _add('treinos_livres',d);toast('Pagamento registado — '+fmt(TL_VALOR));}
+  document.getElementById('tl-nome').value='';document.getElementById('tl-notas').value='';
+  document.getElementById('tl-nome').focus();
+}
+window.saveTreino=saveTreino;
+function abrirNovoTreino(){
+  const e=document.getElementById('tl-eid');if(e)e.value='';
+  document.getElementById('tl-data').value='';
+  document.getElementById('tl-nome').value='';
+  document.getElementById('tl-delegacao').value='';
+  document.getElementById('tl-tipo').value='';
+  document.getElementById('tl-notas').value='';
+  openM('m-treino');
+}
+window.abrirNovoTreino=abrirNovoTreino;
+function editTreino(id){
+  const item=(_treinos||[]).find(x=>x.id===id);if(!item)return;
+  let hid=document.getElementById('tl-eid');
+  if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='tl-eid';
+    const mb=document.querySelector('#m-treino .mb');if(mb)mb.prepend(hid);}
+  hid.value=id;
+  document.getElementById('tl-data').value=item.data||'';
+  document.getElementById('tl-nome').value=item.nome||'';
+  document.getElementById('tl-delegacao').value=item.delegacao||'';
+  document.getElementById('tl-tipo').value=item.tipo||'';
+  document.getElementById('tl-notas').value=item.notas||'';
+  openM('m-treino');
+}
+window.editTreino=editTreino;
+async function delTreino(id){
+  if(!canEditCatalogo()||!confirm('Eliminar este registo de treino livre?'))return;
+  await _del('treinos_livres',id);toast('Eliminado','er');
+}
+window.delTreino=delTreino;
+
+function renderTreinos(){
+  const tbody=document.getElementById('t-treinos');
+  if(tbody){
+    if(!_treinos.length){tbody.innerHTML='<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Sem registos de treino livre</td></tr>';}
+    else{
+      const sorted=[..._treinos].sort((a,b)=>(b.data||'').localeCompare(a.data||'')||(b.ts||0)-(a.ts||0));
+      tbody.innerHTML=sorted.map(t=>`<tr><td class="mu" style="font-size:11px;">${t.data||''}</td><td>${t.nome||''}</td><td class="go">${t.delegacao||''}</td><td style="text-align:center;">${t.tipo||''}</td><td style="text-align:right;font-weight:600;">${fmt(t.valor||0)}</td>${canEditCatalogo()?`<td><button class="btn bo bsm" onclick="editTreino('${t.id}')">✏️</button><button class="btn bd2 bsm" onclick="delTreino('${t.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join('');
+    }
+  }
+  const totalReg=_treinos.length;
+  const totalReceita=_treinos.reduce((s,t)=>s+Number(t.valor||0),0);
+  const dias=new Set(_treinos.map(t=>t.data)).size;
+  const delegacoes=new Set(_treinos.map(t=>t.delegacao).filter(Boolean)).size;
+  const elReg=document.getElementById('tl-kpi-reg');if(elReg)elReg.textContent=totalReg;
+  const elRec=document.getElementById('tl-kpi-receita');if(elRec)elRec.textContent=fmt(totalReceita);
+  const elDias=document.getElementById('tl-kpi-dias');if(elDias)elDias.textContent=dias;
+  const elDeleg=document.getElementById('tl-kpi-deleg');if(elDeleg)elDeleg.textContent=delegacoes;
+
+  const tbodyResumo=document.getElementById('t-treinos-resumo');
+  if(tbodyResumo){
+    const porDia={};
+    _treinos.forEach(t=>{
+      if(!porDia[t.data])porDia[t.data]={jogadores:0,treinadores:0,receita:0};
+      if(t.tipo==='Jogador')porDia[t.data].jogadores++;else if(t.tipo==='Treinador')porDia[t.data].treinadores++;
+      porDia[t.data].receita+=Number(t.valor||0);
+    });
+    const dataOrdenadas=Object.keys(porDia).sort();
+    if(!dataOrdenadas.length){tbodyResumo.innerHTML='<tr><td colspan="5" class="mu" style="text-align:center;padding:22px;">Sem dados</td></tr>';}
+    else{
+      tbodyResumo.innerHTML=dataOrdenadas.map(d=>{
+        const r=porDia[d];
+        return `<tr><td class="mu" style="font-size:11px;">${d}</td><td style="text-align:center;">${r.jogadores}</td><td style="text-align:center;">${r.treinadores}</td><td style="text-align:center;font-weight:600;">${r.jogadores+r.treinadores}</td><td style="text-align:right;font-weight:700;" class="tok">${fmt(r.receita)}</td></tr>`;
+      }).join('');
+    }
+  }
+  populateTreinosDelegacaoSelect();
+}
+function populateTreinosDelegacaoSelect(){
+  const sel=document.getElementById('tl-export-delegacao');
+  if(!sel)return;
+  const atual=sel.value;
+  const delegacoes=[...new Set(_treinos.map(t=>t.delegacao).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">-- Todas as delegações --</option>'+delegacoes.map(d=>`<option value="${d}">${d}</option>`).join('');
+  if(delegacoes.includes(atual))sel.value=atual;
+}
+
+function exportComprovativoTreino(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
+  const data=document.getElementById('tl-export-data').value;
+  const delegacao=document.getElementById('tl-export-delegacao').value;
+  if(!data){toast('Escolhe o dia para o comprovativo.','er');return;}
+  let lista=_treinos.filter(t=>t.data===data);
+  if(delegacao)lista=lista.filter(t=>t.delegacao===delegacao);
+  if(!lista.length){toast('Sem registos para esse dia/delegação.','er');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pw=doc.internal.pageSize.getWidth();
+  doc.setFontSize(16);doc.setFont(undefined,'bold');
+  doc.text('SWC 2026 — Comprovativo de Treino Livre',pw/2,20,{align:'center'});
+  doc.setFontSize(10);doc.setFont(undefined,'normal');
+  doc.text('Seniors World Minigolf Championship · Vizela · 14–17 Outubro 2026',pw/2,27,{align:'center'});
+  doc.setFontSize(11);
+  doc.text('Data do treino: '+data,14,40);
+  doc.text('Delegação/País: '+(delegacao||'Várias'),14,47);
+  let y=60;
+  doc.setFont(undefined,'bold');
+  doc.text('Nome',14,y);doc.text('Tipo',110,y);doc.text('Valor',170,y,{align:'right'});
+  doc.setFont(undefined,'normal');
+  y+=6;doc.line(14,y-4,196,y-4);
+  let total=0;
+  lista.forEach(t=>{
+    if(y>270){doc.addPage();y=20;}
+    doc.text(String(t.nome||''),14,y);
+    doc.text(String(t.tipo||''),110,y);
+    doc.text(fmt(t.valor||0),170,y,{align:'right'});
+    total+=Number(t.valor||0);
+    y+=7;
+  });
+  y+=4;doc.line(14,y-4,196,y-4);
+  doc.setFont(undefined,'bold');
+  doc.text('Total: '+lista.length+' pessoa(s) · '+fmt(total),170,y,{align:'right'});
+  y+=20;
+  doc.setFont(undefined,'normal');doc.setFontSize(9);
+  doc.text('Emitido por: Rui Gonçalves, Diretor Geral SWC 2026',14,y);
+  doc.text('Data de emissão: '+new Date().toLocaleDateString('pt-PT'),14,y+6);
+  doc.save('SWC2026_Comprovativo_TreinoLivre_'+data+(delegacao?'_'+delegacao.replace(/\s+/g,''):'')+'.pdf');
+}
+window.exportComprovativoTreino=exportComprovativoTreino;
+
+function exportRelatorioTreinos(){
+  if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){toast('Biblioteca de PDF não disponível','er');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pw=doc.internal.pageSize.getWidth();
+  doc.setFontSize(16);doc.setFont(undefined,'bold');
+  doc.text('SWC 2026 — Relatório de Treinos Livres',pw/2,20,{align:'center'});
+  doc.setFontSize(10);doc.setFont(undefined,'normal');
+  doc.text('1 a 8 de Outubro 2026 · Taxa diária de '+fmt(TL_VALOR)+' por jogador/treinador',pw/2,27,{align:'center'});
+  let y=40;
+  const porDia={};
+  _treinos.forEach(t=>{
+    if(!porDia[t.data])porDia[t.data]={jogadores:0,treinadores:0,receita:0};
+    if(t.tipo==='Jogador')porDia[t.data].jogadores++;else if(t.tipo==='Treinador')porDia[t.data].treinadores++;
+    porDia[t.data].receita+=Number(t.valor||0);
+  });
+  doc.setFont(undefined,'bold');
+  doc.text('Data',14,y);doc.text('Jogadores',70,y);doc.text('Treinadores',105,y);doc.text('Total pessoas',145,y);doc.text('Receita',185,y,{align:'right'});
+  doc.setFont(undefined,'normal');y+=6;doc.line(14,y-4,196,y-4);
+  let totalGeral=0,totalPessoas=0;
+  Object.keys(porDia).sort().forEach(d=>{
+    if(y>270){doc.addPage();y=20;}
+    const r=porDia[d];
+    doc.text(d,14,y);doc.text(String(r.jogadores),75,y,{align:'center'});doc.text(String(r.treinadores),112,y,{align:'center'});doc.text(String(r.jogadores+r.treinadores),150,y,{align:'center'});doc.text(fmt(r.receita),185,y,{align:'right'});
+    totalGeral+=r.receita;totalPessoas+=r.jogadores+r.treinadores;
+    y+=7;
+  });
+  y+=4;doc.line(14,y-4,196,y-4);
+  doc.setFont(undefined,'bold');
+  doc.text('TOTAL: '+totalPessoas+' registos · '+fmt(totalGeral),185,y,{align:'right'});
+  doc.save('SWC2026_Relatorio_TreinosLivres.pdf');
+}
+window.exportRelatorioTreinos=exportRelatorioTreinos;
 
 function populateMarcaSelects(){
   ['art-marca','vd-marca'].forEach(id=>{

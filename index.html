@@ -1633,6 +1633,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="fg"><div class="fl">Referência (opcional)</div><input class="fi" id="rs-referencia" placeholder="ex: nº de contrato/fatura do patrocinador"></div>
     </div>
     <div class="fg"><div class="fl">Finalidade / Descrição</div><input class="fi" id="rs-finalidade" placeholder="ex: Patrocínio Gold SWC 2026 / Donativo para o Mundial"></div>
+    <div class="fg"><div class="fl">Emitido por</div><input class="fi" id="rs-emitido" placeholder="Rui Cunha"></div>
+    <div class="av" style="font-size:11px;margin-top:8px;">⚠ Enquadramento fiscal do recibo (Isento de IVA / regime de Mecenato) aplicado automaticamente consoante o Tipo — confirma que o texto está correto para o teu enquadramento como Contabilista Certificado antes de emitires em produção.</div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-recswc')">Cancelar</button><button class="btn bp" onclick="salvarReciboSwc()">Emitir Recibo</button></div>
 </div></div>
@@ -11453,6 +11455,7 @@ function abrirNovoReciboSwc(){
   document.getElementById('rs-meio').value='banco';
   document.getElementById('rs-referencia').value='';
   document.getElementById('rs-finalidade').value='';
+  document.getElementById('rs-emitido').value='Rui Cunha';
   openM('m-recswc');
 }
 window.abrirNovoReciboSwc=abrirNovoReciboSwc;
@@ -11463,6 +11466,9 @@ function proximoNumeroRecibo(tipo){
   const n = doTipo.length+1;
   return prefixo+String(n).padStart(4,'0');
 }
+
+// Conta SNC-ESNL por tipo de recibo SWC — Patrocínio usa a 724 (igual aos Patrocínios normais), Donativo usa a 788.
+function contaSwcRecibo(tipo){ return tipo==='Donativo' ? '788' : '724'; }
 
 async function salvarReciboSwc(){
   if(!canEdit()){toast('Sem permissão para emitir recibos.','er');return;}
@@ -11475,17 +11481,35 @@ async function salvarReciboSwc(){
   const meio=document.getElementById('rs-meio').value;
   const referencia=document.getElementById('rs-referencia').value.trim();
   const finalidade=document.getElementById('rs-finalidade').value.trim();
+  const emitido=document.getElementById('rs-emitido').value.trim();
   if(!data||!entidade||!valor){toast('Preenche data, entidade e valor.','er');return;}
   const numero=proximoNumeroRecibo(tipo);
-  const d={numero,tipo,data,entidade,nif,valor,morada,meio,referencia,finalidade,ts:Date.now()};
-  await _add('swc2026_recibos',d);
-  toast('Recibo '+numero+' emitido ✅');
+  const d={numero,tipo,data,entidade,nif,valor,morada,meio,referencia,finalidade,emitido,ts:Date.now()};
+  const docRef=await _add('swc2026_recibos',d);
+  // Lançamento automático no Diário — Patrocínio -> 724, Donativo -> 788, sem botão extra (a pedido do Rui).
+  await lancarVendaContab('recibo_swc', contaSwcRecibo(tipo), numero+' — '+tipo+' — '+entidade, valor, docRef.id);
+  toast('Recibo '+numero+' emitido e lançado no Diário ✅');
   closeM('m-recswc');
 }
 window.salvarReciboSwc=salvarReciboSwc;
 
+async function anularReciboSwc(id){
+  if(!canEdit()){toast('Sem permissão.','er');return;}
+  const r=_recSwc.find(x=>x.id===id);
+  if(!r){toast('Recibo não encontrado','er');return;}
+  if(r.anulado){toast('Este recibo já está anulado','er');return;}
+  const motivo=prompt('Motivo da anulação (ex: IBAN incorreto — substituído pelo recibo SWC2026-PAT-0002):');
+  if(motivo===null)return;
+  if(!motivo.trim()){toast('Indica o motivo da anulação','er');return;}
+  await _upd('swc2026_recibos',id,{anulado:true,motivoAnulacao:motivo.trim(),dataAnulacao:new Date().toISOString().slice(0,10)});
+  await removerVendaContab(id); // reverte o lançamento no Diário associado a este recibo
+  toast('Recibo '+(r.numero||'')+' anulado — mantido no histórico, revertido do Diário','er');
+}
+window.anularReciboSwc=anularReciboSwc;
+
 async function apagarReciboSwc(id){
-  if(!canDelete()||!confirm('Eliminar este recibo? A numeração dos recibos seguintes do mesmo tipo não é reordenada.'))return;
+  if(!canDelete()||!confirm('Apagar definitivamente este recibo? A numeração NÃO é reposta — o próximo recibo deste tipo repete o número que estás a apagar. Usa "Anular" em vez disto para qualquer recibo já enviado a um patrocinador/doador; só apaga se for um registo de teste sem efeito real.'))return;
+  await removerVendaContab(id);
   await _del('swc2026_recibos',id);
   toast('Recibo eliminado','er');
 }
@@ -11498,23 +11522,24 @@ function renderRecibosSwc(){
       tbody.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem recibos emitidos</td></tr>';
     }else{
       const ordenados=[..._recSwc].sort((a,b)=>(b.ts||0)-(a.ts||0));
-      tbody.innerHTML=ordenados.map(r=>`<tr>
-        <td class="vl">${r.numero||''}</td>
+      tbody.innerHTML=ordenados.map(r=>`<tr style="${r.anulado?'opacity:.55':''}">
+        <td class="vl">${r.numero||''}${r.anulado?' <span style="background:#c82828;color:#fff;font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px">ANULADO</span>':''}</td>
         <td><span class="bge ${r.tipo==='Donativo'?'bg-bl':'bg-g'}">${r.tipo||''}</span></td>
-        <td>${r.entidade||''}</td>
+        <td style="${r.anulado?'text-decoration:line-through':''}">${r.entidade||''}</td>
         <td class="mu">${r.nif||'-'}</td>
-        <td class="tok">${fmt(r.valor)}</td>
+        <td class="tok" style="${r.anulado?'text-decoration:line-through':''}">${fmt(r.valor)}</td>
         <td class="mu" style="font-size:11px;">${r.data||''}</td>
-        <td class="mu" style="font-size:11px;">${(r.finalidade||'').substring(0,40)}${(r.finalidade||'').length>40?'...':''}</td>
-        <td><button class="btn bo bsm" onclick="gerarReciboSwcPDF('${r.id}')" title="Gerar PDF">📄</button>${canDelete()?`<button class="btn bd2 bsm" onclick="apagarReciboSwc('${r.id}')" title="Eliminar">🗑️</button>`:''}</td>
+        <td class="mu" style="font-size:11px;">${r.anulado?(r.motivoAnulacao||''):(r.finalidade||'').substring(0,40)+((r.finalidade||'').length>40?'...':'')}</td>
+        <td><button class="btn bo bsm" onclick="gerarReciboSwcPDF('${r.id}')" title="Gerar PDF">📄</button>${r.anulado?'':`<button class="btn bo bsm" onclick="anularReciboSwc('${r.id}')" title="Anular (mantém histórico e reverte do Diário)">🚫</button>`}${canDelete()?`<button class="btn bd2 bsm" onclick="apagarReciboSwc('${r.id}')" title="Apagar definitivamente">🗑️</button>`:''}</td>
       </tr>`).join('');
     }
   }
-  const totPat=_recSwc.filter(r=>r.tipo==='Patrocínio').reduce((s,r)=>s+Number(r.valor||0),0);
-  const totDon=_recSwc.filter(r=>r.tipo==='Donativo').reduce((s,r)=>s+Number(r.valor||0),0);
+  const validos=_recSwc.filter(r=>!r.anulado);
+  const totPat=validos.filter(r=>r.tipo==='Patrocínio').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totDon=validos.filter(r=>r.tipo==='Donativo').reduce((s,r)=>s+Number(r.valor||0),0);
   const elP=document.getElementById('rs-totpat');if(elP)elP.textContent=fmt(totPat);
   const elD=document.getElementById('rs-totdon');if(elD)elD.textContent=fmt(totDon);
-  const elC=document.getElementById('rs-count');if(elC)elC.textContent=_recSwc.length;
+  const elC=document.getElementById('rs-count');if(elC)elC.textContent=_recSwc.length+(_recSwc.length!==validos.length?' ('+(_recSwc.length-validos.length)+' anulado(s))':'');
   const elG=document.getElementById('rs-totgeral');if(elG)elG.textContent=fmt(totPat+totDon);
   const elAviso=document.getElementById('recswc-iban-aviso');
   if(elAviso)elAviso.textContent=_ibanEvento||'ainda não configurado — vai a Backup & Exportação Total e guarda o IBAN do Mundial';
@@ -11678,9 +11703,16 @@ function htmlReciboSwcMeiaFolha(r, etiqueta){
   const logo=(typeof _LOGO_VZG!=='undefined')?_LOGO_VZG:'';
   const corEtiqueta=etiqueta==='DUPLICADO'?'#6b7280':'#1a3a6b';
   const meioLabel={banco:'Transferência bancária',caixa:'Numerário (caixa)',mbway:'MBWay',cheque:'Cheque',cartao:'Cartão'}[r.meio||'banco']||(r.meio||'');
+  const anuladoStamp=r.anulado?`<div class="rc-anulado">ANULADO</div>`:'';
+  const emitidoPor=(r.emitido&&r.emitido.trim())?r.emitido.trim():'Rui Cunha';
+  const isDonativo=r.tipo==='Donativo';
+  // Texto fiscal por tipo, conforme confirmado pelo Rui (Contabilista Certificado).
+  const notaFiscalPatrocinio='Isento de IVA — Artigo 9.º do CIVA.';
+  const certidaoDonativo=`Certifica-se que esta Associação recebeu da empresa ${r.entidade||'—'}, NIF ${r.nif||'—'}, um donativo no valor de ${valor.toFixed(2)} €, efetuado no dia ${hoje}, destinado à prossecução dos fins estatutários e desportivos da associação. Este donativo é enquadrado nos termos dos artigos 61.º e 62.º do Estatuto dos Benefícios Fiscais (EBF), sendo atribuído sem contrapartidas de caráter pecuniário ou comercial.`;
 
   return `
     <div class="rc-wrap">
+      ${anuladoStamp}
       <div class="rc-etiqueta" style="background:${corEtiqueta}">${etiqueta}${etiqueta==='DUPLICADO'?' — 2.ª via':''}</div>
       <div class="rc-header">
         ${logo?`<img class="rc-logo" src="${logo}" alt="${nomeAssoc}">`:''}
@@ -11712,6 +11744,7 @@ function htmlReciboSwcMeiaFolha(r, etiqueta){
         <tfoot><tr><td>TOTAL</td><td style="text-align:right">${valor.toFixed(2)} €</td></tr></tfoot>
       </table>
       <div class="rc-extenso">${valorExtensoSwc(valor)}</div>
+      ${isDonativo?'':`<div class="rc-fiscal">${notaFiscalPatrocinio}</div>`}
 
       <div class="rc-pagamento">
         <span class="rc-pag-label">IBAN (conta exclusiva SWC 2026)</span>
@@ -11720,13 +11753,15 @@ function htmlReciboSwcMeiaFolha(r, etiqueta){
         <span class="rc-pag-val">${banco}</span>
       </div>
 
+      ${isDonativo?`<div class="rc-certidao">${certidaoDonativo}</div>`:''}
+
       <div class="rc-footer">
-        <div class="rc-declaracao">A ${nomeAssoc} declara ter recebido da entidade acima identificada a quantia descrita, a título de ${(r.tipo||'').toLowerCase()} para o SWC 2026.</div>
+        <div class="rc-declaracao">${isDonativo?'':'A '+nomeAssoc+' declara ter recebido da entidade acima identificada a quantia descrita, a título de '+(r.tipo||'').toLowerCase()+' para o SWC 2026.'}</div>
         <div class="rc-assinatura">
-          <div class="rc-assinatura-linha">Pela Vizelgolfe — Direção SWC 2026</div>
+          <div class="rc-assinatura-linha">${emitidoPor} — Presidente da Direção</div>
         </div>
       </div>
-      <div class="rc-nota">Documento emitido eletronicamente · ${nomeAssoc} · NIF ${nifAssoc} · ${hoje}</div>
+      <div class="rc-nota">Documento emitido eletronicamente · ${nomeAssoc} · NIF ${nifAssoc} · ${hoje} · Emitido por ${emitidoPor}</div>
     </div>
   `;
 }
@@ -11744,7 +11779,8 @@ function gerarReciboSwcPDF(id){
     .rc-metade{height:136mm;padding:6mm 4mm;position:relative;overflow:hidden}
     .rc-corte{border-top:1px dashed #999;text-align:center;position:relative;height:0;}
     .rc-corte span{position:relative;top:-7px;background:#fff;padding:0 8px;font-size:9px;color:#999;letter-spacing:1px;}
-    .rc-wrap{max-width:100%}
+    .rc-wrap{max-width:100%;position:relative}
+    .rc-anulado{position:absolute;top:35%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font-family:'Bebas Neue',sans-serif;font-size:42px;color:rgba(200,40,40,.35);border:4px solid rgba(200,40,40,.35);padding:2px 16px;letter-spacing:4px;pointer-events:none;z-index:5}
     .rc-etiqueta{display:inline-block;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;padding:2px 10px;border-radius:3px;margin-bottom:6px}
     .rc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:6px;border-bottom:2px solid #1a3a6b;margin-bottom:8px}
     .rc-logo{width:34px;height:34px;object-fit:contain;flex-shrink:0}
@@ -11765,6 +11801,8 @@ function gerarReciboSwcPDF(id){
     .rc-tabela td{padding:4px 6px;border-bottom:1px solid #dde4ee}
     .rc-tabela tfoot td{background:#0f1e35;color:#fff;font-weight:800;font-size:10px;padding:4px 6px}
     .rc-extenso{font-size:7.5px;color:#555;font-style:italic;text-align:right;margin-bottom:8px}
+    .rc-fiscal{font-size:6.5px;color:#8a5c20;text-align:right;margin-bottom:8px;margin-top:-5px;font-weight:600}
+    .rc-certidao{font-size:6.8px;color:#333;line-height:1.5;text-align:justify;background:#faf7f0;border:1px solid #e8dcc0;border-radius:5px;padding:6px 8px;margin-bottom:8px}
     .rc-pagamento{border:1px solid #c8d4e8;border-radius:5px;padding:6px 9px;margin-bottom:8px;font-size:8px}
     .rc-pag-label{font-size:6.5px;text-transform:uppercase;color:#999;margin-right:3px}
     .rc-pag-val{font-family:monospace;font-weight:700;color:#0f1e35}

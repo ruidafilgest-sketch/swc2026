@@ -744,6 +744,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(255,160,60,.6);">Gestão comercial · Conta 724</div>
     </div>
   </div>
+  <div class="si" title="Numeração própria · IBAN do Evento" onclick="nav(this,'recswc','Recibos SWC (Patroc./Donativos)')" style="">
+    <i class="ti ti-receipt" style="font-size:20px;color:#FFA03C;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Recibos SWC (Patroc./Donativos)</div>
+      <div class="si-sub" style="color:rgba(255,160,60,.6);">Numeração própria · IBAN do Evento</div>
+    </div>
+  </div>
   <div class="si" title="Orcado vs executado · Semáforo" onclick="nav(this,'orcamento','Orçamento vs Real')" style="">
     <i class="ti ti-target" style="font-size:20px;color:#FFA03C;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -1517,7 +1524,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">DI</span>Diário de Caixa / Banco<button class="hbtn" data-help="diario" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Lançamento a lançamento · Caixa e Banco separados · Saldo corrente · Apenas valores reais com confirmação documental</div>
 <div class="av"><strong>Rigor contabilístico absoluto:</strong> Cada lançamento requer confirmação documental (fatura, recibo, transferência). Nunca são inseridos valores estimados.</div>
-<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button></div>
+<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button><button class="btn bd2" onclick="limparLancamentosDuplicados()">🔍 Detetar e Remover Duplicados</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Saldo Caixa</div><div class="smv" id="s-cx">0,00€</div></div>
   <div class="sm"><div class="sml">Saldo Banco</div><div class="smv" id="s-bk">0,00€</div></div>
@@ -1576,6 +1583,22 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 <div class="tw"><table><thead><tr><th>Empresa</th><th>Contacto</th><th>Tipo</th><th>Valor confirmado (€)</th><th>Contrapartidas</th><th>Estado</th><th id="th-pat">Ações</th></tr></thead>
 <tbody id="t-pat"><tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem patrocinadores</td></tr></tbody></table></div>
+</div>
+
+<!-- RECIBOS SWC -->
+<div class="pg" id="pg-recswc">
+<div class="st"><span class="sn">REC</span>Recibos SWC (Patroc./Donativos)<button class="hbtn" data-help="recswc" onclick="openHelp(this.dataset.help)">?</button></div>
+<div class="sd">Recibos oficiais de patrocínio/donativo para o SWC 2026 — numeração própria, lançamento automático no Diário (Patrocínio → 724, Donativo → 788)</div>
+<div class="av" style="margin-bottom:14px;">Todos os recibos emitidos aqui usam sempre o <strong>IBAN do Evento</strong> (definido em Backup &amp; Exportação Total), nunca o IBAN geral da Vizelgolfe.</div>
+<div class="bb" id="bar-recswc"><button class="btn bp" onclick="abrirNovoReciboSwc()">+ Emitir Recibo</button></div>
+<div class="g4" style="margin-bottom:14px;">
+  <div class="sm"><div class="sml">Total Patrocínios</div><div class="smv" id="rs-totpat" style="color:var(--ok)">0,00€</div></div>
+  <div class="sm"><div class="sml">Total Donativos</div><div class="smv" id="rs-totdon" style="color:var(--ok)">0,00€</div></div>
+  <div class="sm"><div class="sml">Recibos emitidos</div><div class="smv" id="rs-count">0</div></div>
+  <div class="sm"><div class="sml">Total Geral</div><div class="smv" id="rs-totgeral">0,00€</div></div>
+</div>
+<div class="tw"><table><thead><tr><th>Nº</th><th>Tipo</th><th>Entidade</th><th>NIF</th><th>Valor</th><th>Data</th><th>Finalidade</th><th>Ações</th></tr></thead>
+<tbody id="t-recswc"><tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem recibos emitidos</td></tr></tbody></table></div>
 </div>
 
 <!-- BALANCETE -->
@@ -2481,6 +2504,36 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mf"><button class="btn bo" onclick="closeM('m-pat')">Cancelar</button><button class="btn bp" onclick="savePat()">Guardar</button></div>
 </div></div>
 
+<div class="mo" id="m-recswc"><div class="mdl">
+  <div class="mh"><div class="mt2">Emitir Recibo — Patrocínio / Donativo SWC 2026</div><button class="mc" onclick="closeM('m-recswc')">✕</button></div>
+  <div class="mb">
+    <div class="fr">
+      <div class="fg"><div class="fl">Tipo</div><select class="fse" id="rs-tipo" style="width:100%;"><option value="Patrocínio">Patrocínio</option><option value="Donativo">Donativo</option></select></div>
+      <div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="rs-data"></div>
+    </div>
+    <div class="fg"><div class="fl">Entidade / Nome</div><input class="fi" id="rs-entidade" placeholder="Nome da empresa ou pessoa"></div>
+    <div class="fr">
+      <div class="fg"><div class="fl">NIF (opcional)</div><input class="fi" id="rs-nif" placeholder="000000000"></div>
+      <div class="fg"><div class="fl">Valor (€)</div><input class="fi" type="number" step="0.01" id="rs-valor" placeholder="0,00"></div>
+    </div>
+    <div class="fg"><div class="fl">Morada (opcional)</div><input class="fi" id="rs-morada" placeholder="Rua, número, código postal, localidade"></div>
+    <div class="fr">
+      <div class="fg"><div class="fl">Meio de Pagamento</div><select class="fse" id="rs-meio" style="width:100%;">
+        <option value="banco">Transferência bancária</option>
+        <option value="caixa">Numerário (caixa)</option>
+        <option value="mbway">MBWay</option>
+        <option value="cheque">Cheque</option>
+        <option value="cartao">Cartão</option>
+      </select></div>
+      <div class="fg"><div class="fl">Referência (opcional)</div><input class="fi" id="rs-referencia" placeholder="ex: nº de contrato/fatura do patrocinador"></div>
+    </div>
+    <div class="fg"><div class="fl">Finalidade / Descrição</div><input class="fi" id="rs-finalidade" placeholder="ex: Patrocínio Gold SWC 2026 / Donativo para o Mundial"></div>
+    <div class="fg"><div class="fl">Emitido por</div><input class="fi" id="rs-emitido" placeholder="Nome de quem emite o recibo"></div>
+    <div class="av" style="font-size:11px;margin-top:8px;">⚠ Enquadramento fiscal do recibo (Isento de IVA / regime de Mecenato) aplicado automaticamente consoante o Tipo — confirma que o texto está correto para o teu enquadramento como Contabilista Certificado antes de emitires em produção.</div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-recswc')">Cancelar</button><button class="btn bp" onclick="salvarReciboSwc()">Emitir Recibo</button></div>
+</div></div>
+
 <div class="mo" id="m-atl"><div class="mdl">
   <div class="mh"><div class="mt2">Novo Atleta</div><button class="mc" onclick="closeM('m-atl')">✕</button></div>
   <div class="mb">
@@ -3008,6 +3061,245 @@ async function deslancarRec(id){ if(!canEdit())return; await removerLanPorRef(id
 async function deslancarDesp(id){ if(!canEdit())return; await removerLanPorRef(id); toast('Removido do Diario','er'); }
 async function deslancarPat(id){ if(!canEdit())return; await removerVendaContab(id); toast('Removido do Diario','er'); }
 window.lancarReceita=lancarReceita;window.lancarDespesa=lancarDespesa;window.lancarPatroc=lancarPatroc;window.deslancarRec=deslancarRec;window.deslancarDesp=deslancarDesp;window.deslancarPat=deslancarPat;
+
+// ===== Recibos SWC (Patrocínio / Donativo) — numeração própria, IBAN do Evento, lançamento automático =====
+function abrirNovoReciboSwc(){
+  const e=document.getElementById('rs-eid');if(e)e.value='';
+  document.getElementById('rs-tipo').value='Patrocínio';
+  document.getElementById('rs-data').value=new Date().toISOString().slice(0,10);
+  document.getElementById('rs-entidade').value='';
+  document.getElementById('rs-nif').value='';
+  document.getElementById('rs-valor').value='';
+  document.getElementById('rs-morada').value='';
+  document.getElementById('rs-meio').value='banco';
+  document.getElementById('rs-referencia').value='';
+  document.getElementById('rs-finalidade').value='';
+  document.getElementById('rs-emitido').value='';
+  openM('m-recswc');
+}
+window.abrirNovoReciboSwc=abrirNovoReciboSwc;
+
+function proximoNumeroRecibo(tipo){
+  const prefixo = tipo==='Donativo' ? 'SWC2026-DON-' : 'SWC2026-PAT-';
+  const doTipo = _recSwc.filter(r=>r.tipo===tipo);
+  const n = doTipo.length+1;
+  return prefixo+String(n).padStart(4,'0');
+}
+
+// Conta SNC-ESNL por tipo de recibo SWC — Patrocínio usa a 724 (igual aos Patrocínios normais), Donativo usa a 788.
+function contaSwcRecibo(tipo){ return tipo==='Donativo' ? '788' : '724'; }
+
+async function salvarReciboSwc(){
+  if(!canEdit()){toast('Sem permissão para emitir recibos.','er');return;}
+  const tipo=document.getElementById('rs-tipo').value;
+  const data=document.getElementById('rs-data').value;
+  const entidade=document.getElementById('rs-entidade').value.trim();
+  const nif=document.getElementById('rs-nif').value.trim();
+  const valor=Number(document.getElementById('rs-valor').value||0);
+  const morada=document.getElementById('rs-morada').value.trim();
+  const meio=document.getElementById('rs-meio').value;
+  const referencia=document.getElementById('rs-referencia').value.trim();
+  const finalidade=document.getElementById('rs-finalidade').value.trim();
+  const emitido=document.getElementById('rs-emitido').value.trim();
+  if(!data||!entidade||!valor){toast('Preenche data, entidade e valor.','er');return;}
+  const numero=proximoNumeroRecibo(tipo);
+  const d={numero,tipo,data,entidade,nif,valor,morada,meio,referencia,finalidade,emitido,ts:Date.now()};
+  const docRef=await _add('swc2026_recibos',d);
+  // Lançamento automático no Diário — Patrocínio -> 724, Donativo -> 788, sem botão extra.
+  await lancarVendaContab('recibo_swc', contaSwcRecibo(tipo), numero+' — '+tipo+' — '+entidade, valor, docRef.id);
+  toast('Recibo '+numero+' emitido e lançado no Diário ✅');
+  closeM('m-recswc');
+}
+window.salvarReciboSwc=salvarReciboSwc;
+
+async function anularReciboSwc(id){
+  if(!canEdit()){toast('Sem permissão.','er');return;}
+  const r=_recSwc.find(x=>x.id===id);
+  if(!r){toast('Recibo não encontrado','er');return;}
+  if(r.anulado){toast('Este recibo já está anulado','er');return;}
+  const motivo=prompt('Motivo da anulação (ex: IBAN incorreto — substituído pelo recibo SWC2026-PAT-0002):');
+  if(motivo===null)return;
+  if(!motivo.trim()){toast('Indica o motivo da anulação','er');return;}
+  await _upd('swc2026_recibos',id,{anulado:true,motivoAnulacao:motivo.trim(),dataAnulacao:new Date().toISOString().slice(0,10)});
+  await removerVendaContab(id);
+  toast('Recibo '+(r.numero||'')+' anulado — mantido no histórico, revertido do Diário','er');
+}
+window.anularReciboSwc=anularReciboSwc;
+
+async function apagarReciboSwc(id){
+  if(!canDelete())return;
+  if(!confirm('Apagar definitivamente este recibo? A numeração NÃO é reposta — o próximo recibo deste tipo repete o número que estás a apagar.\n\nUsa "Anular" em vez disto para qualquer recibo já enviado a um patrocinador/doador; só apaga se for um registo de teste sem efeito real.'))return;
+  await removerVendaContab(id);
+  await _del('swc2026_recibos',id);
+  toast('Recibo eliminado','er');
+}
+window.apagarReciboSwc=apagarReciboSwc;
+
+function renderRecibosSwc(){
+  const tbody=document.getElementById('t-recswc');
+  if(!tbody)return;
+  const ativos=_recSwc.filter(r=>!r.anulado);
+  const totPat=ativos.filter(r=>r.tipo==='Patrocínio').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totDon=ativos.filter(r=>r.tipo==='Donativo').reduce((s,r)=>s+Number(r.valor||0),0);
+  (document.getElementById('rs-totpat')||{}).textContent=fmt(totPat);
+  (document.getElementById('rs-totdon')||{}).textContent=fmt(totDon);
+  (document.getElementById('rs-count')||{}).textContent=_recSwc.length;
+  (document.getElementById('rs-totgeral')||{}).textContent=fmt(totPat+totDon);
+
+  if(!_recSwc.length){
+    tbody.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem recibos emitidos</td></tr>';
+    return;
+  }
+  const ordenados=[..._recSwc].sort((a,b)=>(b.ts||0)-(a.ts||0));
+  tbody.innerHTML=ordenados.map(r=>{
+    const anuladoStyle=r.anulado?' style="opacity:.55;text-decoration:line-through;"':'';
+    const badgeAnulado=r.anulado?' <span class="bge bg-er" style="text-decoration:none;">Anulado</span>':'';
+    return `<tr${anuladoStyle}><td class="vl">${r.numero||''}</td>
+      <td><span class="bge ${r.tipo==='Donativo'?'bg-am':'bg-ok'}">${r.tipo||''}</span></td>
+      <td>${r.entidade||''}${badgeAnulado}</td>
+      <td class="mu">${r.nif||'-'}</td>
+      <td class="tok">${fmt(r.valor)}</td>
+      <td class="mu" style="font-size:11px;">${r.data||''}</td>
+      <td class="mu" style="font-size:11px;">${(r.finalidade||'').substring(0,40)}${(r.finalidade||'').length>40?'...':''}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn bo bsm" onclick="exportReciboSwcPDF('${r.id}')" title="Exportar PDF">📄</button>
+        ${!r.anulado&&canEdit()?`<button class="btn bo bsm" onclick="anularReciboSwc('${r.id}')" title="Anular">↺</button>`:''}
+        ${canDelete()?`<button class="btn bd2 bsm" onclick="apagarReciboSwc('${r.id}')" title="Apagar">🗑️</button>`:''}
+      </td></tr>`;
+  }).join('');
+}
+window.renderRecibosSwc=renderRecibosSwc;
+
+// Desenha uma metade do recibo (compacta), a partir de yBase, dentro de uma faixa de 148,5mm de altura.
+function desenharMeioReciboSwc(doc, r, yBase, etiqueta){
+  const W=210, H=148.5;
+  const NAVY=[8,16,32], GOLD=[201,168,76], GOLDDK=[160,130,55], CREAM=[251,249,244];
+  const meioLabel={banco:'Transferência bancária',caixa:'Numerário (caixa)',mbway:'MBWay',cheque:'Cheque',cartao:'Cartão'}[r.meio||'banco']||(r.meio||'');
+
+  // ---- fundo creme suave para toda a metade ----
+  doc.setFillColor(...CREAM);
+  doc.rect(0,yBase,W,H,'F');
+
+  // ---- moldura dourada dupla, à volta de toda a metade ----
+  const m=4;
+  doc.setDrawColor(...GOLD);
+  doc.setLineWidth(0.6);
+  doc.rect(m,yBase+m,W-2*m,H-2*m,'S');
+  doc.setLineWidth(0.15);
+  doc.rect(m+1.3,yBase+m+1.3,W-2*(m+1.3),H-2*(m+1.3),'S');
+
+  // ---- cabeçalho navy, dentro da moldura ----
+  const hx=m+1.3, hy=yBase+m+1.3, hw=W-2*(m+1.3);
+  doc.setFillColor(...NAVY);
+  doc.rect(hx,hy,hw,20,'F');
+  doc.setFillColor(...GOLD);
+  doc.rect(hx,hy+20,hw,0.7,'F');
+  try{ doc.addImage('data:image/jpeg;base64,'+_LOGO_B64,'JPEG',hx+4,hy+3.5,13,13); }catch(e){}
+  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('RECIBO',hx+22,hy+9);
+  doc.setTextColor(...GOLD);doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.text(r.numero||'',hx+22,hy+15.5);
+  doc.setFontSize(7);doc.setFont('helvetica','italic');doc.setTextColor(190,190,200);
+  doc.text('Seniors World Championship de Minigolfe · Vizela 2026',hx+hw-4,hy+6,{align:'right'});
+  doc.setFillColor(...GOLD);
+  doc.roundedRect(hx+hw-32,hy+9,28,8.5,1.3,1.3,'F');
+  doc.setTextColor(...NAVY);doc.setFontSize(8.5);doc.setFont('helvetica','bold');
+  doc.text(etiqueta,hx+hw-18,hy+14.7,{align:'center'});
+
+  let y=hy+28;
+
+  // ---- Recebido de ----
+  doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...GOLDDK);
+  doc.text('RECEBIDO DE',hx+4,y);
+  y+=6;
+  doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(25,25,35);
+  doc.text(r.entidade||'—',hx+4,y);
+  y+=5.5;
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(100,100,105);
+  let linhaMeta=[];
+  if(r.nif)linhaMeta.push('NIF '+r.nif);
+  if(r.morada)linhaMeta.push(r.morada);
+  if(linhaMeta.length){doc.text(linhaMeta.join('   ·   '),hx+4,y);y+=5;}
+
+  y+=2;
+  doc.setDrawColor(...GOLD);doc.setLineWidth(0.3);
+  doc.line(hx+4,y,hx+hw-4,y);
+  y+=7;
+
+  // ---- referente a / descrição, à esquerda — valor em destaque, à direita ----
+  const valBoxW=42, valBoxX=hx+hw-4-valBoxW;
+  doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...GOLDDK);
+  doc.text('REFERENTE A',hx+4,y);
+  doc.setFontSize(7.5);
+  doc.text('VALOR',valBoxX+valBoxW/2,y,{align:'center'});
+  y+=5.5;
+  doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(40,40,45);
+  const descTxt=(r.tipo||'')+(r.finalidade?' — '+r.finalidade:'');
+  const descLines=doc.splitTextToSize(descTxt, hw-8-valBoxW-6);
+  doc.text(descLines.slice(0,2),hx+4,y);
+
+  doc.setFillColor(...NAVY);
+  doc.roundedRect(valBoxX,y-6,valBoxW,14,1.5,1.5,'F');
+  doc.setTextColor(...GOLD);doc.setFontSize(15);doc.setFont('helvetica','bold');
+  doc.text(Number(r.valor||0).toFixed(2)+' €',valBoxX+valBoxW/2,y+2.5,{align:'center'});
+
+  y+=Math.max(descLines.length,1)*4.5+5;
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(100,100,105);
+  let linhaExtra=[meioLabel];
+  if(r.referencia)linhaExtra.push('Ref: '+r.referencia);
+  doc.text(linhaExtra.join('   ·   '),hx+4,y);
+
+  y+=8;
+  doc.setDrawColor(220,210,190);doc.setLineWidth(0.2);
+  doc.line(hx+4,y,hx+hw-4,y);
+  y+=6;
+
+  // ---- data / emitido por / assinatura ----
+  doc.setFontSize(8);doc.setFont('helvetica','italic');doc.setTextColor(90,90,95);
+  doc.text('Data: '+(r.data||''),hx+4,y);
+  if(r.emitido)doc.text('Emitido por: '+r.emitido,hx+hw/2,y,{align:'center'});
+
+  y+=9;
+  doc.setFont('helvetica','normal');doc.setTextColor(120,120,125);doc.setFontSize(8);
+  doc.text('Assinatura:',hx+4,y);
+  doc.setDrawColor(190,190,190);doc.setLineWidth(0.2);
+  doc.line(hx+26,y,hx+hw-4,y);
+
+  y+=9;
+  if(_ibanEvento){
+    doc.setFillColor(245,238,220);
+    doc.roundedRect(hx+4,y-4,hw-8,7,1,1,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...GOLDDK);
+    doc.text('IBAN  '+_ibanEvento+'   ·   BIC CGDIPTPL   ·   Caixa Geral de Depósitos',hx+hw/2,y,{align:'center'});
+  }
+
+  if(r.anulado){
+    doc.setTextColor(190,40,40);doc.setFont('helvetica','bold');doc.setFontSize(16);
+    doc.text('ANULADO',hx+hw/2,hy+14,{align:'center',angle:0});
+    doc.setFontSize(8);
+    doc.text(r.motivoAnulacao||'',hx+hw/2,y+12,{align:'center'});
+  }
+
+  doc.setFontSize(6.5);doc.setTextColor(...GOLDDK);doc.setFont('helvetica','normal');
+  doc.text('Vizelgolfe — Associação de Minigolfe de Vizela · NIF 509227902',hx+hw/2,yBase+H-m-3,{align:'center'});
+}
+function exportReciboSwcPDF(id){
+  const r=_recSwc.find(x=>x.id===id);
+  if(!r){toast('Recibo não encontrado','er');return;}
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  desenharMeioReciboSwc(doc, r, 0, 'ORIGINAL');
+  // linha de corte tracejada, a meio da folha
+  doc.setDrawColor(160,160,160);doc.setLineWidth(0.3);
+  doc.setLineDashPattern([2,1.5],0);
+  doc.line(0,148.5,210,148.5);
+  doc.setLineDashPattern([],0);
+  doc.setFontSize(6.5);doc.setTextColor(150,150,150);doc.setFont('helvetica','italic');
+  doc.text('✂ corte aqui',105,148.5+3,{align:'center'});
+  desenharMeioReciboSwc(doc, r, 148.5, 'DUPLICADO');
+  doc.save((r.numero||'recibo')+'.pdf');
+  toast('PDF gerado — original + duplicado, numa só folha A4');
+}
+window.exportReciboSwcPDF=exportReciboSwcPDF;
 const _upd=(col,id,data)=>updateDoc(doc(C(col),id),data);
 const _snap=(col,cb,ord)=>{const q=ord?query(C(col),orderBy(ord)):C(col);return onSnapshot(q,s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))));};
 
@@ -3301,12 +3593,13 @@ function closeM(id){
 function toast(msg,type='ok'){const t=document.getElementById('tst');t.textContent=msg;t.className='tst sh '+type;setTimeout(()=>t.classList.remove('sh'),3000);}
 
 //  DATA 
-let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[],_ins=[],_alg=[];
+let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[],_ins=[],_alg=[],_recSwc=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
   _snap('despesas',(docs)=>{_desp=docs;renderDesp();renderDash();},'data');
   _snap('patrocinios',(docs)=>{_pat=docs;renderPat();renderDash();});
+  _snap('swc2026_recibos',(docs)=>{_recSwc=docs;renderRecibosSwc();});
   _snap('atletas',(docs)=>{_atl=docs;renderAtl();renderMapaPaises();renderDash();});
   _snap('convites',(docs)=>{_conv=docs;renderConv();});
   _snap('comissaoHonra',(docs)=>{_hon=docs;renderHon();});
@@ -3385,6 +3678,50 @@ function renderDi(){
   document.getElementById('s-cre').textContent=fmt(totC);
 }
 async function delLan(id){if(!canDelete()||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
+
+// Deteta e remove lançamentos duplicados (mesmo refId a aparecer mais de uma vez em 'lancamentos'
+// e/ou 'receitas'), mantendo sempre o registo mais antigo (menor ts) de cada grupo e apagando os restantes.
+// Não apaga nada sem refId (lançamentos manuais nunca têm refId, ficam sempre intocados).
+async function detetarDuplicadosLancamentos(){
+  const grupos={};
+  for(const l of _lan){
+    if(!l.refId)continue;
+    (grupos[l.refId]=grupos[l.refId]||[]).push(l);
+  }
+  const gruposRec={};
+  for(const r of _rec){
+    if(!r.refId)continue;
+    (gruposRec[r.refId]=gruposRec[r.refId]||[]).push(r);
+  }
+  const duplicadosLan=Object.entries(grupos).filter(([_,arr])=>arr.length>1);
+  const duplicadosRec=Object.entries(gruposRec).filter(([_,arr])=>arr.length>1);
+  return {duplicadosLan,duplicadosRec};
+}
+async function limparLancamentosDuplicados(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
+  const {duplicadosLan,duplicadosRec}=await detetarDuplicadosLancamentos();
+  if(!duplicadosLan.length&&!duplicadosRec.length){toast('Não foram encontrados lançamentos duplicados.','ok');return;}
+  let resumo='Foram encontrados:\n\n';
+  let totalExtra=0;
+  duplicadosLan.forEach(([refId,arr])=>{
+    totalExtra+=arr.length-1;
+    resumo+='• '+arr.length+'x lançamentos para: '+(arr[0].ds||refId)+'\n';
+  });
+  resumo+='\nVai manter-se APENAS 1 de cada (o mais antigo), e remover '+totalExtra+' registo(s) duplicado(s) do Diário e '+duplicadosRec.reduce((s,[_,a])=>s+a.length-1,0)+' de Receitas.\n\nNada mais é tocado. Confirmar?';
+  if(!confirm(resumo))return;
+
+  let removidosLan=0, removidosRec=0;
+  for(const [refId,arr] of duplicadosLan){
+    const ordenados=[...arr].sort((a,b)=>(a.ts||0)-(b.ts||0));
+    for(const extra of ordenados.slice(1)){ await _del('lancamentos',extra.id); removidosLan++; }
+  }
+  for(const [refId,arr] of duplicadosRec){
+    const ordenados=[...arr].sort((a,b)=>(a.ts||0)-(b.ts||0));
+    for(const extra of ordenados.slice(1)){ await _del('receitas',extra.id); removidosRec++; }
+  }
+  toast(removidosLan+' lançamento(s) e '+removidosRec+' receita(s) duplicados removidos','ok');
+}
+window.limparLancamentosDuplicados=limparLancamentosDuplicados;
 
 //  RECEITAS 
 async function saveRec(){

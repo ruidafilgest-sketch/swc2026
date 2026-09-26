@@ -9979,6 +9979,16 @@ function exportAtletasPorPaisPDF(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Atletas & Inscrições — Listagem Geral por País','SWC Vizela 2026 - Lista oficial de participantes',true);
 
+  // Contadores gerais (Jogadores SF, Jogadores SM, Treinadores, Staff) — por país e acumulados para o total geral.
+  let totSF=0, totSM=0, totTrein=0, totStaff=0;
+  function resumoContagem(doPais){
+    const nSF=doPais.filter(x=>(x.tipo||'Atleta')==='Atleta'&&x.categoria==='SF').length;
+    const nSM=doPais.filter(x=>(x.tipo||'Atleta')==='Atleta'&&x.categoria==='SM').length;
+    const nTrein=doPais.filter(x=>x.tipo==='Treinador').length;
+    const nStaff=doPais.filter(x=>x.tipo==='Staff').length;
+    return {nSF,nSM,nTrein,nStaff};
+  }
+
   const body=[];
   if(!lista.length){
     body.push([{content:'Sem atletas registados',colSpan:7,styles:{halign:'center',textColor:[130,130,130]}}]);
@@ -9989,11 +9999,10 @@ function exportAtletasPorPaisPDF(){
       if(p!==paisAtual){
         paisAtual=p;
         const doPais=lista.filter(x=>(x.pais||'Sem país definido')===p);
-        const nAtletas=doPais.filter(x=>(x.tipo||'Atleta')==='Atleta').length;
-        const nTreinadores=doPais.filter(x=>x.tipo==='Treinador').length;
-        const nStaff=doPais.filter(x=>x.tipo==='Staff').length;
+        const {nSF,nSM,nTrein,nStaff}=resumoContagem(doPais);
+        totSF+=nSF; totSM+=nSM; totTrein+=nTrein; totStaff+=nStaff;
         const subtotalTaxas=doPais.reduce((s,x)=>s+Number(x.taxa||0),0);
-        const resumoTipos=[nAtletas?nAtletas+' atleta(s)':'',nTreinadores?nTreinadores+' treinador(es)':'',nStaff?nStaff+' staff':''].filter(Boolean).join(' · ');
+        const resumoTipos=[nSF?nSF+' Jogadores SF':'',nSM?nSM+' Jogadores SM':'',nTrein?nTrein+' Treinador(es)':'',nStaff?nStaff+' Staff':''].filter(Boolean).join(' · ');
         body.push([{content:p+'   —   '+doPais.length+' pessoa(s)  ('+resumoTipos+')   ·   '+fmtPDF(subtotalTaxas),colSpan:7,styles:{fillColor:[232,240,250],textColor:[20,50,100],fontStyle:'bold',fontSize:9,halign:'left'}}]);
       }
       body.push([a.nome||'',a.tipo||'Atleta',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-']);
@@ -10002,12 +10011,15 @@ function exportAtletasPorPaisPDF(){
 
   const totalGeral=lista.reduce((s,a)=>s+Number(a.taxa||0),0);
   const nPaises=new Set(lista.map(a=>a.pais||'Sem país definido')).size;
+  const resumoGeral=[totSF?totSF+' Jogadores SF':'',totSM?totSM+' Jogadores SM':'',totTrein?totTrein+' Treinador(es)':'',totStaff?totStaff+' Staff':''].filter(Boolean).join(' · ');
 
   doc.autoTable({
     startY:38,
     head:[['Nome','Tipo','Federação','Categoria','Taxa (EUR)','Estado','Hotel']],
     body,
-    foot:[['TOTAL GERAL: '+lista.length+' pessoa(s) · '+nPaises+' país(es)','','','',fmtPDF(totalGeral),'','']],
+    foot:[
+      [{content:'TOTAL GERAL: '+lista.length+' pessoa(s) · '+nPaises+' país(es)  ('+resumoGeral+')',colSpan:4},fmtPDF(totalGeral),'',''],
+    ],
     theme:'grid',
     styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[210,200,180],lineWidth:0.15,valign:'middle'},
     headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,cellPadding:4},

@@ -1046,7 +1046,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
 <div class="fr" style="max-width:680px;margin-bottom:14px;">
   <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
   <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
@@ -9940,23 +9940,24 @@ function exportAtletasPDF(){
   let lista=filtroPais?_atl.filter(a=>a.pais===filtroPais):_atl;
   if(filtroEstado==='reais')lista=lista.filter(a=>a.estado!=='Ref.2024');
   else if(filtroEstado==='ref2024')lista=lista.filter(a=>a.estado==='Ref.2024');
+  lista=[...lista].sort((a,b)=>(a.pais||'').localeCompare(b.pais||'')||(a.nome||'').localeCompare(b.nome||''));
 
   const sufixoTitulo=(filtroPais?' — '+filtroPais:'')+(filtroEstado==='reais'?' (confirmados 2026)':filtroEstado==='ref2024'?' (referência 2024)':'');
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Atletas & Inscrições'+sufixoTitulo,'SWC Vizela 2026 - Lista oficial de participantes',true);
-  const rows = lista.map(a=>[a.nome||'',a.pais||'',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-',a.email||'']);
+  const rows = lista.map(a=>[a.nome||'',a.pais||'',a.tipo||'Atleta',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-',a.email||'']);
   const totTaxas = lista.reduce((s,a)=>s+Number(a.taxa||0),0);
   doc.autoTable({
     startY:38,
-    head:[['Nome','País','Federação','Categoria','Taxa (EUR)','Estado','Hotel','Email']],
-    body:rows.length?rows:[['','','','','Sem atletas registados','','','']],
-    foot:[['Total: '+lista.length+' atletas','','','',fmtPDF(totTaxas),'','','']],
+    head:[['Nome','País','Tipo','Federação','Categoria','Taxa (EUR)','Estado','Hotel','Email']],
+    body:rows.length?rows:[['','','','','','Sem atletas registados','','','']],
+    foot:[['Total: '+lista.length+' pessoa(s)','','','','',fmtPDF(totTaxas),'','','']],
     theme:'striped',
     styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[200,190,170],lineWidth:0.15},
     headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,cellPadding:4},
     footStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
     alternateRowStyles:{fillColor:[250,247,240]},
-    columnStyles:{4:{halign:'right'},5:{halign:'center'},6:{halign:'center'},0:{cellWidth:40},1:{cellWidth:28},2:{cellWidth:35},3:{cellWidth:25},4:{cellWidth:22},5:{cellWidth:20},6:{cellWidth:14},7:{cellWidth:45}},
+    columnStyles:{5:{halign:'right'},6:{halign:'center'},7:{halign:'center'},0:{cellWidth:38},1:{cellWidth:24},2:{cellWidth:20},3:{cellWidth:30},4:{cellWidth:22},5:{cellWidth:20},6:{cellWidth:18},7:{cellWidth:14},8:{cellWidth:42}},
     margin:{left:5,right:5,bottom:28},
   });
   pdfFooter(doc,true);
@@ -9964,6 +9965,61 @@ function exportAtletasPDF(){
   doc.save(nomeFicheiro);
   toast('PDF gerado com sucesso'+(filtroPais?' — '+filtroPais:''));
 }
+
+// Relatório geral — todos os países num só PDF, seccionado por país, com subtotal por país e total geral no fim.
+// Evita ter de exportar um PDF por país e depois juntá-los noutra ferramenta.
+function exportAtletasPorPaisPDF(){
+  const filtroEstadoEl=document.getElementById('a-filtro-estado');
+  const filtroEstado=filtroEstadoEl?filtroEstadoEl.value:'';
+  let lista=[..._atl];
+  if(filtroEstado==='reais')lista=lista.filter(a=>a.estado!=='Ref.2024');
+  else if(filtroEstado==='ref2024')lista=lista.filter(a=>a.estado==='Ref.2024');
+  lista.sort((a,b)=>(a.pais||'').localeCompare(b.pais||'')||(a.nome||'').localeCompare(b.nome||''));
+
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Atletas & Inscrições — Listagem Geral por País','SWC Vizela 2026 - Lista oficial de participantes',true);
+
+  const body=[];
+  if(!lista.length){
+    body.push([{content:'Sem atletas registados',colSpan:7,styles:{halign:'center',textColor:[130,130,130]}}]);
+  } else {
+    let paisAtual=null;
+    for(const a of lista){
+      const p=a.pais||'Sem país definido';
+      if(p!==paisAtual){
+        paisAtual=p;
+        const doPais=lista.filter(x=>(x.pais||'Sem país definido')===p);
+        const nAtletas=doPais.filter(x=>(x.tipo||'Atleta')==='Atleta').length;
+        const nTreinadores=doPais.filter(x=>x.tipo==='Treinador').length;
+        const nStaff=doPais.filter(x=>x.tipo==='Staff').length;
+        const subtotalTaxas=doPais.reduce((s,x)=>s+Number(x.taxa||0),0);
+        const resumoTipos=[nAtletas?nAtletas+' atleta(s)':'',nTreinadores?nTreinadores+' treinador(es)':'',nStaff?nStaff+' staff':''].filter(Boolean).join(' · ');
+        body.push([{content:p+'   —   '+doPais.length+' pessoa(s)  ('+resumoTipos+')   ·   '+fmtPDF(subtotalTaxas),colSpan:7,styles:{fillColor:[232,240,250],textColor:[20,50,100],fontStyle:'bold',fontSize:9,halign:'left'}}]);
+      }
+      body.push([a.nome||'',a.tipo||'Atleta',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-']);
+    }
+  }
+
+  const totalGeral=lista.reduce((s,a)=>s+Number(a.taxa||0),0);
+  const nPaises=new Set(lista.map(a=>a.pais||'Sem país definido')).size;
+
+  doc.autoTable({
+    startY:38,
+    head:[['Nome','Tipo','Federação','Categoria','Taxa (EUR)','Estado','Hotel']],
+    body,
+    foot:[['TOTAL GERAL: '+lista.length+' pessoa(s) · '+nPaises+' país(es)','','','',fmtPDF(totalGeral),'','']],
+    theme:'grid',
+    styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[210,200,180],lineWidth:0.15,valign:'middle'},
+    headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,cellPadding:4},
+    footStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:9},
+    columnStyles:{4:{halign:'right'},5:{halign:'center'},6:{halign:'center'},0:{cellWidth:48},1:{cellWidth:24},2:{cellWidth:42},3:{cellWidth:26},4:{cellWidth:24},5:{cellWidth:24},6:{cellWidth:20}},
+    margin:{left:5,right:5,bottom:28},
+  });
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Atletas_ListagemGeralPorPais'+(filtroEstado==='reais'?'_Confirmados':filtroEstado==='ref2024'?'_Ref2024':'')+'.pdf');
+  toast('PDF gerado — '+nPaises+' país(es), '+lista.length+' pessoa(s)');
+}
+window.exportAtletasPorPaisPDF=exportAtletasPorPaisPDF;
 
 //  CERIMONIAS PDF 
 function exportCerimoniasPDF(){

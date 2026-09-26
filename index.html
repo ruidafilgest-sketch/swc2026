@@ -1046,7 +1046,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bd2" onclick="abrirAuditoriaAtletas()" title="Deteta Tipo/Categoria inconsistentes — nunca corrige sozinho">🔍 Auditoria de Consistência</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
 <div class="fr" style="max-width:680px;margin-bottom:14px;">
   <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
   <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
@@ -2502,6 +2502,16 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Estado do processo</div><select class="fse" id="pt-st"><option value="Abordagem">Abordagem inicial</option><option value="Proposta enviada">Proposta enviada</option><option value="Confirmado">Confirmado</option><option value="Recebido">Recebido</option><option value="Recusado">Recusado</option></select></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-pat')">Cancelar</button><button class="btn bp" onclick="savePat()">Guardar</button></div>
+</div></div>
+
+<div class="mo" id="m-auditoria-atl"><div class="mdl" style="max-width:900px;">
+  <div class="mh"><div class="mt2">🔍 Auditoria de Consistência — Tipo vs Categoria</div><button class="mc" onclick="closeM('m-auditoria-atl')">✕</button></div>
+  <div class="mb">
+    <div class="av" style="margin-bottom:14px;">Esta auditoria só deteta e mostra — <strong>nunca corrige nada sozinha</strong>. 🔴 = categoria em si errada (precisa de correção). 🟡 = só falta o Tipo, categoria já válida (menos urgente). Encontrado: <strong id="auditoria-atl-contagem">a calcular...</strong>. Clica em "Editar" para corrigir cada um manualmente.</div>
+    <div class="tw"><table><thead><tr><th>Nome</th><th>País</th><th>Tipo (atual)</th><th>Categoria (atual)</th><th>Motivo / Sugestão</th><th>Ação</th></tr></thead>
+    <tbody id="t-auditoria-atl"><tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">A carregar...</td></tr></tbody></table></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-auditoria-atl')">Fechar</button></div>
 </div></div>
 
 <div class="mo" id="m-recswc"><div class="mdl">
@@ -9968,6 +9978,56 @@ function exportAtletasPDF(){
 
 // Relatório geral — todos os países num só PDF, seccionado por país, com subtotal por país e total geral no fim.
 // Evita ter de exportar um PDF por país e depois juntá-los noutra ferramenta.
+// ===== Auditoria de Consistência — Tipo vs Categoria =====
+// Nunca corrige nada sozinha. Só detecta e mostra, para o Admin decidir e corrigir manualmente.
+// Duas categorias de problema:
+//  1) "Categoria inválida" — a categoria não é SM nem SF (ex: 'TR', vazio, ou outro valor qualquer).
+//  2) "Tipo em falta" — o campo tipo nunca foi definido (fica a assumir 'Atleta' por defeito, escondendo um possível Treinador/Staff).
+function auditarConsistenciaAtletas(){
+  const problemas=[];
+  for(const a of _atl){
+    const categoriaValida=(a.categoria==='SM'||a.categoria==='SF');
+    const tipoEmFalta=!a.tipo;
+    if(!categoriaValida||tipoEmFalta){
+      let motivos=[];
+      if(!categoriaValida)motivos.push('Categoria inválida ("'+(a.categoria||'vazio')+'" — devia ser SM ou SF)');
+      if(tipoEmFalta)motivos.push('Tipo nunca foi definido (a mostrar "Atleta" por defeito)');
+      let sugestao='';
+      if((a.categoria||'').toUpperCase()==='TR'){
+        sugestao='A categoria "TR" sugere Treinador. Sugestão: mudar Tipo para "Treinador", e definir a Categoria como SM ou SF conforme o género da pessoa.';
+      }
+      // Grave: a categoria em si está errada (ex: "TR"). Aviso: só falta o Tipo, mas a categoria já é válida (SM/SF).
+      const gravidade=!categoriaValida?'grave':'aviso';
+      problemas.push({id:a.id,nome:a.nome||'',pais:a.pais||'',tipoAtual:a.tipo||'(vazio → Atleta)',categoriaAtual:a.categoria||'(vazio)',motivos:motivos.join(' · '),sugestao,gravidade});
+    }
+  }
+  problemas.sort((a,b)=>(a.gravidade==='grave'?0:1)-(b.gravidade==='grave'?0:1)||(a.pais||'').localeCompare(b.pais||'')||(a.nome||'').localeCompare(b.nome||''));
+  return problemas;
+}
+function abrirAuditoriaAtletas(){
+  const problemas=auditarConsistenciaAtletas();
+  const nGraves=problemas.filter(p=>p.gravidade==='grave').length;
+  const nAvisos=problemas.filter(p=>p.gravidade==='aviso').length;
+  const contagem=document.getElementById('auditoria-atl-contagem');
+  if(contagem)contagem.textContent=nGraves+' inconsistência(s) grave(s) · '+nAvisos+' aviso(s) de dados incompletos';
+  const corpo=document.getElementById('t-auditoria-atl');
+  if(!corpo)return;
+  if(!problemas.length){
+    corpo.innerHTML='<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;color:var(--ok);">✅ Nenhuma inconsistência encontrada — Tipo e Categoria estão coerentes em todos os registos.</td></tr>';
+  } else {
+    corpo.innerHTML=problemas.map(p=>`<tr>
+      <td class="vl">${p.nome}</td>
+      <td>${p.pais}</td>
+      <td><span class="bge bg-am">${p.tipoAtual}</span></td>
+      <td><span class="bge ${p.gravidade==='grave'?'bg-er':'bg-am'}">${p.categoriaAtual}</span></td>
+      <td class="mu" style="font-size:11px;">${p.gravidade==='grave'?'🔴':'🟡'} ${p.motivos}${p.sugestao?'<br><span style="color:var(--gl2);">💡 '+p.sugestao+'</span>':''}</td>
+      <td>${canEdit()?`<button class="btn bo bsm" onclick="closeM('m-auditoria-atl');editAtl('${p.id}')">✏️ Editar</button>`:''}</td>
+    </tr>`).join('');
+  }
+  openM('m-auditoria-atl');
+}
+window.abrirAuditoriaAtletas=abrirAuditoriaAtletas;
+
 function exportAtletasPorPaisPDF(){
   const filtroEstadoEl=document.getElementById('a-filtro-estado');
   const filtroEstado=filtroEstadoEl?filtroEstadoEl.value:'';

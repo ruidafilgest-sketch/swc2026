@@ -1046,7 +1046,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bd2" onclick="abrirAuditoriaAtletas()" title="Deteta Tipo/Categoria inconsistentes — nunca corrige sozinho">🔍 Auditoria de Consistência</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bd2" onclick="abrirAuditoriaAtletas()" title="Deteta Tipo/Categoria inconsistentes — nunca corrige sozinho">🔍 Auditoria de Consistência</button><button class="btn bp" onclick="repararConsistenciaEMF()" title="Reaplica Tipo/Categoria da acreditação EMF às 58 pessoas já importadas" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🔧 Reparar Consistência (EMF, 8 países)</button><button class="btn bp" onclick="repararConsistenciaPortugal()" title="Corrige os treinadores portugueses com Categoria TR" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🔧 Reparar Consistência (Portugal)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
 <div class="fr" style="max-width:680px;margin-bottom:14px;">
   <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
   <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
@@ -4029,6 +4029,73 @@ async function importarAcreditacaoEMF2026(){
   }
   toast(criados+' pessoa(s) nova(s) importada(s) da acreditação EMF · '+existentes+' já existiam (não duplicadas)','ok');
 }
+
+// Reaplica Tipo+Categoria da acreditação oficial EMF às 58 pessoas já importadas — corrige qualquer
+// desvio que possa ter acontecido (edição manual, importação antiga, etc.). Nunca cria nem apaga
+// ninguém — só corrige Tipo/Categoria de quem já existe, encontrado por nome+país.
+async function repararConsistenciaEMF(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
+  const DADOS=[
+    ['Áustria','P','Claudia Schuster','SF'],['Áustria','P','Michaela Irxmayer','SF'],['Áustria','P','Eva Graser','SF'],['Áustria','P','Eva Reiländer','SF'],
+    ['Áustria','P','Christian Gobetz','SM'],['Áustria','P','Heinz Weber','SM'],['Áustria','P','Andreas Lackner','SM'],['Áustria','P','Adriano Steiner','SM'],['Áustria','P','Roland Bindreiter','SM'],['Áustria','P','Manfred Lindmayr','SM'],['Áustria','P','Sven Reichhard','SM'],
+    ['Áustria','C','Michael Riegler','SM'],['Áustria','C','Norbert Wagenhofer','SM'],['Áustria','C','Klaus Grünbacher','SM'],['Áustria','C','Sissi Würrer','SF'],
+    ['França','P','Raphael Fischer','SM'],['França','P','Philippe Lhéritier','SM'],['França','P','Regis Signe','SM'],
+    ['Reino Unido','P','Rutherford Burke','SF'],['Reino Unido','P','Steve Sturdy','SM'],['Reino Unido','P','David Hartley','SM'],['Reino Unido','P','Scott Lancley','SM'],
+    ['Alemanha','P','Britta Lagerquist','SF'],['Alemanha','P','Alexandra v.d. Knesebeck','SF'],['Alemanha','P','Bianca Zodrow-Wenke','SF'],['Alemanha','P','Alice Kobisch','SF'],
+    ['Alemanha','P','Tim Clasen','SM'],['Alemanha','P','Florian Wietz','SM'],['Alemanha','P','Michael Neuland','SM'],['Alemanha','P','Markus Janßen','SM'],['Alemanha','P','Roman Kobisch','SM'],['Alemanha','P','Markus Büdenbender','SM'],['Alemanha','P','Patrick Bothmann','SM'],
+    ['Alemanha','C','Thomas Schäpe','SM'],['Alemanha','C','Daniel Christ','SM'],['Alemanha','C','Claudia Weinzierl','SF'],['Alemanha','C','Melissa Krane','SF'],
+    ['Alemanha','O','Harm Croppenstedt','SM'],
+    ['Letónia','P','Verners Kirss','SM'],
+    ['Letónia','C','Kritiana Kirsa','SF'],
+    ['Holanda','P','Joy Wielink-Pol','SF'],
+    ['Holanda','P','Steven Steiger','SM'],['Holanda','P','Andre van Vliet','SM'],['Holanda','P','Hans Verkooijen','SM'],['Holanda','P','Alexander Jasper','SM'],['Holanda','P','Dirk-Jan van der Laak','SM'],['Holanda','P','Frits Zwaal','SM'],
+    ['Holanda','C','Herman Kas','SM'],['Holanda','C','Frans Weijsenfeld','SM'],
+    ['Noruega','P','Nikolai Leth','SM'],['Noruega','P','Frank Magnussen','SM'],
+    ['Eslováquia','P','Igor Qualich','SM'],['Eslováquia','P','René Šimanský','SM'],['Eslováquia','P','Tibor Mészáros','SM'],['Eslováquia','P','Ivan Tkáč','SM'],['Eslováquia','P','Jozef Čarny','SM'],['Eslováquia','P','František Drgoň','SM'],
+    ['Eslováquia','C','Lukáš Barylík','SM'],
+  ];
+  const TIPO_NOME={P:'Atleta',C:'Treinador',O:'Staff'};
+  let corrigidos=0, jaCertos=0, naoEncontrados=[];
+  for(const [pais,tp,nome,categoria] of DADOS){
+    const registo=_atl.find(a=>a.pais===pais&&(a.nome||'').trim().toLowerCase()===nome.trim().toLowerCase());
+    if(!registo){naoEncontrados.push(nome+' ('+pais+')');continue;}
+    const tipoCerto=TIPO_NOME[tp];
+    if(registo.tipo===tipoCerto&&registo.categoria===categoria){jaCertos++;continue;}
+    await _upd('atletas',registo.id,{tipo:tipoCerto,categoria});
+    corrigidos++;
+  }
+  let msg=corrigidos+' registo(s) corrigido(s), '+jaCertos+' já estavam certos';
+  if(naoEncontrados.length)msg+=', '+naoEncontrados.length+' não encontrado(s) no sistema (ver consola)';
+  if(naoEncontrados.length)console.log('Não encontrados na reparação EMF:',naoEncontrados);
+  toast(msg,'ok');
+}
+window.repararConsistenciaEMF=repararConsistenciaEMF;
+
+// Corrige especificamente os 4 treinadores portugueses que ficaram com Categoria "TR" (import antigo,
+// anterior à existência do campo Tipo). O género dos treinadores foi assumido pelo nome próprio
+// (todos nomes tradicionalmente masculinos em Portugal) — revê e corrige manualmente se algum estiver errado.
+async function repararConsistenciaPortugal(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
+  const HOMENS=['João Ferreira','André Silva','Domingos Silva','Carlos Ferreira','Belarmino Soares','João Fidalgo','Manuel Simões'];
+  const SENHORAS=['Fernanda Costa','Juventina Silva','Fernanda Manso','Anunciação Almeida'];
+  const TREINADORES=['Abílio Meneses','Ananias Quintano','Eduardo Salazar','Joaquim Batista']; // assumido categoria SM pelo nome — confirmar
+  if(!confirm('Isto vai corrigir, para Portugal:\n\n• '+HOMENS.length+' jogadores → Tipo=Atleta, Categoria=SM\n• '+SENHORAS.length+' jogadoras → Tipo=Atleta, Categoria=SF\n• '+TREINADORES.length+' treinadores → Tipo=Treinador, Categoria=SM (assumido pelo nome — revê depois um a um se precisares)\n\nSó corrige quem já existir. Confirmar?'))return;
+  let corrigidos=0, jaCertos=0, naoEncontrados=[];
+  async function aplicar(nome,tipo,categoria){
+    const registo=_atl.find(a=>a.pais==='Portugal'&&(a.nome||'').trim().toLowerCase()===nome.trim().toLowerCase());
+    if(!registo){naoEncontrados.push(nome);return;}
+    if(registo.tipo===tipo&&registo.categoria===categoria){jaCertos++;return;}
+    await _upd('atletas',registo.id,{tipo,categoria});
+    corrigidos++;
+  }
+  for(const nome of HOMENS)await aplicar(nome,'Atleta','SM');
+  for(const nome of SENHORAS)await aplicar(nome,'Atleta','SF');
+  for(const nome of TREINADORES)await aplicar(nome,'Treinador','SM');
+  let msg=corrigidos+' registo(s) corrigido(s), '+jaCertos+' já estavam certos';
+  if(naoEncontrados.length)msg+=', '+naoEncontrados.length+' não encontrado(s)';
+  toast(msg,'ok');
+}
+window.repararConsistenciaPortugal=repararConsistenciaPortugal;
 window.importarAcreditacaoEMF2026=importarAcreditacaoEMF2026;
 async function importarAtletas2024(){
   if(!canEdit()){toast('Sem permissão para importar. Inicia sessão como Admin ou SWC2026.','er');return;}

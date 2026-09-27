@@ -1046,7 +1046,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bd2" onclick="abrirAuditoriaAtletas()" title="Deteta Tipo/Categoria inconsistentes — nunca corrige sozinho">🔍 Auditoria de Consistência</button><button class="btn bp" onclick="repararConsistenciaEMF()" title="Reaplica Tipo/Categoria da acreditação EMF às 58 pessoas já importadas" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🔧 Reparar Consistência (EMF, 8 países)</button><button class="btn bp" onclick="repararConsistenciaPortugal()" title="Corrige os treinadores portugueses com Categoria TR" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🔧 Reparar Consistência (Portugal)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
+<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirAuditoriaExaustiva()" title="6 verificações cruzadas — nomes, países, contagens — antes de enviar para a tipografia" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);font-weight:700;">🔎 AUDITORIA EXAUSTIVA (pré-tipografia)</button><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bd2" onclick="abrirAuditoriaAtletas()" title="Deteta Tipo/Categoria inconsistentes — nunca corrige sozinho">🔍 Auditoria de Consistência</button><button class="btn bp" onclick="repararConsistenciaEMF()" title="Reaplica Tipo/Categoria da acreditação EMF às 58 pessoas já importadas" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🔧 Reparar Consistência (EMF, 8 países)</button><button class="btn bp" onclick="repararConsistenciaPortugal()" title="Corrige os treinadores portugueses com Categoria TR" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🔧 Reparar Consistência (Portugal)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
 <div class="fr" style="max-width:680px;margin-bottom:14px;">
   <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
   <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
@@ -2502,6 +2502,16 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Estado do processo</div><select class="fse" id="pt-st"><option value="Abordagem">Abordagem inicial</option><option value="Proposta enviada">Proposta enviada</option><option value="Confirmado">Confirmado</option><option value="Recebido">Recebido</option><option value="Recusado">Recusado</option></select></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-pat')">Cancelar</button><button class="btn bp" onclick="savePat()">Guardar</button></div>
+</div></div>
+
+<div class="mo" id="m-auditoria-exaustiva"><div class="mdl" style="max-width:1000px;">
+  <div class="mh"><div class="mt2">🔎 Auditoria Exaustiva — Antes de Enviar para a Tipografia</div><button class="mc" onclick="closeM('m-auditoria-exaustiva')">✕</button></div>
+  <div class="mb">
+    <div class="av" style="margin-bottom:14px;">6 verificações cruzadas: Tipo/Categoria, campos em falta, duplicados, país não reconhecido, contagem vs Inscrições Confirmadas, e sinais de má codificação. <strong>Nunca corrige nada sozinha</strong> — só deteta. <strong id="auditoria-exaustiva-resumo">a calcular...</strong></div>
+    <div class="tw"><table><thead><tr><th>Nome / Valor</th><th>País</th><th>Detalhe</th></tr></thead>
+    <tbody id="t-auditoria-exaustiva"><tr><td colspan="3" class="mu" style="text-align:center;padding:22px;">A carregar...</td></tr></tbody></table></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="exportAuditoriaExaustivaPDF()">📄 Exportar Relatório PDF</button><button class="btn bo" onclick="closeM('m-auditoria-exaustiva')">Fechar</button></div>
 </div></div>
 
 <div class="mo" id="m-auditoria-atl"><div class="mdl" style="max-width:900px;">
@@ -9399,6 +9409,7 @@ const _LOGO_WMF = 'data:image/jpeg;base64,/9j/4gIcSUNDX1BST0ZJTEUAAQEAAAIMbGNtcw
 
 
 function pdfHeader(doc, titulo, subtitulo, isLandscape){
+  registarFontePoppins(doc);
   const W = isLandscape ? 297 : 210;
   const H = 38;
 
@@ -10020,6 +10031,30 @@ function registarFontePoppins(doc){
   doc.addFileToVFS('Poppins-Bold.ttf',_POPPINS_BOLD_B64);
   doc.addFont('Poppins-Bold.ttf','Poppins','bold');
   doc.setFont('Poppins','normal');
+  // Garante que TODAS as tabelas (autoTable) desta folha PDF usam esta fonte — mesmo que a
+  // função que a construiu não o peça explicitamente. Isto aplica a correção a qualquer PDF
+  // do sistema que chame pdfHeader(), sem precisar de editar cada exportação uma a uma.
+  if(doc._poppinsAutoTablePatch)return;
+  doc._poppinsAutoTablePatch=true;
+  const _autoTableOriginal=doc.autoTable.bind(doc);
+  doc.autoTable=function(opcoes){
+    opcoes=opcoes||{};
+    const chaves=['styles','headStyles','bodyStyles','footStyles','alternateRowStyles'];
+    for(const k of chaves){
+      opcoes[k]=opcoes[k]||{};
+      if(!opcoes[k].font)opcoes[k].font='Poppins';
+    }
+    if(Array.isArray(opcoes.body)){
+      for(const linha of opcoes.body){
+        if(Array.isArray(linha)){
+          for(const celula of linha){
+            if(celula&&typeof celula==='object'&&celula.styles&&!celula.styles.font)celula.styles.font='Poppins';
+          }
+        }
+      }
+    }
+    return _autoTableOriginal(opcoes);
+  };
 }
 function exportAtletasPDF(){
   const filtroPaisEl=document.getElementById('a-filtro-pais');
@@ -10064,6 +10099,187 @@ function exportAtletasPDF(){
 // Duas categorias de problema:
 //  1) "Categoria inválida" — a categoria não é SM nem SF (ex: 'TR', vazio, ou outro valor qualquer).
 //  2) "Tipo em falta" — o campo tipo nunca foi definido (fica a assumir 'Atleta' por defeito, escondendo um possível Treinador/Staff).
+// ===== Auditoria EXAUSTIVA — antes de enviar para a tipografia =====
+// Cruza várias fontes de erro possíveis nos dados de atletas/treinadores, para garantir
+// que nomes e números por seleção estão certos antes de saírem para impressão.
+function auditoriaExaustivaAtletas(){
+  const relatorio={
+    tipoCategoria:[],
+    camposEmFalta:[],
+    duplicados:[],
+    paisNaoReconhecido:[],
+    contagemDivergente:[],
+    codificacaoSuspeita:[],
+  };
+
+  // 1) Tipo/Categoria inconsistentes (reaproveita a auditoria já existente)
+  relatorio.tipoCategoria=auditarConsistenciaAtletas();
+
+  // 2) Campos críticos em falta — nome ou país vazios
+  for(const a of _atl){
+    if(a.estado==='Ref.2024')continue; // referência antiga, já sinalizada à parte noutro sítio
+    const semNome=!(a.nome||'').trim();
+    const semPais=!(a.pais||'').trim();
+    if(semNome||semPais){
+      relatorio.camposEmFalta.push({id:a.id,nome:a.nome||'(sem nome)',pais:a.pais||'(sem país)',motivo:[semNome?'Nome em falta':'',semPais?'País em falta':''].filter(Boolean).join(' · ')});
+    }
+  }
+
+  // 3) Possíveis duplicados — mesmo nome (normalizado) + mesmo país, mais que uma vez
+  const vistos={};
+  for(const a of _atl){
+    if(a.estado==='Ref.2024')continue;
+    const chave=(a.pais||'').trim().toLowerCase()+'|'+(a.nome||'').trim().toLowerCase().replace(/\s+/g,' ');
+    (vistos[chave]=vistos[chave]||[]).push(a);
+  }
+  for(const [chave,grupo] of Object.entries(vistos)){
+    if(grupo.length>1){
+      relatorio.duplicados.push({nome:grupo[0].nome,pais:grupo[0].pais,ocorrencias:grupo.length,ids:grupo.map(x=>x.id)});
+    }
+  }
+
+  // 4) País não reconhecido — valor de país que não bate certo com nenhum dos países oficiais
+  //    (apanha gralhas de escrita que, de outra forma, dividem silenciosamente as contagens em dois grupos)
+  const paisesOficiais=new Set(Object.keys(PAIS_BANDEIRA));
+  const paisesVistos=new Set();
+  for(const a of _atl){
+    if(a.estado==='Ref.2024')continue;
+    const p=(a.pais||'').trim();
+    if(p&&!paisesOficiais.has(p)&&!paisesVistos.has(p)){
+      paisesVistos.add(p);
+      const nPessoas=_atl.filter(x=>(x.pais||'').trim()===p&&x.estado!=='Ref.2024').length;
+      relatorio.paisNaoReconhecido.push({pais:p,nPessoas});
+    }
+  }
+
+  // 5) Contagem por país (Atletas & Inscrições, reais) vs total declarado em Inscrições Confirmadas
+  for(const r of _ins){
+    const pais=r.pais||'';
+    if(!pais)continue;
+    const nReal=_atl.filter(a=>(a.pais||'').trim()===pais.trim()&&a.estado!=='Ref.2024').length;
+    const declarado=Number(r.total||0);
+    if(nReal!==declarado){
+      relatorio.contagemDivergente.push({pais,declarado,real:nReal,diferenca:nReal-declarado});
+    }
+  }
+
+  // 6) Sinais de má codificação de caracteres (Ã, Â, ou pontos de interrogação a mais dentro do nome)
+  for(const a of _atl){
+    if(a.estado==='Ref.2024')continue;
+    const nome=a.nome||'';
+    if(/Ã[©¡­³º§£¢¤¥¨ª¬¯°±´¶¸¹¼½¾]|�|\?{2,}/.test(nome)){
+      relatorio.codificacaoSuspeita.push({id:a.id,nome,pais:a.pais||''});
+    }
+  }
+
+  return relatorio;
+}
+
+function totalProblemasAuditoria(r){
+  return r.tipoCategoria.length+r.camposEmFalta.length+r.duplicados.length+r.paisNaoReconhecido.length+r.contagemDivergente.length+r.codificacaoSuspeita.length;
+}
+
+function abrirAuditoriaExaustiva(){
+  const r=auditoriaExaustivaAtletas();
+  const total=totalProblemasAuditoria(r);
+  const resumo=document.getElementById('auditoria-exaustiva-resumo');
+  if(resumo){
+    resumo.textContent=total===0?'✅ Nenhum problema encontrado em nenhuma das 6 verificações.':
+      total+' problema(s) encontrado(s) — reveja secção a secção antes de enviar para a tipografia.';
+  }
+  const corpo=document.getElementById('t-auditoria-exaustiva');
+  if(!corpo)return;
+
+  let html='';
+  function secao(titulo,descricao,linhas){
+    html+=`<tr><td colspan="3" style="background:rgba(90,160,255,.08);padding:10px 12px;font-weight:700;color:var(--gl2);">${titulo} — ${linhas.length?linhas.length+' encontrado(s)':'<span style="color:var(--ok);">✅ sem problemas</span>'}</td></tr>`;
+    if(descricao)html+=`<tr><td colspan="3" class="mu" style="font-size:11px;padding:2px 12px 8px;">${descricao}</td></tr>`;
+    return linhas.length>0;
+  }
+
+  secao('1. Tipo vs Categoria inconsistentes','Ex: alguém marcado como Atleta mas com categoria "TR", ou Tipo nunca definido.',r.tipoCategoria);
+  r.tipoCategoria.forEach(p=>{
+    html+=`<tr><td class="vl">${p.nome}</td><td>${p.pais}</td><td class="mu" style="font-size:11px;">${p.gravidade==='grave'?'🔴':'🟡'} ${p.motivos}${canEdit()?` · <button class="btn bo bsm" onclick="closeM('m-auditoria-exaustiva');editAtl('${p.id}')">✏️ Editar</button>`:''}</td></tr>`;
+  });
+
+  secao('2. Nome ou País em falta','Registos sem um destes dois campos essenciais preenchidos.',r.camposEmFalta);
+  r.camposEmFalta.forEach(p=>{
+    html+=`<tr><td class="vl">${p.nome}</td><td>${p.pais}</td><td class="mu" style="font-size:11px;">🔴 ${p.motivo}${canEdit()?` · <button class="btn bo bsm" onclick="closeM('m-auditoria-exaustiva');editAtl('${p.id}')">✏️ Editar</button>`:''}</td></tr>`;
+  });
+
+  secao('3. Possíveis duplicados','Mesmo nome e mesmo país a aparecer mais que uma vez — confirma se não é a mesma pessoa registada duas vezes.',r.duplicados);
+  r.duplicados.forEach(p=>{
+    html+=`<tr><td class="vl">${p.nome}</td><td>${p.pais}</td><td class="mu" style="font-size:11px;">🟡 Aparece ${p.ocorrencias}x</td></tr>`;
+  });
+
+  secao('4. País não reconhecido / possível gralha','Um valor de país que não corresponde a nenhum dos países oficiais do sistema — pode estar a dividir as contagens em dois grupos sem se notar.',r.paisNaoReconhecido);
+  r.paisNaoReconhecido.forEach(p=>{
+    html+=`<tr><td colspan="2" class="vl">"${p.pais}"</td><td class="mu" style="font-size:11px;">🔴 ${p.nPessoas} pessoa(s) associada(s) a este valor</td></tr>`;
+  });
+
+  secao('5. Contagem por país não bate com Inscrições Confirmadas','Nº de pessoas em Atletas & Inscrições, por país, comparado com o total declarado nas Inscrições Confirmadas.',r.contagemDivergente);
+  r.contagemDivergente.forEach(p=>{
+    html+=`<tr><td colspan="2" class="vl">${p.pais}</td><td class="mu" style="font-size:11px;">🟡 Declarado: ${p.declarado} · Real: ${p.real} (${p.diferenca>0?'+':''}${p.diferenca})</td></tr>`;
+  });
+
+  secao('6. Possível problema de codificação de caracteres','Padrões típicos de texto corrompido (acentos duplicados/errados) no nome.',r.codificacaoSuspeita);
+  r.codificacaoSuspeita.forEach(p=>{
+    html+=`<tr><td class="vl">${p.nome}</td><td>${p.pais}</td><td class="mu" style="font-size:11px;">🔴 Verificar o nome com atenção${canEdit()?` · <button class="btn bo bsm" onclick="closeM('m-auditoria-exaustiva');editAtl('${p.id}')">✏️ Editar</button>`:''}</td></tr>`;
+  });
+
+  corpo.innerHTML=html;
+  openM('m-auditoria-exaustiva');
+}
+window.abrirAuditoriaExaustiva=abrirAuditoriaExaustiva;
+
+function exportAuditoriaExaustivaPDF(){
+  const r=auditoriaExaustivaAtletas();
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Auditoria Exaustiva — Atletas & Treinadores','SWC Vizela 2026 - Verificação antes de envio para tipografia',false);
+  let y=44;
+  doc.setFontSize(10);doc.setTextColor(35,35,35);
+  const total=totalProblemasAuditoria(r);
+  doc.text(total===0?'Nenhum problema encontrado nas 6 verificações.':'Total de problemas encontrados: '+total,14,y);
+  y+=8;
+
+  function tabelaSecao(titulo,linhas,colunas){
+    if(y>250){doc.addPage();y=20;}
+    doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(20,50,100);
+    doc.text(titulo+' — '+(linhas.length||'0')+' encontrado(s)',14,y);
+    y+=4;
+    if(!linhas.length){
+      doc.autoTable({startY:y,head:[],body:[['Sem problemas encontrados nesta verificação.']],theme:'plain',styles:{font:'Poppins',fontSize:9,textColor:[40,140,80]},margin:{left:14,right:14}});
+    } else {
+      doc.autoTable({startY:y,head:[colunas.map(c=>c.titulo)],body:linhas.map(l=>colunas.map(c=>c.valor(l))),theme:'grid',styles:{font:'Poppins',fontSize:8,cellPadding:2.5},headStyles:{font:'Poppins',fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},margin:{left:14,right:14}});
+    }
+    y=doc.lastAutoTable?doc.lastAutoTable.finalY+10:y+16;
+  }
+
+  tabelaSecao('1. Tipo vs Categoria inconsistentes',r.tipoCategoria,[
+    {titulo:'Nome',valor:l=>l.nome},{titulo:'País',valor:l=>l.pais},{titulo:'Gravidade',valor:l=>l.gravidade},{titulo:'Motivo',valor:l=>l.motivos},
+  ]);
+  tabelaSecao('2. Nome ou País em falta',r.camposEmFalta,[
+    {titulo:'Nome',valor:l=>l.nome},{titulo:'País',valor:l=>l.pais},{titulo:'Motivo',valor:l=>l.motivo},
+  ]);
+  tabelaSecao('3. Possíveis duplicados',r.duplicados,[
+    {titulo:'Nome',valor:l=>l.nome},{titulo:'País',valor:l=>l.pais},{titulo:'Ocorrências',valor:l=>String(l.ocorrencias)},
+  ]);
+  tabelaSecao('4. País não reconhecido',r.paisNaoReconhecido,[
+    {titulo:'Valor',valor:l=>l.pais},{titulo:'Pessoas associadas',valor:l=>String(l.nPessoas)},
+  ]);
+  tabelaSecao('5. Contagem divergente (vs Inscrições Confirmadas)',r.contagemDivergente,[
+    {titulo:'País',valor:l=>l.pais},{titulo:'Declarado',valor:l=>String(l.declarado)},{titulo:'Real',valor:l=>String(l.real)},{titulo:'Diferença',valor:l=>(l.diferenca>0?'+':'')+l.diferenca},
+  ]);
+  tabelaSecao('6. Possível problema de codificação',r.codificacaoSuspeita,[
+    {titulo:'Nome',valor:l=>l.nome},{titulo:'País',valor:l=>l.pais},
+  ]);
+
+  pdfFooter(doc,false);
+  doc.save('SWC2026_Auditoria_Exaustiva_Atletas.pdf');
+  toast('PDF da auditoria gerado');
+}
+window.exportAuditoriaExaustivaPDF=exportAuditoriaExaustivaPDF;
+
 function auditarConsistenciaAtletas(){
   const problemas=[];
   for(const a of _atl){

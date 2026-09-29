@@ -1711,6 +1711,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">BAR</span>Bar &mdash; Caixa</div>
 <div class="sd">Caixa do bar: toca nos artigos, soma a conta e regista a venda &mdash; o stock baixa automaticamente.</div>
 <div class="av" style="margin-bottom:14px;"><strong>Dois pontos de venda, dois stocks separados:</strong> escolhe abaixo em qual estás a vender. Cada local só vende do stock que lhe foi atribuído — nunca há conflito entre os dois caixas.</div>
+<div class="av" style="margin-bottom:14px;background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.3);"><strong>⚠ Menus Diários — reserva obrigatória:</strong> a reserva deve ser feita até ao dia anterior junto do staff do bar. Reservas no próprio dia ficam sujeitas à disponibilidade. Clientes com alergias ou restrições alimentares devem falar com a equipa antes de encomendar — não há garantia de ausência de vestígios de alergénios. Venda de bebidas alcoólicas estritamente proibida a menores de 18 anos.</div>
 <div class="fg" style="max-width:340px;margin-bottom:16px;">
   <div class="fl">A vender em</div>
   <select class="fse" id="bar-local-ativo" onchange="mudarLocalBar()">
@@ -1721,6 +1722,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="bb gestao-only" id="bar-bar">
   <button class="btn bp" onclick="openM('m-bar-art')">+ Novo artigo</button>
   <button class="btn bo" onclick="copiarStockCampoParaAldeia()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📋 Copiar stock Campo → Aldeia</button>
+  <button class="btn bo" onclick="importarMenuBarSWC2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">📥 Importar Menu Oficial (bebidas/snacks/menus)</button>
 </div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Artigos</div><div class="smv" id="bar-k-art">0</div></div>
@@ -10956,6 +10958,47 @@ function editBarArtigo(id){
   openM('m-bar-art');
 }
 async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
+
+// Importa o menu oficial do Bar SWC2026 (site de menus multilingue) — bebidas, snacks e
+// menus diários com reserva. Stock igual nos dois locais (Campo e Aldeia). Não duplica:
+// se um artigo com o mesmo nome já existir, é ignorado.
+async function importarMenuBarSWC2026(){
+  if(!canEdit()){toast('Sem permissão para importar.','er');return;}
+  const BEBIDAS=[
+    ['Garrafa de Água 0,33l',1.00],['Garrafa de Água 0,5l',1.30],['Garrafa de Água 1,5l',2.00],
+    ['Água com Gás 0,25l',2.00],['Pedras Limão 0,25l',2.00],['Café Expresso',1.00],
+    ['Ice Tea (Limão / Pêssego) 0,33l',2.00],['Coca-Cola (Original / Zero) 0,33l',2.00],
+    ['7 Up 0,33l',2.00],['Copo de Refrigerante 0,20l',1.20],
+    ["Cerveja 'Super Bock' Mini (200ml)",1.20],["Cerveja 'Super Bock' 33cl",1.80],
+    ['Favaios',2.00],['Copo de Vinho Verde Branco 0,20l',2.00],
+    ['Copo de Vinho Maduro Branco/Tinto 0,20l',2.00],['Garrafa Vinho Verde Branco',5.00],
+  ];
+  const SNACKS=[
+    ['Croissant brioche (misto/queijo/fiambre)',2.50],['Sandes (Mista/queijo/fiambre)',2.00],
+    ['Sandes de Presunto',2.50],['Sandes de Atum (alface, tomate, ovo, queijo fresco)',3.50],
+    ['Sandes Mediterrânea (alface, tomate, queijo fresco, paio)',3.50],['Fatia de Pizza',1.50],
+    ['Panado no pão',3.00],['Rissól de Carne',1.00],['Bolinho de Bacalhau',1.00],
+    ['Sopa do dia (variedade 12/10 a 16/10)',2.00],['Bolos Variados',1.00],
+  ];
+  const MENUS=[
+    ['Menu 10/10 — Tripas'],['Menu 11/10 — Enroladinhos de Frango c/ Queijo e Fiambre'],
+    ['Menu 12/10 — Bacalhau à Brás'],['Menu 13/10 — Frango Assado'],
+    ['Menu 14/10 — Esparguete c/ Bifes de Frango e Cogumelos'],
+    ['Menu 15/10 — Filetes de Peixe c/ Salada Russa'],['Menu 16/10 — Arroz de Pato'],
+    ['Menu 17/10 — Lombo de Porco Assado'],
+  ];
+  let criados=0, existentes=0;
+  async function item(nome,categoria,preco,qtyCampo,qtyAldeia){
+    if(_barArt.some(a=>(a.nome||'').trim().toLowerCase()===nome.trim().toLowerCase())){existentes++;return;}
+    await _add('bar_artigos',{nome,categoria,preco,qtyEntrouCampo:qtyCampo,qtyEntrouAldeia:qtyAldeia,ts:Date.now()});
+    criados++;
+  }
+  for(const [nome,preco] of BEBIDAS)await item(nome,'Bebidas',preco,0,0);
+  for(const [nome,preco] of SNACKS)await item(nome,'Snacks',preco,0,0);
+  for(const [nome] of MENUS)await item(nome,'Menu do Dia',12.00,50,50);
+  toast(criados+' artigo(s) importado(s) · '+existentes+' já existiam (não duplicados)','ok');
+}
+window.importarMenuBarSWC2026=importarMenuBarSWC2026;
 // Copia, de uma vez, a quantidade de stock inicial "Campo" de cada artigo do Bar para "Aldeia Olimpica" —
 // atalho para nao teres de reescrever tudo a mao. Substitui o que ja estiver na Aldeia.
 async function copiarStockCampoParaAldeia(){

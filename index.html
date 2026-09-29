@@ -10850,7 +10850,7 @@ let _marcas=[], _artigos=[], _vendas_cs=[];
 let _barArt=[], _barVen=[], _barCart={};
 let _barLocal=(function(){try{return localStorage.getItem('swc_bar_local')||'campo';}catch(e){return 'campo';}})();
 function loadBar(){
-  _snap('bar_artigos',(d)=>{_barArt=d;renderBarGrid();renderBarArtigos();renderBarKPIs();});
+  _snap('bar_artigos',(d)=>{_barArt=d;renderBarGrid();renderBarArtigos();renderBarKPIs();atualizarVisibilidadeBarGestao();});
   _snap('bar_vendas',(d)=>{_barVen=d;renderBarVendas();renderBarArtigos();renderBarGrid();renderBarKPIs();});
   const sel=document.getElementById('bar-local-ativo');if(sel)sel.value=_barLocal;
 }
@@ -10943,8 +10943,18 @@ function renderBarVendas(){
     return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+' · <span style="color:var(--gl);">'+loc+'</span></td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoBarVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
   }).join('');
 }
+// Esconde a barra inteira de gestão do Bar (+ Novo artigo, Copiar stock, Importar, Ícones, Exportar PDF)
+// de quem não for Admin — independente da opção "só vendas" de cada conta de Secção, que é fácil
+// de esquecer marcar. Isto é a garantia definitiva: só o Admin vê estes botões.
+function atualizarVisibilidadeBarGestao(){
+  const barra=document.getElementById('bar-bar');
+  if(barra)barra.style.display=canEditCatalogo()?'':'none';
+  const th=document.getElementById('th-bar-a');
+  if(th)th.style.display=canEditCatalogo()?'':'none';
+}
+window.atualizarVisibilidadeBarGestao=atualizarVisibilidadeBarGestao;
 async function saveBarArtigo(){
-  if(!canEdit())return;
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode editar o catálogo do Bar.','er');return;}
   const d={nome:document.getElementById('ba-nome').value,categoria:document.getElementById('ba-cat').value,preco:parseFloat(document.getElementById('ba-preco').value)||0,qtyEntrouCampo:parseInt(document.getElementById('ba-qty-campo').value)||0,qtyEntrouAldeia:parseInt(document.getElementById('ba-qty-aldeia').value)||0,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
   const _e=document.getElementById('ba-eid');const _eid=_e&&_e.value?_e.value:'';
@@ -10952,6 +10962,7 @@ async function saveBarArtigo(){
   closeM('m-bar-art');
 }
 function editBarArtigo(id){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode editar o catálogo do Bar.','er');return;}
   const a=_barArt.find(x=>x.id===id);if(!a)return;
   let hid=document.getElementById('ba-eid');
   if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='ba-eid';const mb=document.querySelector('#m-bar-art .mb');if(mb)mb.prepend(hid);}
@@ -10961,11 +10972,12 @@ function editBarArtigo(id){
   set('ba-qty-campo',barEntrouLoc(a,'campo'));set('ba-qty-aldeia',barEntrouLoc(a,'aldeia'));
   openM('m-bar-art');
 }
-async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
+async function delBarArtigo(id){if(!canEditCatalogo()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
 
 // Exporta a listagem completa do Bar (Campo + Aldeia sempre juntos, independente do local ativo
 // no ecrã), com ícone, categoria, preço, stock e vendido — para auditoria/conferência a 100%.
 function exportBarArtigosPDF(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode exportar esta listagem.','er');return;}
   if(!_barArt.length){toast('Não há artigos para exportar.','er');return;}
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Bar SWC 2026 — Listagem Completa de Artigos','Campo Fonseca e Castro + Aldeia Olímpica — auditoria de stock',true);
@@ -11062,7 +11074,7 @@ const _BAR_ICONES={
 };
 
 async function importarMenuBarSWC2026(){
-  if(!canEdit()){toast('Sem permissão para importar.','er');return;}
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode importar o catálogo do Bar.','er');return;}
   const BEBIDAS=[
     ['Garrafa de Água 0,33l',1.00],['Garrafa de Água 0,5l',1.30],['Garrafa de Água 1,5l',2.00],
     ['Água com Gás 0,25l',2.00],['Pedras Limão 0,25l',2.00],['Café Expresso',1.00],
@@ -11106,7 +11118,7 @@ window.importarMenuBarSWC2026=importarMenuBarSWC2026;
 // (por isso o "Importar Menu Oficial" os saltou, ao ver que já tinham nome igual). Nunca mexe
 // em stock, preço ou qualquer outro campo — só define o ícone, e só em quem ainda não o tem.
 async function repararIconesBar(){
-  if(!canEdit()){toast('Sem permissão.','er');return;}
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
   let corrigidos=0, jaTinham=0, semCorrespondencia=[];
   for(const a of _barArt){
     if(a.icone){jaTinham++;continue;}
@@ -11124,7 +11136,7 @@ window.repararIconesBar=repararIconesBar;
 // Copia, de uma vez, a quantidade de stock inicial "Campo" de cada artigo do Bar para "Aldeia Olimpica" —
 // atalho para nao teres de reescrever tudo a mao. Substitui o que ja estiver na Aldeia.
 async function copiarStockCampoParaAldeia(){
-  if(!canEdit()){toast('Sem permissão','er');return;}
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
   if(!_barArt.length){toast('Sem artigos do Bar registados ainda.','er');return;}
   if(!confirm('Isto vai copiar a quantidade de stock do Campo para a Aldeia Olímpica, em TODOS os '+_barArt.length+' artigos do Bar — substituindo o que já lá estiver na Aldeia.\\n\\nConfirmar?'))return;
   let ok=0,err=0;

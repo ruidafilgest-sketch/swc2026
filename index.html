@@ -1723,6 +1723,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bp" onclick="openM('m-bar-art')">+ Novo artigo</button>
   <button class="btn bo" onclick="copiarStockCampoParaAldeia()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📋 Copiar stock Campo → Aldeia</button>
   <button class="btn bo" onclick="importarMenuBarSWC2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">📥 Importar Menu Oficial (bebidas/snacks/menus)</button>
+  <button class="btn bo" onclick="repararIconesBar()" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🖼️ Acrescentar Ícones aos Artigos Já Existentes</button>
 </div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Artigos</div><div class="smv" id="bar-k-art">0</div></div>
@@ -11042,6 +11043,26 @@ async function importarMenuBarSWC2026(){
   toast(criados+' artigo(s) importado(s) · '+existentes+' já existiam (não duplicados)','ok');
 }
 window.importarMenuBarSWC2026=importarMenuBarSWC2026;
+
+// Acrescenta o ícone aos artigos do bar que já existiam antes desta funcionalidade existir
+// (por isso o "Importar Menu Oficial" os saltou, ao ver que já tinham nome igual). Nunca mexe
+// em stock, preço ou qualquer outro campo — só define o ícone, e só em quem ainda não o tem.
+async function repararIconesBar(){
+  if(!canEdit()){toast('Sem permissão.','er');return;}
+  let corrigidos=0, jaTinham=0, semCorrespondencia=[];
+  for(const a of _barArt){
+    if(a.icone){jaTinham++;continue;}
+    const iconeB64=_BAR_ICONES[(a.nome||'').trim()];
+    if(!iconeB64){semCorrespondencia.push(a.nome);continue;}
+    await _upd('bar_artigos',a.id,{icone:'data:image/png;base64,'+iconeB64});
+    corrigidos++;
+  }
+  let msg=corrigidos+' artigo(s) receberam ícone agora · '+jaTinham+' já tinham';
+  if(semCorrespondencia.length)msg+=' · '+semCorrespondencia.length+' sem ícone correspondente (nome não bate certo)';
+  if(semCorrespondencia.length)console.log('Sem correspondência de ícone:',semCorrespondencia);
+  toast(msg,'ok');
+}
+window.repararIconesBar=repararIconesBar;
 // Copia, de uma vez, a quantidade de stock inicial "Campo" de cada artigo do Bar para "Aldeia Olimpica" —
 // atalho para nao teres de reescrever tudo a mao. Substitui o que ja estiver na Aldeia.
 async function copiarStockCampoParaAldeia(){

@@ -1724,6 +1724,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" onclick="copiarStockCampoParaAldeia()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📋 Copiar stock Campo → Aldeia</button>
   <button class="btn bo" onclick="importarMenuBarSWC2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">📥 Importar Menu Oficial (bebidas/snacks/menus)</button>
   <button class="btn bo" onclick="repararIconesBar()" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🖼️ Acrescentar Ícones aos Artigos Já Existentes</button>
+  <button class="btn bp" onclick="exportBarArtigosPDF()" style="background:linear-gradient(135deg,#1a3d52,#0d2233);font-weight:700;">📄 Exportar PDF — Listagem Completa (Campo + Aldeia)</button>
 </div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Artigos</div><div class="smv" id="bar-k-art">0</div></div>
@@ -10961,6 +10962,63 @@ function editBarArtigo(id){
   openM('m-bar-art');
 }
 async function delBarArtigo(id){if(!canDelete()||!confirm('Eliminar artigo do bar?'))return;await _del('bar_artigos',id);toast('Eliminado','er');}
+
+// Exporta a listagem completa do Bar (Campo + Aldeia sempre juntos, independente do local ativo
+// no ecrã), com ícone, categoria, preço, stock e vendido — para auditoria/conferência a 100%.
+function exportBarArtigosPDF(){
+  if(!_barArt.length){toast('Não há artigos para exportar.','er');return;}
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Bar SWC 2026 — Listagem Completa de Artigos','Campo Fonseca e Castro + Aldeia Olímpica — auditoria de stock',true);
+
+  const ordenados=[..._barArt].sort((a,b)=>(a.categoria||'').localeCompare(b.categoria||'')||(a.nome||'').localeCompare(b.nome||''));
+  const iconesPorLinha=[]; // guarda {rowIndex, dataUrl} para desenhar depois, via didDrawCell
+  const body=[];
+  let catAtual=null, totGeralStockC=0, totGeralStockA=0, totGeralVend=0;
+
+  for(const a of ordenados){
+    const cat=a.categoria||'Sem categoria';
+    if(cat!==catAtual){
+      catAtual=cat;
+      const doCat=ordenados.filter(x=>(x.categoria||'Sem categoria')===cat);
+      const stC=doCat.reduce((s,x)=>s+barStock(x.id,'campo'),0);
+      const stA=doCat.reduce((s,x)=>s+barStock(x.id,'aldeia'),0);
+      body.push([{content:cat+'   —   '+doCat.length+' artigo(s)   ·   stock atual: '+stC+' (Campo) + '+stA+' (Aldeia)',colSpan:8,styles:{fillColor:[232,240,250],textColor:[20,50,100],fontStyle:'bold',fontSize:9,halign:'left'}}]);
+    }
+    const stC=barStock(a.id,'campo'), inC=barEntrouLoc(a,'campo'), vC=barVendidoLoc(a.id,'campo');
+    const stA=barStock(a.id,'aldeia'), inA=barEntrouLoc(a,'aldeia'), vA=barVendidoLoc(a.id,'aldeia');
+    totGeralStockC+=stC; totGeralStockA+=stA; totGeralVend+=(vC+vA);
+    if(a.icone)iconesPorLinha.push({rowIndex:body.length, dataUrl:a.icone});
+    body.push(['', a.nome||'', a.categoria||'', fmtPDF(a.preco),
+      stC+' / '+inC, stA+' / '+inA, (vC+vA), (stC<=3||stA<=3)?'⚠ Stock baixo':'']);
+  }
+
+  doc.autoTable({
+    startY:38,
+    head:[['','Artigo','Categoria','Preço','Campo\n(atual/inicial)','Aldeia\n(atual/inicial)','Vendido\n(total)','Aviso']],
+    body,
+    foot:[[{content:'TOTAL GERAL — Stock atual: '+totGeralStockC+' (Campo) + '+totGeralStockA+' (Aldeia)   ·   Vendido: '+totGeralVend+' un.',colSpan:8}]],
+    theme:'grid',
+    styles:{font:'Poppins',fontSize:8,textColor:[35,35,35],cellPadding:{top:3,bottom:3,left:2,right:2},lineColor:[210,200,180],lineWidth:0.15,valign:'middle',minCellHeight:13},
+    headStyles:{font:'Poppins',fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,cellPadding:4},
+    footStyles:{font:'Poppins',fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:9},
+    columnStyles:{0:{cellWidth:13},1:{cellWidth:62},2:{cellWidth:28},3:{cellWidth:18,halign:'right'},4:{cellWidth:30,halign:'center'},5:{cellWidth:30,halign:'center'},6:{cellWidth:20,halign:'center'},7:{cellWidth:26,textColor:[180,40,40]}},
+    margin:{left:5,right:5,bottom:28},
+    didDrawCell:(data)=>{
+      if(data.section!=='body'||data.column.index!==0)return;
+      const found=iconesPorLinha.find(x=>x.rowIndex===data.row.index);
+      if(!found)return;
+      try{
+        const sz=Math.min(data.cell.width,data.cell.height)-3;
+        const x=data.cell.x+(data.cell.width-sz)/2, y=data.cell.y+(data.cell.height-sz)/2;
+        doc.addImage(found.dataUrl,'PNG',x,y,sz,sz);
+      }catch(e){}
+    },
+  });
+  pdfFooter(doc,true);
+  doc.save('SWC2026_Bar_Listagem_Completa.pdf');
+  toast('PDF gerado — '+ordenados.length+' artigo(s)');
+}
+window.exportBarArtigosPDF=exportBarArtigosPDF;
 
 // Importa o menu oficial do Bar SWC2026 (site de menus multilingue) — bebidas, snacks e
 // menus diários com reserva. Stock igual nos dois locais (Campo e Aldeia). Não duplica:

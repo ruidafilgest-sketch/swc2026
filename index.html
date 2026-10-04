@@ -1725,7 +1725,9 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" onclick="importarMenuBarSWC2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">📥 Importar Menu Oficial (bebidas/snacks/menus)</button>
   <button class="btn bo" onclick="repararIconesBar()" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🖼️ Acrescentar Ícones aos Artigos Já Existentes</button>
   <button class="btn bp" onclick="exportBarArtigosPDF()" style="background:linear-gradient(135deg,#1a3d52,#0d2233);font-weight:700;">📄 Exportar PDF — Listagem Completa (Campo + Aldeia)</button>
+  <button class="btn bp" onclick="abrirTotalDia('bar')" style="background:linear-gradient(135deg,#8A6D1F,#C9A84C);color:#0B2E4F;font-weight:700;">🧾 Registar total do dia (folha)</button>
 </div>
+<div id="bar-tot-nota"></div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Artigos</div><div class="smv" id="bar-k-art">0</div></div>
   <div class="sm"><div class="sml">Stock total</div><div class="smv" id="bar-k-stock">0 un.</div></div>
@@ -1781,6 +1783,11 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" onclick="nav(document.querySelector('.si[onclick*=consignacao]'),'consignacao','Consignação &amp; Merchandise')">+ Carregar artigos (Consignação)</button>
   <span class="mu" style="font-size:11px;align-self:center;margin-left:8px;">Os artigos sao geridos em Consignacao &amp; Merchandise &mdash; aqui so se vende.</span>
 </div>
+<div class="bb" id="merch-admin-tot" style="display:none;">
+  <button class="btn bp" onclick="abrirTotalDia('merch')" style="background:linear-gradient(135deg,#8A6D1F,#C9A84C);color:#0B2E4F;font-weight:700;">🧾 Registar total do dia (folha)</button>
+  <span class="mu" style="font-size:11px;align-self:center;margin-left:8px;">Só Administrador. Para lançar o total de uma folha de registo.</span>
+</div>
+<div id="merch-pendente"></div>
 <div class="g4" style="margin-bottom:16px;">
   <div class="sm"><div class="sml">Artigos</div><div class="smv" id="merch-k-art">0</div></div>
   <div class="sm"><div class="sml">Stock total</div><div class="smv" id="merch-k-stock">0 un.</div></div>
@@ -2475,6 +2482,29 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox" id="ac-sovendas"> <span>So registar vendas (nao pode carregar nem editar artigos)</span></label></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-acesso')">Cancelar</button><button class="btn bp" onclick="salvarAcesso()">Guardar acesso</button></div>
+</div></div>
+
+<div class="mo" id="m-totdia"><div class="mdl">
+  <div class="mh"><div class="mt2" id="td-titulo">Registar total do dia</div><button class="mc" onclick="closeM('m-totdia')">&#10005;</button></div>
+  <div class="mb">
+    <div class="mu" style="font-size:12px;margin-bottom:12px;">Só para o Administrador. Lança o total de uma folha de registo (Dinheiro + MBWay) quando as vendas não foram feitas no tablet. Fica na receita e no Diário com a <b>data da folha</b>.</div>
+    <div class="fr"><div class="fg"><div class="fl">Data da folha</div><input class="fi" type="date" id="td-data" onchange="tdAtualizar()" oninput="tdAtualizar()"></div>
+      <div class="fg"><div class="fl">Turno</div><select class="fse" id="td-turno" onchange="tdAtualizar()"><option>Dia inteiro</option><option>Manhã</option><option>Tarde</option></select></div></div>
+    <div class="fg" id="td-local-wrap"><div class="fl">Local do Bar</div><select class="fse" id="td-local" onchange="tdAtualizar()"><option value="campo">Campo</option><option value="aldeia">Aldeia Olímpica</option></select></div>
+    <div class="fr"><div class="fg"><div class="fl">Total em Dinheiro (€)</div><input class="fi" id="td-din" inputmode="decimal" placeholder="0,00" oninput="tdAtualizar()"></div>
+      <div class="fg"><div class="fl">Total em MBWay (€)</div><input class="fi" id="td-mb" inputmode="decimal" placeholder="0,00" oninput="tdAtualizar()"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">O MBWay entra no Diário em</div><select class="fse" id="td-mbconta"><option value="Banco">Banco</option><option value="Caixa">Caixa</option></select></div>
+      <div class="fg"><div class="fl">Folhas / vendas nº (opcional)</div><input class="fi" id="td-folhas" placeholder="Ex.: folhas 1 a 3"></div></div>
+    <div class="fg"><div class="fl">Observações (opcional)</div><input class="fi" id="td-obs" placeholder=""></div>
+    <div id="td-merch" style="display:none;margin-bottom:10px;">
+      <div class="fl" style="margin-bottom:6px;">Detalhe por artigo (opcional) — mantém o stock e as comissões das marcas</div>
+      <div id="td-lin"></div>
+      <button type="button" class="btn bo bsm" onclick="tdAddLinha()">+ Adicionar artigo</button>
+    </div>
+    <div id="td-aviso" style="font-size:12px;margin:10px 0;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:800;border-top:1px solid rgba(201,168,76,.25);padding-top:10px;"><span>Total da folha</span><span id="td-total" style="color:var(--gl2)">0,00€</span></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-totdia')">Cancelar</button><button class="btn bp" id="td-btn" onclick="tdGuardar()">Registar total do dia</button></div>
 </div></div>
 
 <div class="mo" id="m-merch-art"><div class="mdl">
@@ -10890,7 +10920,7 @@ function renderBarKPIs(){
   (document.getElementById('bar-k-art')||{}).textContent=_barArt.length;
   (document.getElementById('bar-k-stock')||{}).textContent=stock+' un.';
   (document.getElementById('bar-k-vend')||{}).textContent=vend+' un.';
-  (document.getElementById('bar-k-rec')||{}).textContent=fmt(rec);if(typeof renderCaixaResumo==='function')renderCaixaResumo();
+  (document.getElementById('bar-k-rec')||{}).textContent=fmt(rec);if(typeof renderCaixaResumo==='function')renderCaixaResumo();if(typeof tdRenderNotas==='function')tdRenderNotas();
 }
 function renderBarGrid(){
   const g=document.getElementById('bar-grid');if(!g)return;
@@ -10939,8 +10969,9 @@ function renderBarVendas(){
   const tb=document.getElementById('t-bar-vendas');if(!tb)return;
   const sorted=[..._barVen].sort((a,b)=>b.ts-a.ts);
   if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
-  tb.innerHTML=sorted.map(v=>{const desc=(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');const loc=v.local==='aldeia'?'Aldeia':'Campo';
-    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+' · <span style="color:var(--gl);">'+loc+'</span></td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoBarVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
+  tb.innerHTML=sorted.map(v=>{const tot=v.tipo==='total_dia';const desc=tot?tdDescLinha(v):(v.items||[]).map(it=>it.qty+'x '+it.nome).join(', ');const loc=v.local==='aldeia'?'Aldeia':'Campo';
+    const acoes=tot?(canEditCatalogo()?'<td><button class="btn bd2 bsm" title="Anular total de folha" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>'):(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoBarVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delBarVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>');
+    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+' · <span style="color:var(--gl);">'+loc+'</span></td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+acoes+'</tr>';
   }).join('');
 }
 // Esconde a barra inteira de gestão do Bar (+ Novo artigo, Copiar stock, Importar, Ícones, Exportar PDF)
@@ -10951,6 +10982,8 @@ function atualizarVisibilidadeBarGestao(){
   if(barra)barra.style.display=canEditCatalogo()?'':'none';
   const th=document.getElementById('th-bar-a');
   if(th)th.style.display=canEditCatalogo()?'':'none';
+  const mt=document.getElementById('merch-admin-tot');if(mt)mt.style.display=canEditCatalogo()?'':'none';
+  if(typeof tdRenderNotas==='function')tdRenderNotas();
 }
 window.atualizarVisibilidadeBarGestao=atualizarVisibilidadeBarGestao;
 async function saveBarArtigo(){
@@ -11147,7 +11180,7 @@ async function copiarStockCampoParaAldeia(){
   }
   toast('Stock copiado para '+ok+' artigo(s)'+(err?' ('+err+' erros)':''),'ok');
 }
-async function delBarVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await removerVendaContab(id);await _del('bar_vendas',id);toast('Anulada','er');}
+async function delBarVenda(id){const _v=(typeof _barVen!=='undefined'?_barVen:[]).find(x=>x.id===id);if(_v&&_v.tipo==='total_dia'&&!canEditCatalogo()){toast('Apenas o Administrador pode anular um total de folha.','er');return;}if(!canDelete()||!confirm(_v&&_v.tipo==='total_dia'?'Anular este total de folha (e o lançamento no Diário)?':'Anular esta venda?'))return;await removerVendaContab(id);await _del('bar_vendas',id);toast('Anulada','er');}
 window.mudarLocalBar=mudarLocalBar;window.barAdd=barAdd;window.barInc=barInc;window.barDec=barDec;window.barDelLine=barDelLine;window.barRegistar=barRegistar;window.barLimpar=barLimpar;window.saveBarArtigo=saveBarArtigo;window.editBarArtigo=editBarArtigo;window.delBarArtigo=delBarArtigo;window.delBarVenda=delBarVenda;window.copiarStockCampoParaAldeia=copiarStockCampoParaAldeia;
 //  ACESSOS POR SECCAO (Fase 2) 
 let _acessos=[];
@@ -11181,6 +11214,8 @@ function aplicarAcessos(){
   document.querySelectorAll('.si').forEach(si=>si.style.display='');
   const siAc=document.getElementById('si-acessos'); if(siAc)siAc.style.display=isAdmin?'':'none';
   const soV=isSecao&&_secAtual&&_secAtual.soVendas;document.querySelectorAll('.gestao-only').forEach(el=>el.style.display=soV?'none':'');
+  const _mtd=document.getElementById('merch-admin-tot');if(_mtd)_mtd.style.display=isAdmin?'':'none';
+  if(typeof tdRenderNotas==='function')tdRenderNotas();
   if(isSecao&&_secAtual){
     const permit=_secAtual.modulos||[];
     document.querySelectorAll('.si').forEach(si=>{
@@ -11267,7 +11302,7 @@ function renderMerchKPIs(){
   (document.getElementById('merch-k-stock')||{}).textContent=stock+' un.';
   (document.getElementById('merch-k-vend')||{}).textContent=vend+' un.';
   (document.getElementById('merch-k-rec')||{}).textContent=fmt(rec);
-  renderCaixaResumo();
+  renderCaixaResumo();if(typeof tdRenderNotas==='function')tdRenderNotas();
 }
 function popularFiltroMarcaMerch(){
   const sel=document.getElementById('merch-filtro-marca');if(!sel)return;
@@ -11327,6 +11362,205 @@ async function merchRegistar(){
   _merchCart={};renderMerchCart();merchRefresh();toast('Venda registada '+fmt(total));
 }
 function merchLimpar(){_merchCart={};renderMerchCart();}
+// ====================================================================================
+// TOTAIS DO DIA (folha de registo) — função só do Administrador
+// Lança o total de uma folha (Dinheiro + MBWay) sem passar venda a venda pelo tablet.
+// Bar: grava em bar_vendas (items vazio => não mexe no stock).
+// Merchandise: grava em cs_vendas; opcionalmente com detalhe por artigo (mantém stock e comissões).
+// Diário/Receitas: com a DATA DA FOLHA; Dinheiro => Caixa, MBWay => Banco (ou Caixa, à escolha).
+// ====================================================================================
+let _tdPosto='bar', _tdBusy=false;
+function _tdPad(n){return String(n).padStart(2,'0');}
+function _tdHoje(){const d=new Date();return d.getFullYear()+'-'+_tdPad(d.getMonth()+1)+'-'+_tdPad(d.getDate());}
+function _tdDataPT(iso){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||'');return m?(m[3]+'/'+m[2]+'/'+m[1]):(iso||'');}
+function _tdIsoValida(s){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');if(!m)return false;const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));return d.getUTCMonth()===+m[2]-1&&d.getUTCDate()===+m[3];}
+// "1.234,56" | "1234,56" | "1234.56" -> cêntimos inteiros, ou null
+function _tdCents(str){
+  if(str===null||str===undefined)return null;
+  let s=String(str).replace(/[€\s\u00a0]/g,'');if(s==='')return null;
+  if(!/^[\d.,]+$/.test(s))return null;
+  const lp=s.lastIndexOf('.'),lc=s.lastIndexOf(',');let ip=s,dp='';
+  if(lp>-1&&lc>-1){const d=Math.max(lp,lc);ip=s.slice(0,d).replace(/[.,]/g,'');dp=s.slice(d+1);}
+  else if(lc>-1){if((s.match(/,/g)||[]).length>1)ip=s.replace(/,/g,'');else{ip=s.slice(0,lc);dp=s.slice(lc+1);}}
+  else if(lp>-1){if((s.match(/\./g)||[]).length>1||/^\d{1,3}\.\d{3}$/.test(s))ip=s.replace(/\./g,'');else{ip=s.slice(0,lp);dp=s.slice(lp+1);}}
+  if(ip==='')ip='0';
+  if(!/^\d+$/.test(ip)||(dp!==''&&!/^\d+$/.test(dp))||ip.length>9)return null;
+  let c=parseInt(ip,10)*100;
+  if(dp.length>0){c+=parseInt((dp+'00').slice(0,2),10);if(dp.length>2&&dp.charAt(2)>='5')c+=1;}
+  return c;
+}
+const _tdEur=c=>Number((c/100).toFixed(2));
+function _tdDataDe(v){
+  if(v&&v.data&&/^\d{4}-\d{2}-\d{2}$/.test(v.data))return v.data;
+  if(v&&/^\d{4}-\d{2}-\d{2}/.test(v.dt||''))return v.dt.slice(0,10);
+  if(v&&v.ts){const d=new Date(v.ts);return d.getFullYear()+'-'+_tdPad(d.getMonth()+1)+'-'+_tdPad(d.getDate());}
+  return '';
+}
+function _tdEmail(){try{return (_auth&&_auth.currentUser&&_auth.currentUser.email)||'';}catch(e){return '';}}
+function _tdEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// Lançamento no Diário/Receitas com a data da folha e o pagamento separado por conta
+async function lancarTotalDia(origem,conta,ds,din,mb,data,refId,mbEm){
+  const total=Number(din||0)+Number(mb||0);
+  if(!(total>0))return;
+  try{
+    await _add('receitas',{data:data,conta:conta,desc:ds,valor:Number(total.toFixed(2)),estado:'Recebido',obs:'Auto '+origem+' (total de folha)',origem:origem,refId:refId||'',ts:Date.now()});
+    if(Number(din)>0)await _add('lancamentos',{data:data,dc:'',cn:conta,cb:'Caixa',ds:ds+' · Dinheiro',tp:'C',vl:Number(din),origem:origem,refId:refId||'',ts:Date.now()});
+    if(Number(mb)>0)await _add('lancamentos',{data:data,dc:'',cn:conta,cb:(mbEm==='Caixa'?'Caixa':'Banco'),ds:ds+' · MBWay',tp:'C',vl:Number(mb),origem:origem,refId:refId||'',ts:Date.now()});
+  }catch(e){console.error('lancarTotalDia',e);throw e;}
+}
+
+function tdDescLinha(v){
+  const partes=[];
+  partes.push('<span class="bge bg-g" style="font-size:9px;">TOTAL DE FOLHA</span>');
+  if(v.turno)partes.push(_tdEsc(v.turno));
+  partes.push('Dinheiro '+fmt(v.dinheiro)+' · MBWay '+fmt(v.mbway));
+  if(v.folhas)partes.push('folhas '+_tdEsc(v.folhas));
+  let s=partes.join(' · ');
+  if(v.totalFolha!==undefined&&Number(v.totalFolha)!==Number(v.total)){
+    s+='<div class="mu" style="font-size:10px;">Total da folha '+fmt(v.totalFolha)+(Number(v.total)>0?(' · sem detalhe de artigos: '+fmt(v.total)):' · totalmente detalhado nas linhas por artigo')+'</div>';
+  }
+  return s;
+}
+
+function _tdMerchLinhas(){
+  const out=[];
+  document.querySelectorAll('#td-lin .td-l').forEach(row=>{
+    const id=row.querySelector('.td-art').value,q=parseInt(row.querySelector('.td-qty').value,10);
+    if(id&&q>0)out.push({id:id,qty:q});
+  });
+  return out;
+}
+function tdAddLinha(){
+  const box=document.getElementById('td-lin');if(!box)return;
+  const arts=MART().slice().sort((a,b)=>((a.desc||a.ref||'')).localeCompare(b.desc||b.ref||''));
+  const div=document.createElement('div');div.className='td-l';div.style.cssText='display:flex;gap:6px;margin-bottom:6px;align-items:center;';
+  div.innerHTML='<select class="fse td-art" style="flex:1;min-width:0;" onchange="tdAtualizar()"><option value="">— artigo —</option>'+arts.map(a=>'<option value="'+_tdEsc(a.id)+'">'+_tdEsc((a.desc||a.ref||'Artigo')+(a.marcaNome?(' · '+a.marcaNome):'')+' · '+fmt(a.preco)+' · stock '+merchStock(a.id))+'</option>').join('')+'</select>'+
+    '<input class="fi td-qty" type="number" min="1" step="1" placeholder="Qtd" style="width:84px !important;min-width:84px !important;flex:0 0 84px;" oninput="tdAtualizar()">'+
+    '<button type="button" class="btn bd2 bsm" onclick="this.parentNode.remove();tdAtualizar()">&#10005;</button>';
+  box.appendChild(div);
+}
+
+function abrirTotalDia(posto){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode registar totais do dia.','er');return;}
+  _tdPosto=posto==='merch'?'merch':'bar';
+  const set=(i,v)=>{const e=document.getElementById(i);if(e)e.value=v;};
+  document.getElementById('td-titulo').textContent=_tdPosto==='bar'?'Registar total do dia — Bar':'Registar total do dia — Merchandise';
+  document.getElementById('td-local-wrap').style.display=_tdPosto==='bar'?'':'none';
+  document.getElementById('td-merch').style.display=_tdPosto==='merch'?'':'none';
+  set('td-data',_tdHoje());set('td-turno','Dia inteiro');set('td-din','');set('td-mb','');set('td-mbconta','Banco');set('td-folhas','');set('td-obs','');
+  set('td-local',(typeof _barLocal!=='undefined'&&_barLocal==='aldeia')?'aldeia':'campo');
+  const lin=document.getElementById('td-lin');if(lin)lin.innerHTML='';
+  tdAtualizar();openM('m-totdia');
+}
+
+function _tdCalculo(){
+  const iso=document.getElementById('td-data').value,turno=document.getElementById('td-turno').value;
+  const local=_tdPosto==='bar'?document.getElementById('td-local').value:'';
+  const din=_tdCents(document.getElementById('td-din').value),mb=_tdCents(document.getElementById('td-mb').value);
+  const dinC=din===null?0:din,mbC=mb===null?0:mb;
+  const erros=[];
+  if(document.getElementById('td-din').value.trim()!==''&&din===null)erros.push('O valor em Dinheiro não é válido (use o formato 1.234,56).');
+  if(document.getElementById('td-mb').value.trim()!==''&&mb===null)erros.push('O valor em MBWay não é válido (use o formato 1.234,56).');
+  if(dinC<0||mbC<0)erros.push('Os valores não podem ser negativos.');
+  if(!_tdIsoValida(iso))erros.push('Indique a data da folha.');
+  const total=dinC+mbC;
+  let linhas=[],S=0;
+  if(_tdPosto==='merch'){
+    linhas=_tdMerchLinhas().map(l=>{const a=MART().find(x=>x.id===l.id)||{};const pu=Math.round(Number(a.preco||0)*100);return {id:l.id,qty:l.qty,pu:pu,lt:pu*l.qty,art:a};});
+    S=linhas.reduce((s,l)=>s+l.lt,0);
+    const dup={};linhas.forEach(l=>{dup[l.id]=(dup[l.id]||0)+1;});
+    if(Object.keys(dup).some(k=>dup[k]>1))erros.push('Há o mesmo artigo em mais do que uma linha. Junte as quantidades numa só.');
+    if(S>total&&total>0)erros.push('Os artigos detalhados somam '+fmt(S/100)+', mais do que o total da folha ('+fmt(total/100)+'). Confirme preços e quantidades.');
+  }
+  return {iso:iso,turno:turno,local:local,dinC:dinC,mbC:mbC,total:total,linhas:linhas,S:S,R:total-S,erros:erros};
+}
+function _tdExistentes(c){
+  const arr=_tdPosto==='bar'?(typeof _barVen!=='undefined'?_barVen:[]):MVEN();
+  const tab=[],tots=[];
+  arr.forEach(v=>{
+    if(_tdDataDe(v)!==c.iso)return;
+    if(_tdPosto==='bar'&&(v.local||'campo')!==c.local)return;
+    if(v.tipo==='total_dia')tots.push(v);else if(v.tipo!=='detalhe_dia')tab.push(v);
+  });
+  const sobrepoe=tots.filter(t=>{const a=t.turno||'Dia inteiro';return a===c.turno||a==='Dia inteiro'||c.turno==='Dia inteiro';});
+  return {tab:tab,tots:tots,sobrepoe:sobrepoe};
+}
+function tdAtualizar(){
+  const c=_tdCalculo();
+  const tot=document.getElementById('td-total');if(tot)tot.textContent=fmt(c.total/100);
+  const av=[];
+  c.erros.forEach(e=>av.push('<div style="color:var(--er);">&#9888; '+_tdEsc(e)+'</div>'));
+  if(_tdIsoValida(c.iso)){
+    const ex=_tdExistentes(c);
+    if(ex.sobrepoe.length){const s=ex.sobrepoe.reduce((a,t)=>a+Number(t.totalFolha!==undefined?t.totalFolha:t.total||0),0);av.push('<div style="color:var(--er);">&#9888; Já existe um total de folha para este dia'+(c.turno!=='Dia inteiro'?' / turno':'')+' ('+fmt(s)+'). Registar outro duplica a receita.</div>');}
+    if(ex.tab.length){const s=ex.tab.reduce((a,t)=>a+Number(t.total||0),0);av.push('<div style="color:var(--am,#d9a441);">Já há '+ex.tab.length+(ex.tab.length===1?' venda':' vendas')+' no tablet neste dia ('+fmt(s)+'). Se também estão na folha, não as conte duas vezes.</div>');}
+  }
+  if(_tdPosto==='merch'&&c.linhas.length){
+    av.push('<div class="mu" style="font-size:12px;">Artigos detalhados: <b>'+fmt(c.S/100)+'</b> · Sem detalhe: <b>'+fmt(Math.max(0,c.R)/100)+'</b></div>');
+  }
+  if(_tdPosto==='merch'&&!c.linhas.length&&c.total>0){
+    av.push('<div class="mu" style="font-size:12px;">Sem artigos detalhados: o valor entra na receita mas não baixa stock nem gera comissão às marcas.</div>');
+  }
+  const box=document.getElementById('td-aviso');if(box)box.innerHTML=av.join('');
+}
+
+async function tdGuardar(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode registar totais do dia.','er');return;}
+  if(_tdBusy)return;
+  const c=_tdCalculo();
+  if(c.erros.length){toast(c.erros[0],'er');return;}
+  if(!(c.total>0)){toast('Indique o valor em Dinheiro e/ou MBWay.','er');return;}
+  const ex=_tdExistentes(c);
+  if(ex.sobrepoe.length&&!confirm('Já existe um total de folha para este dia'+(c.turno!=='Dia inteiro'?' / turno':'')+'. Registar outro DUPLICA a receita. Continuar mesmo assim?'))return;
+  const mbEm=document.getElementById('td-mbconta').value==='Caixa'?'Caixa':'Banco';
+  const folhas=document.getElementById('td-folhas').value.trim(),obs=document.getElementById('td-obs').value.trim();
+  const din=_tdEur(c.dinC),mb=_tdEur(c.mbC),totalE=_tdEur(c.total);
+  const email=_tdEmail(),dtPT=_tdDataPT(c.iso);
+  if(_tdPosto==='merch'&&c.linhas.length){
+    const neg=c.linhas.filter(l=>merchStock(l.id)-l.qty<0).map(l=>(l.art.desc||l.art.ref||'Artigo')+' (stock '+merchStock(l.id)+', a abater '+l.qty+')');
+    if(neg.length&&!confirm('O stock ficaria negativo em: '+neg.join('; ')+'. Continuar mesmo assim?'))return;
+  }
+  _tdBusy=true;const btn=document.getElementById('td-btn');if(btn)btn.disabled=true;
+  try{
+    if(_tdPosto==='bar'){
+      const ref=await _add('bar_vendas',{tipo:'total_dia',items:[],total:totalE,dinheiro:din,mbway:mb,mbwayEm:mbEm,local:c.local,turno:c.turno,folhas:folhas,obs:obs,data:c.iso,dt:dtPT,por:email,ts:Date.now()});
+      await lancarTotalDia('bar','7152','Bar ('+(c.local==='aldeia'?'Aldeia Olímpica':'Campo')+') — total da folha '+dtPT+(c.turno!=='Dia inteiro'?(' · '+c.turno):''),din,mb,c.iso,ref&&ref.id,mbEm);
+    }else{
+      const R=Math.max(0,c.R);
+      const ref=await _add('cs_vendas',{tipo:'total_dia',marcaId:'',marcaNome:'',artigoId:'',ref:'',desc:'Total do dia (folha)',qty:0,precoUnit:0,total:_tdEur(R),totalFolha:totalE,pct:0,comissao:0,dinheiro:din,mbway:mb,mbwayEm:mbEm,turno:c.turno,folhas:folhas,obs:obs,notas:'Total de folha',data:c.iso,dt:c.iso,por:email,ts:Date.now()});
+      for(const l of c.linhas){
+        const a=l.art;const marca=(typeof _marcas!=='undefined'?_marcas:[]).find(m=>m.id===a.marcaId);const pct=marca?Number(marca.pct||0):0;
+        const preco=Number(a.preco||0),lt=_tdEur(l.lt);
+        await _add('cs_vendas',{tipo:'detalhe_dia',lote:ref&&ref.id,marcaId:a.marcaId||'',marcaNome:a.marcaNome||'',artigoId:l.id,ref:a.ref||'',desc:a.desc||'',qty:l.qty,precoUnit:preco,total:lt,pct:pct,comissao:Number((lt*pct/100).toFixed(2)),dt:c.iso,data:c.iso,notas:'Folha '+dtPT+(folhas?(' · '+folhas):''),ts:Date.now()});
+      }
+      await lancarTotalDia('merch','7153','Merchandise — total da folha '+dtPT+(c.turno!=='Dia inteiro'?(' · '+c.turno):''),din,mb,c.iso,ref&&ref.id,mbEm);
+    }
+    closeM('m-totdia');
+    toast('Total do dia registado: '+fmt(totalE));
+    if(typeof merchRefresh==='function')merchRefresh();
+  }catch(e){
+    console.error('tdGuardar',e);toast('Erro ao guardar o total do dia. Verifique antes de repetir.','er');
+  }finally{_tdBusy=false;if(btn)btn.disabled=false;}
+}
+
+// Notas informativas (só Administrador)
+function tdRenderNotas(){
+  const adm=(typeof canEditCatalogo==='function')&&canEditCatalogo();
+  const bn=document.getElementById('bar-tot-nota'),mp=document.getElementById('merch-pendente');
+  if(bn){
+    const l=(typeof _barVen!=='undefined'?_barVen:[]).filter(v=>v.tipo==='total_dia');
+    const s=l.reduce((a,v)=>a+Number(v.total||0),0);
+    bn.innerHTML=(adm&&l.length)?'<div class="mu" style="font-size:11px;margin:-6px 0 12px;">Inclui '+fmt(s)+' em '+l.length+(l.length===1?' total de folha':' totais de folha')+' (sem artigos: não baixam o stock nem contam em unidades vendidas).</div>':'';
+  }
+  if(mp){
+    const l=MVEN().filter(v=>v.tipo==='total_dia'&&Number(v.total||0)>0);
+    const s=l.reduce((a,v)=>a+Number(v.total||0),0);
+    mp.innerHTML=(adm&&l.length)?'<div style="background:rgba(217,164,65,.12);border:1px solid rgba(217,164,65,.5);border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;">&#9888; <b>'+fmt(s)+'</b> de receita em '+l.length+(l.length===1?' folha':' folhas')+' <b>sem detalhe de artigos</b>: não baixam o stock nem geram comissão às marcas. Para detalhar, anule o total e volte a registá-lo com os artigos.</div>':'';
+  }
+}
+window.abrirTotalDia=abrirTotalDia;window.tdAtualizar=tdAtualizar;window.tdAddLinha=tdAddLinha;window.tdGuardar=tdGuardar;window.tdDescLinha=tdDescLinha;window.tdRenderNotas=tdRenderNotas;
+
 function renderMerchArtigos(){
   const tb=document.getElementById('t-merch-art');if(!tb)return;
   const arr=MART();
@@ -11340,8 +11574,9 @@ function renderMerchVendas(){
   const tb=document.getElementById('t-merch-vendas');if(!tb)return;
   const sorted=[...MVEN()].sort((a,b)=>(b.ts||0)-(a.ts||0));
   if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
-  tb.innerHTML=sorted.map(v=>{const desc=Number(v.qty||0)+'x '+(v.desc||v.ref||'');
-    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoMerchVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';
+  tb.innerHTML=sorted.map(v=>{const tot=v.tipo==='total_dia',det=v.tipo==='detalhe_dia';const desc=tot?tdDescLinha(v):Number(v.qty||0)+'x '+(v.desc||v.ref||'')+(det?' <span class="mu" style="font-size:10px;">(da folha)</span>':'');
+    const acoes=tot?(canEditCatalogo()?'<td><button class="btn bd2 bsm" title="Anular total de folha" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>'):det?'<td class="mu" style="font-size:10px;">parte do total</td>':(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoMerchVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>');
+    return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+acoes+'</tr>';
   }).join('');
 }
 async function saveMerchArtigo(){
@@ -11362,7 +11597,16 @@ function editMerchArtigo(id){
   openM('m-merch-art');
 }
 async function delMerchArtigo(id){if(!canDelete()||!confirm('Eliminar artigo de merchandise?'))return;await _del('merch_artigos',id);toast('Eliminado','er');}
-async function delMerchVenda(id){if(!canDelete()||!confirm('Anular esta venda?'))return;await removerVendaContab(id);await _del('cs_vendas',id);merchRefresh();toast('Anulada','er');}
+async function delMerchVenda(id){
+  const _v=MVEN().find(x=>x.id===id);
+  if(_v&&_v.tipo==='detalhe_dia'){toast('Esta linha faz parte de um total de folha. Anule o total do dia.','er');return;}
+  if(_v&&_v.tipo==='total_dia'){
+    if(!canEditCatalogo()){toast('Apenas o Administrador pode anular um total de folha.','er');return;}
+    if(!confirm('Anular este total de folha, as linhas de artigos que dele fazem parte e o lançamento no Diário?'))return;
+    for(const d of MVEN().filter(x=>x.tipo==='detalhe_dia'&&x.lote===id)){await _del('cs_vendas',d.id);}
+    await removerVendaContab(id);await _del('cs_vendas',id);if(typeof merchRefresh==='function')merchRefresh();toast('Total de folha anulado','er');return;
+  }
+  if(!canDelete()||!confirm('Anular esta venda?'))return;await removerVendaContab(id);await _del('cs_vendas',id);merchRefresh();toast('Anulada','er');}
 window.renderMerchGrid=renderMerchGrid;
 window.merchAdd=merchAdd;window.merchInc=merchInc;window.merchDec=merchDec;window.merchDelLine=merchDelLine;window.merchRegistar=merchRegistar;window.merchLimpar=merchLimpar;window.saveMerchArtigo=saveMerchArtigo;window.editMerchArtigo=editMerchArtigo;window.delMerchArtigo=delMerchArtigo;window.delMerchVenda=delMerchVenda;
 //  DOSSIER DE PATROCINIO 
@@ -11666,12 +11910,25 @@ function renderVendas(){
   if(!tbody)return;
   const sorted=[..._vendas_cs].sort((a,b)=>b.ts-a.ts);
   if(!sorted.length){tbody.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
-  tbody.innerHTML=sorted.map(v=>`<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editVenda('${v.id}')">✏️</button><button class="btn bd2 bsm" onclick="delVendaCS('${v.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join('');
+  tbody.innerHTML=sorted.map(v=>{
+    if(v.tipo==='total_dia')return `<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td colspan="4">${tdDescLinha(v)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="mu">—</td>${canEditCatalogo()?`<td><button class="btn bd2 bsm" title="Anular total de folha" onclick="delVendaCS('${v.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    if(v.tipo==='detalhe_dia')return `<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td><td class="mu" style="font-size:10px;">parte do total</td></tr>`;
+    return `<tr><td class="mu" style="font-size:11px;">${v.dt||''}</td><td class="go">${v.marcaNome||''}</td><td style="font-family:monospace;font-size:11px;">${v.ref||''}</td><td style="text-align:center;font-weight:700;">${v.qty||0}</td><td style="text-align:right;">${fmt(v.precoUnit)}</td><td style="text-align:right;font-weight:600;">${fmt(v.total)}</td><td class="tok">${fmt(v.comissao)} (${v.pct||0}%)</td>${canEdit()?`<td><button class="btn bo bsm" onclick="editVenda('${v.id}')">✏️</button><button class="btn bd2 bsm" onclick="delVendaCS('${v.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+  }).join('');
 }
 
 async function delMarca(id){if(!canEditCatalogo()||!confirm('Eliminar marca?'))return;await _del('cs_marcas',id);toast('Eliminada','er');}
 async function delArtigo(id){if(!canEditCatalogo()||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
-async function delVendaCS(id){if(!canDelete()||!confirm('Anular venda?'))return;await removerVendaContab(id);await _del('cs_vendas',id);toast('Anulada','er');}
+async function delVendaCS(id){
+  const _v=MVEN().find(x=>x.id===id);
+  if(_v&&_v.tipo==='detalhe_dia'){toast('Esta linha faz parte de um total de folha. Anule o total do dia.','er');return;}
+  if(_v&&_v.tipo==='total_dia'){
+    if(!canEditCatalogo()){toast('Apenas o Administrador pode anular um total de folha.','er');return;}
+    if(!confirm('Anular este total de folha, as linhas de artigos que dele fazem parte e o lançamento no Diário?'))return;
+    for(const d of MVEN().filter(x=>x.tipo==='detalhe_dia'&&x.lote===id)){await _del('cs_vendas',d.id);}
+    await removerVendaContab(id);await _del('cs_vendas',id);if(typeof merchRefresh==='function')merchRefresh();toast('Total de folha anulado','er');return;
+  }
+  if(!canDelete()||!confirm('Anular venda?'))return;await removerVendaContab(id);await _del('cs_vendas',id);toast('Anulada','er');}
 
 function exportAcertoPDF(marcaId){
   const marca=_marcas.find(m=>m.id===marcaId);

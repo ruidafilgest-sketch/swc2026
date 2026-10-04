@@ -9633,7 +9633,7 @@ function comprovativoVenda(origem,itens,total,quando){
 function comprovativoBarCart(){ const ids=Object.keys(_barCart||{}); if(!ids.length){toast('Talao vazio','er');return;} let total=0; const itens=ids.map(id=>{const a=_barArt.find(x=>x.id===id)||{};const q=_barCart[id];total+=Number(a.preco||0)*q;return {nome:(a.nome||''),qty:q,precoUnit:Number(a.preco||0)};}); comprovativoVenda('bar',itens,total); }
 function comprovativoMerchCart(){ const ids=Object.keys(_merchCart||{}); if(!ids.length){toast('Talao vazio','er');return;} let total=0; const itens=ids.map(id=>{const a=MART().find(x=>x.id===id)||{};const q=_merchCart[id];total+=Number(a.preco||0)*q;return {nome:(a.desc||a.ref||'Artigo'),qty:q,precoUnit:Number(a.preco||0)};}); comprovativoVenda('merch',itens,total); }
 function comprovativoBarVenda(id){ const v=(_barVen||[]).find(x=>x.id===id); if(!v)return; const itens=(v.items||[]).map(it=>({nome:it.nome||'',qty:it.qty||1,precoUnit:it.precoUnit||0})); comprovativoVenda('bar',itens,v.total,v.dt); }
-function comprovativoMerchVenda(id){ const v=MVEN().find(x=>x.id===id); if(!v)return; comprovativoVenda('merch',[{nome:(v.desc||v.ref||'Artigo'),qty:v.qty||1,precoUnit:v.precoUnit||0}],v.total,v.dt); }
+function comprovativoMerchVenda(id){ const v=MVEN().find(x=>x.id===id); if(!v)return; const ls=(v.vendaId?MVEN().filter(x=>x.vendaId===v.vendaId):[v]).slice().sort((x,y)=>(x.ts||0)-(y.ts||0)); const itens=ls.map(l=>({nome:(l.desc||l.ref||'Artigo'),qty:l.qty||1,precoUnit:l.precoUnit||0})); const total=ls.reduce((s,l)=>s+Number(l.total||0),0); comprovativoVenda('merch',itens,total,v.dt); }
 window.comprovativoBarCart=comprovativoBarCart;window.comprovativoMerchCart=comprovativoMerchCart;window.comprovativoBarVenda=comprovativoBarVenda;window.comprovativoMerchVenda=comprovativoMerchVenda;
 
 //  DR PDF 
@@ -11355,10 +11355,14 @@ async function merchRegistar(){
   const ids=Object.keys(_merchCart);if(!ids.length){toast('Talao vazio','er');return;}
   let total=0; const agora=new Date().toISOString().slice(0,10);
   for(const id of ids){const a=MART().find(x=>x.id===id);if(!a)continue;const q=_merchCart[id];if(q>merchStock(id)){toast('Stock insuficiente: '+(a.desc||a.ref||''),'er');return;}}
+  // UMA venda = UM lançamento no Diário. Por baixo guarda-se uma linha por artigo (stock e comissão de cada marca),
+  // todas ligadas pelo mesmo vendaId.
+  const vendaId='V'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);const partes=[];
   for(const id of ids){const a=MART().find(x=>x.id===id);if(!a)continue;const q=_merchCart[id];const preco=Number(a.preco||0);const lt=preco*q;total+=lt;
     const marca=(typeof _marcas!=='undefined'?_marcas:[]).find(m=>m.id===a.marcaId);const pct=marca?Number(marca.pct||0):0;
-    const _mref=await _add('cs_vendas',{marcaId:a.marcaId||'',marcaNome:a.marcaNome||'',artigoId:id,ref:a.ref||'',desc:a.desc||'',qty:q,precoUnit:preco,total:lt,pct,comissao:lt*pct/100,dt:agora,notas:'Caixa Merchandise',ts:Date.now()});
-    await lancarVendaContab('merch','7153',(q+'x '+(a.desc||a.ref||'Artigo')),lt,_mref&&_mref.id);}
+    await _add('cs_vendas',{vendaId:vendaId,marcaId:a.marcaId||'',marcaNome:a.marcaNome||'',artigoId:id,ref:a.ref||'',desc:a.desc||'',qty:q,precoUnit:preco,total:lt,pct,comissao:lt*pct/100,dt:agora,notas:'Caixa Merchandise',ts:Date.now()});
+    partes.push(q+'x '+(a.desc||a.ref||'Artigo'));}
+  if(partes.length)await lancarVendaContab('merch','7153','Merchandise: '+partes.join(', '),Number(total.toFixed(2)),vendaId);
   _merchCart={};renderMerchCart();merchRefresh();toast('Venda registada '+fmt(total));
 }
 function merchLimpar(){_merchCart={};renderMerchCart();}
@@ -11572,9 +11576,15 @@ function renderMerchArtigos(){
 }
 function renderMerchVendas(){
   const tb=document.getElementById('t-merch-vendas');if(!tb)return;
-  const sorted=[...MVEN()].sort((a,b)=>(b.ts||0)-(a.ts||0));
-  if(!sorted.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
-  tb.innerHTML=sorted.map(v=>{const tot=v.tipo==='total_dia',det=v.tipo==='detalhe_dia';const desc=tot?tdDescLinha(v):Number(v.qty||0)+'x '+(v.desc||v.ref||'')+(det?' <span class="mu" style="font-size:10px;">(da folha)</span>':'');
+  const linhas=[...MVEN()].sort((a,b)=>(b.ts||0)-(a.ts||0));
+  if(!linhas.length){tb.innerHTML='<tr><td colspan="4" class="mu" style="text-align:center;padding:22px;">Sem vendas registadas</td></tr>';return;}
+  // uma venda com vários artigos aparece numa só linha (vendaId); registos antigos continuam como estavam
+  const grupos={},sorted=[];
+  linhas.forEach(v=>{if(v.vendaId){if(!grupos[v.vendaId]){grupos[v.vendaId]={_grupo:true,id:v.id,vendaId:v.vendaId,dt:v.dt,linhas:[]};sorted.push(grupos[v.vendaId]);}grupos[v.vendaId].linhas.push(v);}else sorted.push(v);});
+  tb.innerHTML=sorted.map(v=>{
+    if(v._grupo){const tot=v.linhas.reduce((s,l)=>s+Number(l.total||0),0);const desc=v.linhas.slice().sort((x,y)=>(x.ts||0)-(y.ts||0)).map(l=>Number(l.qty||0)+'x '+(l.desc||l.ref||'')).join(' + ');
+      return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(tot)+'</td>'+(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoMerchVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" title="Anular a venda completa" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>')+'</tr>';}
+    const tot=v.tipo==='total_dia',det=v.tipo==='detalhe_dia';const desc=tot?tdDescLinha(v):Number(v.qty||0)+'x '+(v.desc||v.ref||'')+(det?' <span class="mu" style="font-size:10px;">(da folha)</span>':'');
     const acoes=tot?(canEditCatalogo()?'<td><button class="btn bd2 bsm" title="Anular total de folha" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>'):det?'<td class="mu" style="font-size:10px;">parte do total</td>':(canDelete()?'<td><button class="btn bo bsm" title="Comprovativo" onclick="comprovativoMerchVenda(\''+v.id+'\')">&#128442;</button><button class="btn bd2 bsm" onclick="delMerchVenda(\''+v.id+'\')">&#128465;</button></td>':'<td></td>');
     return '<tr><td class="mu" style="font-size:11px;">'+(v.dt||'')+'</td><td>'+desc+'</td><td class="tok" style="font-weight:700;">'+fmt(v.total)+'</td>'+acoes+'</tr>';
   }).join('');
@@ -11599,6 +11609,12 @@ function editMerchArtigo(id){
 async function delMerchArtigo(id){if(!canDelete()||!confirm('Eliminar artigo de merchandise?'))return;await _del('merch_artigos',id);toast('Eliminado','er');}
 async function delMerchVenda(id){
   const _v=MVEN().find(x=>x.id===id);
+  if(_v&&_v.vendaId){
+    const ls=MVEN().filter(x=>x.vendaId===_v.vendaId);const tot=ls.reduce((s,l)=>s+Number(l.total||0),0);
+    if(!canDelete()||!confirm('Anular esta venda completa ('+ls.length+(ls.length===1?' artigo':' artigos')+', '+fmt(tot)+') e o seu lançamento no Diário?'))return;
+    for(const l of ls){await _del('cs_vendas',l.id);}
+    await removerVendaContab(_v.vendaId);if(typeof merchRefresh==='function')merchRefresh();toast('Venda anulada','er');return;
+  }
   if(_v&&_v.tipo==='detalhe_dia'){toast('Esta linha faz parte de um total de folha. Anule o total do dia.','er');return;}
   if(_v&&_v.tipo==='total_dia'){
     if(!canEditCatalogo()){toast('Apenas o Administrador pode anular um total de folha.','er');return;}
@@ -11921,6 +11937,12 @@ async function delMarca(id){if(!canEditCatalogo()||!confirm('Eliminar marca?'))r
 async function delArtigo(id){if(!canEditCatalogo()||!confirm('Eliminar artigo?'))return;await _del('cs_artigos',id);toast('Eliminado','er');}
 async function delVendaCS(id){
   const _v=MVEN().find(x=>x.id===id);
+  if(_v&&_v.vendaId){
+    const ls=MVEN().filter(x=>x.vendaId===_v.vendaId);const tot=ls.reduce((s,l)=>s+Number(l.total||0),0);
+    if(!canDelete()||!confirm('Anular esta venda completa ('+ls.length+(ls.length===1?' artigo':' artigos')+', '+fmt(tot)+') e o seu lançamento no Diário?'))return;
+    for(const l of ls){await _del('cs_vendas',l.id);}
+    await removerVendaContab(_v.vendaId);if(typeof merchRefresh==='function')merchRefresh();toast('Venda anulada','er');return;
+  }
   if(_v&&_v.tipo==='detalhe_dia'){toast('Esta linha faz parte de um total de folha. Anule o total do dia.','er');return;}
   if(_v&&_v.tipo==='total_dia'){
     if(!canEditCatalogo()){toast('Apenas o Administrador pode anular um total de folha.','er');return;}

@@ -3679,6 +3679,14 @@ function sugerirCodigoHotel(){
   const ct=document.getElementById('ht-ct');if(ct)ct.value='';
   const wmf=document.getElementById('ht-wmf');if(wmf)wmf.value='';
 }
+// Nome do hotel para MOSTRAR. O que fica guardado nos registos continua a ser o código (H1, H2, ...); só a apresentação muda.
+// Se o código não existir (hotel apagado) ou o hotel não tiver nome, mostra-se o código tal como está.
+function hotelNome(cod){if(!cod)return '';const h=(typeof _hot!=='undefined'&&_hot?_hot:[]).find(x=>x.codigo===cod);return (h&&h.nome)?h.nome:cod;}
+function _hotEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+// Volta a desenhar as vistas que mostram hotel quando os hotéis chegam/mudam (para trocarem o código pelo nome)
+function hotelRecarregarVistas(){
+  [()=>renderAtl(),()=>renderArb(),()=>renderRooming(),()=>renderDelegacoes(),()=>renderMapaPaises()].forEach(f=>{try{f();}catch(e){}});
+}
 function atualizarSelectsHoteis(){
   const codigos=[..._hot].map(h=>h.codigo).filter(Boolean).sort();
   const alvos=[
@@ -3692,7 +3700,7 @@ function atualizarSelectsHoteis(){
     const sel=document.getElementById(id);if(!sel)return;
     const atual=sel.value;
     const opVazia=vazio?`<option value="">${vazio}</option>`:'';
-    sel.innerHTML=opVazia+codigos.map(c=>`<option value="${c}" ${c===atual?'selected':''}>${c}</option>`).join('');
+    sel.innerHTML=opVazia+codigos.map(c=>{const nm=hotelNome(c);return `<option value="${c}" ${c===atual?'selected':''}>${_hotEsc(nm&&nm!==c?(c+' — '+nm):c)}</option>`;}).join('');
     if(codigos.includes(atual))sel.value=atual;
   });
 }
@@ -3736,7 +3744,7 @@ function loadAll(){
   _snap('voluntarios',(docs)=>{_vol=docs;renderOrg();});
   _snap('equipas',(docs)=>{_equipas=docs;renderEquipas();});
   _snap('seccoes',(docs)=>{_seccoes=docs;renderOrg();renderSeccoes();},'ordem');
-  _snap('hoteis',(docs)=>{_hot=docs;renderAlo();atualizarSelectsHoteis();});
+  _snap('hoteis',(docs)=>{_hot=docs;renderAlo();atualizarSelectsHoteis();hotelRecarregarVistas();});
   carregarViaturaCMV();
   _snap('transfers',(docs)=>{_trn=docs;renderAlo();},'data');
   _snap('arbitros',(docs)=>{_arb=docs;renderArb();});
@@ -4003,7 +4011,7 @@ function renderAtl(){
     const estCor=isRef?'bg-mu':(a.estado==='Pago'?'bg-ok':'bg-am');
     const confirmBtn=isRef&&canEdit()?`<button class="btn bp bsm" onclick="confirmarAtleta2026('${a.id}')" title="Marcar esta pessoa como confirmada para 2026">✓ Confirmar 2026</button>`:'';
     const tipoCor=a.tipo==='Treinador'?'bg-am':(a.tipo==='Staff'?'bg-mu':'bg-ok');
-    return `<tr${isRef?' style="opacity:.65;"':''}><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td><span class="bge ${tipoCor}">${a.tipo||'Atleta'}</span></td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${estCor}">${a.estado}</span></td><td class="mu">${a.hotel||'-'}</td>${canEdit()?`<td style="white-space:nowrap;">${confirmBtn}<button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+    return `<tr${isRef?' style="opacity:.65;"':''}><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td><span class="bge ${tipoCor}">${a.tipo||'Atleta'}</span></td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${estCor}">${a.estado}</span></td><td class="mu">${hotelNome(a.hotel)||'-'}</td>${canEdit()?`<td style="white-space:nowrap;">${confirmBtn}<button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
   }).join(''):'<tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem atletas'+(filtroPais?' registados para '+filtroPais:'')+'</td></tr>';
 }
 async function confirmarAtleta2026(id){
@@ -5813,7 +5821,7 @@ async function saveArb(){
 }
 function renderArb(){
   const el=document.getElementById('lst-arb');
-  el.innerHTML=_arb.length?_arb.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${a.nome||''}</div><div style="font-size:11px;color:var(--mu);">${a.funcao||''} - ${a.pais||''} - Hotel: ${a.hotel||'-'}</div></div>${canEdit()?`<button class="btn bo bsm" onclick="editArb('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArb('${a.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem árbitros</div></div>';
+  el.innerHTML=_arb.length?_arb.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${a.nome||''}</div><div style="font-size:11px;color:var(--mu);">${a.funcao||''} - ${a.pais||''} - Hotel: ${hotelNome(a.hotel)||'-'}</div></div>${canEdit()?`<button class="btn bo bsm" onclick="editArb('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArb('${a.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem árbitros</div></div>';
 }
 async function delArb(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('arbitros',id);}
 
@@ -6711,7 +6719,7 @@ function renderRooming(){
     <td class="vl">${r.nome||''}</td>
     <td class="mu">${r.pais||''}</td>
     <td><span class="bge ${r.tipo==='Atleta'?'bg-g':r.tipo==='Arbitro'?'bg-bl':'bg-mu'}">${r.tipo||''}</span></td>
-    <td style="font-weight:700;color:var(--gl2);">${r.hotel||''}</td>
+    <td style="font-weight:700;color:var(--gl2);">${hotelNome(r.hotel)}</td>
     <td style="font-weight:600;">${r.quarto||'-'}</td>
     <td class="mu">${r.checkin||''}</td>
     <td class="mu">${r.checkout||''}</td>
@@ -6784,7 +6792,7 @@ function renderDelegacoes(){
       <div class="cdh">
         <div style="flex:1;">
           <div class="cdt">${del.pais||''} <span style="font-size:11px;color:var(--mu);">- ${del.federacao||''}</span></div>
-          <div class="cds">Chefe: ${del.chefe||'-'} | ${del.nAtletas||0} atletas | ${del.hotel||'Hotel a definir'}</div>
+          <div class="cds">Chefe: ${del.chefe||'-'} | ${del.nAtletas||0} atletas | ${hotelNome(del.hotel)||'Hotel a definir'}</div>
         </div>
         <div style="text-align:right;">
           <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${cor};">${pct}%</div>
@@ -7152,8 +7160,8 @@ function exportAccredPDF(){
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Lista de Acreditações','SWC Vizela 2026 - Todos os participantes',true);
   const todos=[
-    ..._atl.map(a=>['ATLETA',a.nome||'',a.pais||'',a.categoria||'',a.hotel||'-']),
-    ..._arb.map(a=>['ARBITRO',a.nome||'',a.pais||'',a.funcao||'',a.hotel||'-']),
+    ..._atl.map(a=>['ATLETA',a.nome||'',a.pais||'',a.categoria||'',hotelNome(a.hotel)||'-']),
+    ..._arb.map(a=>['ARBITRO',a.nome||'',a.pais||'',a.funcao||'',hotelNome(a.hotel)||'-']),
     ..._mbr.map(m=>['COE',m.nome||'','Portugal',m.funcao||'','-']),
     ..._vol.map(v=>['VOLUNTARIO',v.nome||'','Portugal',v.area||'','-']),
   ];
@@ -7167,7 +7175,7 @@ function exportRoomingPDF(){
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Rooming List Oficial WMF','SWC Vizela 2026 - Lista oficial de alojamento',true);
   const sorted=[..._rooming].sort((a,b)=>a.hotel.localeCompare(b.hotel)||a.quarto.localeCompare(b.quarto));
-  const rows=sorted.map(r=>[r.nome||'',r.pais||'',r.tipo||'',r.hotel||'',r.quarto||'-',r.tquarto||'',r.checkin||'',r.checkout||'',r.obs||'']);
+  const rows=sorted.map(r=>[r.nome||'',r.pais||'',r.tipo||'',hotelNome(r.hotel),r.quarto||'-',r.tquarto||'',r.checkin||'',r.checkout||'',r.obs||'']);
   doc.autoTable({startY:38,head:[['Nome','Pais/Funcao','Tipo','Hotel','Quarto','Tipo qt.','Check-in','Check-out','Obs.']],body:rows.length?rows:[['','','','','Sem registos','','','','']],theme:'striped',styles:{fontSize:8,textColor:[35,35,35],cellPadding:3,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},alternateRowStyles:{fillColor:[250,247,240]},columnStyles:{0:{cellWidth:45},1:{cellWidth:35},2:{cellWidth:22},3:{cellWidth:14,halign:'center',fontStyle:'bold'},4:{cellWidth:18,halign:'center'},5:{cellWidth:18},6:{cellWidth:22},7:{cellWidth:22},8:{cellWidth:35}},margin:{left:5,right:5,bottom:28}});
   pdfFooter(doc,true);
   doc.save('SWC2026_Rooming_List_WMF.pdf');
@@ -7180,7 +7188,7 @@ function exportChegadasPDF(){
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Checklist de Chegadas por País','SWC Vizela 2026 - Estado das delegações',true);
   const rows=_delegacoes.map(d=>[
-    d.pais||'',d.chefe||'',String(d.nAtletas||0),d.hotel||'-',
+    d.pais||'',d.chefe||'',String(d.nAtletas||0),hotelNome(d.hotel)||'-',
     d.vooConf?'OK':'-',d.hotelConf?'OK':'-',d.transferConf?'OK':'-',
     d.credencial?'OK':'-',d.kit?'OK':'-',d.pagamento?'OK':'-'
   ]);
@@ -8249,7 +8257,7 @@ function renderMapaPaises(){
         <td style="text-align:center;">${d.s||0}</td>
         <td style="text-align:center;">${d.tr||0}</td>
         <td style="text-align:center;font-weight:700;color:var(--gl2);">${tot}</td>
-        <td style="text-align:center;">${d.hotel||'—'}</td>
+        <td style="text-align:center;">${hotelNome(d.hotel)||'—'}</td>
         <td class="mu">${d.chefe||'—'}</td>
       </tr>`;
     }).join('');
@@ -8430,7 +8438,7 @@ function doGlobalSearch(query){
   _arb.forEach(a=>{if((a.nome||'').toLowerCase().includes(q))results.push({tipo:'Arbitro',nome:a.nome,sub:a.pais||'',mod:'desportivo'});});
   _pat.forEach(p=>{if((p.empresa||'').toLowerCase().includes(q))results.push({tipo:'Patrocinador',nome:p.empresa,sub:p.tipo||'',mod:'patrocinios'});});
   _praz.forEach(p=>{if((p.titulo||'').toLowerCase().includes(q))results.push({tipo:'Prazo',nome:p.titulo,sub:p.data||'',mod:'cronologia'});});
-  _rooming.forEach(r=>{if((r.nome||'').toLowerCase().includes(q))results.push({tipo:'Rooming',nome:r.nome,sub:r.hotel+' - qto '+r.quarto,mod:'rooming'});});
+  _rooming.forEach(r=>{if((r.nome||'').toLowerCase().includes(q))results.push({tipo:'Rooming',nome:r.nome,sub:hotelNome(r.hotel)+' - qto '+r.quarto,mod:'rooming'});});
   if(!results.length){
     el.style.display='block';
     el.innerHTML='<div style="padding:12px 14px;font-size:12px;color:var(--mu);">Sem resultados para "'+query+'"</div>';
@@ -10105,7 +10113,7 @@ function exportAtletasPDF(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Atletas & Inscrições'+sufixoTitulo,'SWC Vizela 2026 - Lista oficial de participantes',true);
   registarFontePoppins(doc);
-  const rows = lista.map(a=>[a.nome||'',a.pais||'',a.tipo||'Atleta',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-',a.email||'']);
+  const rows = lista.map(a=>[a.nome||'',a.pais||'',a.tipo||'Atleta',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',hotelNome(a.hotel)||'-',a.email||'']);
   const totTaxas = lista.reduce((s,a)=>s+Number(a.taxa||0),0);
   doc.autoTable({
     startY:38,
@@ -10397,7 +10405,7 @@ function exportAtletasPorPaisPDF(){
         const resumoTipos=[nSF?nSF+' Jogadores SF':'',nSM?nSM+' Jogadores SM':'',nTrein?nTrein+' Treinador(es)':'',nStaff?nStaff+' Staff':''].filter(Boolean).join(' · ');
         body.push([{content:p+'   —   '+doPais.length+' pessoa(s)  ('+resumoTipos+')   ·   '+fmtPDF(subtotalTaxas),colSpan:7,styles:{font:'Poppins',fillColor:[232,240,250],textColor:[20,50,100],fontStyle:'bold',fontSize:9,halign:'left'}}]);
       }
-      body.push([a.nome||'',a.tipo||'Atleta',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',a.hotel||'-']);
+      body.push([a.nome||'',a.tipo||'Atleta',a.federacao||'',a.categoria||'',fmtPDF(a.taxa),a.estado||'',hotelNome(a.hotel)||'-']);
     }
   }
 

@@ -1726,6 +1726,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bo" onclick="repararIconesBar()" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🖼️ Acrescentar Ícones aos Artigos Já Existentes</button>
   <button class="btn bp" onclick="exportBarArtigosPDF()" style="background:linear-gradient(135deg,#1a3d52,#0d2233);font-weight:700;">📄 Exportar PDF — Listagem Completa (Campo + Aldeia)</button>
   <button class="btn bp" onclick="abrirTotalDia('bar')" style="background:linear-gradient(135deg,#8A6D1F,#C9A84C);color:#0B2E4F;font-weight:700;">🧾 Registar total do dia (folha)</button>
+  <button class="btn bo" onclick="abrirAuditoriaDuplicados()">🔎 Auditar duplicados</button>
 </div>
 <div id="bar-tot-nota"></div>
 <div class="g4" style="margin-bottom:16px;">
@@ -1785,7 +1786,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 <div class="bb" id="merch-admin-tot" style="display:none;">
   <button class="btn bp" onclick="abrirTotalDia('merch')" style="background:linear-gradient(135deg,#8A6D1F,#C9A84C);color:#0B2E4F;font-weight:700;">🧾 Registar total do dia (folha)</button>
-  <span class="mu" style="font-size:11px;align-self:center;margin-left:8px;">Só Administrador. Para lançar o total de uma folha de registo.</span>
+  <button class="btn bo" onclick="abrirAuditoriaDuplicados()">🔎 Auditar duplicados</button>
+  <span class="mu" style="font-size:11px;align-self:center;margin-left:8px;">Só Administrador. Total de folha e auditoria de duplicados.</span>
 </div>
 <div id="merch-pendente"></div>
 <div class="g4" style="margin-bottom:16px;">
@@ -2482,6 +2484,12 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;"><input type="checkbox" id="ac-sovendas"> <span>So registar vendas (nao pode carregar nem editar artigos)</span></label></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-acesso')">Cancelar</button><button class="btn bp" onclick="salvarAcesso()">Guardar acesso</button></div>
+</div></div>
+
+<div class="mo" id="m-auditoria"><div class="mdl" style="max-width:900px;width:96vw;">
+  <div class="mh"><div class="mt2">Auditoria de duplicados</div><button class="mc" onclick="closeM('m-auditoria')">&#10005;</button></div>
+  <div class="mb" id="aud-body" style="max-height:68vh;overflow:auto;"></div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-auditoria')">Fechar</button></div>
 </div></div>
 
 <div class="mo" id="m-totdia"><div class="mdl">
@@ -6694,10 +6702,9 @@ async function saveQuarto(){
     ts:Date.now()
   };
   if(!d.nome){toast('Nome obrigatorio','er');return;}
-  await _add('rooming',d);
-  const _e=document.getElementById('qrt-eid');const _eid=_e&&_e.value?_e.value:'';
-  if(_eid){await _upd('quartos',_eid,d);if(_e)_e.value='';toast('Quarto actualizado');}else{await _add('quartos',d);toast('Quarto registado');}
-  closeM('m-quarto');toast('Quarto atribuido');
+  const _e=document.getElementById('rooming-eid')||document.getElementById('qrt-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('rooming',_eid,d);if(_e)_e.value='';closeM('m-quarto');toast('Quarto actualizado');}
+  else{await _add('rooming',d);closeM('m-quarto');toast('Quarto atribuido');}
 }
 
 function renderRooming(){
@@ -6748,7 +6755,7 @@ async function saveDelegacao(){
     ts:Date.now()
   };
   if(!d.pais){toast('Pais obrigatorio','er');return;}
-  const _e=document.getElementById('del-eid');const _eid=_e&&_e.value?_e.value:'';
+  const _e=(document.getElementById('delegacoes-eid')||document.getElementById('del-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('delegacoes',_eid,d);if(_e)_e.value='';toast('Delegação actualizada');}else{await _add('delegacoes',d);toast('Delegação registada');}
   closeM('m-delegacao');
 }
@@ -7447,7 +7454,7 @@ async function saveResultado(){
     const total=r1+r2+r3+(r4>0?r4:0);
     const d={nome:document.getElementById('rs-nome').value,pais:document.getElementById('rs-pais').value,categoria:document.getElementById('rs-cat').value,r1,r2,r3,r4,total,ts:Date.now()};
     if(!d.nome){toast('Nome obrigatorio','er');return;}
-    const _e=document.getElementById('res-eid');const _eid=_e&&_e.value?_e.value:'';
+    const _e=(document.getElementById('resultados-eid')||document.getElementById('res-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('resultados',_eid,d);if(_e)_e.value='';toast('Resultado actualizado');}else{await _add('resultados',d);toast('Resultado registado');}
   } else {
     const d={ronda:document.getElementById('mp-ronda').value,categoria:document.getElementById('rs-cat').value,jogA:document.getElementById('mp-a').value,paisA:document.getElementById('mp-pa').value,scoreA:parseInt(document.getElementById('mp-sa').value)||0,scoreB:parseInt(document.getElementById('mp-sb').value)||0,jogB:document.getElementById('mp-b').value,paisB:document.getElementById('mp-pb').value,ts:Date.now()};
@@ -7511,7 +7518,9 @@ async function saveEntradaDB(){
   if(!canEdit())return;
   const d={dia:document.getElementById('db-dia').value,hora:document.getElementById('db-hora').value,tipo:document.getElementById('db-tipo').value,titulo:document.getElementById('db-titulo').value,desc:document.getElementById('db-desc').value,resp:document.getElementById('db-resp').value,ts:Date.now()};
   if(!d.titulo){toast('Título obrigatório','er');return;}
-  await _add('diariodb',d);closeM('m-entrada-db');toast('Entrada registada no Diário de Bordo');
+  const _e=document.getElementById('db-eid');const _eid=_e&&_e.value?_e.value:'';
+  if(_eid){await _upd('diariodb',_eid,d);if(_e)_e.value='';closeM('m-entrada-db');toast('Entrada actualizada');}
+  else{await _add('diariodb',d);closeM('m-entrada-db');toast('Entrada registada no Diário de Bordo');}
 }
 
 function renderDiarioBordo(){
@@ -7667,7 +7676,7 @@ async function saveFatura(){
   if(!canEdit())return;
   const d={nr:document.getElementById('fat-nr').value,forn:document.getElementById('fat-forn').value,conta:document.getElementById('fat-conta').value,valor:parseFloat(document.getElementById('fat-valor').value)||0,data:document.getElementById('fat-data').value,venc:document.getElementById('fat-venc').value,estado:document.getElementById('fat-estado').value,notas:document.getElementById('fat-notas').value,ts:Date.now()};
   if(!d.forn){toast('Fornecedor obrigatorio','er');return;}
-  const _e=document.getElementById('fat-eid');const _eid=_e&&_e.value?_e.value:'';
+  const _e=(document.getElementById('faturas-eid')||document.getElementById('fat-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('faturas',_eid,d);if(_e)_e.value='';toast('Fatura actualizado');}else{await _add('faturas',d);toast('Fatura registado');}
   closeM('m-fatura');toast('Fatura registada');
 }
@@ -7717,7 +7726,7 @@ async function delFatura(id){if(!canDelete()||!confirm('Eliminar fatura?'))retur
 async function saveFluxoItem(){
   if(!canEdit())return;
   const d={mes:document.getElementById('fc-mes').value,tipo:document.getElementById('fc-tipo').value,desc:document.getElementById('fc-desc').value,valor:parseFloat(document.getElementById('fc-valor').value)||0,prob:document.getElementById('fc-prob').value,ts:Date.now()};
-  const _e=document.getElementById('flx-eid');const _eid=_e&&_e.value?_e.value:'';
+  const _e=(document.getElementById('fluxo-eid')||document.getElementById('flx-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('fluxo',_eid,d);if(_e)_e.value='';toast('Previsão actualizado');}else{await _add('fluxo',d);toast('Previsão registado');}
   closeM('m-fluxo-item');toast('Previsao adicionada');
 }
@@ -7866,7 +7875,7 @@ async function saveActa(){
   if(!canEdit())return;
   const d={data:document.getElementById('ac-data').value,hora:document.getElementById('ac-hora').value,local:document.getElementById('ac-local').value,pres:document.getElementById('ac-pres').value,part:document.getElementById('ac-part').value,ordem:document.getElementById('ac-ordem').value,dec:document.getElementById('ac-dec').value,prox:document.getElementById('ac-prox').value,ts:Date.now()};
   if(!d.data){toast('Data obrigatoria','er');return;}
-  const _e=document.getElementById('act-eid');const _eid=_e&&_e.value?_e.value:'';
+  const _e=(document.getElementById('actas-eid')||document.getElementById('act-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('actas',_eid,d);if(_e)_e.value='';toast('Acta actualizado');}else{await _add('actas',d);toast('Acta registado');}
   closeM('m-acta');toast('Acta registada');
 }
@@ -7935,7 +7944,7 @@ function exportActasPDF(){_actas.forEach(a=>exportActaPDF(a.id));}
 async function saveComunicado(){
   if(!canEdit())return;
   const d={dest:document.getElementById('cm-dest').value,lang:document.getElementById('cm-lang').value,tipo:document.getElementById('cm-tipo').value,assunto:document.getElementById('cm-assunto').value,corpo:document.getElementById('cm-corpo').value,estado:document.getElementById('cm-estado').value,ts:Date.now()};
-  const _e=document.getElementById('com-eid');const _eid=_e&&_e.value?_e.value:'';
+  const _e=(document.getElementById('comunicados-eid')||document.getElementById('com-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('comunicados',_eid,d);if(_e)_e.value='';toast('Comunicado actualizado');}else{await _add('comunicados',d);toast('Comunicado registado');}
   closeM('m-comunicado');toast('Comunicado guardado');
 }
@@ -11572,6 +11581,82 @@ function tdRenderNotas(){
   }
 }
 window.abrirTotalDia=abrirTotalDia;window.tdAtualizar=tdAtualizar;window.tdAddLinha=tdAddLinha;window.tdGuardar=tdGuardar;window.tdDescLinha=tdDescLinha;window.tdRenderNotas=tdRenderNotas;
+// ====================================================================================
+// AUDITORIA DE DUPLICADOS — SÓ LEITURA, só Administrador. Não altera, não apaga, não move nada.
+// Lista possíveis registos duplicados (por exemplo, criados por edições antigas) com os números
+// que ajudam a decidir: vendas feitas, stock, datas. Quem decide e elimina é sempre o utilizador.
+// ====================================================================================
+function _audNorm(s){return String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,' ');}
+function _audEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function _audData(ts){if(!ts)return '—';const d=new Date(ts),p=n=>String(n).padStart(2,'0');return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());}
+function _audG(lista,chave){const m={};(lista||[]).forEach(x=>{const k=chave(x);if(k)(m[k]=m[k]||[]).push(x);});return Object.keys(m).filter(k=>m[k].length>1).map(k=>m[k].slice().sort((a,b)=>(a.ts||0)-(b.ts||0)));}
+function auditoriaDuplicadosDados(){
+  const out=[];
+  const arts=(typeof _artigos!=='undefined'&&_artigos)?_artigos:[];
+  const vcs=(typeof _vendas_cs!=='undefined'&&_vendas_cs)?_vendas_cs:[];
+  const marcas=(typeof _marcas!=='undefined'&&_marcas)?_marcas:[];
+  const barArt=(typeof _barArt!=='undefined'&&_barArt)?_barArt:[];
+  const barVen=(typeof _barVen!=='undefined'&&_barVen)?_barVen:[];
+  const dels=(typeof _delegacoes!=='undefined'&&_delegacoes)?_delegacoes:[];
+  const room=(typeof _rooming!=='undefined'&&_rooming)?_rooming:[];
+  const vArt=id=>{let q=0,n=0;vcs.forEach(v=>{if(v.artigoId===id&&v.tipo!=='total_dia'){q+=Number(v.qty||0);n++;}});return {q:q,n:n};};
+  const vBar=id=>{let q=0,n=0;barVen.forEach(v=>(v.items||[]).forEach(it=>{if(it.artigoId===id){q+=Number(it.qty||0);n++;}}));return {q:q,n:n};};
+
+  // 1) Artigos de Merchandise: mesma marca + mesma referência (ou, se não houver referência, mesma marca + descrição)
+  const usados={};
+  const gA=_audG(arts,a=>a.marcaId&&a.ref?(a.marcaId+'|'+_audNorm(a.ref)):'').concat(_audG(arts.filter(a=>!(a.marcaId&&a.ref)),a=>a.marcaId&&a.desc?(a.marcaId+'|d|'+_audNorm(a.desc)):''));
+  gA.forEach(g=>{
+    const linhas=g.map(a=>{const v=vArt(a.id);return {id:a.id,vendas:v.n,cols:[_audData(a.ts),a.ref||'—',a.desc||'—',fmt(a.preco),String(Number(a.qtyEntrou||0)),v.q+' un. ('+v.n+(v.n===1?' venda':' vendas')+')',String(Number(a.qtyEntrou||0)-v.q)]};});
+    const comVendas=linhas.filter(l=>l.vendas>0).length;
+    const stockTotal=g.reduce((s,a)=>s+Number(a.qtyEntrou||0)-vArt(a.id).q,0);
+    out.push({categoria:'Artigos de Merchandise',titulo:(g[0].desc||g[0].ref||'Artigo')+(g[0].marcaNome?' — '+g[0].marcaNome:''),
+      cab:['Criado/alterado','Ref.','Descrição','Preço','Entrou','Vendido','Stock'],linhas:linhas,
+      nota:'Stock somado das cópias: '+stockTotal+' un. '+(comVendas===1?'Só UMA cópia tem vendas: é a que deve ficar (mantém o histórico e as comissões). As outras só devem ser eliminadas depois de confirmares o stock físico.':comVendas===0?'Nenhuma cópia tem vendas.':'ATENÇÃO: mais do que uma cópia tem vendas. Não elimines nenhuma sem rever as vendas de cada uma.')});
+  });
+  // 2) Marcas com o mesmo nome
+  _audG(marcas,m=>_audNorm(m.nome)).forEach(g=>{
+    const linhas=g.map(m=>{const na=arts.filter(a=>a.marcaId===m.id).length;const nv=vcs.filter(v=>v.marcaId===m.id&&v.tipo!=='total_dia').length;return {id:m.id,vendas:nv,cols:[_audData(m.ts),m.nome||'—',String(m.pct||0)+'%',na+(na===1?' artigo':' artigos'),nv+(nv===1?' venda':' vendas')]};});
+    out.push({categoria:'Marcas (Consignação)',titulo:g[0].nome||'Marca',cab:['Criada/alterada','Nome','Comissão','Artigos','Vendas'],linhas:linhas,
+      nota:'As vendas e os artigos ficam ligados à marca em que foram criados. Se as percentagens forem diferentes, a comissão calculada depende da cópia usada.'});
+  });
+  // 3) Artigos do Bar: mesmo nome
+  _audG(barArt,a=>_audNorm(a.nome)).forEach(g=>{
+    const linhas=g.map(a=>{const v=vBar(a.id);return {id:a.id,vendas:v.n,cols:[_audData(a.ts),a.nome||'—',fmt(a.preco),String(Number(a.qtyEntrouCampo||0)),String(Number(a.qtyEntrouAldeia||0)),v.q+' un. ('+v.n+(v.n===1?' venda':' vendas')+')']};});
+    out.push({categoria:'Artigos do Bar',titulo:g[0].nome||'Artigo',cab:['Criado/alterado','Nome','Preço','Entrou Campo','Entrou Aldeia','Vendido'],linhas:linhas,nota:'Confirma o stock físico antes de eliminar qualquer cópia.'});
+  });
+  // 4) Delegações do mesmo país
+  _audG(dels,d=>_audNorm(d.pais)).forEach(g=>{
+    out.push({categoria:'Delegações',titulo:g[0].pais||'Delegação',cab:['Criada/alterada','País','Chefe','Atletas','Hotel'],
+      linhas:g.map(d=>({id:d.id,vendas:0,cols:[_audData(d.ts),d.pais||'—',d.chefe||'—',String(d.nAtletas||0),(typeof hotelNome==='function'?hotelNome(d.hotel):d.hotel)||'—']})),
+      nota:'Em regra deve ficar uma só por país: a mais recente costuma ser a corrigida.'});
+  });
+  // 5) Rooming: mesma pessoa, hotel e quarto
+  _audG(room,r=>r.nome?(_audNorm(r.nome)+'|'+(r.hotel||'')+'|'+_audNorm(r.quarto)):'').forEach(g=>{
+    out.push({categoria:'Rooming',titulo:g[0].nome||'Quarto',cab:['Criado/alterado','Nome','Hotel','Quarto','Check-in','Check-out'],
+      linhas:g.map(r=>({id:r.id,vendas:0,cols:[_audData(r.ts),r.nome||'—',(typeof hotelNome==='function'?hotelNome(r.hotel):r.hotel)||'—',r.quarto||'—',r.checkin||'—',r.checkout||'—']})),
+      nota:'A mesma pessoa no mesmo quarto repetida conta a ocupação a dobrar.'});
+  });
+  return out;
+}
+function abrirAuditoriaDuplicados(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode abrir a auditoria.','er');return;}
+  const g=auditoriaDuplicadosDados();
+  const body=document.getElementById('aud-body');if(!body)return;
+  let h='<div class="av" style="margin-bottom:12px;"><strong>Só leitura.</strong> Esta janela não altera nem elimina nada. Antes de eliminares qualquer registo, faz uma cópia de segurança do programa e confirma os números.</div>';
+  if(!g.length){h+='<div class="tok" style="padding:18px;text-align:center;font-weight:600;">Nenhum possível duplicado encontrado.</div>';}
+  else{
+    h+='<div style="margin-bottom:10px;font-size:13px;"><b>'+g.length+'</b> '+(g.length===1?'grupo':'grupos')+' de possíveis duplicados.</div>';
+    g.forEach(x=>{
+      h+='<div style="border:1px solid rgba(201,168,76,.25);border-radius:10px;padding:10px 12px;margin-bottom:12px;"><div style="font-size:11px;color:var(--mu);">'+_audEsc(x.categoria)+'</div><div style="font-weight:700;margin-bottom:6px;">'+_audEsc(x.titulo)+'</div>';
+      h+='<div style="overflow-x:auto;"><table style="width:100%;font-size:12px;border-collapse:collapse;"><thead><tr>'+x.cab.map(c=>'<th style="text-align:left;padding:4px 8px;color:var(--mu);font-weight:600;">'+_audEsc(c)+'</th>').join('')+'<th></th></tr></thead><tbody>';
+      x.linhas.forEach(l=>{h+='<tr style="border-top:1px solid rgba(201,168,76,.12);">'+l.cols.map(c=>'<td style="padding:5px 8px;">'+_audEsc(c)+'</td>').join('')+'<td style="padding:5px 8px;white-space:nowrap;">'+(l.vendas>0?'<span class="bge bg-g" style="font-size:9px;">COM VENDAS</span>':'')+'</td></tr>';});
+      h+='</tbody></table></div><div class="mu" style="font-size:11.5px;margin-top:6px;">'+_audEsc(x.nota)+'</div></div>';
+    });
+  }
+  body.innerHTML=h;openM('m-auditoria');
+}
+window.abrirAuditoriaDuplicados=abrirAuditoriaDuplicados;window.auditoriaDuplicadosDados=auditoriaDuplicadosDados;
+
 
 function renderMerchArtigos(){
   const tb=document.getElementById('t-merch-art');if(!tb)return;
@@ -11833,7 +11918,7 @@ async function saveMarca(){
   if(!canEditCatalogo()){toast('Apenas o Administrador pode editar marcas','er');return;}
   const d={nome:document.getElementById('mk-nome').value,contacto:document.getElementById('mk-ct').value,email:document.getElementById('mk-email').value,pct:parseFloat(document.getElementById('mk-pct').value)||0,data:document.getElementById('mk-data').value,notas:document.getElementById('mk-notas').value,ts:Date.now()};
   if(!d.nome){toast('Nome obrigatorio','er');return;}
-  const _e=document.getElementById('mrc-eid');const _eid=_e&&_e.value?_e.value:'';
+  const _e=(document.getElementById('marcas-eid')||document.getElementById('mrc-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('cs_marcas',_eid,d);if(_e)_e.value='';toast('Marca actualizada');}else{await _add('cs_marcas',d);toast('Marca registada');}
   closeM('m-marca');
 }
@@ -11844,7 +11929,7 @@ async function saveArtigo(){
   const marca=_marcas.find(m=>m.id===marcaId);
   const d={marcaId,marcaNome:marca?marca.nome:'',ref:document.getElementById('art-ref').value,desc:document.getElementById('art-desc').value,preco:parseFloat(document.getElementById('art-preco').value)||0,qtyEntrou:parseInt(document.getElementById('art-qty').value)||0,notas:document.getElementById('art-notas').value,ts:Date.now()};
   if(!d.marcaId||!d.ref){toast('Marca e referência obrigatórias','er');return;}
-  const _e=document.getElementById('art-eid');const _eid=_e&&_e.value?_e.value:'';
+  const _e=(document.getElementById('artigos-eid')||document.getElementById('art-eid'));const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('cs_artigos',_eid,d);if(_e)_e.value='';toast('Artigo actualizado');}else{await _add('cs_artigos',d);toast('Artigo registado');}
   closeM('m-artigo');
 }
@@ -12607,6 +12692,8 @@ async function editMatch(id){
 }
 window.editMatch=editMatch;
 async function editVenda(id){
+  // Editar uma venda não é suportado: o programa criaria uma venda NOVA (stock, comissão e Diário duplicados). Anula-se e regista-se de novo.
+  toast('Não é possível editar uma venda registada (o stock, a comissão e o Diário ficariam duplicados). Anule-a e registe-a de novo.','er');return;
   const item=(_vendas_cs||[]).find(x=>x.id===id);if(!item)return;
   let hid=document.getElementById('vendas_cs-eid');
   if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='vendas_cs-eid';

@@ -1033,6 +1033,28 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="bb" style="margin-top:10px;">
   <button class="btn bo" onclick="importarBoardEMF()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar Board EMF</button>
 </div>
+<div id="juri-bloco" style="margin-top:26px;">
+<div class="st"><span class="sn">JUR</span>Júri &amp; Arbitragem SWC 2026</div>
+<div class="sd">Júri do Evento (Jury) e Arbitragem (Referees): chefes e restantes membros. Os árbitros já registados aparecem aqui e podem ser editados.</div>
+<div class="bb" id="bar-juri">
+<button class="btn bp" onclick="juriNovo('juri','head')">+ Head Jury</button>
+<button class="btn bo" onclick="juriNovo('juri')">+ Jurado</button>
+<button class="btn bp" onclick="juriNovo('arbitragem','head')">+ Head Referee</button>
+<button class="btn bo" onclick="juriNovo('arbitragem')">+ Árbitro</button>
+<label class="btn bo" style="cursor:pointer;">&#8679; Importar Excel
+<input type="file" accept=".xlsx,.xls" style="display:none;" onchange="juriImportExcel(this)">
+</label>
+</div>
+<div class="bb" id="bar-juri-pdf" style="display:flex;margin-top:6px;">
+<button class="btn bo" onclick="juriExportPDF()">📄 PDF Júri e Arbitragem</button>
+<button class="btn bo" onclick="juriExportPDF('juri')">📄 PDF só Júri</button>
+<button class="btn bo" onclick="juriExportPDF('arbitragem')">📄 PDF só Arbitragem</button>
+</div>
+<div class="g2" style="margin-top:12px;">
+<div class="cd"><div class="cdh"><div><div class="cdt">Júri do Evento · Jury</div><div class="cds" id="juri-cnt-juri">a carregar...</div></div></div><div class="cdb" id="juri-lista-juri"><div class="em"><div class="emi">◎</div><div class="emt">A carregar...</div></div></div></div>
+<div class="cd"><div class="cdh"><div><div class="cdt">Arbitragem · Referees</div><div class="cds" id="juri-cnt-arb">a carregar...</div></div></div><div class="cdb" id="juri-lista-arb"><div class="em"><div class="emi">◎</div><div class="emt">A carregar...</div></div></div></div>
+</div>
+</div>
 </div>
 
 <!-- ATLETAS -->
@@ -2687,10 +2709,27 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mh"><div class="mt2">Árbitro / Juíz</div><button class="mc" onclick="closeM('m-arb')">✕</button></div>
   <div class="mb">
     <div class="fr"><div class="fg"><div class="fl">Nome</div><input class="fi" id="ar-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">País / Federação</div><input class="fi" id="ar-ps" placeholder="País"></div></div>
-    <div class="fr"><div class="fg"><div class="fl">Função</div><select class="fse" id="ar-fn"><option>Diretor do Torneio WMF</option><option>Árbitro EMF</option><option>Juíz de campo</option><option>Secretariado técnico</option></select></div><div class="fg"><div class="fl">Custo (€) — real</div><input class="fi" type="number" id="ar-vl" placeholder="0,00"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Função</div><select class="fse" id="ar-fn"><option>Diretor do Torneio WMF</option><option>Árbitro EMF</option><option>Juíz de campo</option><option>Secretariado técnico</option><option>Head Jury</option><option>Jury Member</option><option>Head Referee</option><option>Referee</option></select></div><div class="fg"><div class="fl">Custo (€) — real</div><input class="fi" type="number" id="ar-vl" placeholder="0,00"></div></div>
     <div class="fg"><div class="fl">Alojamento atribuído</div><select class="fse" id="ar-ht"><option value="">— A definir —</option></select></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-arb')">Cancelar</button><button class="btn bp" onclick="saveArb()">Guardar</button></div>
+</div></div>
+
+<div class="mo" id="m-juri"><div class="mdl">
+  <div class="mh"><div class="mt2" id="jr-titulo">Novo Jury Member</div><button class="mc" onclick="closeM('m-juri')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="jr-eid">
+    <div class="fr"><div class="fg"><div class="fl">Grupo</div><select class="fse" id="jr-gp" onchange="juriTitulo()"><option value="juri">Júri do Evento (Jury)</option><option value="arbitragem">Arbitragem (Referees)</option></select></div>
+    <div class="fg"><div class="fl">Cargo</div><select class="fse" id="jr-cg" onchange="juriTitulo()"><option value="head">Chefe (Head)</option><option value="membro">Membro</option></select></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="jr-nm" placeholder="Nome completo"></div><div class="fg"><div class="fl">País / Federação</div><input class="fi" id="jr-ps" placeholder="ex: GER"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Nomeado por</div><select class="fse" id="jr-np"><option value="">—</option><option>EMF</option><option>WMF</option><option>FPM</option><option>Organização SWC</option><option>Outro</option></select></div>
+    <div class="fg"><div class="fl">Estado</div><select class="fse" id="jr-st"><option value="por_confirmar">Por confirmar</option><option value="confirmado">Confirmado</option></select></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Telemóvel / WhatsApp</div><input class="fi" id="jr-tl" placeholder="ex: 912345678 ou +41 79 123 45 67"></div><div class="fg"><div class="fl">Email</div><input class="fi" id="jr-em" placeholder="email@"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Chegada</div><input class="fi" type="date" id="jr-ch"></div><div class="fg"><div class="fl">Partida</div><input class="fi" type="date" id="jr-pt"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Alojamento</div><select class="fse" id="jr-ht"><option value="">— A definir —</option></select></div><div class="fg"><div class="fl">Pista / zona (opcional)</div><input class="fi" id="jr-pi" placeholder="ex: Pista A"></div></div>
+    <div class="fg"><div class="fl">Notas</div><input class="fi" id="jr-ob" placeholder="Notas, necessidades especiais..."></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-juri')">Cancelar</button><button class="btn bp" onclick="juriGuardar()">Guardar</button></div>
 </div></div>
 
 <div class="mo" id="m-inv"><div class="mdl">
@@ -3504,7 +3543,7 @@ function setAdminBars(){
     'bar-cron','bar-atl','bar-alo','bar-cer',
     'bar-rec','bar-desp','bar-pat','bar-inv','bar-bar','bar-merch',
     'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
-    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas',
+    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas','bar-juri',
   ].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.style.display=edit?'flex':'none';
@@ -3628,7 +3667,7 @@ function nav(el,id,title){
   if(id==='guia'){renderGuia();}
   if(id==='consignacao'){renderMarcas();renderArtigos();renderVendas();renderConsigKPIs();populateMarcaSelects();}
   if(id==='dashboard'){setTimeout(startCountdown,100);setTimeout(loadClima,200);}
-  if(id==='organizacao'){setTimeout(renderOrg,200);}
+  if(id==='organizacao'){setTimeout(renderOrg,200);setTimeout(()=>{if(typeof juriRender==='function')juriRender();},250);}
   // Re-aplicar permissoes apos navegacao
   setTimeout(setAdminBars, 50);
   if(id==='modo-evento')startModeEvento();
@@ -3700,6 +3739,7 @@ function atualizarSelectsHoteis(){
   const alvos=[
     {id:'at-ht',vazio:'— Sem atribuição —'},
     {id:'ar-ht',vazio:'— A definir —'},
+    {id:'jr-ht',vazio:'— A definir —'},
     {id:'rm-hotel',vazio:''},
     {id:'del-hotel',vazio:'-- A definir --'},
     {id:'rm-filtro-hotel',vazio:'Todos os hoteis'},
@@ -3755,7 +3795,7 @@ function loadAll(){
   _snap('hoteis',(docs)=>{_hot=docs;renderAlo();atualizarSelectsHoteis();hotelRecarregarVistas();});
   carregarViaturaCMV();
   _snap('transfers',(docs)=>{_trn=docs;renderAlo();},'data');
-  _snap('arbitros',(docs)=>{_arb=docs;renderArb();});
+  _snap('arbitros',(docs)=>{_arb=docs;renderArb();if(typeof juriRender==='function')juriRender();});
   _snap('inventario',(docs)=>{_inv=docs;renderInv();});
   _snap('programa',(docs)=>{_prog=docs;renderPrograma();});
 }
@@ -5832,6 +5872,206 @@ function renderArb(){
   el.innerHTML=_arb.length?_arb.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(201,168,76,.07);"><div><div style="font-size:12px;font-weight:500;color:var(--wh);">${a.nome||''}</div><div style="font-size:11px;color:var(--mu);">${a.funcao||''} - ${a.pais||''} - Hotel: ${hotelNome(a.hotel)||'-'}</div></div>${canEdit()?`<button class="btn bo bsm" onclick="editArb('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delArb('${a.id}')">🗑️</button>`:''}</div>`).join(''):'<div class="em"><div class="emi"></div><div class="emt">Sem árbitros</div></div>';
 }
 async function delArb(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('arbitros',id);}
+
+// ======================================================================================================
+// JÚRI & ARBITRAGEM (bloco da página «Equipa & Organização»)
+// Reaproveita a coleção 'arbitros': acreditações, alojamento e chegadas continuam a funcionar.
+// Só acrescenta campos opcionais (grupo, cargo, nomeadoPor, tel, email, estado, chegada, partida, pista, obs).
+// Registos antigos (sem «grupo») aparecem em Arbitragem, marcados «a classificar», até serem editados.
+// ======================================================================================================
+const JR_LAB={juri:{head:'Head Jury',membro:'Jury Member'},arbitragem:{head:'Head Referee',membro:'Referee'}};
+const JR_NOME={juri:'Júri do Evento',arbitragem:'Arbitragem'};
+function _jrEsc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function _jrNorm(t){return String(t==null?'':t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
+function _jrWa(tel){const d=String(tel||'').replace(/[^\d+]/g,'');if(!d)return '';if(d.startsWith('+'))return d.slice(1);if(d.startsWith('00'))return d.slice(2);return '351'+d;}
+function _jrData(d){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d||''));return m?m[3]+'/'+m[2]+'/'+m[1]:String(d||'');}
+function _jrArb(){return (typeof _arb!=='undefined'&&_arb)?_arb:[];}
+function juriClass(a){
+  if(a&&(a.grupo==='juri'||a.grupo==='arbitragem'))return {grupo:a.grupo,cargo:a.cargo==='head'?'head':'membro',legado:false};
+  const f=_jrNorm(a&&a.funcao);
+  return {grupo:/\bjury\b|\bjuri\b|jurado/.test(f)?'juri':'arbitragem',cargo:/^head/.test(f)?'head':'membro',legado:true};
+}
+function juriDados(grupo){
+  return _jrArb().map(a=>Object.assign({a:a},juriClass(a))).filter(x=>x.grupo===grupo)
+    .sort((x,y)=>((y.cargo==='head')-(x.cargo==='head'))||String(x.a.nome||'').localeCompare(String(y.a.nome||''),'pt'));
+}
+function _jrBadge(txt,cls){return '<span class="bge '+cls+'" style="font-size:9px;">'+_jrEsc(txt)+'</span>';}
+function juriLinha(x,destaque){
+  const a=x.a,ed=canEdit(),del=canDelete(),wa=_jrWa(a.tel);
+  const hotel=a.hotel?(typeof hotelNome==='function'?hotelNome(a.hotel):a.hotel):'';
+  const badges=[_jrBadge((x.legado&&a.funcao)?a.funcao:JR_LAB[x.grupo][x.cargo],'bg-g'),a.pais?_jrBadge(a.pais,'bg-mu'):'',a.nomeadoPor?_jrBadge('Nomeado: '+a.nomeadoPor,'bg-bl'):'',
+    a.estado==='confirmado'?_jrBadge('Confirmado','bg-ok'):_jrBadge('Por confirmar','bg-am'),x.legado?_jrBadge('a classificar','bg-er'):''].filter(Boolean).join(' ');
+  const contacto=[a.tel?_jrEsc(a.tel)+(wa?' <a href="https://wa.me/'+wa+'" target="_blank" rel="noopener" style="color:var(--ok);text-decoration:none;font-weight:600;">WhatsApp</a>':''):'',a.email?_jrEsc(a.email):''].filter(Boolean).join(' · ');
+  const per=[a.chegada?'Chegada '+_jrEsc(_jrData(a.chegada)):'',a.partida?'Partida '+_jrEsc(_jrData(a.partida)):'',hotel?'Alojamento: '+_jrEsc(hotel):'',a.pista?'Pista/zona: '+_jrEsc(a.pista):''].filter(Boolean).join(' · ');
+  const btn=(ic,tt,fn)=>'<button class="btn bo bsm" title="'+tt+'" onclick="'+fn+'" style="padding:3px 8px;">'+ic+'</button>';
+  const acoes=(ed?btn('✏️','Editar','juriEditar(\''+a.id+'\')'):'')+(ed&&x.cargo!=='head'?btn('★','Tornar '+JR_LAB[x.grupo].head,'juriTornarHead(\''+a.id+'\')'):'')+(del?btn('🗑️','Eliminar','juriEliminar(\''+a.id+'\')'):'');
+  return '<div style="'+(destaque?'padding:12px;background:rgba(201,168,76,.07);border-left:3px solid var(--gl);border-radius:6px;margin-bottom:8px;':'padding:9px 0;border-top:1px solid rgba(201,168,76,.07);')+'">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;"><div style="flex:1;min-width:0;">'
+    +'<div style="font-size:'+(destaque?'13':'12')+'px;font-weight:'+(destaque?'700':'600')+';color:var(--wh);">'+_jrEsc(a.nome||'(sem nome)')+'</div>'
+    +'<div style="margin:3px 0;display:flex;flex-wrap:wrap;gap:4px;">'+badges+'</div>'
+    +(contacto?'<div style="font-size:10px;color:var(--mu);">'+contacto+'</div>':'')+(per?'<div style="font-size:10px;color:var(--mu);">'+per+'</div>':'')
+    +(a.obs?'<div style="font-size:10px;color:var(--mu);font-style:italic;">'+_jrEsc(a.obs)+'</div>':'')
+    +'</div><div style="display:flex;gap:5px;flex-shrink:0;">'+acoes+'</div></div></div>';
+}
+function juriRender(){
+  [['juri','juri-lista-juri','juri-cnt-juri'],['arbitragem','juri-lista-arb','juri-cnt-arb']].forEach(([g,idL,idC])=>{
+    const el=document.getElementById(idL);if(!el)return;
+    const l=juriDados(g),heads=l.filter(x=>x.cargo==='head'),resto=l.filter(x=>x.cargo!=='head');
+    let h='';
+    if(heads.length){heads.forEach(x=>{h+=juriLinha(x,true);});}
+    else{h+='<div style="padding:12px;border:1px dashed rgba(201,168,76,.35);border-radius:6px;margin-bottom:8px;font-size:12px;color:var(--mu);display:flex;justify-content:space-between;align-items:center;gap:8px;"><span>'+JR_LAB[g].head+' por indicar</span>'+(canEdit()?'<button class="btn bo bsm" onclick="juriNovo(\''+g+'\',\'head\')">+ Definir '+JR_LAB[g].head+'</button>':'')+'</div>';}
+    if(resto.length){h+=resto.map(x=>juriLinha(x,false)).join('');}
+    else if(!heads.length){h='<div class="em"><div class="emi">◎</div><div class="emt">Sem registos em '+JR_NOME[g]+'</div></div>'+h;}
+    el.innerHTML=h;
+    const c=document.getElementById(idC);if(c)c.textContent=l.length?(l.length+(l.length===1?' pessoa':' pessoas')+(heads.length?' · '+JR_LAB[g].head+' definido':' · sem '+JR_LAB[g].head)):'sem registos';
+  });
+}
+function juriTitulo(){
+  const g=document.getElementById('jr-gp').value,c=document.getElementById('jr-cg').value,eid=document.getElementById('jr-eid').value;
+  const t=document.getElementById('jr-titulo');if(t)t.textContent=(eid?'Editar ':'Novo ')+JR_LAB[g][c==='head'?'head':'membro'];
+}
+function juriLimpar(){
+  ['jr-eid','jr-nm','jr-ps','jr-tl','jr-em','jr-ch','jr-pt','jr-pi','jr-ob'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('jr-np').value='';document.getElementById('jr-st').value='por_confirmar';
+  const h=document.getElementById('jr-ht');if(h)h.value='';
+}
+function juriNovo(grupo,cargo){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}
+  juriLimpar();document.getElementById('jr-gp').value=grupo||'juri';document.getElementById('jr-cg').value=cargo==='head'?'head':'membro';
+  if(typeof atualizarSelectsHoteis==='function')atualizarSelectsHoteis();
+  juriTitulo();openM('m-juri');
+}
+function juriEditar(id){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}
+  const a=_jrArb().find(x=>x.id===id);if(!a)return;
+  const k=juriClass(a);juriLimpar();
+  if(typeof atualizarSelectsHoteis==='function')atualizarSelectsHoteis();
+  document.getElementById('jr-eid').value=id;document.getElementById('jr-gp').value=k.grupo;document.getElementById('jr-cg').value=k.cargo;
+  document.getElementById('jr-nm').value=a.nome||'';document.getElementById('jr-ps').value=a.pais||'';document.getElementById('jr-np').value=a.nomeadoPor||'';
+  document.getElementById('jr-tl').value=a.tel||'';document.getElementById('jr-em').value=a.email||'';document.getElementById('jr-st').value=a.estado==='confirmado'?'confirmado':'por_confirmar';
+  document.getElementById('jr-ch').value=a.chegada||'';document.getElementById('jr-pt').value=a.partida||'';document.getElementById('jr-pi').value=a.pista||'';document.getElementById('jr-ob').value=a.obs||'';
+  const h=document.getElementById('jr-ht');if(h)h.value=a.hotel||'';
+  juriTitulo();openM('m-juri');
+}
+async function _jrGarantirUmHead(grupo,idIgnorar){
+  const outro=_jrArb().find(x=>x.id!==idIgnorar&&juriClass(x).grupo===grupo&&juriClass(x).cargo==='head');
+  if(!outro)return true;
+  if(!confirm('Já existe '+JR_LAB[grupo].head+': '+(outro.nome||'(sem nome)')+'.\nSubstituir? O anterior passa a '+JR_LAB[grupo].membro+'.'))return false;
+  await _upd('arbitros',outro.id,{grupo:grupo,cargo:'membro',funcao:JR_LAB[grupo].membro});return true;
+}
+async function juriGuardar(){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}
+  const v=id=>(document.getElementById(id).value||'').trim();
+  const nome=v('jr-nm');if(!nome){toast('Indica o nome','er');return;}
+  const grupo=document.getElementById('jr-gp').value==='arbitragem'?'arbitragem':'juri',cargo=document.getElementById('jr-cg').value==='head'?'head':'membro',eid=v('jr-eid');
+  const d={nome:nome,pais:v('jr-ps'),grupo:grupo,cargo:cargo,funcao:JR_LAB[grupo][cargo],nomeadoPor:v('jr-np'),tel:v('jr-tl'),email:v('jr-em'),
+    estado:document.getElementById('jr-st').value==='confirmado'?'confirmado':'por_confirmar',chegada:v('jr-ch'),partida:v('jr-pt'),hotel:document.getElementById('jr-ht')?document.getElementById('jr-ht').value:'',pista:v('jr-pi'),obs:v('jr-ob'),ts:Date.now()};
+  if(cargo==='head'&&!(await _jrGarantirUmHead(grupo,eid)))return;
+  if(eid){await _upd('arbitros',eid,d);toast(JR_LAB[grupo][cargo]+' actualizado');}
+  else{d.valor=0;await _add('arbitros',d);toast(JR_LAB[grupo][cargo]+' registado');}
+  closeM('m-juri');
+}
+async function juriTornarHead(id){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}
+  const a=_jrArb().find(x=>x.id===id);if(!a)return;
+  const k=juriClass(a);
+  if(!(await _jrGarantirUmHead(k.grupo,id)))return;
+  await _upd('arbitros',id,{grupo:k.grupo,cargo:'head',funcao:JR_LAB[k.grupo].head});toast(JR_LAB[k.grupo].head+': '+(a.nome||''));
+}
+async function juriEliminar(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('arbitros',id);}
+
+// ---- Importar Excel (colunas reconhecidas por nome, em PT ou EN) ----
+function juriLinhasParaRegistos(rows,existentes){
+  const out={novos:[],duplicados:0,ignorados:[]};
+  if(!rows||rows.length<2){out.ignorados.push('ficheiro vazio');return out;}
+  const syn={nome:['nome','name','nome completo','full name'],pais:['pais','pais/federacao','federacao','country','federation','nacionalidade'],grupo:['grupo','group','tipo','type'],cargo:['cargo','funcao','role','function','posicao'],
+    tel:['telemovel','telefone','tel','phone','mobile','whatsapp','contacto'],email:['email','e-mail','mail'],nomeadoPor:['nomeado por','nomeado','appointed by','nominated by'],estado:['estado','status'],
+    chegada:['chegada','arrival'],partida:['partida','departure'],pista:['pista','zona','pista/zona','lane','area'],obs:['notas','observacoes','obs','notes','remarks']};
+  const hdr=rows[0].map(_jrNorm),col={};
+  Object.keys(syn).forEach(k=>{const i=hdr.findIndex(h=>syn[k].includes(h));if(i>=0)col[k]=i;});
+  if(col.nome===undefined){out.ignorados.push('falta a coluna «Nome»');return out;}
+  const ja=new Set((existentes||[]).map(a=>_jrNorm(a.nome)));
+  for(let r=1;r<rows.length;r++){
+    const row=rows[r]||[],cel=k=>col[k]===undefined?'':String(row[col[k]]==null?'':row[col[k]]).trim();
+    const nome=cel('nome');if(!nome)continue;
+    const txt=_jrNorm(cel('grupo')+' '+cel('cargo'));
+    const grupo=/jur/.test(txt)?'juri':(/arbitr|referee|juiz/.test(txt)?'arbitragem':'');
+    if(!grupo){out.ignorados.push(nome+': sem grupo (Júri/Arbitragem)');continue;}
+    const cargo=/head|chefe|presidente/.test(txt)?'head':'membro';
+    if(ja.has(_jrNorm(nome))){out.duplicados++;continue;}
+    ja.add(_jrNorm(nome));
+    const est=_jrNorm(cel('estado'));
+    out.novos.push({nome:nome,pais:cel('pais'),grupo:grupo,cargo:cargo,funcao:JR_LAB[grupo][cargo],nomeadoPor:cel('nomeadoPor'),tel:cel('tel'),email:cel('email'),
+      estado:/confirm/.test(est)&&!/por|pend|to be/.test(est)?'confirmado':'por_confirmar',chegada:cel('chegada'),partida:cel('partida'),hotel:'',pista:cel('pista'),obs:cel('obs'),valor:0,ts:Date.now()});
+  }
+  return out;
+}
+async function juriImportarLinhas(rows){
+  const r=juriLinhasParaRegistos(rows,_jrArb());
+  // um só Head por grupo: o primeiro Head do ficheiro fica Head; os restantes passam a membro
+  const vistos={};
+  r.novos.forEach(n=>{if(n.cargo==='head'){const ja=_jrArb().some(a=>juriClass(a).grupo===n.grupo&&juriClass(a).cargo==='head');if(vistos[n.grupo]||ja){n.cargo='membro';n.funcao=JR_LAB[n.grupo].membro;}vistos[n.grupo]=true;}});
+  for(const n of r.novos){await _add('arbitros',n);}
+  toast('Importados: '+r.novos.length+(r.duplicados?' · repetidos ignorados: '+r.duplicados:'')+(r.ignorados.length?' · sem dados suficientes: '+r.ignorados.length:''),r.novos.length?'ok':'er');
+  if(r.ignorados.length)console.warn('Júri/Arbitragem — linhas ignoradas:',r.ignorados);
+}
+function juriImportExcel(input){
+  if(!canDelete()){toast('Apenas admin pode importar','er');return;}
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async function(e){
+    try{
+      const data=new Uint8Array(e.target.result);
+      const ler=async()=>{const wb=XLSX.read(data,{type:'array'});await juriImportarLinhas(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1}));};
+      if(typeof XLSX!=='undefined'){await ler();}
+      else{toast('A carregar SheetJS...','ok');const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';sc.onload=ler;document.head.appendChild(sc);}
+    }catch(err){toast('Erro ao importar: '+err.message,'er');}
+    input.value='';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ---- PDF (cabeçalho e rodapé padrão do programa) ----
+function juriExportPDF(grupo){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const titulo=grupo==='juri'?'Júri do Evento (Jury)':grupo==='arbitragem'?'Arbitragem (Referees)':'Júri e Arbitragem';
+  const subtitulo='Seniors World Championship - Vizela 2026 - '+new Date().toLocaleDateString('pt-PT');
+  pdfHeader(doc,titulo,subtitulo);
+  let y=44;const W=210;
+  const grupos=grupo?[grupo]:['juri','arbitragem'];
+  grupos.forEach(g=>{
+    const l=juriDados(g),heads=l.filter(x=>x.cargo==='head'),resto=l.filter(x=>x.cargo!=='head');
+    if(y>225){doc.addPage();pdfHeader(doc,titulo,subtitulo);y=44;}
+    doc.setFillColor(8,16,32);doc.roundedRect(10,y,W-20,10,2,2,'F');doc.setFillColor(201,168,76);doc.roundedRect(10,y,3,10,1,1,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(201,168,76);doc.text((g==='juri'?'JÚRI DO EVENTO · JURY':'ARBITRAGEM · REFEREES'),17,y+6.6);
+    doc.setFontSize(8);doc.setTextColor(200,180,140);doc.text(l.length+(l.length===1?' pessoa':' pessoas'),W-14,y+6.4,{align:'right'});y+=14;
+    // Head em destaque
+    doc.setDrawColor(201,168,76);doc.setLineWidth(0.5);doc.setFillColor(252,250,246);doc.roundedRect(10,y,W-20,17,2,2,'FD');
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(140,110,50);doc.text(JR_LAB[g].head.toUpperCase(),15,y+5);
+    if(heads.length){const a=heads[0].a;
+      doc.setFontSize(11);doc.setTextColor(10,22,40);doc.text(String(a.nome||''),15,y+11);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(80,70,50);
+      doc.text([a.pais,a.nomeadoPor?'Nomeado: '+a.nomeadoPor:''].filter(Boolean).join(' - '),15,y+15);
+      doc.text([a.tel,a.email].filter(Boolean).join(' - '),W-14,y+11,{align:'right'});
+      doc.setFont('helvetica','bold');doc.setTextColor(a.estado==='confirmado'?40:160,a.estado==='confirmado'?130:100,a.estado==='confirmado'?80:20);doc.text(a.estado==='confirmado'?'Confirmado':'Por confirmar',W-14,y+15,{align:'right'});
+    }else{doc.setFont('helvetica','italic');doc.setFontSize(9);doc.setTextColor(140,120,90);doc.text('Por indicar',15,y+12);}
+    y+=21;
+    const rows=resto.map(x=>{const a=x.a;return [a.nome||'',a.pais||'',((x.legado&&a.funcao)?a.funcao:JR_LAB[g].membro)+(x.legado?' (a classificar)':''),[a.tel,a.email].filter(Boolean).join('\n'),a.estado==='confirmado'?'Confirmado':'Por confirmar',[a.chegada,a.partida].filter(Boolean).map(_jrData).join(' › ')||'',a.hotel?(typeof hotelNome==='function'?hotelNome(a.hotel):a.hotel):''];});
+    if(rows.length){
+      doc.autoTable({startY:y,head:[['Nome','País / Federação','Função','Contacto','Estado','Chegada › Partida','Alojamento']],body:rows,theme:'striped',
+        styles:{fontSize:7.8,textColor:[35,35,35],cellPadding:2.2,valign:'middle'},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},
+        columnStyles:{0:{fontStyle:'bold',cellWidth:33},1:{cellWidth:22},2:{cellWidth:27},3:{cellWidth:34},4:{cellWidth:24},5:{cellWidth:24}},rowPageBreak:'avoid',margin:{top:42,left:10,right:10,bottom:28},
+        didDrawPage:function(){pdfHeader(doc,titulo,subtitulo);}});
+      y=doc.lastAutoTable.finalY+8;
+    }else{doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(120,100,70);doc.text('Sem outros membros registados.',14,y+2);y+=10;}
+  });
+  pdfFooter(doc,false);
+  doc.save(grupo==='juri'?'Juri_SWC2026.pdf':grupo==='arbitragem'?'Arbitragem_SWC2026.pdf':'Juri_Arbitragem_SWC2026.pdf');
+}
+window.juriRender=juriRender;window.juriNovo=juriNovo;window.juriEditar=juriEditar;window.juriGuardar=juriGuardar;window.juriTornarHead=juriTornarHead;window.juriEliminar=juriEliminar;
+window.juriTitulo=juriTitulo;window.juriImportExcel=juriImportExcel;window.juriExportPDF=juriExportPDF;
+
 
 //  INVENTÁRIO 
 async function saveInv(){

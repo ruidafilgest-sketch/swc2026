@@ -730,6 +730,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(255,160,60,.6);">Rendimentos reais · Contas 7xx</div>
     </div>
   </div>
+  <div class="si" title="Taxa por pessoa e por dia · recebimentos · Receitas e Diário" onclick="nav(this,'treinoslivres','Treinos Livres')" style="">
+    <i class="ti ti-golf" style="font-size:20px;color:#FFA03C;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Treinos Livres</div>
+      <div class="si-sub" style="color:rgba(255,160,60,.6);">Taxa por pessoa/dia · recebimentos</div>
+    </div>
+  </div>
   <div class="si" title="Gastos reais · Contas 6xx" onclick="nav(this,'despesas','Despesas')" style="">
     <i class="ti ti-trending-down" style="font-size:20px;color:#FFA03C;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -1482,12 +1489,21 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">SEG</span>Segurança &amp; Seguros<button class="hbtn" data-help="seguranca" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Responsabilidade civil obrigatória · Segurança recinto · Equipamento WMF · Inventário para receber 25% final</div>
 <div class="g2">
-  <div class="cd"><div class="cdh"><div><div class="cdt">Seguro de Responsabilidade Civil</div><div class="cds">Obrigatório — cobertura total do evento</div></div></div>
+  <div class="cd" style="grid-column:1/-1;"><div class="cdh"><div><div class="cdt">Seguros do Evento</div><div class="cds">Responsabilidade civil (obrigatória), acidentes pessoais, equipamento · seguradora, prazo e valores</div></div></div>
     <div class="cdb">
-      <div class="fg"><div class="fl">Seguradora</div><input class="fi" id="sg-s" placeholder="Nome da seguradora"></div>
-      <div class="fr"><div class="fg"><div class="fl">Apólice nº</div><input class="fi" id="sg-a" placeholder="Nº apólice"></div><div class="fg"><div class="fl">Valor (€) — real</div><input class="fi" id="sg-v" placeholder="— valor real"></div></div>
-      <div class="fr"><div class="fg"><div class="fl">Início cobertura</div><input class="fi" type="date" id="sg-i"></div><div class="fg"><div class="fl">Fim cobertura</div><input class="fi" type="date" id="sg-f"></div></div>
-      <button class="btn bp bsm" onclick="toast('Dados do seguro guardados')">Guardar</button>
+      <div class="g4" style="margin-bottom:12px;">
+        <div class="sm"><div class="sml">Apólices vigentes</div><div class="smv" id="sgr-k-at">0 de 0</div></div>
+        <div class="sm"><div class="sml">Prémio total</div><div class="smv" id="sgr-k-pr">0,00€</div></div>
+        <div class="sm"><div class="sml">Próximo fim de cobertura</div><div class="smv" id="sgr-k-fim">—</div></div>
+        <div class="sm"><div class="sml">Resp. civil obrigatória</div><div class="smv" id="sgr-k-rc" style="font-size:15px;">—</div></div>
+      </div>
+      <div class="bb" id="bar-seg"><button class="btn bp bsm" onclick="sgrAbrir()">+ Apólice</button></div>
+      <div class="bb">
+        <select class="fse" id="sgrf-est" onchange="sgrRender()" style="max-width:170px;"><option value="">Todos os estados</option><option>Vigente</option><option>A expirar</option><option>Expirada</option><option>Futura</option><option>Sem datas</option></select>
+        <select class="fse" id="sgrf-tp" onchange="sgrRender()" style="max-width:260px;"><option value="">Todos os tipos</option><option>Responsabilidade civil (obrigatório)</option><option>Acidentes pessoais</option><option>Equipamento / roubo</option><option>Saúde / assistência em viagem</option><option>Cancelamento do evento</option><option>Outro</option></select>
+        <button class="btn bo bsm" onclick="sgrPdf()">📄 Exportar seguros (PDF)</button><button class="btn bo bsm" onclick="sgrCsv()">⬇ Excel (CSV)</button>
+      </div>
+      <div id="sgr-lista"><div class="em"><div class="emi">◆</div><div class="emt">Sem seguros registados</div></div></div>
     </div>
   </div>
   <div class="cd"><div class="cdh"><div><div class="cdt">Inventário Equipamento WMF</div><div class="cds">Condição para receber os 25% remanescentes</div></div></div>
@@ -1573,6 +1589,49 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 
 <!-- DESPESAS -->
+<div class="pg" id="pg-treinoslivres">
+<div class="st"><span class="sn">TL</span>Treinos Livres</div>
+<div class="sd">Taxa por pessoa e por dia (atletas e treinadores) · cada recebimento lança-se em Receitas, no Diário e nas contas</div>
+<div class="av"><div><strong>Como funciona:</strong> 1) em «Registo diário» escreva quantos atletas e treinadores de cada seleção treinaram em cada dia; 2) em «Recebimentos» registe o que foi pago, por seleção ou global. Cada recebimento cria a <b>Receita</b> (conta 781) e, se estiver recebido, o <b>lançamento no Diário</b> (Caixa ou Banco). Por isso entra no Balancete, na Demonstração de Resultados, no Balanço e nos relatórios.</div></div>
+<div class="g4" style="margin-bottom:14px;">
+  <div class="sm"><div class="sml">Devido (registo diário)</div><div class="smv" id="tl-k-dev">0,00€</div></div>
+  <div class="sm"><div class="sml">Recebido</div><div class="smv" id="tl-k-rec" style="color:var(--ok)">0,00€</div></div>
+  <div class="sm"><div class="sml">Por receber</div><div class="smv" id="tl-k-por" style="color:var(--wr)">0,00€</div></div>
+  <div class="sm"><div class="sml">Pessoas-dia</div><div class="smv" id="tl-k-pd">0</div></div>
+</div>
+<div class="bb"><button class="btn bp" id="tl-bt-dia" onclick="tlTab('dia')">Registo diário</button><button class="btn bo" id="tl-bt-rec" onclick="tlTab('rec')">Recebimentos</button><button class="btn bo" id="tl-bt-res" onclick="tlTab('res')">Resumo e PDF</button></div>
+
+<div id="tl-tab-dia">
+  <div class="bb" id="tl-chips"></div>
+  <div class="bb" id="bar-tl"><button class="btn bo" onclick="tlCopiarAnterior()">⧉ Copiar do dia anterior</button><input class="fi" id="tl-nova-ent" placeholder="Outra entidade (ex.: clube)" style="max-width:230px;"><button class="btn bo" onclick="tlAddEntidade()">+ Entidade</button></div>
+  <div class="tw"><table><thead><tr><th>Seleção</th><th style="text-align:center;">Atletas</th><th style="text-align:center;">Treinadores</th><th style="text-align:center;">Pessoas</th><th>Valor</th><th>Observações</th></tr></thead><tbody id="tl-t-dia"></tbody><tfoot id="tl-f-dia"></tfoot></table></div>
+  <div class="mu" style="font-size:11px;margin-top:8px;">Escreva os números e carregue em <b>Enter</b> para passar à seleção seguinte. Fica guardado automaticamente.</div>
+</div>
+
+<div id="tl-tab-rec" style="display:none;">
+  <div class="bb" id="bar-tl-rec"><button class="btn bp" onclick="tlAbrirRec('selecao')">+ Recebimento por seleção</button><button class="btn bo" onclick="tlAbrirRec('global')">+ Recebimento global</button><button class="btn bo" onclick="tlVerificar()">🔍 Verificar contas</button></div>
+  <div class="bb">
+    <select class="fse" id="tlf-sel" onchange="tlRenderRec()" style="max-width:190px;"></select>
+    <select class="fse" id="tlf-est" onchange="tlRenderRec()" style="max-width:150px;"><option value="">Todos os estados</option><option>Recebido</option><option>Pendente</option></select>
+    <select class="fse" id="tlf-mp" onchange="tlRenderRec()" style="max-width:190px;"><option value="">Todos os meios</option><option>Numerário</option><option>Transferência</option><option>MB WAY / Multibanco</option></select>
+    <input class="fi" type="date" id="tlf-de" onchange="tlRenderRec()" style="max-width:150px;" title="De"><input class="fi" type="date" id="tlf-ate" onchange="tlRenderRec()" style="max-width:150px;" title="Até">
+    <button class="btn bo" onclick="tlPdfRecebimentos()">📄 PDF (com estes filtros)</button><button class="btn bo" onclick="tlCsv('rec')">⬇ Excel (CSV)</button>
+  </div>
+  <div class="tw"><table><thead><tr><th>Ref.</th><th>Data</th><th>Seleção</th><th>Período</th><th>Valor</th><th>Estado</th><th>Meio</th><th>Diário</th><th>Obs.</th><th>Ações</th></tr></thead><tbody id="tl-t-rec"></tbody><tfoot id="tl-f-rec"></tfoot></table></div>
+</div>
+
+<div id="tl-tab-res" style="display:none;">
+  <div class="av" id="tl-aviso" style="display:none;"></div>
+  <div class="bb"><button class="btn bp" onclick="tlPdfTodas()">📄 Mapas de todas as seleções (PDF)</button><button class="btn bo" onclick="tlPdfGeral()">📄 Resumo geral (PDF)</button><button class="btn bo" onclick="tlCsv('res')">⬇ Excel (CSV)</button></div>
+  <div class="tw"><table><thead><tr><th>Seleção</th><th style="text-align:center;">Atletas-dia</th><th style="text-align:center;">Trein.-dia</th><th style="text-align:center;">Pessoas-dia</th><th>Devido</th><th>Recebido</th><th>Por receber</th><th>Ações</th></tr></thead><tbody id="tl-t-res"></tbody><tfoot id="tl-f-res"></tfoot></table></div>
+  <div class="cd" style="margin-top:16px;"><div class="cdh"><div><div class="cdt">Definições</div><div class="cds">Preço por pessoa e por dia e dias de treino livre</div></div></div>
+    <div class="cdb">
+      <div class="fr"><div class="fg"><div class="fl">Preço por pessoa e por dia (€)</div><input class="fi" id="tld-preco" onchange="tlSetPreco()" style="max-width:140px;"></div><div class="fg"><div class="fl">Acrescentar dia</div><div style="display:flex;gap:8px;"><input class="fi" type="date" id="tld-novo" style="max-width:170px;"><button class="btn bo" onclick="tlAddDia()">+ Dia</button></div></div></div>
+      <div class="fl" style="margin-top:10px;">Dias em uso</div><div id="tld-dias"></div>
+    </div></div>
+</div>
+</div>
+
 <div class="pg" id="pg-despesas">
 <div class="st"><span class="sn">DESP</span>Despesas<button class="hbtn" data-help="despesas" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Classe 6 SNC-ESNL · 17 rubricas · Valores reais por documento fiscal confirmado</div>
@@ -2464,6 +2523,23 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mf"><button class="btn bo" onclick="closeM('m-rec')">Cancelar</button><button class="btn bp" onclick="saveRec()">Guardar receita</button></div>
 </div></div>
 
+<div class="mo" id="m-tl-rec"><div class="mdl">
+  <div class="mh"><div class="mt2" id="tlr-titulo">Novo recebimento — Treinos Livres</div><button class="mc" onclick="closeM('m-tl-rec')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="tlr-eid">
+    <div class="fr"><div class="fg"><div class="fl">Tipo</div><select class="fse" id="tlr-tipo" onchange="tlRecUI()"><option value="selecao">Por seleção</option><option value="global">Global (sem seleção)</option></select></div>
+    <div class="fg" id="tlr-sel-w"><div class="fl">Seleção</div><select class="fse" id="tlr-sel" onchange="tlRecUI()"></select></div></div>
+    <div class="av" id="tlr-info" style="margin:6px 0 10px;font-size:12px;"></div>
+    <div class="fr"><div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="tlr-dt"></div><div class="fg"><div class="fl">Valor (€)</div><input class="fi" type="number" step="0.01" min="0" id="tlr-vl" placeholder="0,00"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Estado</div><select class="fse" id="tlr-st" onchange="tlRecUI()"><option value="Recebido">Recebido</option><option value="Pendente">Pendente a receber</option></select></div>
+    <div class="fg" id="tlr-mp-w"><div class="fl">Meio de pagamento</div><select class="fse" id="tlr-mp"><option>Numerário</option><option>Transferência</option><option>MB WAY / Multibanco</option></select></div></div>
+    <div class="fg"><div class="fl">Período / referência (opcional)</div><input class="fi" id="tlr-pe" placeholder="ex.: 2 a 8 de outubro"></div>
+    <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="tlr-ob" placeholder="Notas, quem pagou, comprovativo..."></textarea></div>
+    <div class="mu" style="font-size:11px;">Ao guardar, cria-se a receita (conta 781) e, se estiver «Recebido», o lançamento no Diário (Numerário = Caixa; Transferência e MB WAY = Banco).</div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-tl-rec')">Cancelar</button><button class="btn bp" onclick="tlGuardarRec()">Guardar</button></div>
+</div></div>
+
 <div class="mo" id="m-taxa-treino"><div class="mdl">
   <div class="mh"><div class="mt2">Taxa de Treino Extra</div><button class="mc" onclick="closeM('m-taxa-treino')">✕</button></div>
   <div class="mb">
@@ -2730,6 +2806,23 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Notas</div><input class="fi" id="jr-ob" placeholder="Notas, necessidades especiais..."></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-juri')">Cancelar</button><button class="btn bp" onclick="juriGuardar()">Guardar</button></div>
+</div></div>
+
+<div class="mo" id="m-sgr"><div class="mdl">
+  <div class="mh"><div class="mt2" id="sgm-titulo">Nova apólice de seguro</div><button class="mc" onclick="closeM('m-sgr')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="sgm-eid">
+    <div class="fr"><div class="fg"><div class="fl">Tipo de seguro</div><select class="fse" id="sgm-tp"><option>Responsabilidade civil (obrigatório)</option><option>Acidentes pessoais</option><option>Equipamento / roubo</option><option>Saúde / assistência em viagem</option><option>Cancelamento do evento</option><option>Outro</option></select></div>
+    <div class="fg"><div class="fl">Seguradora</div><input class="fi" id="sgm-sg" placeholder="Nome da seguradora"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Nº da apólice</div><input class="fi" id="sgm-ap" placeholder="Nº apólice"></div><div class="fg"><div class="fl">Mediador / contacto</div><input class="fi" id="sgm-md" placeholder="Nome, telefone ou email"></div></div>
+    <div class="fg"><div class="fl">Tomador do seguro</div><input class="fi" id="sgm-tm"></div>
+    <div class="fg"><div class="fl">Coberturas / âmbito</div><textarea class="fta" id="sgm-cb" placeholder="O que cobre, exclusões, franquia..."></textarea></div>
+    <div class="fr"><div class="fg"><div class="fl">Início da cobertura</div><input class="fi" type="date" id="sgm-di"></div><div class="fg"><div class="fl">Fim da cobertura</div><input class="fi" type="date" id="sgm-df"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Capital seguro (€)</div><input class="fi" type="number" step="0.01" min="0" id="sgm-cp" placeholder="0,00"></div><div class="fg"><div class="fl">Prémio / valor pago (€) — real</div><input class="fi" type="number" step="0.01" min="0" id="sgm-pr" placeholder="0,00"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Pagamento do prémio</div><select class="fse" id="sgm-pg"><option>Pendente</option><option>Pago</option><option>Não aplicável</option></select></div><div class="fg"><div class="fl">Data do pagamento</div><input class="fi" type="date" id="sgm-dp"></div></div>
+    <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="sgm-ob" placeholder="Notas, documentos, renovação..."></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-sgr')">Cancelar</button><button class="btn bp" onclick="sgrGuardar()">Guardar</button></div>
 </div></div>
 
 <div class="mo" id="m-inv"><div class="mdl">
@@ -3154,11 +3247,11 @@ async function removerLanPorRef(refId){
   if(!refId)return;
   for(const l of (typeof _lan!=='undefined'&&_lan?_lan:[]).filter(x=>x.refId===refId)){ try{ await _del('lancamentos',l.id); }catch(e){} }
 }
-function jaLancado(id){ return (typeof _lan!=='undefined'&&_lan?_lan:[]).some(l=>l.refId===id); }
-async function lancarReceita(id){ if(!canEdit())return; const r=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(!r)return; if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('receita',(r.conta||'788'),(r.desc||'Receita'),Number(r.valor||0),'C',id); toast('Lancado no Diario'); }
+function jaLancado(id){ const L_=(typeof _lan!=='undefined'&&_lan?_lan:[]); if(L_.some(l=>l.refId===id))return true; const r_=(typeof _rec!=='undefined'&&_rec?_rec:[]).find(x=>x.id===id); return !!(r_&&r_.origem==='treinosLivres'&&r_.refId&&L_.some(l=>l.refId===r_.refId)); }
+async function lancarReceita(id){ if(!canEdit())return; const r=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(!r)return; if(r.origem==='treinosLivres'){toast('Receita de Treinos Livres: marque-a como recebida no separador «Treinos Livres».','am');return;} if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('receita',(r.conta||'788'),(r.desc||'Receita'),Number(r.valor||0),'C',id); toast('Lancado no Diario'); }
 async function lancarDespesa(id){ if(!canEdit())return; const x=(typeof _desp!=='undefined'?_desp:[]).find(y=>y.id===id); if(!x)return; if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('despesa',(x.conta||'6268'),(x.desc||'Despesa'),Number(x.valor||0),'D',id); toast('Lancado no Diario'); }
 async function lancarPatroc(id){ if(!canEdit())return; const p=(typeof _pat!=='undefined'?_pat:[]).find(y=>y.id===id); if(!p)return; if(p.tipoValor==='Espécie'){toast('Patrocínio em espécie não é dinheiro','am');return;} if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarVendaContab('patroc','724',('Patrocinio '+(p.empresa||'')),Number(p.valor||0),id); toast('Lancado no Diario'); }
-async function deslancarRec(id){ if(!canEdit())return; await removerLanPorRef(id); toast('Removido do Diario','er'); }
+async function deslancarRec(id){ if(!canEdit())return; const r0_=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(r0_&&r0_.origem==='treinosLivres'){toast('Receita de Treinos Livres: altere o estado no separador «Treinos Livres».','am');return;} await removerLanPorRef(id); toast('Removido do Diario','er'); }
 async function deslancarDesp(id){ if(!canEdit())return; await removerLanPorRef(id); toast('Removido do Diario','er'); }
 async function deslancarPat(id){ if(!canEdit())return; await removerVendaContab(id); toast('Removido do Diario','er'); }
 window.lancarReceita=lancarReceita;window.lancarDespesa=lancarDespesa;window.lancarPatroc=lancarPatroc;window.deslancarRec=deslancarRec;window.deslancarDesp=deslancarDesp;window.deslancarPat=deslancarPat;
@@ -3543,7 +3636,7 @@ function setAdminBars(){
     'bar-cron','bar-atl','bar-alo','bar-cer',
     'bar-rec','bar-desp','bar-pat','bar-inv','bar-bar','bar-merch',
     'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
-    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas','bar-juri',
+    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas','bar-juri','bar-tl','bar-tl-rec','bar-seg',
   ].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.style.display=edit?'flex':'none';
@@ -3646,6 +3739,8 @@ function nav(el,id,title){
   if(id==='orcamento'){renderOrcamento();}
   if(id==='faturas'){renderFaturas();}
   if(id==='fluxo'){renderFluxo();}
+  if(id==='treinoslivres'){tlRenderTudo();}
+  if(id==='seguranca'){sgrRender();}
   if(id==='relpatr'){renderRelPatr();}
   if(id==='mapapaises'){renderMapaPaises();}
   if(id==='estatisticas'){renderEstatisticas();}
@@ -3770,9 +3865,15 @@ function toast(msg,type='ok'){const t=document.getElementById('tst');t.textConte
 
 //  DATA 
 let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[],_ins=[],_alg=[],_recSwc=[];
+let _tl=[],_tld=[],_tlcfg={};
+let _sgr=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
+  _snap('treinosLivres',(docs)=>{_tl=docs;tlRefresca();});
+  _snap('treinosLivresDias',(docs)=>{_tld=docs;tlOnDias();});
+  _snap('treinosLivresCfg',(docs)=>{_tlcfg=docs.find(d=>d.id==='cfg')||{};tlRefresca();});
+  _snap('seguros',(docs)=>{_sgr=docs;sgrRender();});
   _snap('despesas',(docs)=>{_desp=docs;renderDesp();renderDash();},'data');
   _snap('patrocinios',(docs)=>{_pat=docs;renderPat();renderDash();});
   _snap('swc2026_recibos',(docs)=>{_recSwc=docs;renderRecibosSwc();});
@@ -3853,7 +3954,7 @@ function renderDi(){
   document.getElementById('s-deb').textContent=fmt(totD);
   document.getElementById('s-cre').textContent=fmt(totC);
 }
-async function delLan(id){if(!canDelete()||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
+async function delLan(id){const _l0=(_lan||[]).find(x=>x.id===id);if(_l0&&_l0.origem==='treinosLivres'){toast('Este lançamento vem de «Treinos Livres»: altere-o nesse separador.','am');return;}if(!canDelete()||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
 
 // Deteta e remove lançamentos duplicados (mesmo refId a aparecer mais de uma vez em 'lancamentos'
 // e/ou 'receitas'), mantendo sempre o registo mais antigo (menor ts) de cada grupo e apagando os restantes.
@@ -3954,7 +4055,324 @@ function renderRec(){
   document.getElementById('r-prv').textContent=fmt(totR-pub);
   document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${canEdit()?`<td>${jaLancado(r.id)?`<span class="bge bg-ok" style="font-size:9px;">Diário</span><button class="btn bo bsm" title="Remover do Diario" onclick="deslancarRec('${r.id}')">&#8634;</button>`:`<button class="btn bp bsm" title="Lancar no Diario" onclick="lancarReceita('${r.id}')">&#8364;&#8594;</button>`}<button class="btn bo bsm" onclick="editRec('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRec('${r.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
 }
-async function delRec(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
+async function delRec(id){const _r0=(_rec||[]).find(x=>x.id===id);if(_r0&&_r0.origem==='treinosLivres'){toast('Esta receita vem de «Treinos Livres»: elimine-a nesse separador.','am');return;}if(!canDelete()||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
+
+// ===================================================================================================
+// TREINOS LIVRES — taxa por pessoa e por dia (atletas e treinadores) · recebimentos por seleção ou globais
+// Cada recebimento cria/atualiza uma RECEITA (conta 781) e, se estiver «Recebido», um LANÇAMENTO no Diário
+// (Caixa ou Banco), ligados pelo mesmo refId («tl_<id>»). Assim entram no Balancete, DR, Balanço, Fluxo e
+// relatórios que já existem, sem contas paralelas. Registos antigos (Taxa de Treino Extra) não são tocados.
+// ===================================================================================================
+const TL_CONTA='781',TL_COL='treinosLivres',TL_DIAS='treinosLivresDias',TL_CFG='treinosLivresCfg';
+const TL_SELECOES=['Alemanha','Áustria','Chéquia','Dinamarca','Eslováquia','Finlândia','França','Itália','Letónia','Noruega','Países Baixos','Portugal','Reino Unido','Suécia','Suíça'];
+const TL_DIAS_DEF=['2026-10-02','2026-10-04','2026-10-05','2026-10-06','2026-10-07','2026-10-08'];
+const TL_MEIOS={'Numerário':'Caixa','Transferência':'Banco','MB WAY / Multibanco':'Banco'};
+const TL_NOTA='Documento de reconhecimento de valores. O recibo oficial é emitido em separado. · Acknowledgement of amounts. The official receipt is issued separately.';
+let _tlSep='dia',_tlDiaSel=null,_tlBusy=false,TLMAP={};
+const _tlEsc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const _tlNum=v=>{const n=parseInt(v,10);return isFinite(n)&&n>0?n:0;};
+const _tlR2=n=>Math.round((Number(n)||0)*100)/100;
+const _tlSlug=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'');
+const _tlSetDoc=(col,id,data)=>setDoc(doc(C(col),id),data);
+const _tlDmy=iso=>{const p=String(iso||'').split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:String(iso||'');};
+const _tlDow=iso=>{const d=new Date(iso+'T12:00:00');return {en:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()],pt:['dom','seg','ter','qua','qui','sex','sáb'][d.getDay()]};};
+const _tlEl=id=>document.getElementById(id);
+function _tlRodape(id){const e=_tlEl(id);if(e)e.querySelectorAll('td').forEach(td=>{td.style.cssText+='font-size:12px;padding:11px 13px;border-top:1px solid var(--bs);background:rgba(201,168,76,.06);vertical-align:middle;';});}
+
+// ---------------------------------------------------------------- configuração, linhas e cálculos
+function tlCfgGet(){const c=_tlcfg||{};const p=parseFloat(c.preco);return {preco:(c.preco!==undefined&&c.preco!==null&&c.preco!==''&&isFinite(p)&&p>=0)?p:6,dias:(Array.isArray(c.dias)&&c.dias.length)?c.dias.slice().sort():TL_DIAS_DEF.slice(),extras:Array.isArray(c.extras)?c.extras.slice():[]};}
+async function tlCfgSet(parcial){const c=Object.assign({},tlCfgGet(),parcial);_tlcfg=Object.assign({},_tlcfg||{},c);await _tlSetDoc(TL_CFG,'cfg',{preco:c.preco,dias:c.dias,extras:c.extras,ts:Date.now()});}
+function tlIndex(){TLMAP={};(_tld||[]).forEach(d=>{TLMAP[d.id]=d;});}
+const _tlId=(dia,sel)=>dia+'_'+_tlSlug(sel);
+function tlLinha(dia,sel){const l=TLMAP[_tlId(dia,sel)];return l?{a:_tlNum(l.a),t:_tlNum(l.t),obs:l.obs||''}:{a:0,t:0,obs:''};}
+function tlSelecoes(){const cfg=tlCfgGet();const out=TL_SELECOES.concat(cfg.extras);(_tld||[]).forEach(d=>{if(d.selecao&&out.indexOf(d.selecao)<0)out.push(d.selecao);});(_tl||[]).forEach(r=>{if(r.tipo==='selecao'&&r.selecao&&out.indexOf(r.selecao)<0)out.push(r.selecao);});return out;}
+function tlRes(sel){
+  const cfg=tlCfgGet();const r={sel:sel,dias:[],a:0,t:0,p:0,v:0};
+  cfg.dias.forEach(d=>{const l=tlLinha(d,sel),p=l.a+l.t;r.dias.push({dia:d,a:l.a,t:l.t,p:p,v:_tlR2(p*cfg.preco),obs:l.obs});r.a+=l.a;r.t+=l.t;r.p+=p;});
+  r.v=_tlR2(r.p*cfg.preco);const mine=(_tl||[]).filter(x=>x.tipo==='selecao'&&x.selecao===sel);
+  r.recs=mine;r.recebido=_tlR2(mine.filter(x=>x.estado==='Recebido').reduce((a,x)=>a+Number(x.valor||0),0));r.pendente=_tlR2(mine.filter(x=>x.estado==='Pendente').reduce((a,x)=>a+Number(x.valor||0),0));r.porReceber=_tlR2(r.v-r.recebido);
+  return r;
+}
+function tlGlobais(){const g=(_tl||[]).filter(x=>x.tipo==='global');return {recs:g,recebido:_tlR2(g.filter(x=>x.estado==='Recebido').reduce((a,x)=>a+Number(x.valor||0),0)),pendente:_tlR2(g.filter(x=>x.estado==='Pendente').reduce((a,x)=>a+Number(x.valor||0),0))};}
+function tlTotais(){
+  const rs=tlSelecoes().map(tlRes),g=tlGlobais();let devido=0,recebido=g.recebido,pendente=g.pendente,p=0,n=0;
+  rs.forEach(r=>{devido+=r.v;recebido+=r.recebido;pendente+=r.pendente;p+=r.p;if(r.p||r.recs.length)n++;});
+  devido=_tlR2(devido);recebido=_tlR2(recebido);pendente=_tlR2(pendente);return {devido:devido,recebido:recebido,pendente:pendente,porReceber:_tlR2(devido-recebido),p:p,n:n,rs:rs,g:g};
+}
+function tlProximaRef(){let m=0;(_tl||[]).forEach(r=>{const x=/^TL-(\d+)$/.exec(r.ref||'');if(x)m=Math.max(m,parseInt(x[1],10));});return 'TL-'+String(m+1).padStart(4,'0');}
+const tlDesc=r=>'Treinos Livres — '+(r.tipo==='global'?'Global':r.selecao)+' · '+r.ref;
+
+// ---------------------------------------------------------------- registo diário
+async function tlSetDia(dia,sel,campo,valor){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}
+  const id=_tlId(dia,sel),cur=tlLinha(dia,sel),nv=Object.assign({},cur);nv[campo]=campo==='obs'?String(valor||'').trim():_tlNum(valor);
+  if(!nv.a&&!nv.t&&!nv.obs){delete TLMAP[id];try{await _del(TL_DIAS,id);}catch(e){}}
+  else{TLMAP[id]={id:id,dia:dia,selecao:sel,a:nv.a,t:nv.t,obs:nv.obs};await _tlSetDoc(TL_DIAS,id,{dia:dia,selecao:sel,a:nv.a,t:nv.t,obs:nv.obs,ts:Date.now()});}
+}
+function tlRenderChips(){
+  const cfg=tlCfgGet();if(!_tlDiaSel||cfg.dias.indexOf(_tlDiaSel)<0)_tlDiaSel=cfg.dias[0]||null;
+  const sels=tlSelecoes();
+  _tlEl('tl-chips').innerHTML=cfg.dias.map(d=>{let p=0;sels.forEach(s=>{const l=tlLinha(d,s);p+=l.a+l.t;});const w=_tlDow(d);return '<button class="btn '+(d===_tlDiaSel?'bp':'bo')+'" onclick="tlEscolheDia(\''+d+'\')">'+w.pt+' '+_tlDmy(d).slice(0,5)+' · '+(p?p+' pessoas · '+fmt(p*cfg.preco):'sem registos')+'</button>';}).join('')||'<span class="mu">Sem dias. Acrescente-os em «Resumo e PDF».</span>';
+}
+function tlRenderDia(){
+  tlRenderChips();const cfg=tlCfgGet(),ed=canEdit();if(!_tlDiaSel){_tlEl('tl-t-dia').innerHTML='';return;}
+  _tlEl('tl-t-dia').innerHTML=tlSelecoes().map(s=>{
+    const l=tlLinha(_tlDiaSel,s),p=l.a+l.t,ex=cfg.extras.indexOf(s)>=0,dis=ed?'':' disabled';
+    return '<tr data-sel="'+_tlEsc(s)+'"><td><b>'+_tlEsc(s)+'</b>'+(ex&&ed?' <button class="btn bo bsm" title="Remover entidade" onclick="tlRemoveEntidade(this.closest(\'tr\').dataset.sel)">×</button>':'')+'</td>'
+      +'<td><input class="fi" type="number" min="0" step="1" data-c="a" value="'+(l.a||'')+'" placeholder="0" style="width:84px;text-align:center;"'+dis+'></td>'
+      +'<td><input class="fi" type="number" min="0" step="1" data-c="t" value="'+(l.t||'')+'" placeholder="0" style="width:84px;text-align:center;"'+dis+'></td>'
+      +'<td class="tl-p" style="text-align:center;">'+(p||'–')+'</td><td class="tl-v tok">'+(p?fmt(p*cfg.preco):'–')+'</td>'
+      +'<td><input class="fi" type="text" data-c="obs" value="'+_tlEsc(l.obs)+'" placeholder="observações" style="min-width:140px;"'+dis+'></td></tr>';
+  }).join('');
+  tlRodapeDia();
+}
+function tlRodapeDia(){
+  const cfg=tlCfgGet();let a=0,t=0;tlSelecoes().forEach(s=>{const l=tlLinha(_tlDiaSel,s);a+=l.a;t+=l.t;});
+  _tlEl('tl-f-dia').innerHTML='<tr><td><b>TOTAL DO DIA</b></td><td style="text-align:center;"><b>'+a+'</b></td><td style="text-align:center;"><b>'+t+'</b></td><td style="text-align:center;"><b>'+(a+t)+'</b></td><td class="tok"><b>'+fmt((a+t)*cfg.preco)+'</b></td><td></td></tr>';
+  _tlRodape('tl-f-dia');tlRenderChips();tlRenderKpis();
+}
+function tlEscolheDia(d){_tlDiaSel=d;tlRenderDia();}
+async function tlCopiarAnterior(){
+  if(!canEdit())return;const cfg=tlCfgGet(),i=cfg.dias.indexOf(_tlDiaSel);if(i<=0){toast('Este é o primeiro dia','am');return;}
+  const ant=cfg.dias[i-1],sels=tlSelecoes();if(sels.some(s=>{const l=tlLinha(_tlDiaSel,s);return l.a||l.t;})&&!confirm('Já existem registos neste dia. Substituir pelos números do dia anterior?'))return;
+  for(const s of sels){const l=tlLinha(ant,s);await tlSetDia(_tlDiaSel,s,'a',l.a);await tlSetDia(_tlDiaSel,s,'t',l.t);}
+  tlRenderDia();
+}
+async function tlAddEntidade(){
+  if(!canEdit())return;const n=(_tlEl('tl-nova-ent').value||'').trim();if(!n)return;
+  if(tlSelecoes().some(s=>s.toLowerCase()===n.toLowerCase())){toast('Essa entidade já existe','am');return;}
+  const cfg=tlCfgGet();cfg.extras.push(n);await tlCfgSet({extras:cfg.extras});_tlEl('tl-nova-ent').value='';tlRenderTudo();
+}
+async function tlRemoveEntidade(s){
+  if(!canEdit())return;const cfg=tlCfgGet(),tem=cfg.dias.some(d=>{const l=tlLinha(d,s);return l.a||l.t||l.obs;})||(_tl||[]).some(r=>r.selecao===s);
+  if(tem){toast('«'+s+'» tem registos: não pode ser removida','er');return;}
+  await tlCfgSet({extras:cfg.extras.filter(x=>x!==s)});tlRenderTudo();
+}
+
+// ---------------------------------------------------------------- recebimentos: contabilização (Receitas + Diário)
+async function tlSyncContab(id,r){
+  const refId='tl_'+id,desc=tlDesc(r),valor=_tlR2(r.valor);
+  const recs=(_rec||[]).filter(x=>x.refId===refId),lans=(_lan||[]).filter(x=>x.refId===refId);
+  const dRec={data:r.data,conta:TL_CONTA,desc:desc,valor:valor,estado:r.estado,obs:'Auto Treinos Livres'+(r.periodo?' ('+r.periodo+')':'')+(r.meio&&r.estado==='Recebido'?' · '+r.meio:'')+(r.obs?' | '+r.obs:''),origem:'treinosLivres',refId:refId};
+  if(recs.length){await _upd('receitas',recs[0].id,dRec);for(const x of recs.slice(1)){try{await _del('receitas',x.id);}catch(e){}}}
+  else await _add('receitas',Object.assign({ts:Date.now()},dRec));
+  if(r.estado==='Recebido'){
+    const dLan={data:r.data,dc:r.ref,cn:TL_CONTA,cb:TL_MEIOS[r.meio]||'Caixa',ds:desc,tp:'C',vl:valor,origem:'treinosLivres',refId:refId};
+    if(lans.length){await _upd('lancamentos',lans[0].id,dLan);for(const x of lans.slice(1)){try{await _del('lancamentos',x.id);}catch(e){}}}
+    else await _add('lancamentos',Object.assign({ts:Date.now()},dLan));
+  }else{for(const x of lans){try{await _del('lancamentos',x.id);}catch(e){}}}
+}
+function tlInfoSel(sel,excluirId){
+  if(!sel)return null;const r=tlRes(sel);let rec=r.recebido;
+  if(excluirId){const x=(_tl||[]).find(y=>y.id===excluirId);if(x&&x.tipo==='selecao'&&x.selecao===sel&&x.estado==='Recebido')rec=_tlR2(rec-Number(x.valor||0));}
+  return {devido:r.v,recebido:rec,porReceber:_tlR2(r.v-rec),pd:r.p};
+}
+function tlAbrirRec(tipo,sel){
+  if(!canEdit()){toast('Sem permissão para registar recebimentos','er');return;}
+  _tlEl('tlr-eid').value='';_tlEl('tlr-tipo').value=tipo||'selecao';_tlEl('tlr-sel').innerHTML=tlSelecoes().map(s=>'<option>'+_tlEsc(s)+'</option>').join('');
+  _tlEl('tlr-sel').value=sel||tlSelecoes()[0];_tlEl('tlr-dt').value=new Date().toISOString().slice(0,10);_tlEl('tlr-vl').value='';_tlEl('tlr-st').value='Recebido';_tlEl('tlr-mp').value='Numerário';_tlEl('tlr-pe').value='';_tlEl('tlr-ob').value='';
+  _tlEl('tlr-titulo').textContent='Novo recebimento — Treinos Livres';tlRecUI();openM('m-tl-rec');
+}
+function tlEditarRec(id){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}const r=(_tl||[]).find(x=>x.id===id);if(!r)return;
+  _tlEl('tlr-sel').innerHTML=tlSelecoes().map(s=>'<option>'+_tlEsc(s)+'</option>').join('');
+  _tlEl('tlr-eid').value=id;_tlEl('tlr-tipo').value=r.tipo||'selecao';_tlEl('tlr-sel').value=r.selecao||tlSelecoes()[0];_tlEl('tlr-dt').value=r.data||'';_tlEl('tlr-vl').value=r.valor;_tlEl('tlr-st').value=r.estado||'Recebido';_tlEl('tlr-mp').value=r.meio||'Numerário';_tlEl('tlr-pe').value=r.periodo||'';_tlEl('tlr-ob').value=r.obs||'';
+  _tlEl('tlr-titulo').textContent='Editar recebimento '+(r.ref||'');tlRecUI();openM('m-tl-rec');
+}
+function tlRecUI(){
+  const tipo=_tlEl('tlr-tipo').value,est=_tlEl('tlr-st').value;_tlEl('tlr-sel-w').style.display=tipo==='selecao'?'':'none';_tlEl('tlr-mp-w').style.display=est==='Recebido'?'':'none';
+  const i=tipo==='selecao'?tlInfoSel(_tlEl('tlr-sel').value,_tlEl('tlr-eid').value):null,box=_tlEl('tlr-info');
+  box.innerHTML=i?'<div>Devido (registo diário): <b>'+fmt(i.devido)+'</b> · já recebido: <b>'+fmt(i.recebido)+'</b> · por receber: <b style="color:var(--wr)">'+fmt(i.porReceber)+'</b> <button class="btn bo bsm" onclick="tlSugerir()">Usar este valor</button></div>':'<div>Recebimento global: não fica associado a nenhuma seleção.</div>';
+}
+function tlSugerir(){const i=tlInfoSel(_tlEl('tlr-sel').value,_tlEl('tlr-eid').value);if(i)_tlEl('tlr-vl').value=Math.max(0,i.porReceber);}
+async function tlGuardarRec(){
+  if(!canEdit()){toast('Sem permissão para registar recebimentos','er');return;}if(_tlBusy)return;
+  const eid=_tlEl('tlr-eid').value,tipo=_tlEl('tlr-tipo').value==='global'?'global':'selecao',sel=tipo==='selecao'?_tlEl('tlr-sel').value:'',data=_tlEl('tlr-dt').value,valor=_tlR2(parseFloat(String(_tlEl('tlr-vl').value).replace(',','.'))),estado=_tlEl('tlr-st').value==='Pendente'?'Pendente':'Recebido';
+  if(!data||!(valor>0)){toast('Indique a data e um valor maior que zero','er');return;}if(tipo==='selecao'&&!sel){toast('Escolha a seleção','er');return;}
+  const meio=estado==='Recebido'?(TL_MEIOS[_tlEl('tlr-mp').value]?_tlEl('tlr-mp').value:'Numerário'):'';
+  if(tipo==='selecao'){const i=tlInfoSel(sel,eid);if(i&&valor>i.porReceber+0.004&&!confirm('O valor ('+fmt(valor)+') ultrapassa o que falta receber de '+sel+' ('+fmt(Math.max(0,i.porReceber))+').\nGuardar mesmo assim?'))return;}
+  const base={tipo:tipo,selecao:sel,data:data,valor:valor,estado:estado,meio:meio,periodo:(_tlEl('tlr-pe').value||'').trim(),obs:(_tlEl('tlr-ob').value||'').trim()};
+  _tlBusy=true;
+  try{
+    if(eid){const old=(_tl||[]).find(x=>x.id===eid);if(!old){toast('Registo não encontrado','er');return;}await _upd(TL_COL,eid,base);await tlSyncContab(eid,Object.assign({},old,base));if(typeof addLog==='function')addLog('edição','Treinos Livres',(old.ref||'')+' · '+fmt(valor)+' · '+estado);toast('Recebimento atualizado — Receitas e Diário em dia');}
+    else{const ref=tlProximaRef(),dados=Object.assign({ref:ref,ts:Date.now()},base),dr=await _add(TL_COL,dados);await tlSyncContab(dr.id,dados);if(typeof addLog==='function')addLog('criação','Treinos Livres',ref+' · '+(tipo==='global'?'Global':sel)+' · '+fmt(valor)+' · '+estado);toast('Recebimento '+ref+' registado — lançado em Receitas'+(estado==='Recebido'?' e no Diário':''));}
+    closeM('m-tl-rec');
+  }catch(e){console.error('tlGuardarRec',e);toast('Erro ao guardar: '+(e&&e.message||e),'er');}
+  finally{_tlBusy=false;}
+}
+async function tlEliminarRec(id){
+  if(!canDelete()){toast('Sem permissão para eliminar','er');return;}const r=(_tl||[]).find(x=>x.id===id);if(!r)return;
+  if(!confirm('Eliminar o recebimento '+(r.ref||'')+' ('+fmt(r.valor)+')?\nVai também retirar a receita de Receitas e o lançamento do Diário.'))return;
+  await removerVendaContab('tl_'+id);await _del(TL_COL,id);if(typeof addLog==='function')addLog('eliminação','Treinos Livres',(r.ref||'')+' · '+fmt(r.valor));toast('Recebimento eliminado (receita e lançamento retirados)','er');
+}
+function tlMarcarRecebido(id){tlEditarRec(id);_tlEl('tlr-st').value='Recebido';tlRecUI();}
+
+// ---------------------------------------------------------------- verificação das contas (auditoria da ligação contabilística)
+function tlAuditar(){
+  const out=[],T=(_tl||[]),R=(_rec||[]),LN=(_lan||[]);
+  T.forEach(r=>{
+    const refId='tl_'+r.id,rec=R.filter(x=>x.refId===refId),lan=LN.filter(x=>x.refId===refId),v=_tlR2(r.valor);
+    if(!rec.length)out.push({id:r.id,ref:r.ref,t:'falta a receita em Receitas'});
+    else{if(rec.length>1)out.push({id:r.id,ref:r.ref,t:'receita repetida'});if(Math.abs(Number(rec[0].valor)-v)>0.004)out.push({id:r.id,ref:r.ref,t:'valor da receita diferente'});if(rec[0].estado!==r.estado)out.push({id:r.id,ref:r.ref,t:'estado da receita diferente'});if(rec[0].data!==r.data)out.push({id:r.id,ref:r.ref,t:'data da receita diferente'});}
+    if(r.estado==='Recebido'){
+      if(!lan.length)out.push({id:r.id,ref:r.ref,t:'falta o lançamento no Diário'});
+      else{if(lan.length>1)out.push({id:r.id,ref:r.ref,t:'lançamento repetido no Diário'});if(Math.abs(Number(lan[0].vl)-v)>0.004)out.push({id:r.id,ref:r.ref,t:'valor do Diário diferente'});if(lan[0].cb!==(TL_MEIOS[r.meio]||'Caixa'))out.push({id:r.id,ref:r.ref,t:'Caixa/Banco diferente do meio de pagamento'});if(lan[0].data!==r.data)out.push({id:r.id,ref:r.ref,t:'data do Diário diferente'});}
+    }else if(lan.length)out.push({id:r.id,ref:r.ref,t:'lançamento no Diário de um recebimento pendente'});
+  });
+  R.filter(x=>x.origem==='treinosLivres'&&!T.some(r=>'tl_'+r.id===x.refId)).forEach(x=>out.push({id:null,col:'receitas',docId:x.id,ref:x.desc,t:'receita sem recebimento (órfã)'}));
+  LN.filter(x=>x.origem==='treinosLivres'&&!T.some(r=>'tl_'+r.id===x.refId)).forEach(x=>out.push({id:null,col:'lancamentos',docId:x.id,ref:x.ds,t:'lançamento sem recebimento (órfão)'}));
+  return out;
+}
+async function tlVerificar(){
+  const p=tlAuditar();
+  if(!p.length){toast('Contas verificadas: Receitas e Diário coincidem com os recebimentos ✓');return;}
+  if(!canEdit()||!confirm('Foram encontradas '+p.length+' diferença(s):\n\n'+p.slice(0,12).map(x=>'• '+(x.ref||'')+': '+x.t).join('\n')+(p.length>12?'\n…':'')+'\n\nCorrigir agora (refazer a receita e o lançamento a partir do recebimento)?'))return;
+  const ids=new Set(p.filter(x=>x.id).map(x=>x.id));
+  for(const id of ids){const r=(_tl||[]).find(x=>x.id===id);if(r)await tlSyncContab(id,r);}
+  for(const x of p.filter(y=>!y.id)){try{await _del(x.col,x.docId);}catch(e){}}
+  toast('Contas corrigidas: '+p.length+' diferença(s) resolvida(s)');
+}
+
+// ---------------------------------------------------------------- listagem e filtros
+function tlFiltros(){return {sel:(_tlEl('tlf-sel')||{}).value||'',est:(_tlEl('tlf-est')||{}).value||'',mp:(_tlEl('tlf-mp')||{}).value||'',de:(_tlEl('tlf-de')||{}).value||'',ate:(_tlEl('tlf-ate')||{}).value||''};}
+function tlFiltrados(f){
+  f=f||tlFiltros();
+  return (_tl||[]).filter(r=>(!f.sel||(f.sel==='__global'?r.tipo==='global':r.selecao===f.sel))&&(!f.est||r.estado===f.est)&&(!f.mp||r.meio===f.mp)&&(!f.de||(r.data||'')>=f.de)&&(!f.ate||(r.data||'')<=f.ate)).slice().sort((a,b)=>(a.data||'').localeCompare(b.data||'')||String(a.ref||'').localeCompare(String(b.ref||'')));
+}
+function tlFiltrosTexto(f){const t=[];if(f.sel)t.push('Seleção: '+(f.sel==='__global'?'Global':f.sel));if(f.est)t.push('Estado: '+f.est);if(f.mp)t.push('Meio: '+f.mp);if(f.de)t.push('de '+_tlDmy(f.de));if(f.ate)t.push('até '+_tlDmy(f.ate));return t.length?t.join(' · '):'Sem filtros (todos os recebimentos)';}
+function tlDiarioDe(r){if(r.estado!=='Recebido')return '—';const l=(_lan||[]).find(x=>x.refId==='tl_'+r.id);return l?l.cb:'a lançar';}
+function tlRenderRec(){
+  const sels=tlSelecoes(),f=tlFiltros(),ss=_tlEl('tlf-sel'),atual=ss.value;
+  if(ss.options.length!==sels.length+2){ss.innerHTML='<option value="">Todas as seleções</option><option value="__global">Global (sem seleção)</option>'+sels.map(s=>'<option>'+_tlEsc(s)+'</option>').join('');ss.value=atual||'';}
+  const lista=tlFiltrados(f),ed=canEdit(),dl=canDelete();let tR=0,tP=0;
+  _tlEl('tl-t-rec').innerHTML=lista.length?lista.map(r=>{if(r.estado==='Recebido')tR+=Number(r.valor||0);else tP+=Number(r.valor||0);
+    return '<tr><td><span class="sc">'+_tlEsc(r.ref||'')+'</span></td><td>'+_tlEsc(r.data||'')+'</td><td>'+(r.tipo==='global'?'<i class="mu">Global</i>':'<b>'+_tlEsc(r.selecao)+'</b>')+'</td><td class="mu">'+_tlEsc(r.periodo||'')+'</td><td class="tok">'+fmt(r.valor)+'</td>'
+      +'<td><span class="bge '+(r.estado==='Recebido'?'bg-ok':'bg-am')+'">'+_tlEsc(r.estado)+'</span></td><td class="mu">'+_tlEsc(r.meio||'—')+'</td><td class="mu">'+_tlEsc(tlDiarioDe(r))+'</td><td class="mu">'+_tlEsc(r.obs||'')+'</td>'
+      +'<td style="white-space:nowrap;">'+(ed?(r.estado==='Pendente'?'<button class="btn bo bsm" title="Marcar como recebido" onclick="tlMarcarRecebido(\''+r.id+'\')">✓ Recebido</button> ':'')+'<button class="btn bo bsm" title="Editar" onclick="tlEditarRec(\''+r.id+'\')">✏️</button> ':'')+(dl?'<button class="btn bo bsm" title="Eliminar" onclick="tlEliminarRec(\''+r.id+'\')">🗑️</button>':'')+'</td></tr>';}).join('')
+    :'<tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem recebimentos com estes filtros</td></tr>';
+  _tlEl('tl-f-rec').innerHTML='<tr><td colspan="4"><b>TOTAL ('+lista.length+')</b></td><td class="tok"><b>'+fmt(tR+tP)+'</b></td><td colspan="5" class="mu">Recebido: <b>'+fmt(tR)+'</b> · Pendente: <b>'+fmt(tP)+'</b></td></tr>';
+  _tlRodape('tl-f-rec');
+}
+
+// ---------------------------------------------------------------- resumo e definições
+function tlRenderResumo(){
+  const T=tlTotais();
+  _tlEl('tl-t-res').innerHTML=T.rs.filter(r=>r.p||r.recs.length).map(r=>'<tr><td><b>'+_tlEsc(r.sel)+'</b></td><td style="text-align:center;">'+r.a+'</td><td style="text-align:center;">'+r.t+'</td><td style="text-align:center;"><b>'+r.p+'</b></td><td class="tok">'+fmt(r.v)+'</td><td class="tok">'+fmt(r.recebido)+'</td><td class="'+(r.porReceber>0.004?'tv':'tok')+'"><b>'+fmt(r.porReceber)+'</b></td><td style="white-space:nowrap;" data-sel="'+_tlEsc(r.sel)+'"><button class="btn bo bsm" onclick="tlPdfSelecao(this.parentNode.dataset.sel)">📄 PDF</button>'+(canEdit()?' <button class="btn bo bsm" onclick="tlAbrirRec(\'selecao\',this.parentNode.dataset.sel)">+ Recebimento</button>':'')+'</td></tr>').join('')
+    ||'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Ainda não há registos. Comece no «Registo diário».</td></tr>';
+  const g=T.g;_tlEl('tl-t-res').innerHTML+=g.recs.length?'<tr><td><i>Recebimentos globais</i></td><td colspan="3" class="mu" style="text-align:center;">sem seleção</td><td></td><td class="tok">'+fmt(g.recebido)+'</td><td class="mu">—</td><td></td></tr>':'';
+  _tlEl('tl-f-res').innerHTML='<tr><td><b>TOTAL</b></td><td></td><td></td><td style="text-align:center;"><b>'+T.p+'</b></td><td class="tok"><b>'+fmt(T.devido)+'</b></td><td class="tok"><b>'+fmt(T.recebido)+'</b></td><td class="'+(T.porReceber>0.004?'tv':'tok')+'"><b>'+fmt(T.porReceber)+'</b></td><td></td></tr>';
+  _tlRodape('tl-f-res');
+  const ant=(_rec||[]).filter(r=>/^Taxa de Treino Extra/.test(r.desc||'')),aviso=_tlEl('tl-aviso');
+  if(ant.length){aviso.style.display='';aviso.innerHTML='<div><strong>Atenção:</strong> já existem <b>'+ant.length+'</b> receita(s) «Taxa de Treino Extra» (<b>'+fmt(ant.reduce((a,r)=>a+Number(r.valor||0),0))+'</b>) registadas diretamente em Receitas. Não as repita aqui, para o mesmo valor não entrar duas vezes nas contas.</div>';}else aviso.style.display='none';
+  const cfg=tlCfgGet();_tlEl('tld-preco').value=String(cfg.preco).replace('.',',');
+  _tlEl('tld-dias').innerHTML=cfg.dias.map(d=>'<span class="bge bg-mu" style="margin:3px;">'+_tlDow(d).pt+' '+_tlDmy(d)+(canEdit()?' <a href="#" style="color:var(--er);text-decoration:none;" onclick="tlRemoveDia(\''+d+'\');return false;">×</a>':'')+'</span>').join('');
+}
+async function tlSetPreco(){if(!canEdit())return;const v=parseFloat(String(_tlEl('tld-preco').value).replace(',','.'));if(!isFinite(v)||v<0){toast('Valor inválido','er');tlRenderResumo();return;}await tlCfgSet({preco:v});tlRenderTudo();toast('Preço por pessoa e por dia: '+fmt(v));}
+async function tlAddDia(){if(!canEdit())return;const d=_tlEl('tld-novo').value;if(!d)return;const cfg=tlCfgGet();if(cfg.dias.indexOf(d)>=0){toast('Esse dia já existe','am');return;}cfg.dias.push(d);cfg.dias.sort();await tlCfgSet({dias:cfg.dias});_tlEl('tld-novo').value='';tlRenderTudo();}
+async function tlRemoveDia(d){
+  if(!canEdit())return;const tem=(_tld||[]).some(x=>x.dia===d);if(tem&&!confirm('O dia '+_tlDmy(d)+' tem registos. Remover o dia e apagar esses registos?'))return;
+  for(const x of (_tld||[]).filter(y=>y.dia===d)){try{await _del(TL_DIAS,x.id);delete TLMAP[x.id];}catch(e){}}
+  const cfg=tlCfgGet();await tlCfgSet({dias:cfg.dias.filter(x=>x!==d)});tlRenderTudo();
+}
+function tlRenderKpis(){const T=tlTotais();_tlEl('tl-k-dev').textContent=fmt(T.devido);_tlEl('tl-k-rec').textContent=fmt(T.recebido);_tlEl('tl-k-por').textContent=fmt(T.porReceber);_tlEl('tl-k-pd').textContent=T.p;}
+function tlTab(n){
+  _tlSep=n;['dia','rec','res'].forEach(k=>{_tlEl('tl-tab-'+k).style.display=k===n?'':'none';_tlEl('tl-bt-'+k).className='btn '+(k===n?'bp':'bo');});
+  if(n==='dia')tlRenderDia();if(n==='rec')tlRenderRec();if(n==='res')tlRenderResumo();tlRenderKpis();
+}
+function tlRenderTudo(){if(!_tlEl('pg-treinoslivres'))return;tlIndex();tlTab(_tlSep);}
+function tlAtivo(){const p=_tlEl('pg-treinoslivres');return !!(p&&p.classList.contains('act'));}
+function tlRefresca(){if(tlAtivo())tlRenderTudo();}
+function tlOnDias(){tlIndex();const tb=_tlEl('tl-t-dia');if(_tlSep==='dia'&&tb&&document.activeElement&&tb.contains(document.activeElement)){tlRodapeDia();return;}tlRefresca();}
+function tlLigar(){
+  const tb=_tlEl('tl-t-dia');if(!tb||tb.dataset.tl)return;tb.dataset.tl='1';
+  const ler=tr=>({a:_tlNum(tr.querySelector('[data-c="a"]').value),t:_tlNum(tr.querySelector('[data-c="t"]').value),obs:(tr.querySelector('[data-c="obs"]').value||'').trim()});
+  tb.addEventListener('input',e=>{const el=e.target,tr=el.closest('tr');if(!tr||!el.dataset.c||el.dataset.c==='obs'||!_tlDiaSel)return;const l=ler(tr),id=_tlId(_tlDiaSel,tr.dataset.sel),p=l.a+l.t;TLMAP[id]=Object.assign({id:id,dia:_tlDiaSel,selecao:tr.dataset.sel},l);tr.querySelector('.tl-p').textContent=p||'–';tr.querySelector('.tl-v').textContent=p?fmt(p*tlCfgGet().preco):'–';tlRodapeDia();});
+  tb.addEventListener('change',e=>{const el=e.target,tr=el.closest('tr');if(!tr||!el.dataset.c||!_tlDiaSel)return;tlSetDia(_tlDiaSel,tr.dataset.sel,el.dataset.c,el.value);});
+  tb.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target.dataset||!e.target.dataset.c)return;e.preventDefault();const tr=e.target.closest('tr'),nx=tr?tr.nextElementSibling:null,c=e.target.dataset.c;e.target.blur();if(nx){const n=nx.querySelector('[data-c="'+c+'"]');if(n){n.focus();if(n.select)n.select();}}});
+}
+tlLigar();
+
+// ---------------------------------------------------------------- CSV
+function tlCsv(tipo){
+  const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"',r=[];
+  if(tipo==='res'){r.push('Seleção;Atletas-dia;Treinadores-dia;Pessoas-dia;Devido (€);Recebido (€);Por receber (€)');tlTotais().rs.forEach(x=>{if(x.p||x.recs.length)r.push([q(x.sel),x.a,x.t,x.p,x.v.toFixed(2).replace('.',','),x.recebido.toFixed(2).replace('.',','),x.porReceber.toFixed(2).replace('.',',')].join(';'));});}
+  else{r.push('Ref;Data;Seleção;Período;Valor (€);Estado;Meio;Diário;Observações');tlFiltrados().forEach(x=>r.push([q(x.ref),x.data,q(x.tipo==='global'?'Global':x.selecao),q(x.periodo),Number(x.valor).toFixed(2).replace('.',','),x.estado,q(x.meio),q(tlDiarioDe(x)),q(x.obs)].join(';')));}
+  const b=new Blob(['\ufeff'+r.join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Treinos_Livres_'+(tipo==='res'?'Resumo':'Recebimentos')+'.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+
+// ---------------------------------------------------------------- PDF (mesmo cabeçalho/rodapé dos outros relatórios)
+const _tlC={NAVY:[11,46,79],GOLD:[201,168,76],GOLD_L:[231,207,134],INK:[20,32,46],SUB:[88,101,119],LINE:[201,209,219],CREAM:[255,244,214],SOFT:[243,246,250]};
+function _tlPeriodo(dias){
+  if(!dias.length)return {en:'',pt:''};const MES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const a=new Date(dias[0]+'T12:00:00'),b=new Date(dias[dias.length-1]+'T12:00:00');
+  if(a.getMonth()===b.getMonth()&&a.getFullYear()===b.getFullYear())return {en:a.getDate()+(a.getDate()===b.getDate()?'':' – '+b.getDate())+' '+MON[a.getMonth()]+' '+a.getFullYear(),pt:a.getDate()+(a.getDate()===b.getDate()?'':' a '+b.getDate())+' de '+MES[a.getMonth()]+' de '+a.getFullYear()};
+  return {en:_tlDmy(dias[0])+' – '+_tlDmy(dias[dias.length-1]),pt:_tlDmy(dias[0])+' a '+_tlDmy(dias[dias.length-1])};
+}
+function _tlRot(doc,x,y,en,pt){const c=_tlC;doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(150,125,45);doc.text(en.toUpperCase(),x,y);doc.setFont('helvetica','normal');doc.setFontSize(6.4);doc.setTextColor(...c.SUB);doc.text(pt,x,y+3.1);}
+function _tlCaixa(doc,x,y,w,h,tit,sub,val,cor){const c=_tlC;doc.setFillColor(...c.CREAM);doc.setDrawColor(...c.GOLD);doc.setLineWidth(0.7);doc.roundedRect(x,y,w,h,2,2,'FD');doc.setFont('helvetica','bold');doc.setFontSize(8.6);doc.setTextColor(...c.NAVY);doc.text(tit,x+4,y+6.2);doc.setFont('helvetica','normal');doc.setFontSize(6.6);doc.setTextColor(...c.SUB);doc.text(sub,x+4,y+10);doc.setFont('helvetica','bold');doc.setFontSize(13.5);doc.setTextColor(...(cor||c.NAVY));doc.text(val,x+w-4,y+h-3.4,{align:'right'});}
+function tlDesenharSelecao(doc,res,primeira){
+  const c=_tlC,cfg=tlCfgGet(),dias=cfg.dias,per=_tlPeriodo(dias),W=210;
+  pdfHeader(doc,'Treinos Livres — Mapa financeiro','SWC Vizela 2026 · Free training · Financial statement',false);
+  _tlRot(doc,15,47,'Delegation','Seleção');doc.setFont('helvetica','bold');let fsn=19;doc.setFontSize(fsn);while(doc.getTextWidth(res.sel)>92&&fsn>9){fsn-=1;doc.setFontSize(fsn);}doc.setTextColor(...c.NAVY);doc.text(res.sel,15,58);
+  _tlRot(doc,112,47,'Period','Período');doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...c.INK);doc.text(per.en,112,55);doc.setFont('helvetica','normal');doc.setFontSize(7.4);doc.setTextColor(...c.SUB);doc.text(per.pt,112,58.8);
+  _tlRot(doc,162,47,'Rate','Tarifa');doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...c.INK);doc.text(fmtPDF(cfg.preco)+'/day',162,55);doc.setFont('helvetica','normal');doc.setFontSize(7.4);doc.setTextColor(...c.SUB);doc.text(fmtPDF(cfg.preco)+'/dia, por pessoa',162,58.8);
+  const corpo=res.dias.map(d=>{const w=_tlDow(d.dia);return [_tlDmy(d.dia)+'  ·  '+w.en+' / '+w.pt,d.a||'–',d.t||'–',d.p||'–',d.p?fmtPDF(d.v):'–'];});
+  doc.autoTable({startY:65,margin:{left:15,right:15,bottom:24},head:[['Date\nData','Athletes\nAtletas','Coaches\nTreinadores','Persons\nPessoas','Amount\nValor']],body:corpo,foot:[['TOTAL',String(res.a),String(res.t),String(res.p),fmtPDF(res.v)]],showFoot:'lastPage',theme:'grid',
+    styles:{font:'helvetica',fontSize:9,cellPadding:res.dias.length>5?1.7:2.1,textColor:c.INK,lineColor:c.LINE,lineWidth:0.2,valign:'middle'},headStyles:{fillColor:c.NAVY,textColor:c.GOLD_L,fontStyle:'bold',halign:'center',fontSize:7.6,lineWidth:0},footStyles:{fillColor:c.CREAM,textColor:c.NAVY,fontStyle:'bold',halign:'center',fontSize:9.6},alternateRowStyles:{fillColor:c.SOFT},
+    columnStyles:{0:{cellWidth:50,halign:'left'},1:{halign:'center'},2:{halign:'center'},3:{halign:'center'},4:{halign:'right',fontStyle:'bold'}},
+    didParseCell:function(d){if(d.section==='foot'&&d.column.index===0)d.cell.styles.halign='left';if(d.section==='foot'&&d.column.index===4)d.cell.styles.halign='right';if(d.section==='head'&&d.column.index===4)d.cell.styles.halign='right';if(d.section==='head'&&d.column.index===0)d.cell.styles.halign='left';}});
+  let y=doc.lastAutoTable.finalY+6;const bw=(W-30-8)/3;
+  _tlCaixa(doc,15,y,bw,17,'TOTAL DUE','Total devido',fmtPDF(res.v),c.NAVY);_tlCaixa(doc,15+bw+4,y,bw,17,'RECEIVED','Já recebido',fmtPDF(res.recebido),[46,125,91]);_tlCaixa(doc,15+2*(bw+4),y,bw,17,'STILL TO PAY','Por receber',fmtPDF(res.porReceber),res.porReceber>0.004?[194,65,12]:[46,125,91]);y+=23;
+  if(res.recs.length){
+    doc.autoTable({startY:y,margin:{left:15,right:15,bottom:24},head:[['Ref.','Date / Data','Payment / Meio','Status / Estado','Amount / Valor']],body:res.recs.slice().sort((a,b)=>(a.data||'').localeCompare(b.data||'')).map(r=>[r.ref||'',_tlDmy(r.data),r.meio||'—',r.estado,fmtPDF(r.valor)]),theme:'striped',styles:{font:'helvetica',fontSize:8,cellPadding:1.7,textColor:c.INK},headStyles:{fillColor:c.NAVY,textColor:c.GOLD_L,fontStyle:'bold',fontSize:7.2},columnStyles:{4:{halign:'right',fontStyle:'bold'}}});
+    y=doc.lastAutoTable.finalY+6;
+  }
+  const H=297,alt=72;if(y+alt>H-20){doc.addPage();y=22;}else y=Math.max(y+2,H-20-alt);
+  _tlRot(doc,15,y,'Acknowledgement','Reconhecimento');y+=8;doc.setFont('helvetica','normal');doc.setFontSize(8.2);doc.setTextColor(...c.INK);
+  const en='The delegation named above acknowledges and accepts the training days, the number of persons and the amounts stated in this statement, with a total due of '+fmtPDF(res.v)+'.',pt='A seleção acima identificada reconhece e aceita os dias de treino, o número de pessoas e os valores constantes deste mapa, com um total devido de '+fmtPDF(res.v)+'.';
+  let ls=doc.splitTextToSize(en,W-30);doc.text(ls,15,y);y+=ls.length*3.9;doc.setFontSize(7.2);doc.setTextColor(...c.SUB);ls=doc.splitTextToSize(pt,W-30);doc.text(ls,15,y+0.6);y+=ls.length*3.4+3.5;
+  const bx=(x,t,p)=>{doc.setDrawColor(...c.INK);doc.setLineWidth(0.4);doc.rect(x,y-3,3.2,3.2);doc.setFont('helvetica','normal');doc.setFontSize(7.4);doc.setTextColor(...c.INK);doc.text(t,x+5,y-0.4);doc.setFontSize(6.2);doc.setTextColor(...c.SUB);doc.text(p,x+5,y+2.6);};
+  bx(15,'Paid in full','Pago na totalidade');bx(55,'Cash','Numerário');bx(85,'Bank transfer','Transferência');bx(122,'To be paid by','A pagar até');doc.setDrawColor(...c.INK);doc.line(148,y,W-15,y);y+=8.5;
+  const bw2=(W-30-8)/2,bh=36;
+  [['For the delegation','Pela seleção',15,['Name / Nome','Role / Função','Date / Data']],['For the organisation','Pela organização — Vizelgolfe',15+bw2+8,['Amount received / Valor recebido (€)','Received by / Recebido por','Date / Data']]].forEach(b=>{
+    doc.setDrawColor(...c.NAVY);doc.setLineWidth(0.5);doc.roundedRect(b[2],y,bw2,bh,2,2,'S');doc.setFillColor(...c.NAVY);doc.roundedRect(b[2],y,bw2,7.4,2,2,'F');doc.rect(b[2],y+4,bw2,3.4,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text(b[0].toUpperCase(),b[2]+4,y+5);doc.setFont('helvetica','normal');doc.setFontSize(6.6);doc.setTextColor(...c.GOLD_L);doc.text(b[1],b[2]+bw2-4,y+5,{align:'right'});
+    b[3].forEach((t,i)=>{const yy=y+13.6+i*7;doc.setDrawColor(...c.LINE);doc.setLineWidth(0.3);doc.line(b[2]+4,yy,b[2]+bw2-4,yy);doc.setFontSize(6.2);doc.setTextColor(...c.SUB);doc.text(t,b[2]+4,yy-1.2);});
+    doc.setFontSize(6.2);doc.setTextColor(...c.SUB);doc.text('Signature'+(b[2]>20?' and stamp':'')+' / Assinatura'+(b[2]>20?' e carimbo':''),b[2]+4,y+bh-2.2);
+  });
+}
+function tlPdfSelecao(sel){
+  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});tlDesenharSelecao(doc,tlRes(sel),true);
+  pdfFooter(doc,false);doc.save('Treinos_Livres_Mapa_'+_tlSlug(sel)+'.pdf');toast('PDF gerado');
+}
+function tlPdfTodas(){
+  const rs=tlTotais().rs.filter(r=>r.p||r.recs.length);if(!rs.length){toast('Ainda não há registos','am');return;}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});rs.forEach((r,i)=>{if(i)doc.addPage();tlDesenharSelecao(doc,r,i===0);});
+  pdfFooter(doc,false);doc.save('Treinos_Livres_Mapas_Todas_as_Selecoes.pdf');toast('PDF gerado ('+rs.length+' seleções)');
+}
+function tlPdfGeral(){
+  const T=tlTotais(),c=_tlC,rs=T.rs.filter(r=>r.p||r.recs.length);if(!rs.length&&!T.g.recs.length){toast('Ainda não há registos','am');return;}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),per=_tlPeriodo(tlCfgGet().dias);
+  pdfHeader(doc,'Treinos Livres — Resumo geral','SWC Vizela 2026 · '+per.pt+' · '+fmtPDF(tlCfgGet().preco)+' por pessoa e por dia',false);
+  const corpo=rs.map(r=>[r.sel,r.a,r.t,r.p,fmtPDF(r.v),fmtPDF(r.recebido),fmtPDF(r.porReceber)]);if(T.g.recs.length)corpo.push(['Recebimentos globais (sem seleção)','','','','',fmtPDF(T.g.recebido),'']);
+  doc.autoTable({startY:44,margin:{left:15,right:15,bottom:24},head:[['Seleção','Atletas-dia','Trein.-dia','Pessoas-dia','Devido','Recebido','Por receber']],body:corpo,foot:[['TOTAL','','',String(T.p),fmtPDF(T.devido),fmtPDF(T.recebido),fmtPDF(T.porReceber)]],showFoot:'lastPage',theme:'striped',
+    styles:{font:'helvetica',fontSize:8.6,cellPadding:2.4,textColor:c.INK},headStyles:{fillColor:c.NAVY,textColor:c.GOLD_L,fontStyle:'bold',halign:'center',fontSize:7.6},footStyles:{fillColor:c.CREAM,textColor:c.NAVY,fontStyle:'bold',fontSize:9},columnStyles:{0:{fontStyle:'bold',cellWidth:54},1:{halign:'center'},2:{halign:'center'},3:{halign:'center'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right',fontStyle:'bold'}}});
+  let y=doc.lastAutoTable.finalY+8;const bw=(210-30-8)/3;
+  _tlCaixa(doc,15,y,bw,17,'TOTAL DUE','Total devido',fmtPDF(T.devido),c.NAVY);_tlCaixa(doc,15+bw+4,y,bw,17,'RECEIVED','Total recebido',fmtPDF(T.recebido),[46,125,91]);_tlCaixa(doc,15+2*(bw+4),y,bw,17,'STILL TO COLLECT','Por receber',fmtPDF(T.porReceber),T.porReceber>0.004?[194,65,12]:[46,125,91]);y+=24;
+  doc.setFont('helvetica','normal');doc.setFontSize(7.6);doc.setTextColor(...c.SUB);const nt=doc.splitTextToSize('Cada recebimento está lançado em Receitas (conta '+TL_CONTA+') e, quando recebido, no Diário de Caixa ou Banco. Pendente: '+fmtPDF(T.pendente)+' lançado como a receber.',180);doc.text(nt,15,y);
+  pdfFooter(doc,false);doc.save('Treinos_Livres_Resumo_Geral.pdf');toast('PDF gerado');
+}
+function tlPdfRecebimentos(){
+  const f=tlFiltros(),lista=tlFiltrados(f);if(!lista.length){toast('Sem recebimentos com estes filtros','am');return;}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'}),c=_tlC;
+  pdfHeader(doc,'Treinos Livres — Recebimentos','SWC Vizela 2026 · '+tlFiltrosTexto(f),true);
+  let tR=0,tP=0;const corpo=lista.map(r=>{if(r.estado==='Recebido')tR+=Number(r.valor||0);else tP+=Number(r.valor||0);return [r.ref||'',_tlDmy(r.data),r.tipo==='global'?'Global':r.selecao,r.periodo||'',fmtPDF(r.valor),r.estado,r.meio||'—',tlDiarioDe(r),r.obs||''];});
+  doc.autoTable({startY:42,margin:{left:12,right:12,bottom:24},head:[['Ref.','Data','Seleção','Período','Valor','Estado','Meio','Diário','Obs.']],body:corpo,foot:[['TOTAL ('+lista.length+')','','','',fmtPDF(tR+tP),'Recebido '+fmtPDF(tR),'Pendente '+fmtPDF(tP),'','']],showFoot:'lastPage',theme:'striped',styles:{fontSize:8,cellPadding:2.6,textColor:c.INK},headStyles:{fillColor:[10,22,40],textColor:c.GOLD,fontStyle:'bold'},footStyles:{fillColor:c.CREAM,textColor:c.NAVY,fontStyle:'bold'},columnStyles:{4:{halign:'right',fontStyle:'bold'},0:{cellWidth:20},1:{cellWidth:22}}});
+  pdfFooter(doc,true);doc.save('Treinos_Livres_Recebimentos.pdf');toast('PDF gerado');
+}
+window.tlTab=tlTab;window.tlEscolheDia=tlEscolheDia;window.tlCopiarAnterior=tlCopiarAnterior;window.tlAddEntidade=tlAddEntidade;window.tlRemoveEntidade=tlRemoveEntidade;window.tlAbrirRec=tlAbrirRec;window.tlEditarRec=tlEditarRec;window.tlRecUI=tlRecUI;window.tlSugerir=tlSugerir;window.tlGuardarRec=tlGuardarRec;window.tlEliminarRec=tlEliminarRec;window.tlMarcarRecebido=tlMarcarRecebido;window.tlVerificar=tlVerificar;window.tlRenderRec=tlRenderRec;window.tlCsv=tlCsv;window.tlSetPreco=tlSetPreco;window.tlAddDia=tlAddDia;window.tlRemoveDia=tlRemoveDia;window.tlPdfSelecao=tlPdfSelecao;window.tlPdfTodas=tlPdfTodas;window.tlPdfGeral=tlPdfGeral;window.tlPdfRecebimentos=tlPdfRecebimentos;window.tlRenderTudo=tlRenderTudo;window.tlSetDia=tlSetDia;window.tlRefresca=tlRefresca;window.tlOnDias=tlOnDias;window.tlLigar=tlLigar;window.tlAuditar=tlAuditar;
+
+
 
 //  DESPESAS 
 async function saveDesp(){
@@ -8389,7 +8807,7 @@ function exportBackupJSON(){
       lancamentos:_lan,receitas:_rec,despesas:_desp,patrocinios:_pat,
       programa:_prog,resultados:_resultados,matchplay:_matchplay,
       diariodb:_diariodb,actas:_actas,comunicados:_comunicados,
-      orcamento:_orcamento,faturas:_faturas,fluxo:_fluxo,
+      orcamento:_orcamento,faturas:_faturas,fluxo:_fluxo,treinosLivres:_tl,treinosLivresDias:_tld,treinosLivresCfg:_tlcfg,seguros:_sgr,
       cs_marcas:_marcas,cs_artigos:_artigos,cs_vendas:_vendas_cs,
     }
   };
@@ -11116,6 +11534,83 @@ function exportSegPDF(){
   pdfFooter(doc,false);doc.save('SWC2026_Inventario_WMF.pdf');toast('PDF gerado com sucesso');
 }
 
+// ===================================================================================================
+// SEGUROS DO EVENTO (página «Segurança & Seguros»): várias apólices, com editor, estado, avisos e exportação.
+// Antes, o cartão do seguro era só um molde: o botão «Guardar» mostrava a mensagem e não guardava nada.
+// ===================================================================================================
+const SGR_TIPOS=['Responsabilidade civil (obrigatório)','Acidentes pessoais','Equipamento / roubo','Saúde / assistência em viagem','Cancelamento do evento','Outro'];
+const SGR_FIM_EVENTO='2026-10-17',SGR_COL='seguros';
+const _sgrEsc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const _sgrDmy=iso=>{const p=String(iso||'').split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:'';};
+const _sgrNum=v=>{const n=parseFloat(String(v==null?'':v).replace(',','.'));return isFinite(n)&&n>=0?Math.round(n*100)/100:0;};
+const _sgrEl=id=>document.getElementById(id);
+function sgrEstado(p,hoje){
+  hoje=hoje||new Date().toISOString().slice(0,10);
+  if(!p.inicio&&!p.fim)return 'Sem datas';if(p.fim&&p.fim<hoje)return 'Expirada';if(p.inicio&&p.inicio>hoje)return 'Futura';
+  if(p.fim&&Math.round((new Date(p.fim+'T12:00:00')-new Date(hoje+'T12:00:00'))/86400000)<=30)return 'A expirar';return 'Vigente';
+}
+const sgrCobreEvento=p=>!!(p.fim&&p.fim>=SGR_FIM_EVENTO);
+function sgrRCok(hoje){return (_sgr||[]).some(p=>/^Responsabilidade civil/.test(p.tipo||'')&&['Vigente','A expirar'].indexOf(sgrEstado(p,hoje))>=0&&sgrCobreEvento(p));}
+function sgrFiltros(){return {est:(_sgrEl('sgrf-est')||{}).value||'',tp:(_sgrEl('sgrf-tp')||{}).value||''};}
+function sgrFiltrados(f){f=f||sgrFiltros();return (_sgr||[]).filter(p=>(!f.est||sgrEstado(p)===f.est)&&(!f.tp||p.tipo===f.tp)).slice().sort((a,b)=>(a.fim||'9999').localeCompare(b.fim||'9999')||String(a.seguradora||'').localeCompare(String(b.seguradora||'')));}
+function sgrRender(){
+  const el=_sgrEl('sgr-lista');if(!el)return;const lista=sgrFiltrados(),ed=canEdit(),dl=canDelete(),todas=_sgr||[];
+  const ativas=todas.filter(p=>['Vigente','A expirar'].indexOf(sgrEstado(p))>=0),premio=Math.round(todas.reduce((a,p)=>a+Number(p.premio||0),0)*100)/100,rc=sgrRCok();
+  const proximo=ativas.filter(p=>p.fim).map(p=>p.fim).sort()[0]||'';
+  _sgrEl('sgr-k-at').textContent=ativas.length+' de '+todas.length;_sgrEl('sgr-k-pr').textContent=fmt(premio);_sgrEl('sgr-k-fim').textContent=proximo?_sgrDmy(proximo):'—';
+  const k=_sgrEl('sgr-k-rc');k.textContent=rc?'✓ coberta até ao fim do evento':(todas.some(p=>/^Responsabilidade civil/.test(p.tipo||''))?'⚠ não cobre até 17/10':'⚠ sem apólice registada');k.style.color=rc?'var(--ok)':'var(--wr)';
+  el.innerHTML=lista.length?'<div class="tw"><table><thead><tr><th>Tipo</th><th>Seguradora</th><th>Apólice</th><th>Cobertura</th><th>Capital</th><th>Prémio</th><th>Pagamento</th><th>Estado</th><th>Ações</th></tr></thead><tbody>'+lista.map(p=>{
+    const st=sgrEstado(p),cls=st==='Vigente'?'bg-ok':st==='A expirar'?'bg-am':st==='Expirada'?'bg-er':'bg-bl';
+    return '<tr><td><b>'+_sgrEsc(p.tipo||'')+'</b>'+(p.ambito?'<div class="mu" style="font-size:10px;">'+_sgrEsc(p.ambito)+'</div>':'')+'</td><td>'+_sgrEsc(p.seguradora||'')+(p.mediador?'<div class="mu" style="font-size:10px;">'+_sgrEsc(p.mediador)+'</div>':'')+'</td><td class="mu">'+_sgrEsc(p.apolice||'—')+'</td>'
+      +'<td style="white-space:nowrap;">'+_sgrDmy(p.inicio)+' a '+_sgrDmy(p.fim)+(p.fim&&!sgrCobreEvento(p)?'<div style="font-size:10px;color:var(--wr);">termina antes de 17/10</div>':'')+'</td><td>'+(p.capital?fmt(p.capital):'—')+'</td><td class="tok">'+(p.premio?fmt(p.premio):'—')+'</td>'
+      +'<td class="mu">'+_sgrEsc(p.pagamento||'—')+(p.dataPag?' · '+_sgrDmy(p.dataPag):'')+'</td><td><span class="bge '+cls+'">'+st+'</span></td>'
+      +'<td style="white-space:nowrap;">'+(ed?'<button class="btn bo bsm" title="Editar" onclick="sgrEditar(\''+p.id+'\')">✏️</button> ':'')+(dl?'<button class="btn bo bsm" title="Eliminar" onclick="sgrEliminar(\''+p.id+'\')">🗑️</button>':'')+'</td></tr>';}).join('')+'</tbody></table></div>'
+    :'<div class="em"><div class="emi">◆</div><div class="emt">'+(todas.length?'Sem apólices com estes filtros':'Sem seguros registados')+'</div><div style="font-size:11px;color:var(--mu);">Carregue em «+ Apólice» para registar a seguradora, o prazo e os valores</div></div>';
+}
+function sgrAbrir(){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}
+  _sgrEl('sgm-eid').value='';_sgrEl('sgm-tp').value=SGR_TIPOS[0];['sgm-sg','sgm-md','sgm-ap','sgm-cb','sgm-cp','sgm-pr','sgm-dp','sgm-di','sgm-df','sgm-ob'].forEach(i=>{_sgrEl(i).value='';});
+  _sgrEl('sgm-tm').value='Vizelgolfe — Associação de Minigolfe de Vizela';_sgrEl('sgm-pg').value='Pendente';_sgrEl('sgm-titulo').textContent='Nova apólice de seguro';openM('m-sgr');
+}
+function sgrEditar(id){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}const p=(_sgr||[]).find(x=>x.id===id);if(!p)return;
+  _sgrEl('sgm-eid').value=id;_sgrEl('sgm-tp').value=SGR_TIPOS.indexOf(p.tipo)>=0?p.tipo:'Outro';_sgrEl('sgm-sg').value=p.seguradora||'';_sgrEl('sgm-md').value=p.mediador||'';_sgrEl('sgm-ap').value=p.apolice||'';_sgrEl('sgm-tm').value=p.tomador||'';_sgrEl('sgm-cb').value=p.ambito||'';
+  _sgrEl('sgm-cp').value=p.capital||'';_sgrEl('sgm-pr').value=p.premio||'';_sgrEl('sgm-pg').value=p.pagamento||'Pendente';_sgrEl('sgm-dp').value=p.dataPag||'';_sgrEl('sgm-di').value=p.inicio||'';_sgrEl('sgm-df').value=p.fim||'';_sgrEl('sgm-ob').value=p.obs||'';
+  _sgrEl('sgm-titulo').textContent='Editar apólice';openM('m-sgr');
+}
+async function sgrGuardar(){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}const v=i=>(_sgrEl(i).value||'').trim();
+  if(!v('sgm-sg')){toast('Indique a seguradora','er');return;}if(v('sgm-di')&&v('sgm-df')&&v('sgm-df')<v('sgm-di')){toast('O fim da cobertura é anterior ao início','er');return;}
+  const d={tipo:_sgrEl('sgm-tp').value,seguradora:v('sgm-sg'),mediador:v('sgm-md'),apolice:v('sgm-ap'),tomador:v('sgm-tm'),ambito:v('sgm-cb'),capital:_sgrNum(v('sgm-cp')),premio:_sgrNum(v('sgm-pr')),pagamento:_sgrEl('sgm-pg').value,dataPag:v('sgm-dp'),inicio:v('sgm-di'),fim:v('sgm-df'),obs:v('sgm-ob')};
+  const eid=_sgrEl('sgm-eid').value;
+  try{
+    if(eid){await _upd(SGR_COL,eid,d);if(typeof addLog==='function')addLog('edição','Seguros',d.tipo+' · '+d.seguradora);toast('Apólice atualizada');}
+    else{d.ts=Date.now();await _add(SGR_COL,d);if(typeof addLog==='function')addLog('criação','Seguros',d.tipo+' · '+d.seguradora);toast('Apólice registada');}
+    closeM('m-sgr');
+  }catch(e){console.error('sgrGuardar',e);toast('Erro ao guardar: '+(e&&e.message||e),'er');}
+}
+async function sgrEliminar(id){
+  if(!canDelete()){toast('Sem permissão para eliminar','er');return;}const p=(_sgr||[]).find(x=>x.id===id);if(!p||!confirm('Eliminar a apólice de '+(p.seguradora||'')+' ('+(p.tipo||'')+')?'))return;
+  await _del(SGR_COL,id);if(typeof addLog==='function')addLog('eliminação','Seguros',(p.tipo||'')+' · '+(p.seguradora||''));toast('Apólice eliminada','er');
+}
+function sgrTextoFiltros(f){const t=[];if(f.est)t.push('Estado: '+f.est);if(f.tp)t.push('Tipo: '+f.tp);return t.length?t.join(' · '):'Todas as apólices';}
+function sgrPdf(){
+  const f=sgrFiltros(),lista=sgrFiltrados(f);if(!lista.length){toast('Sem apólices para exportar','am');return;}
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});pdfHeader(doc,'Seguros do Evento','SWC Vizela 2026 - Apólices, prazos e valores · '+sgrTextoFiltros(f),true);
+  let tp=0,tc=0;const corpo=lista.map(p=>{tp+=Number(p.premio||0);tc+=Number(p.capital||0);return [p.tipo||'',p.seguradora||'',p.apolice||'',_sgrDmy(p.inicio),_sgrDmy(p.fim),sgrEstado(p),p.capital?fmtPDF(p.capital):'',p.premio?fmtPDF(p.premio):'',(p.pagamento||'')+(p.dataPag?' '+_sgrDmy(p.dataPag):''),p.obs||''];});
+  doc.autoTable({startY:42,margin:{left:12,right:12,bottom:24},head:[['Tipo','Seguradora','Apólice','Início','Fim','Estado','Capital','Prémio','Pagamento','Obs.']],body:corpo,foot:[['TOTAL ('+lista.length+')','','','','','',fmtPDF(tc),fmtPDF(tp),'','']],showFoot:'lastPage',theme:'striped',styles:{fontSize:8,cellPadding:2.6,textColor:[35,35,35]},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},footStyles:{fillColor:[255,244,214],textColor:[11,46,79],fontStyle:'bold'},columnStyles:{6:{halign:'right'},7:{halign:'right',fontStyle:'bold'},3:{cellWidth:20},4:{cellWidth:20}}});
+  const y=doc.lastAutoTable.finalY+7;doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(11,46,79);doc.text('Responsabilidade civil obrigatória: '+(sgrRCok()?'coberta até ao fim do evento (17/10/2026)':'ATENÇÃO — sem apólice vigente que cubra até 17/10/2026'),12,y);
+  pdfFooter(doc,true);doc.save('SWC2026_Seguros.pdf');toast('PDF gerado com sucesso');
+}
+function sgrCsv(){
+  const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"',r=['Tipo;Seguradora;Mediador;Apólice;Tomador;Início;Fim;Estado;Capital (€);Prémio (€);Pagamento;Data pagamento;Coberturas;Observações'];
+  sgrFiltrados().forEach(p=>r.push([q(p.tipo),q(p.seguradora),q(p.mediador),q(p.apolice),q(p.tomador),p.inicio||'',p.fim||'',sgrEstado(p),String(p.capital||0).replace('.',','),String(p.premio||0).replace('.',','),q(p.pagamento),p.dataPag||'',q(p.ambito),q(p.obs)].join(';')));
+  const b=new Blob(['\ufeff'+r.join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='SWC2026_Seguros.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+window.sgrAbrir=sgrAbrir;window.sgrEditar=sgrEditar;window.sgrGuardar=sgrGuardar;window.sgrEliminar=sgrEliminar;window.sgrRender=sgrRender;window.sgrPdf=sgrPdf;window.sgrCsv=sgrCsv;
+
+
+
 //  CHECKLIST WMF PDF 
 function exportChkPDF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
@@ -12691,6 +13186,7 @@ async function editPat(id){
 window.editPat=editPat;
 async function editRec(id){
   const item=(_rec||[]).find(x=>x.id===id);if(!item)return;
+  if(item.origem==='treinosLivres'){toast('Esta receita vem de «Treinos Livres»: edite-a nesse separador.','am');return;}
   let hid=document.getElementById('rec-eid');
   if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='rec-eid';
     const mb=document.querySelector('#m-rec .mb');if(mb)mb.prepend(hid);}

@@ -644,6 +644,13 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(74,184,122,.58);">Stroke Play · Match Play · Pódio</div>
     </div>
   </div>
+  <div class="si" title="Base permanente dos resultados finais" onclick="nav(this,'arquivo','Resultados Finais — Arquivo')" style="">
+    <i class="ti ti-archive" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
+    <div style="flex:1;min-width:0;">
+      <div class="si-label">Resultados Finais</div>
+      <div class="si-sub" style="color:rgba(74,184,122,.58);">Arquivo · só de leitura depois de selado</div>
+    </div>
+  </div>
   <div class="si" title="Registo cronológico · Incidentes" onclick="nav(this,'diariobordo','Diário de Bordo')" style="">
     <i class="ti ti-notebook" style="font-size:20px;color:#4AB87A;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
@@ -1075,7 +1082,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="radar-desc">Esta lista de atletas é baseada nas participações de 2024 — serve como referência de trabalho, mas não há garantia de que sejam as mesmas pessoas em 2026. Os números reais e já confirmados por país estão no separador <b>"Inscrições Confirmadas"</b>. Não usar estes nomes para diplomas, dorsais ou qualquer material final até a EMF enviar a lista nominal real de 2026.</div>
   </div>
 </div>
-<div class="bb" id="bar-atl"><button class="btn bp" onclick="abrirAuditoriaExaustiva()" title="6 verificações cruzadas — nomes, países, contagens — antes de enviar para a tipografia" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);font-weight:700;">🔎 AUDITORIA EXAUSTIVA (pré-tipografia)</button><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bd2" onclick="abrirAuditoriaAtletas()" title="Deteta Tipo/Categoria inconsistentes — nunca corrige sozinho">🔍 Auditoria de Consistência</button><button class="btn bp" onclick="repararConsistenciaEMF()" title="Reaplica Tipo/Categoria da acreditação EMF às 58 pessoas já importadas" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🔧 Reparar Consistência (EMF, 8 países)</button><button class="btn bp" onclick="repararConsistenciaPortugal()" title="Corrige os treinadores portugueses com Categoria TR" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🔧 Reparar Consistência (Portugal)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
+<div class="bb" id="bar-atl"><button class="btn bo" onclick="document.getElementById('atl-foto-json').click()" title="Liga automaticamente as fotografias dos resultados oficiais aos atletas">🖼️ Importar fotos</button><button class="btn bo" onclick="atlPdfComFotos()" title="Exporta a lista (com os filtros ativos) em PDF com as fotografias">📄 Listagem com fotos</button><input type="file" id="atl-foto-json" accept=".json,application/json" style="display:none" onchange="atlFotosImportar(this)"><button class="btn bp" onclick="abrirAuditoriaExaustiva()" title="6 verificações cruzadas — nomes, países, contagens — antes de enviar para a tipografia" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);font-weight:700;">🔎 AUDITORIA EXAUSTIVA (pré-tipografia)</button><button class="btn bp" onclick="abrirNovoAtleta()">+ Novo atleta</button><button class="btn bo" onclick="exportAtletasPDF()" title="Exporta exatamente o que estiver filtrado acima (país / reais ou 2024)">Exportar PDF (respeita filtro)</button><button class="btn bp" onclick="exportAtletasPorPaisPDF()" title="Um único PDF com todos os países, cada um com o seu subtotal, e total geral no fim" style="background:linear-gradient(135deg,#1a3d52,#0d2233);">📋 Listagem Geral por País (com subtotais)</button><button class="btn bd2" onclick="abrirAuditoriaAtletas()" title="Deteta Tipo/Categoria inconsistentes — nunca corrige sozinho">🔍 Auditoria de Consistência</button><button class="btn bp" onclick="repararConsistenciaEMF()" title="Reaplica Tipo/Categoria da acreditação EMF às 58 pessoas já importadas" style="background:linear-gradient(135deg,#2c7a4a,#1a5233);">🔧 Reparar Consistência (EMF, 8 países)</button><button class="btn bp" onclick="repararConsistenciaPortugal()" title="Corrige os treinadores portugueses com Categoria TR" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🔧 Reparar Consistência (Portugal)</button><button class="btn bo" onclick="importarSelecaoPortugal()" style="background:linear-gradient(135deg,#2c5f7a,#1a3d52);">🇵🇹 Importar Seleção Portugal</button><button class="btn bo" onclick="importarAtletas2024()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">📥 Importar referência 2024</button><button class="btn bp" onclick="importarAcreditacaoEMF2026()" style="background:linear-gradient(135deg,#A67C27,#7a5c1c);">⭐ Importar Acreditação EMF 2026 (8 países)</button><button class="btn bd2" onclick="eliminarRef2024()">🗑️ Apagar toda a referência 2024</button><button class="btn bd2" onclick="eliminarChinaBelgica()">🗑️ Apagar China e Bélgica</button></div>
 <div class="fr" style="max-width:680px;margin-bottom:14px;">
   <div class="fg" style="margin-bottom:0;"><div class="fl">Filtrar por país</div><select class="fse" id="a-filtro-pais" onchange="renderAtl()"><option value="">— Todos os países —</option></select></div>
   <div class="fg" style="margin-bottom:0;"><div class="fl">Mostrar</div><select class="fse" id="a-filtro-estado" onchange="renderAtl()">
@@ -1091,8 +1098,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="sm"><div class="sml">Pendentes</div><div class="smv" id="a-pn" style="color:var(--wr)">0</div></div>
   <div class="sm"><div class="sml">Países</div><div class="smv" id="a-ps">0</div></div>
 </div>
-<div class="tw"><table><thead><tr><th>Nome</th><th>País</th><th>Tipo</th><th>Federação</th><th>Categoria WMF</th><th>Taxa (€)</th><th>Estado</th><th>Hotel</th><th id="th-atl">Ações</th></tr></thead>
-<tbody id="t-atl"><tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem atletas registados</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th></th><th>Nome</th><th>País</th><th>Tipo</th><th>Federação</th><th>Categoria WMF</th><th>Taxa (€)</th><th>Estado</th><th>Hotel</th><th id="th-atl">Ações</th></tr></thead>
+<tbody id="t-atl"><tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem atletas registados</td></tr></tbody></table></div>
 </div>
 
 <!-- ALOJAMENTO -->
@@ -1630,6 +1637,19 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="fl" style="margin-top:10px;">Dias em uso</div><div id="tld-dias"></div>
     </div></div>
 </div>
+</div>
+
+<div class="pg" id="pg-arquivo">
+<div class="st"><span class="sn">RES</span>Resultados Finais — Arquivo</div>
+<div class="sd">Base permanente dos resultados finais, para segurança e consulta · depois de selada fica só de leitura</div>
+<div class="g4" style="margin-bottom:14px;">
+  <div class="sm"><div class="sml">Arquivos de resultados</div><div class="smv" id="arq-k-pr">0</div></div>
+  <div class="sm"><div class="sml">Selados (só de leitura)</div><div class="smv" id="arq-k-se" style="color:var(--ok)">0</div></div>
+</div>
+<div class="av"><div><strong>Como funciona:</strong> envia-me o PDF da página de resultados e devolvo-te um ficheiro <b>.json</b>. Importa-o aqui e fica guardado no programa. Podes ver (por atleta e por equipa), exportar o livro de resultados em PDF e, quando estiver conferido, carregar em <b>🔒 Selar</b>: fica só de leitura e já não pode ser eliminado nem substituído.</div></div>
+<div class="bb" id="bar-arq"><button class="btn bp" onclick="document.getElementById('arq-file-json').click()">+ Importar ficheiro de resultados (.json)</button></div>
+<div class="tw"><table><thead><tr><th>Arquivo</th><th>Capturado em</th><th>Estado</th><th>Atletas</th><th>Selo</th><th>Ações</th></tr></thead><tbody id="arq-t-res"></tbody></table></div>
+<input type="file" id="arq-file-json" accept=".json,application/json" style="display:none" onchange="arqImportar(this)">
 </div>
 
 <div class="pg" id="pg-despesas">
@@ -2697,6 +2717,14 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="mo" id="m-atl"><div class="mdl">
   <div class="mh"><div class="mt2">Novo Atleta</div><button class="mc" onclick="closeM('m-atl')">✕</button></div>
   <div class="mb">
+<div id="atl-foto-bloco" style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+  <div id="atl-foto-prev" style="width:60px;height:72px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gl);flex-shrink:0;"></div>
+  <div><div class="fl">Fotografia</div>
+    <div id="atl-foto-btns"><button class="btn bo bsm" type="button" onclick="atlFotoEscolher(true)">📷 Tirar</button> <button class="btn bo bsm" type="button" onclick="atlFotoEscolher(false)">🖼️ Galeria</button> <button class="btn bo bsm" type="button" id="atl-foto-rm" onclick="atlFotoRemover()">🗑️</button></div>
+    <div id="atl-foto-aviso" class="mu" style="font-size:11px;margin-top:4px;"></div></div>
+</div>
+<input type="file" id="atl-foto-file" accept="image/*" style="display:none" onchange="atlFotoEscolhida(this)">
+
     <div class="fr"><div class="fg"><div class="fl">Nome completo</div><input class="fi" id="at-nm" placeholder="Nome do atleta"></div><div class="fg"><div class="fl">País / Nação</div><select class="fse" id="at-ps"><option value="">— Selecionar país —</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Função</div><select class="fse" id="at-tipo"><option value="Atleta">Atleta (P)</option><option value="Treinador">Treinador (C)</option><option value="Staff">Staff / Outro (O)</option></select></div><div class="fg"><div class="fl">Categoria WMF</div><select class="fse" id="at-ct"><option value="SM">Séniores Masculinos</option><option value="SF">Séniores Femininas</option></select></div></div>
     <div class="fr"><div class="fg"><div class="fl">Federação nacional</div><input class="fi" id="at-fd" placeholder="Federação"></div><div class="fg"><div class="fl">Taxa inscrição (€) — valor real</div><input class="fi" type="number" step="0.01" id="at-tx" placeholder="0,00"></div></div>
@@ -2823,6 +2851,12 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="sgm-ob" placeholder="Notas, documentos, renovação..."></textarea></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-sgr')">Cancelar</button><button class="btn bp" onclick="sgrGuardar()">Guardar</button></div>
+</div></div>
+
+<div class="mo" id="m-arq-ver"><div class="mdl" style="max-width:980px;width:96vw;">
+  <div class="mh"><div class="mt2" id="arq-ver-titulo">Resultados</div><button class="mc" onclick="closeM('m-arq-ver')">✕</button></div>
+  <div class="mb" id="arq-ver-corpo" style="max-height:70vh;overflow:auto;"></div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-arq-ver')">Fechar</button></div>
 </div></div>
 
 <div class="mo" id="m-inv"><div class="mdl">
@@ -3636,7 +3670,7 @@ function setAdminBars(){
     'bar-cron','bar-atl','bar-alo','bar-cer',
     'bar-rec','bar-desp','bar-pat','bar-inv','bar-bar','bar-merch',
     'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
-    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas','bar-juri','bar-tl','bar-tl-rec','bar-seg',
+    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas','bar-juri','bar-tl','bar-tl-rec','bar-seg','bar-arq',
   ].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.style.display=edit?'flex':'none';
@@ -3741,6 +3775,7 @@ function nav(el,id,title){
   if(id==='fluxo'){renderFluxo();}
   if(id==='treinoslivres'){tlRenderTudo();}
   if(id==='seguranca'){sgrRender();}
+  if(id==='arquivo'){arqRenderTudo();}
   if(id==='relpatr'){renderRelPatr();}
   if(id==='mapapaises'){renderMapaPaises();}
   if(id==='estatisticas'){renderEstatisticas();}
@@ -3867,6 +3902,7 @@ function toast(msg,type='ok'){const t=document.getElementById('tst');t.textConte
 let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_hot=[],_trn=[],_arb=[],_inv=[],_boardEmf=[],_hon=[],_tro=[],_trod=[],_cmd=[],_gld=[],_cor=[],_ins=[],_alg=[],_recSwc=[];
 let _tl=[],_tld=[],_tlcfg={};
 let _sgr=[];
+let _arq=[];
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
@@ -3874,6 +3910,7 @@ function loadAll(){
   _snap('treinosLivresDias',(docs)=>{_tld=docs;tlOnDias();});
   _snap('treinosLivresCfg',(docs)=>{_tlcfg=docs.find(d=>d.id==='cfg')||{};tlRefresca();});
   _snap('seguros',(docs)=>{_sgr=docs;sgrRender();});
+  _snap('arquivoResultados',(docs)=>{_arq=docs;arqRefresca();});
   _snap('despesas',(docs)=>{_desp=docs;renderDesp();renderDash();},'data');
   _snap('patrocinios',(docs)=>{_pat=docs;renderPat();renderDash();});
   _snap('swc2026_recibos',(docs)=>{_recSwc=docs;renderRecibosSwc();});
@@ -4430,6 +4467,7 @@ function abrirNovoAtleta(){
   const tipoEl=document.getElementById('at-tipo');if(tipoEl)tipoEl.value='Atleta';
   popularSelectPaisAtleta('');
   atualizarSelectsHoteis();
+  atlFotoModal(null);
   openM('m-atl');
 }
 async function saveAtl(){
@@ -4477,8 +4515,8 @@ function renderAtl(){
     const estCor=isRef?'bg-mu':(a.estado==='Pago'?'bg-ok':'bg-am');
     const confirmBtn=isRef&&canEdit()?`<button class="btn bp bsm" onclick="confirmarAtleta2026('${a.id}')" title="Marcar esta pessoa como confirmada para 2026">✓ Confirmar 2026</button>`:'';
     const tipoCor=a.tipo==='Treinador'?'bg-am':(a.tipo==='Staff'?'bg-mu':'bg-ok');
-    return `<tr${isRef?' style="opacity:.65;"':''}><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td><span class="bge ${tipoCor}">${a.tipo||'Atleta'}</span></td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${estCor}">${a.estado}</span></td><td class="mu">${hotelNome(a.hotel)||'-'}</td>${canEdit()?`<td style="white-space:nowrap;">${confirmBtn}<button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
-  }).join(''):'<tr><td colspan="9" class="mu" style="text-align:center;padding:22px;">Sem atletas'+(filtroPais?' registados para '+filtroPais:'')+'</td></tr>';
+    return `<tr${isRef?' style="opacity:.65;"':''}><td>${atlFotoThumb(a)}</td><td class="vl">${a.nome||''}</td><td>${bandeira(a.pais)}${a.pais||''}</td><td><span class="bge ${tipoCor}">${a.tipo||'Atleta'}</span></td><td class="mu">${a.federacao||''}</td><td>${a.categoria||''}</td><td class="go">${fmt(a.taxa)}</td><td><span class="bge ${estCor}">${a.estado}</span></td><td class="mu">${hotelNome(a.hotel)||'-'}</td>${canEdit()?`<td style="white-space:nowrap;">${confirmBtn}<button class="btn bo bsm" onclick="editAtl('${a.id}')">✏️</button><button class="btn bd2 bsm" onclick="delAtl('${a.id}')">🗑️</button></td>`:'<td></td>'}</tr>`;
+  }).join(''):'<tr><td colspan="10" class="mu" style="text-align:center;padding:22px;">Sem atletas'+(filtroPais?' registados para '+filtroPais:'')+'</td></tr>';
 }
 async function confirmarAtleta2026(id){
   if(!canEdit())return;
@@ -8807,7 +8845,7 @@ function exportBackupJSON(){
       lancamentos:_lan,receitas:_rec,despesas:_desp,patrocinios:_pat,
       programa:_prog,resultados:_resultados,matchplay:_matchplay,
       diariodb:_diariodb,actas:_actas,comunicados:_comunicados,
-      orcamento:_orcamento,faturas:_faturas,fluxo:_fluxo,treinosLivres:_tl,treinosLivresDias:_tld,treinosLivresCfg:_tlcfg,seguros:_sgr,
+      orcamento:_orcamento,faturas:_faturas,fluxo:_fluxo,treinosLivres:_tl,treinosLivresDias:_tld,treinosLivresCfg:_tlcfg,seguros:_sgr,arquivoResultados:_arq,
       cs_marcas:_marcas,cs_artigos:_artigos,cs_vendas:_vendas_cs,
     }
   };
@@ -11609,6 +11647,173 @@ function sgrCsv(){
 }
 window.sgrAbrir=sgrAbrir;window.sgrEditar=sgrEditar;window.sgrGuardar=sgrGuardar;window.sgrEliminar=sgrEliminar;window.sgrRender=sgrRender;window.sgrPdf=sgrPdf;window.sgrCsv=sgrCsv;
 
+// ===================================================================================================
+// FOTOGRAFIAS na secção «Atletas & Inscrições»: miniatura na lista, foto na ficha de edição, importação automática a partir
+// de um ficheiro (fotos dos resultados oficiais) e listagem em PDF com fotografias. A foto fica no próprio registo do atleta
+// (campo «foto»), por isso acompanha-o nos filtros, na edição e na cópia de segurança (Backup).
+// ===================================================================================================
+const ATLF_COD={alemanha:'GER',germany:'GER',austria:'AUT',chequia:'CZE','republica checa':'CZE',czechia:'CZE','czech republic':'CZE',dinamarca:'DEN',denmark:'DEN',eslovaquia:'SVK',slovakia:'SVK',finlandia:'FIN',finland:'FIN',franca:'FRA',france:'FRA',italia:'ITA',italy:'ITA',letonia:'LAT',latvia:'LAT',noruega:'NOR',norway:'NOR','paises baixos':'NED',holanda:'NED',netherlands:'NED',portugal:'POR','reino unido':'GBR',inglaterra:'GBR','great britain':'GBR',suecia:'SWE',sweden:'SWE',suica:'SUI',switzerland:'SUI'};
+let _atlFotoId=null;
+const _fN=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/ø/g,'o').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const _fIni=n=>String(n||'').split(' ').filter(Boolean).map(x=>x[0]).slice(0,2).join('').toUpperCase();
+function _fLev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=[];for(let j=0;j<=n;j++)p[j]=j;for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+function _fPartes(nome){const t=_fN(nome).split(' ').filter(Boolean);return {t:t,n:t.join(' '),first:t[0]||'',last:t[t.length-1]||''};}
+function _fSim(a,b){
+  if(a.n&&a.n===b.n)return 1;if(a.t.length<2||b.t.length<2)return 0;
+  const lf=_fLev(a.first,b.first),ll=_fLev(a.last,b.last);
+  const pOk=lf<=2||(a.first.length>=3&&b.first.startsWith(a.first))||(b.first.length>=3&&a.first.startsWith(b.first));
+  const aOk=ll<=2||(a.last.length>=5&&b.last.startsWith(a.last))||(b.last.length>=5&&a.last.startsWith(b.last));
+  return pOk&&aOk?Math.max(0.7,0.95-0.05*(lf+Math.min(ll,4))):0;
+}
+const _fCod=p=>ATLF_COD[_fN(p)]||'';
+function atlFotoCasar(atletas,fotos){
+  const cand=[];
+  atletas.forEach((a,i)=>{if(a.tipo&&a.tipo!=='Atleta')return;const ca=_fCod(a.pais),pa=_fPartes(a.nome),cat=String(a.categoria||'').replace(/^S/,'');
+    fotos.forEach((f,j)=>{if(ca&&f.cod&&f.cod!==ca)return;if(cat&&f.cat&&cat!==f.cat)return;const s=_fSim(pa,_fPartes(f.nome));if(s>=0.7)cand.push({i:i,j:j,s:s});});});
+  cand.sort((x,y)=>y.s-x.s);const uA=new Set(),uF=new Set(),pares=[];
+  cand.forEach(c=>{if(uA.has(c.i)||uF.has(c.j))return;uA.add(c.i);uF.add(c.j);pares.push({a:atletas[c.i],f:fotos[c.j],s:c.s});});
+  return {pares:pares,semAtleta:fotos.filter((f,j)=>!uF.has(j)),semFoto:atletas.filter((a,i)=>(!a.tipo||a.tipo==='Atleta')&&!uA.has(i))};
+}
+function atlFotoThumb(a){
+  if(a&&a.foto)return '<img src="'+a.foto+'" alt="" style="width:30px;height:36px;object-fit:cover;border-radius:4px;display:block;">';
+  return '<div style="width:30px;height:36px;border-radius:4px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);">'+_fIni(a&&a.nome)+'</div>';
+}
+async function atlFotoRedim(file,W,H,q){
+  W=W||120;H=H||144;q=q||0.85;const url=URL.createObjectURL(file);
+  try{const im=await new Promise((ok,er)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>er(new Error('imagem inválida'));i.src=url;});
+    const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);
+    const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;x.drawImage(im,(W-w)/2,-(h-H)*0.3,w,h);return c.toDataURL('image/jpeg',q);}
+  finally{URL.revokeObjectURL(url);}
+}
+// ---- ficha de edição do atleta
+function atlFotoModal(item){
+  _atlFotoId=item?item.id:null;const prev=document.getElementById('atl-foto-prev'),btn=document.getElementById('atl-foto-btns'),av=document.getElementById('atl-foto-aviso');if(!prev)return;
+  prev.innerHTML=item&&item.foto?'<img src="'+item.foto+'" alt="" style="width:100%;height:100%;object-fit:cover;">':'<span>'+_fIni(item&&item.nome)+'</span>';
+  const ed=typeof canEdit==='function'&&canEdit();btn.style.display=item&&ed?'':'none';
+  av.textContent=item?(item.foto?'':'Sem fotografia.'):'Guarde o registo e volte a abrir (✏️) para juntar a fotografia.';
+  const rm=document.getElementById('atl-foto-rm');if(rm)rm.style.display=item&&item.foto&&typeof canDelete==='function'&&canDelete()?'':'none';
+}
+function atlFotoEscolher(camara){const i=document.getElementById('atl-foto-file');if(!_atlFotoId||!i)return;if(camara)i.setAttribute('capture','environment');else i.removeAttribute('capture');i.value='';i.click();}
+async function atlFotoEscolhida(inp){
+  const f=inp.files&&inp.files[0];if(!f||!_atlFotoId)return;if(!canEdit()){toast('Sem permissão para editar','er');return;}
+  try{const img=await atlFotoRedim(f);await _upd('atletas',_atlFotoId,{foto:img});const it=(_atl||[]).find(x=>x.id===_atlFotoId);if(it)it.foto=img;atlFotoModal(it||{id:_atlFotoId,foto:img});toast('Fotografia guardada');}
+  catch(e){console.error('atlFotoEscolhida',e);toast('Não consegui guardar a fotografia: '+(e&&e.message||e),'er');}
+}
+async function atlFotoRemover(){
+  if(!_atlFotoId||!canDelete()||!confirm('Remover a fotografia?'))return;
+  await _upd('atletas',_atlFotoId,{foto:''});const it=(_atl||[]).find(x=>x.id===_atlFotoId);if(it){it.foto='';atlFotoModal(it);}toast('Fotografia removida','am');
+}
+// ---- importação automática (ficheiro com as fotos dos resultados oficiais)
+async function atlFotosImportar(inp){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}const f=inp.files&&inp.files[0];if(!f)return;let o;
+  try{o=JSON.parse(await f.text());}catch(e){toast('O ficheiro não é um JSON válido','er');inp.value='';return;}inp.value='';
+  if(!o||o.tipo!=='fotos-swc2026'||!Array.isArray(o.fotos)){toast('Ficheiro não reconhecido (não é um ficheiro de fotografias SWC 2026)','er');return;}
+  const R=atlFotoCasar(_atl||[],o.fotos),novos=R.pares.filter(p=>!p.a.foto),ja=R.pares.length-novos.length,lista=(a,n)=>a.slice(0,n).join(', ')+(a.length>n?' …(+'+(a.length-n)+')':'');
+  const msg='Fotografias a ligar aos atletas da lista:\n\n• '+novos.length+' fotografia(s) novas ligadas'+(ja?'\n• '+ja+' atleta(s) já tinham foto e ficam como estão':'')+(R.semAtleta.length?'\n• '+R.semAtleta.length+' foto(s) sem atleta correspondente na lista: '+lista(R.semAtleta.map(x=>x.nome),8):'')+(R.semFoto.length?'\n• '+R.semFoto.length+' atleta(s) da lista ficam sem foto: '+lista(R.semFoto.map(x=>x.nome),10):'')+'\n\nContinuar?';
+  if(!novos.length&&!confirm(msg+'\n\n(Nada de novo para ligar.)'))return;if(novos.length&&!confirm(msg))return;
+  let ok=0;for(const p of novos){try{await _upd('atletas',p.a.id,{foto:p.f.img,fotoNo:p.f.no});p.a.foto=p.f.img;ok++;}catch(e){console.error('atlFotosImportar',p.a.nome,e);}}
+  if(typeof addLog==='function')addLog('edição','Atletas','Fotografias importadas: '+ok);toast(ok+' fotografia(s) ligada(s) aos atletas'+(R.semAtleta.length||R.semFoto.length?' · veja o que ficou por ligar':''),R.semAtleta.length||R.semFoto.length?'am':'ok');if(typeof renderAtl==='function')renderAtl();
+}
+// ---- listagem em PDF com fotografias (respeita os filtros da lista)
+function atlLista(){
+  const pf=(document.getElementById('a-filtro-pais')||{}).value||'',fe=(document.getElementById('a-filtro-estado')||{}).value||'';let L=pf?(_atl||[]).filter(a=>a.pais===pf):(_atl||[]).slice();
+  if(fe==='reais')L=L.filter(a=>a.estado!=='Ref.2024');else if(fe==='ref2024')L=L.filter(a=>a.estado==='Ref.2024');return L;
+}
+function atlPdfComFotos(){
+  const L=atlLista();if(!L.length){toast('Sem pessoas para exportar','am');return;}
+  const pf=(document.getElementById('a-filtro-pais')||{}).value||'',doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Atletas & Treinadores — com fotografia','SWC Vizela 2026 · '+(pf||'Todos os países')+' · '+L.length+' pessoas',false);
+  const ord={Atleta:0,Treinador:1,Staff:2},G={};L.forEach(a=>{(G[a.pais||'—']=G[a.pais||'—']||[]).push(a);});let y=42;
+  Object.keys(G).sort((a,b)=>a.localeCompare(b)).forEach(p=>{
+    const P=G[p].slice().sort((a,b)=>(ord[a.tipo||'Atleta']-ord[b.tipo||'Atleta'])||String(a.categoria||'').localeCompare(String(b.categoria||''))||String(a.nome||'').localeCompare(String(b.nome||'')));
+    if(y>250){doc.addPage();y=18;}doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(11,46,79);doc.text(p+' · '+P.length,15,y+3);
+    doc.autoTable({startY:y+6,margin:{left:15,right:15,bottom:22},head:[['','Nome','Função','Categoria','Estado']],body:P.map(a=>['',a.nome||'',a.tipo||'Atleta',a.categoria||'',a.estado||'']),theme:'grid',
+      styles:{font:'helvetica',fontSize:9,cellPadding:2,textColor:[30,30,30],valign:'middle',minCellHeight:15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,minCellHeight:7},columnStyles:{0:{cellWidth:16},1:{fontStyle:'bold'}},
+      didDrawCell:function(d){if(d.section!=='body'||d.column.index!==0)return;const a=P[d.row.index];if(a&&a.foto){try{doc.addImage(a.foto,'JPEG',d.cell.x+2.2,d.cell.y+1.4,10.4,12.5);}catch(e){}}else if(a){doc.setFillColor(11,46,79);doc.roundedRect(d.cell.x+2.2,d.cell.y+1.4,10.4,12.5,1,1,'F');doc.setTextColor(231,207,134);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.text(_fIni(a.nome),d.cell.x+7.4,d.cell.y+8.6,{align:'center'});}}});
+    y=doc.lastAutoTable.finalY+8;});
+  pdfFooter(doc,false);doc.save('SWC2026_Atletas_com_Fotografia.pdf');toast('PDF gerado com sucesso');
+}
+window.atlFotoThumb=atlFotoThumb;window.atlFotoModal=atlFotoModal;window.atlFotoEscolher=atlFotoEscolher;window.atlFotoEscolhida=atlFotoEscolhida;window.atlFotoRemover=atlFotoRemover;window.atlFotosImportar=atlFotosImportar;window.atlPdfComFotos=atlPdfComFotos;
+
+// ===================================================================================================
+// RESULTADOS FINAIS — ARQUIVO: base permanente dos resultados, para segurança e consulta. Importa-se um ficheiro de resultados,
+// consulta-se (por atleta e por equipa), exporta-se o livro de resultados em PDF e sela-se (fica só de leitura).
+// ===================================================================================================
+const ARQ_COL='arquivoResultados';
+const ARQ_EQ_PT={Germany:'Alemanha',Austria:'Áustria',Italy:'Itália',Switzerland:'Suíça',Czechia:'Chéquia',Denmark:'Dinamarca',Portugal:'Portugal',Slovakia:'Eslováquia',Sweden:'Suécia',Netherlands:'Países Baixos',Norway:'Noruega',Finland:'Finlândia',France:'França','Great Britain':'Reino Unido','United Kingdom':'Reino Unido',Latvia:'Letónia'};
+const _aEsc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const _aEl=id=>document.getElementById(id);
+const _aNorm=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/ø/g,'o').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const _aDmy=iso=>{const p=String(iso||'').slice(0,10).split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:'';};
+const _aFx=v=>v==null?'':(Math.round(v)===v?String(v):String(v).replace('.',','));
+async function arqImportar(inp){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}const f=inp.files&&inp.files[0];if(!f)return;let o;
+  try{o=JSON.parse(await f.text());}catch(e){toast('O ficheiro não é um JSON válido','er');inp.value='';return;}inp.value='';
+  if(!o||o.tipo!=='resultados-swc2026'||!o.individuais||!o.prova){toast('Ficheiro não reconhecido (não é um ficheiro de resultados SWC 2026)','er');return;}
+  const nF=(o.individuais.F||[]).length,nM=(o.individuais.M||[]).length,nEq=((o.equipas&&o.equipas.F)||[]).length+((o.equipas&&o.equipas.M)||[]).length;
+  if(!confirm('Importar «'+o.titulo+'»?\n\n'+(o.parcial?'⚠ RESULTADOS PARCIAIS':'Resultados finais')+' · '+(o.capturadoEm||'')+'\n'+nF+' atletas femininas, '+nM+' masculinos, '+nEq+' equipas.\n\nFica guardado como um novo arquivo (não substitui os anteriores).'))return;
+  const d={prova:o.prova,titulo:o.titulo||o.prova,capturadoEm:o.capturadoEm||'',parcial:!!o.parcial,fonte:o.fonte||'',cabecalhos:o.cabecalhos||{},individuais:o.individuais,corte:o.corte||{},equipas:o.equipas||{F:[],M:[]},textoOriginal:o.textoOriginal||'',selado:false,ts:Date.now()};
+  try{await _add(ARQ_COL,d);if(typeof addLog==='function')addLog('criação','Arquivo de Resultados',d.prova+' · '+d.capturadoEm+(d.parcial?' (parcial)':''));toast('Resultados importados: '+d.prova+(d.parcial?' (parciais)':''));arqRenderTudo();}
+  catch(e){console.error('arqImportar',e);toast('Erro ao guardar: '+(e&&e.message||e),'er');}
+}
+async function arqSelar(id){
+  if(!canEdit())return;const d=(_arq||[]).find(x=>x.id===id);if(!d||d.selado)return;
+  if(d.parcial&&!confirm('ATENÇÃO: este arquivo está marcado como PARCIAL.\nSelar resultados parciais não é o habitual.\n\nContinuar mesmo assim?'))return;
+  if(!confirm('Selar «'+d.titulo+'» ('+d.capturadoEm+')?\n\nDepois de selado fica só de leitura: não se pode eliminar nem substituir (só reabrir, com confirmação).'))return;
+  const por=(typeof auth!=='undefined'&&auth&&auth.currentUser&&auth.currentUser.email)||'';
+  await _upd(ARQ_COL,id,{selado:true,seladoEm:new Date().toISOString(),seladoPor:por});if(typeof addLog==='function')addLog('edição','Arquivo de Resultados','SELADO: '+d.prova+' · '+d.capturadoEm);toast('Arquivo selado: só de leitura');
+}
+async function arqReabrir(id){
+  if(!canDelete())return;const d=(_arq||[]).find(x=>x.id===id);if(!d||!d.selado)return;
+  if(!confirm('Reabrir o arquivo selado «'+d.titulo+'»?\n\nSó deve fazer isto para corrigir um erro. Fica registado no histórico de atividade.'))return;
+  await _upd(ARQ_COL,id,{selado:false,reabertoEm:new Date().toISOString()});if(typeof addLog==='function')addLog('edição','Arquivo de Resultados','REABERTO: '+d.prova+' · '+d.capturadoEm);toast('Arquivo reaberto','am');
+}
+async function arqEliminar(id){
+  if(!canDelete())return;const d=(_arq||[]).find(x=>x.id===id);if(!d)return;
+  if(d.selado){toast('Arquivo selado: reabra-o primeiro se for mesmo para eliminar','am');return;}
+  if(!confirm('Eliminar o arquivo «'+d.titulo+'» ('+d.capturadoEm+')?'))return;await _del(ARQ_COL,id);if(typeof addLog==='function')addLog('eliminação','Arquivo de Resultados',d.prova+' · '+d.capturadoEm);toast('Arquivo eliminado','er');
+}
+function arqExportJson(id){
+  const d=(_arq||[]).find(x=>x.id===id);if(!d)return;const o={tipo:'resultados-swc2026',versao:1,prova:d.prova,titulo:d.titulo,capturadoEm:d.capturadoEm,parcial:!!d.parcial,fonte:d.fonte,cabecalhos:d.cabecalhos,individuais:d.individuais,corte:d.corte,equipas:d.equipas,textoOriginal:d.textoOriginal,selado:!!d.selado,seladoEm:d.seladoEm||''};
+  const b=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Resultados_'+_aNorm(d.prova).replace(/ /g,'_')+'_'+String(d.capturadoEm||'').slice(0,10)+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+function arqVer(id){
+  const d=(_arq||[]).find(x=>x.id===id);if(!d)return;const T=(cat,tit)=>{const L=(d.individuais||{})[cat]||[];if(!L.length)return '';const cab=((d.cabecalhos||{})[cat]||[]),rc=cab.filter(c=>/^[CM]\d+$/.test(c));
+    return '<div style="font-weight:700;color:var(--gl);margin:10px 0 6px;">'+tit+' · '+L.length+'</div><div class="tw"><table><thead><tr><th>Pos</th><th>Nome</th><th>País</th><th>Nº</th>'+rc.map(c=>'<th>'+c+'</th>').join('')+'<th>Total</th></tr></thead><tbody>'
+      +L.map(r=>'<tr><td>'+r.pos+'</td><td><b>'+_aEsc(r.nome)+'</b></td><td>'+_aEsc(r.pais)+'</td><td class="mu">'+r.no+'</td>'+rc.map(c=>'<td>'+_aFx((r.rondas||{})[c])+'</td>').join('')+'<td class="tok"><b>'+_aFx(r.tot)+'</b></td></tr>'+((d.corte||{})[cat]||[]).filter(c=>c.depoisDaPos===r.pos).map(c=>'<tr><td colspan="'+(5+rc.length)+'" class="mu" style="font-size:10px;text-align:center;border-top:1px dashed var(--gl);">'+_aEsc(c.texto)+'</td></tr>').join('')).join('')+'</tbody></table></div>';};
+  const E=(cat,tit)=>{const L=((d.equipas||{})[cat])||[];if(!L.length)return '';return '<div style="font-weight:700;color:var(--gl);margin:12px 0 6px;">'+tit+'</div><div class="tw"><table><thead><tr><th>Pos</th><th>Equipa</th><th>Jogadores</th></tr></thead><tbody>'+L.map(e=>'<tr><td>'+e.pos+'</td><td><b>'+_aEsc(ARQ_EQ_PT[e.equipa]||e.equipa)+'</b>'+(e.subst?' <span class="mu">('+e.subst+' suplente)</span>':'')+'</td><td class="mu" style="font-size:11px;">'+(e.jogadores||[]).map(j=>_aEsc(j.nome)).join(', ')+'</td></tr>').join('')+'</tbody></table></div>';};
+  _aEl('arq-ver-titulo').textContent=d.titulo+(d.parcial?' (PARCIAL)':'')+' · '+d.capturadoEm;_aEl('arq-ver-corpo').innerHTML=T('F','Seniors Femininos')+T('M','Seniors Masculinos')+E('F','Equipas femininas')+E('M','Equipas masculinas')+'<div class="mu" style="font-size:10px;margin-top:10px;">Fonte: '+_aEsc(d.fonte||'')+(d.selado?' · SELADO em '+_aDmy(d.seladoEm)+' '+String(d.seladoEm||'').slice(11,16):'')+'</div>';openM('m-arq-ver');
+}
+function arqRenderResultados(){
+  const ar=(_arq||[]).slice().sort((a,b)=>String(b.capturadoEm||'').localeCompare(String(a.capturadoEm||''))||(b.ts||0)-(a.ts||0)),ed=canEdit(),dl=canDelete();
+  _aEl('arq-t-res').innerHTML=ar.length?ar.map(d=>'<tr><td><b>'+_aEsc(d.titulo)+'</b><div class="mu" style="font-size:10px;">'+_aEsc(d.fonte||'')+'</div></td><td>'+_aEsc(d.capturadoEm||'')+'</td><td><span class="bge '+(d.parcial?'bg-am':'bg-ok')+'">'+(d.parcial?'Parcial':'Final')+'</span></td><td class="mu">'+((d.individuais&&d.individuais.F||[]).length+(d.individuais&&d.individuais.M||[]).length)+' atletas</td>'
+    +'<td>'+(d.selado?'<span class="bge bg-bl">🔒 Selado '+_aDmy(d.seladoEm)+'</span>':'<span class="bge bg-mu">Aberto</span>')+'</td><td style="white-space:nowrap;"><button class="btn bo bsm" onclick="arqVer(\''+d.id+'\')">👁 Ver</button> <button class="btn bo bsm" onclick="arqPdfLivro(\''+d.id+'\')">📄 PDF</button> <button class="btn bo bsm" onclick="arqExportJson(\''+d.id+'\')">⬇ JSON</button>'
+    +(ed&&!d.selado?' <button class="btn bp bsm" onclick="arqSelar(\''+d.id+'\')">🔒 Selar</button>':'')+(dl&&d.selado?' <button class="btn bo bsm" onclick="arqReabrir(\''+d.id+'\')">Reabrir</button>':'')+(dl&&!d.selado?' <button class="btn bo bsm" onclick="arqEliminar(\''+d.id+'\')">🗑️</button>':'')+'</td></tr>').join('')
+    :'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Ainda não há resultados arquivados. Importe o ficheiro de resultados.</td></tr>';
+}
+function arqPdfLivro(id){
+  const d=(_arq||[]).find(x=>x.id===id);if(!d)return;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pdfHeader(doc,'Livro de Resultados — '+d.prova,'SWC Vizela 2026 · '+(d.parcial?'PROVISÓRIO · ':'')+(d.capturadoEm||'')+(d.selado?' · SELADO em '+_aDmy(d.seladoEm):''),true);let y=42;
+  [['F','Seniors Women · Seniores Femininos'],['M','Seniors Men · Seniores Masculinos']].forEach(([cat,tit])=>{
+    const L=(d.individuais||{})[cat]||[];if(!L.length)return;const cab=((d.cabecalhos||{})[cat]||[]),rc=cab.filter(c=>/^[CM]\d+$/.test(c)),nc=4+rc.length+6;
+    const corpo=[];L.forEach(r=>{corpo.push([r.pos,r.nome,r.pais,r.no].concat(rc.map(c=>(r.rondas||{})[c]!=null?r.rondas[c]:'')).concat([_aFx(r.cavg),_aFx(r.mavg),_aFx(r.csum),_aFx(r.msum),_aFx(r.diff),_aFx(r.tot)]));
+      ((d.corte||{})[cat]||[]).filter(c=>c.depoisDaPos===r.pos).forEach(c=>corpo.push([{content:c.texto,colSpan:nc,styles:{halign:'center',fillColor:[255,244,214],textColor:[90,70,20],fontStyle:'italic',fontSize:6.8}}]));});
+    if(y>165){doc.addPage();y=18;}doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(11,46,79);doc.text(tit+' · '+L.length,12,y+3);
+    doc.autoTable({startY:y+6,margin:{left:12,right:12,bottom:22},head:[['Pos','Nome','País','Nº'].concat(rc).concat(['CAvg','MAvg','CSum','MSum','Diff','Tot'])],body:corpo,theme:'striped',styles:{font:'helvetica',fontSize:6.8,cellPadding:1.2,textColor:[30,30,30],halign:'center'},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:6.6},columnStyles:{1:{halign:'left',cellWidth:44,fontStyle:'bold'}}});
+    y=doc.lastAutoTable.finalY+8;});
+  [['F','Equipas femininas · Women teams'],['M','Equipas masculinas · Men teams']].forEach(([cat,tit])=>{
+    const L=((d.equipas||{})[cat])||[];if(!L.length)return;if(y>150){doc.addPage();y=18;}doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(11,46,79);doc.text(tit,12,y+3);
+    doc.autoTable({startY:y+6,margin:{left:12,right:12,bottom:22},head:[['Pos','Equipa / Team','Suplentes','Jogadores / Players']],body:L.map(e=>[e.pos,ARQ_EQ_PT[e.equipa]||e.equipa,e.subst||0,(e.jogadores||[]).map(j=>j.nome+' ('+j.no+')').join(', ')]),theme:'striped',styles:{font:'helvetica',fontSize:7.4,cellPadding:1.8,textColor:[30,30,30]},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{halign:'center',cellWidth:12},2:{halign:'center',cellWidth:20},1:{fontStyle:'bold',cellWidth:34}}});y=doc.lastAutoTable.finalY+8;});
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(110,110,110);doc.text('Fonte: '+(d.fonte||'')+' · '+(d.parcial?'RESULTADOS PARCIAIS, sujeitos a alteração.':'Resultados finais.'),12,Math.min(y,198));
+  pdfFooter(doc,true);doc.save('Livro_Resultados_'+_aNorm(d.prova).replace(/ /g,'_')+'_'+String(d.capturadoEm||'').slice(0,10)+'.pdf');toast('PDF gerado');
+}
+function arqRenderKpis(){const ar=_arq||[];_aEl('arq-k-pr').textContent=ar.length;_aEl('arq-k-se').textContent=ar.filter(d=>d.selado).length;}
+function arqRenderTudo(){if(!_aEl('pg-arquivo'))return;arqRenderResultados();arqRenderKpis();}
+function arqAtivo(){const p=_aEl('pg-arquivo');return !!(p&&p.classList.contains('act'));}
+function arqRefresca(){if(arqAtivo())arqRenderTudo();}
+window.arqImportar=arqImportar;window.arqSelar=arqSelar;window.arqReabrir=arqReabrir;window.arqEliminar=arqEliminar;window.arqExportJson=arqExportJson;window.arqVer=arqVer;window.arqPdfLivro=arqPdfLivro;window.arqRenderTudo=arqRenderTudo;window.arqRefresca=arqRefresca;
+
+
 
 
 //  CHECKLIST WMF PDF 
@@ -13166,6 +13371,7 @@ async function editAtl(id){
   const _eat_st=document.getElementById('at-st');if(_eat_st)_eat_st.value=item.estado||'';
   const _eat_ht=document.getElementById('at-ht');if(_eat_ht)_eat_ht.value=item.hotel||'';
   const _eat_em=document.getElementById('at-em');if(_eat_em)_eat_em.value=item.email||'';
+  atlFotoModal(item);
   openM('m-atl');
 }
 window.editAtl=editAtl;

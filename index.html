@@ -1650,7 +1650,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 <div class="av"><div><strong>Como funciona:</strong> no computador, abre a página dos resultados do Bangolfe, carrega em <b>Ctrl + S</b> e guarda como <b>«Página Web, completa»</b>. Depois carrega aqui em <b>«Importar página guardada»</b> e escolhe o ficheiro <b>.htm</b>: o programa lê sozinho as tabelas (strokeplay e equipas), mostra um resumo e só grava depois de confirmares. Se já houver um arquivo <b>aberto</b> desta prova, pergunta se o substitui (assim não ficam arquivos repetidos). Quando estiver conferido, carrega em <b>🔒 Selar</b>: fica só de leitura e já não pode ser eliminado nem substituído. Guarda também o ficheiro .htm no Drive.</div></div>
 <div class="bb" id="bar-arq"><button class="btn bp" onclick="document.getElementById('arq-file-htm').click()">+ Importar página guardada (.htm)</button><button class="btn bo" onclick="document.getElementById('arq-file-json').click()" title="Ficheiro .json preparado a partir de um PDF">Importar ficheiro .json</button></div>
-<div class="tw"><table><thead><tr><th>Arquivo</th><th>Capturado em</th><th>Estado</th><th>Atletas</th><th>Selo</th><th>Ações</th></tr></thead><tbody id="arq-t-res"></tbody></table></div>
+<div class="tw"><table><thead><tr><th>Arquivo</th><th>Capturado em</th><th>Estado</th><th>Conteúdo</th><th>Selo</th><th>Ações</th></tr></thead><tbody id="arq-t-res"></tbody></table></div>
 <input type="file" id="arq-file-json" accept=".json,application/json" style="display:none" onchange="arqImportar(this)">
 <input type="file" id="arq-file-htm" accept=".htm,.html,text/html" style="display:none" onchange="arqImportarHtml(this)">
 
@@ -11858,15 +11858,21 @@ async function arqImportarHtml(inp){
   try{o=arqParseBangolf(txt);}catch(e){console.error('arqParseBangolf',e);toast('Não consegui ler esta página: '+(e&&e.message||e),'er');return;}
   const nF=o.individuais.F.length,nM=o.individuais.M.length,nEq=o.equipas.F.length+o.equipas.M.length;
   if(!nF&&!nM&&!nEq){toast('Esta página não tem resultados que eu reconheça. Confirme que guardou a página dos resultados, com as tabelas já visíveis.','er');return;}
-  if(!confirm('Importar «'+o.titulo+'»?\n\nAtualizada em '+(o.capturadoEm||'?')+'\n'+nF+' atletas femininas, '+nM+' masculinos, '+nEq+' equipas.\n'+(o.parcial?'⚠ Há rondas em curso: fica como PARCIAL.':'Não há rondas em curso.')))return;
+  const todasEq=o.equipas.F.concat(o.equipas.M),eqCompletas=todasEq.length>0&&todasEq.every(e=>e.rondas.length>0&&e.rondas.every(v=>v!=null)&&!Object.keys(e.parciais||{}).length);
+  const eqArq=(_arq||[]).find(x=>x.prova==='Equipas'&&x.fonteId&&x.fonteId===o.fonteId),eqJa=eqCompletas&&!!eqArq;
+  if(!confirm('Importar «'+o.titulo+'»?\n\nAtualizada em '+(o.capturadoEm||'?')+'\n'+nF+' atletas femininas, '+nM+' masculinos, '+nEq+' equipas.\n'+(o.parcial?'⚠ Há rondas em curso: fica como PARCIAL.':'Não há rondas em curso.')+(eqJa?'\n\nAs equipas já estão arquivadas à parte: não entram neste arquivo.':'')))return;
+  let separar=false;
+  if(eqCompletas&&!eqArq&&(nF||nM)&&o.parcial)separar=confirm('As EQUIPAS já terminaram (todas as rondas fechadas), mas o strokeplay individual ainda continua.\n\nGuardar as equipas num arquivo à parte, que já podes selar?\n\nOK = Sim: 2 arquivos (Equipas FINAL + Strokeplay parcial)\nCancelar = Não: um só arquivo com tudo (parcial)');
   if(!o.parcial)o.parcial=!confirm('Não há rondas em curso. Estes são os resultados FINAIS desta prova?\n\nOK = Finais\nCancelar = Parciais (ainda vão jogar mais rondas)');
-  const d={prova:o.prova,titulo:o.titulo||o.prova,capturadoEm:o.capturadoEm||'',parcial:!!o.parcial,fonte:o.fonte||'',fonteId:o.fonteId||'',linkMatchplay:o.linkMatchplay||'',cabecalhos:o.cabecalhos,individuais:o.individuais,corte:o.corte,equipas:o.equipas,textoOriginal:'',selado:false,ts:Date.now()};
+  const vazio={F:[],M:[]},base={capturadoEm:o.capturadoEm||'',fonte:o.fonte||'',fonteId:o.fonteId||'',linkMatchplay:o.linkMatchplay||'',textoOriginal:'',selado:false,ts:Date.now()};
+  const d=Object.assign({},base,{prova:o.prova,titulo:o.titulo||o.prova,parcial:!!o.parcial,cabecalhos:o.cabecalhos,individuais:o.individuais,corte:o.corte,equipas:(separar||eqJa)?vazio:o.equipas});
   const aberto=(_arq||[]).find(x=>!x.selado&&x.prova===d.prova&&d.fonteId&&x.fonteId===d.fonteId);
   try{
+    if(separar){await _add(ARQ_COL,Object.assign({},base,{prova:'Equipas',titulo:(o.titulo||'Resultados')+' · Equipas',parcial:false,cabecalhos:{},individuais:vazio,corte:vazio,equipas:o.equipas}));if(typeof addLog==='function')addLog('criação','Arquivo de Resultados','Equipas (final) · '+base.capturadoEm);}
     if(aberto&&confirm('Já existe um arquivo ABERTO desta prova (de '+(aberto.capturadoEm||'?')+').\n\nSubstituir pelos dados mais recentes? (recomendado: evita arquivos repetidos)\n\nOK = Substituir\nCancelar = Guardar como arquivo novo')){
-      await _upd(ARQ_COL,aberto.id,d);if(typeof addLog==='function')addLog('edição','Arquivo de Resultados','ATUALIZADO: '+d.prova+' · '+d.capturadoEm+(d.parcial?' (parcial)':''));toast('Arquivo atualizado: '+d.prova+(d.parcial?' (parcial)':''));
+      await _upd(ARQ_COL,aberto.id,d);if(typeof addLog==='function')addLog('edição','Arquivo de Resultados','ATUALIZADO: '+d.prova+' · '+d.capturadoEm+(d.parcial?' (parcial)':''));toast('Arquivo atualizado: '+d.prova+(d.parcial?' (parcial)':'')+(separar?' · Equipas arquivadas à parte (final)':''));
     }else{
-      await _add(ARQ_COL,d);if(typeof addLog==='function')addLog('criação','Arquivo de Resultados',d.prova+' · '+d.capturadoEm+(d.parcial?' (parcial)':''));toast('Resultados importados: '+d.prova+(d.parcial?' (parciais)':''));
+      await _add(ARQ_COL,d);if(typeof addLog==='function')addLog('criação','Arquivo de Resultados',d.prova+' · '+d.capturadoEm+(d.parcial?' (parcial)':''));toast('Resultados importados: '+d.prova+(d.parcial?' (parciais)':'')+(separar?' · Equipas arquivadas à parte (final)':''));
     }
     arqRenderTudo();
   }catch(e){console.error('arqImportarHtml',e);toast('Erro ao guardar: '+(e&&e.message||e),'er');}
@@ -11906,9 +11912,10 @@ function arqVer(id){
     return h+'</tbody></table></div>';};
   _aEl('arq-ver-titulo').textContent=d.titulo+(d.parcial?' (PARCIAL)':'')+' · '+d.capturadoEm;_aEl('arq-ver-corpo').innerHTML=T('F','Seniors Femininos')+T('M','Seniors Masculinos')+E('F','Equipas femininas')+E('M','Equipas masculinas')+'<div class="mu" style="font-size:10px;margin-top:10px;">Fonte: '+_aEsc(d.fonte||'')+(d.selado?' · SELADO em '+_aDmy(d.seladoEm)+' '+String(d.seladoEm||'').slice(11,16):'')+'</div>';openM('m-arq-ver');
 }
+function arqContagem(d){const na=((d.individuais&&d.individuais.F)||[]).length+((d.individuais&&d.individuais.M)||[]).length,ne=((d.equipas&&d.equipas.F)||[]).length+((d.equipas&&d.equipas.M)||[]).length;return (na?na+' atletas':'')+(na&&ne?' · ':'')+(ne?ne+' equipas':'')||'—';}
 function arqRenderResultados(){
   const ar=(_arq||[]).slice().sort((a,b)=>String(b.capturadoEm||'').localeCompare(String(a.capturadoEm||''))||(b.ts||0)-(a.ts||0)),ed=canEdit(),dl=canDelete();
-  _aEl('arq-t-res').innerHTML=ar.length?ar.map(d=>'<tr><td><b>'+_aEsc(d.titulo)+'</b><div class="mu" style="font-size:10px;">'+_aEsc(d.fonte||'')+'</div></td><td>'+_aEsc(d.capturadoEm||'')+'</td><td><span class="bge '+(d.parcial?'bg-am':'bg-ok')+'">'+(d.parcial?'Parcial':'Final')+'</span></td><td class="mu">'+((d.individuais&&d.individuais.F||[]).length+(d.individuais&&d.individuais.M||[]).length)+' atletas</td>'
+  _aEl('arq-t-res').innerHTML=ar.length?ar.map(d=>'<tr><td><b>'+_aEsc(d.titulo)+'</b><div class="mu" style="font-size:10px;">'+_aEsc(d.fonte||'')+'</div></td><td>'+_aEsc(d.capturadoEm||'')+'</td><td><span class="bge '+(d.parcial?'bg-am':'bg-ok')+'">'+(d.parcial?'Parcial':'Final')+'</span></td><td class="mu">'+arqContagem(d)+'</td>'
     +'<td>'+(d.selado?'<span class="bge bg-bl">🔒 Selado '+_aDmy(d.seladoEm)+'</span>':'<span class="bge bg-mu">Aberto</span>')+'</td><td style="white-space:nowrap;"><button class="btn bo bsm" onclick="arqVer(\''+d.id+'\')">👁 Ver</button> <button class="btn bo bsm" onclick="arqPdfLivro(\''+d.id+'\')">📄 PDF</button> <button class="btn bo bsm" onclick="arqExportJson(\''+d.id+'\')">⬇ JSON</button>'
     +(ed&&!d.selado?' <button class="btn bp bsm" onclick="arqSelar(\''+d.id+'\')">🔒 Selar</button>':'')+(dl&&d.selado?' <button class="btn bo bsm" onclick="arqReabrir(\''+d.id+'\')">Reabrir</button>':'')+(dl&&!d.selado?' <button class="btn bo bsm" onclick="arqEliminar(\''+d.id+'\')">🗑️</button>':'')+'</td></tr>').join('')
     :'<tr><td colspan="6" class="mu" style="text-align:center;padding:22px;">Ainda não há resultados arquivados. Importe o ficheiro de resultados.</td></tr>';

@@ -1645,11 +1645,25 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Arquivos de resultados</div><div class="smv" id="arq-k-pr">0</div></div>
   <div class="sm"><div class="sml">Selados (só de leitura)</div><div class="smv" id="arq-k-se" style="color:var(--ok)">0</div></div>
+  <div class="sm"><div class="sml">Decisões e ocorrências</div><div class="smv" id="dj-k-n">0</div></div>
+  <div class="sm"><div class="sml">Diário do júri</div><div class="smv" id="dj-k-s">Aberto</div></div>
 </div>
 <div class="av"><div><strong>Como funciona:</strong> envia-me o PDF da página de resultados e devolvo-te um ficheiro <b>.json</b>. Importa-o aqui e fica guardado no programa. Podes ver (por atleta e por equipa), exportar o livro de resultados em PDF e, quando estiver conferido, carregar em <b>🔒 Selar</b>: fica só de leitura e já não pode ser eliminado nem substituído.</div></div>
 <div class="bb" id="bar-arq"><button class="btn bp" onclick="document.getElementById('arq-file-json').click()">+ Importar ficheiro de resultados (.json)</button></div>
 <div class="tw"><table><thead><tr><th>Arquivo</th><th>Capturado em</th><th>Estado</th><th>Atletas</th><th>Selo</th><th>Ações</th></tr></thead><tbody id="arq-t-res"></tbody></table></div>
 <input type="file" id="arq-file-json" accept=".json,application/json" style="display:none" onchange="arqImportar(this)">
+
+<div style="margin-top:30px;font-family:var(--fh,inherit);font-size:19px;color:var(--wh);">Decisões do júri e ocorrências</div>
+<div class="mu" style="font-size:12px;margin:4px 0 12px;">Substituições, playoffs e desempates, advertências, protestos, suspensões e outras decisões: o que explica resultados que as tabelas não mostram. Fica guardado para sempre e pode ser selado.</div>
+<div class="av" id="dj-aviso" style="display:none;"></div>
+<div class="bb" id="bar-dj"><button class="btn bp" id="dj-bt-novo" onclick="djAbrir()">+ Registar decisão ou ocorrência</button><button class="btn bo" id="dj-bt-imp" onclick="document.getElementById('dj-file-json').click()">⬆ Importar (.json)</button><button class="btn bo" id="dj-bt-selo">🔒 Selar diário</button></div>
+<div class="bb">
+  <select class="fse" id="djf-tp" onchange="djRender()" style="max-width:210px;"><option value="">Todos os tipos</option><option>Substituição</option><option>Playoff / desempate</option><option>Advertência</option><option>Protesto / reclamação</option><option>Suspensão / retoma</option><option>Decisão do júri</option><option>Outra ocorrência</option></select>
+  <select class="fse" id="djf-pv" onchange="djRender()" style="max-width:170px;"><option value="">Todas as provas</option><option>Strokeplay</option><option>Equipas</option><option>Matchplay</option><option>Geral</option></select>
+  <button class="btn bo" onclick="djPdf()">📄 PDF (com estes filtros)</button><button class="btn bo" onclick="djCsv()">⬇ Excel (CSV)</button>
+</div>
+<div class="tw"><table><thead><tr><th>Ref.</th><th>Data / hora</th><th>Tipo</th><th>Prova</th><th>Pessoas / seleção</th><th>Descrição</th><th>Ações</th></tr></thead><tbody id="dj-t"></tbody></table></div>
+<input type="file" id="dj-file-json" accept=".json,application/json" style="display:none" onchange="djImportar(this)">
 </div>
 
 <div class="pg" id="pg-despesas">
@@ -2859,6 +2873,25 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mf"><button class="btn bo" onclick="closeM('m-arq-ver')">Fechar</button></div>
 </div></div>
 
+<div class="mo" id="m-dj"><div class="mdl">
+  <div class="mh"><div class="mt2" id="dj-titulo">Registar decisão ou ocorrência</div><button class="mc" onclick="closeM('m-dj')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="dj-eid">
+    <div class="fr"><div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="dj-dt"></div><div class="fg"><div class="fl">Hora (opcional)</div><input class="fi" type="time" id="dj-hr"></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Tipo</div><select class="fse" id="dj-tp" onchange="djUI()"><option>Substituição</option><option>Playoff / desempate</option><option>Advertência</option><option>Protesto / reclamação</option><option>Suspensão / retoma</option><option>Decisão do júri</option><option>Outra ocorrência</option></select></div>
+    <div class="fg"><div class="fl">Prova</div><select class="fse" id="dj-pv"><option>Strokeplay</option><option>Equipas</option><option>Matchplay</option><option>Geral</option></select></div></div>
+    <div class="fg"><div class="fl">Categoria</div><select class="fse" id="dj-ct"><option value="">—</option><option>Femininos (SF)</option><option>Masculinos (SM)</option><option>Equipas femininas</option><option>Equipas masculinas</option></select></div>
+    <div id="dj-sub" style="border:1px solid var(--bds);border-radius:10px;padding:10px 12px;margin-bottom:10px;">
+      <div class="fl" style="margin-bottom:6px;">Substituição</div>
+      <div class="fr"><div class="fg"><div class="fl">Seleção</div><input class="fi" id="dj-sp" placeholder="ex.: Itália"></div><div class="fg"><div class="fl">Ronda · pista</div><div style="display:flex;gap:8px;"><input class="fi" id="dj-sr" placeholder="Ronda" style="min-width:0;"><input class="fi" id="dj-sl" placeholder="Pista" style="min-width:0;"></div></div></div>
+      <div class="fr"><div class="fg"><div class="fl">Sai</div><input class="fi" id="dj-so" placeholder="Nome de quem sai"></div><div class="fg"><div class="fl">Entra</div><input class="fi" id="dj-se" placeholder="Nome de quem entra"></div></div>
+    </div>
+    <div class="fg"><div class="fl">Pessoas ou seleção envolvidas</div><input class="fi" id="dj-ps" placeholder="ex.: Roberto Garbui (Itália)"></div>
+    <div class="fg"><div class="fl">Descrição / decisão</div><textarea class="fta" id="dj-tx" placeholder="O que aconteceu e o que o júri decidiu. Nas substituições, a linha acima é gerada sozinha."></textarea></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-dj')">Cancelar</button><button class="btn bp" onclick="djGuardar()">Guardar</button></div>
+</div></div>
+
 <div class="mo" id="m-inv"><div class="mdl">
   <div class="mh"><div class="mt2">Item Equipamento WMF</div><button class="mc" onclick="closeM('m-inv')">✕</button></div>
   <div class="mb">
@@ -3670,7 +3703,7 @@ function setAdminBars(){
     'bar-cron','bar-atl','bar-alo','bar-cer',
     'bar-rec','bar-desp','bar-pat','bar-inv','bar-bar','bar-merch',
     'bar-programa','bar-accred','bar-rooming','bar-chegadas','bar-comunicacoes',
-    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas','bar-juri','bar-tl','bar-tl-rec','bar-seg','bar-arq',
+    'bar-resultados','bar-diariobordo','bar-faturas','bar-actas','bar-juri','bar-tl','bar-tl-rec','bar-seg','bar-arq','bar-dj',
   ].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.style.display=edit?'flex':'none';
@@ -3903,6 +3936,7 @@ let _lan=[],_rec=[],_desp=[],_pat=[],_atl=[],_conv=[],_praz=[],_mbr=[],_vol=[],_
 let _tl=[],_tld=[],_tlcfg={};
 let _sgr=[];
 let _arq=[];
+let _dj=[],_djcfg={};
 function loadAll(){
   _snap('lancamentos',(docs)=>{_lan=docs;renderDi();renderDash();if(typeof renderRec==='function')renderRec();if(typeof renderDesp==='function')renderDesp();if(typeof renderPat==='function')renderPat();},'data');
   _snap('receitas',(docs)=>{_rec=docs;renderRec();renderDash();},'data');
@@ -3911,6 +3945,8 @@ function loadAll(){
   _snap('treinosLivresCfg',(docs)=>{_tlcfg=docs.find(d=>d.id==='cfg')||{};tlRefresca();});
   _snap('seguros',(docs)=>{_sgr=docs;sgrRender();});
   _snap('arquivoResultados',(docs)=>{_arq=docs;arqRefresca();});
+  _snap('decisoesJuri',(docs)=>{_dj=docs;arqRefresca();});
+  _snap('decisoesJuriCfg',(docs)=>{_djcfg=docs.find(d=>d.id==='cfg')||{};arqRefresca();});
   _snap('despesas',(docs)=>{_desp=docs;renderDesp();renderDash();},'data');
   _snap('patrocinios',(docs)=>{_pat=docs;renderPat();renderDash();});
   _snap('swc2026_recibos',(docs)=>{_recSwc=docs;renderRecibosSwc();});
@@ -8845,7 +8881,7 @@ function exportBackupJSON(){
       lancamentos:_lan,receitas:_rec,despesas:_desp,patrocinios:_pat,
       programa:_prog,resultados:_resultados,matchplay:_matchplay,
       diariodb:_diariodb,actas:_actas,comunicados:_comunicados,
-      orcamento:_orcamento,faturas:_faturas,fluxo:_fluxo,treinosLivres:_tl,treinosLivresDias:_tld,treinosLivresCfg:_tlcfg,seguros:_sgr,arquivoResultados:_arq,
+      orcamento:_orcamento,faturas:_faturas,fluxo:_fluxo,treinosLivres:_tl,treinosLivresDias:_tld,treinosLivresCfg:_tlcfg,seguros:_sgr,arquivoResultados:_arq,decisoesJuri:_dj,decisoesJuriCfg:_djcfg,
       cs_marcas:_marcas,cs_artigos:_artigos,cs_vendas:_vendas_cs,
     }
   };
@@ -11778,7 +11814,7 @@ function arqExportJson(id){
   const b=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Resultados_'+_aNorm(d.prova).replace(/ /g,'_')+'_'+String(d.capturadoEm||'').slice(0,10)+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
 }
 function arqVer(id){
-  const d=(_arq||[]).find(x=>x.id===id);if(!d)return;const T=(cat,tit)=>{const L=(d.individuais||{})[cat]||[];if(!L.length)return '';const cab=((d.cabecalhos||{})[cat]||[]),rc=cab.filter(c=>/^[CM]\d+$/.test(c));
+  const d=(_arq||[]).find(x=>x.id===id);if(!d)return;const T=(cat,tit)=>{const L=(d.individuais||{})[cat]||[];if(!L.length)return '';const cab=((d.cabecalhos||{})[cat]||[]),rc=cab.filter(c=>/^[CEM]\d+$/.test(c));
     return '<div style="font-weight:700;color:var(--gl);margin:10px 0 6px;">'+tit+' · '+L.length+'</div><div class="tw"><table><thead><tr><th>Pos</th><th>Nome</th><th>País</th><th>Nº</th>'+rc.map(c=>'<th>'+c+'</th>').join('')+'<th>Total</th></tr></thead><tbody>'
       +L.map(r=>'<tr><td>'+r.pos+'</td><td><b>'+_aEsc(r.nome)+'</b></td><td>'+_aEsc(r.pais)+'</td><td class="mu">'+r.no+'</td>'+rc.map(c=>'<td>'+_aFx((r.rondas||{})[c])+'</td>').join('')+'<td class="tok"><b>'+_aFx(r.tot)+'</b></td></tr>'+((d.corte||{})[cat]||[]).filter(c=>c.depoisDaPos===r.pos).map(c=>'<tr><td colspan="'+(5+rc.length)+'" class="mu" style="font-size:10px;text-align:center;border-top:1px dashed var(--gl);">'+_aEsc(c.texto)+'</td></tr>').join('')).join('')+'</tbody></table></div>';};
   const E=(cat,tit)=>{const L=((d.equipas||{})[cat])||[];if(!L.length)return '';return '<div style="font-weight:700;color:var(--gl);margin:12px 0 6px;">'+tit+'</div><div class="tw"><table><thead><tr><th>Pos</th><th>Equipa</th><th>Jogadores</th></tr></thead><tbody>'+L.map(e=>'<tr><td>'+e.pos+'</td><td><b>'+_aEsc(ARQ_EQ_PT[e.equipa]||e.equipa)+'</b>'+(e.subst?' <span class="mu">('+e.subst+' suplente)</span>':'')+'</td><td class="mu" style="font-size:11px;">'+(e.jogadores||[]).map(j=>_aEsc(j.nome)).join(', ')+'</td></tr>').join('')+'</tbody></table></div>';};
@@ -11795,7 +11831,7 @@ function arqPdfLivro(id){
   const d=(_arq||[]).find(x=>x.id===id);if(!d)return;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   pdfHeader(doc,'Livro de Resultados — '+d.prova,'SWC Vizela 2026 · '+(d.parcial?'PROVISÓRIO · ':'')+(d.capturadoEm||'')+(d.selado?' · SELADO em '+_aDmy(d.seladoEm):''),true);let y=42;
   [['F','Seniors Women · Seniores Femininos'],['M','Seniors Men · Seniores Masculinos']].forEach(([cat,tit])=>{
-    const L=(d.individuais||{})[cat]||[];if(!L.length)return;const cab=((d.cabecalhos||{})[cat]||[]),rc=cab.filter(c=>/^[CM]\d+$/.test(c)),nc=4+rc.length+6;
+    const L=(d.individuais||{})[cat]||[];if(!L.length)return;const cab=((d.cabecalhos||{})[cat]||[]),rc=cab.filter(c=>/^[CEM]\d+$/.test(c)),nc=4+rc.length+6;
     const corpo=[];L.forEach(r=>{corpo.push([r.pos,r.nome,r.pais,r.no].concat(rc.map(c=>(r.rondas||{})[c]!=null?r.rondas[c]:'')).concat([_aFx(r.cavg),_aFx(r.mavg),_aFx(r.csum),_aFx(r.msum),_aFx(r.diff),_aFx(r.tot)]));
       ((d.corte||{})[cat]||[]).filter(c=>c.depoisDaPos===r.pos).forEach(c=>corpo.push([{content:c.texto,colSpan:nc,styles:{halign:'center',fillColor:[255,244,214],textColor:[90,70,20],fontStyle:'italic',fontSize:6.8}}]));});
     if(y>165){doc.addPage();y=18;}doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(11,46,79);doc.text(tit+' · '+L.length,12,y+3);
@@ -11808,10 +11844,99 @@ function arqPdfLivro(id){
   pdfFooter(doc,true);doc.save('Livro_Resultados_'+_aNorm(d.prova).replace(/ /g,'_')+'_'+String(d.capturadoEm||'').slice(0,10)+'.pdf');toast('PDF gerado');
 }
 function arqRenderKpis(){const ar=_arq||[];_aEl('arq-k-pr').textContent=ar.length;_aEl('arq-k-se').textContent=ar.filter(d=>d.selado).length;}
-function arqRenderTudo(){if(!_aEl('pg-arquivo'))return;arqRenderResultados();arqRenderKpis();}
+function arqRenderTudo(){if(!_aEl('pg-arquivo'))return;arqRenderResultados();arqRenderKpis();if(typeof djRender==='function')djRender();}
 function arqAtivo(){const p=_aEl('pg-arquivo');return !!(p&&p.classList.contains('act'));}
 function arqRefresca(){if(arqAtivo())arqRenderTudo();}
 window.arqImportar=arqImportar;window.arqSelar=arqSelar;window.arqReabrir=arqReabrir;window.arqEliminar=arqEliminar;window.arqExportJson=arqExportJson;window.arqVer=arqVer;window.arqPdfLivro=arqPdfLivro;window.arqRenderTudo=arqRenderTudo;window.arqRefresca=arqRefresca;
+
+// ===================================================================================================
+// DECISÕES DO JÚRI E OCORRÊNCIAS — diário permanente: substituições, playoffs/desempates, advertências, protestos, suspensões e
+// outras decisões. Explicam resultados que as tabelas não mostram. Pode ser selado (só de leitura), como os resultados.
+// ===================================================================================================
+const DJ_COL='decisoesJuri',DJ_CFG='decisoesJuriCfg';
+const DJ_TIPOS=['Substituição','Playoff / desempate','Advertência','Protesto / reclamação','Suspensão / retoma','Decisão do júri','Outra ocorrência'];
+const DJ_PROVAS=['Strokeplay','Equipas','Matchplay','Geral'];
+const DJ_CATS=['','Femininos (SF)','Masculinos (SM)','Equipas femininas','Equipas masculinas'];
+const _djSetDoc=(col,id,data)=>setDoc(doc(C(col),id),data,{merge:true});
+const djSelado=()=>!!(_djcfg&&_djcfg.selado);
+function djFiltros(){return {tp:(_aEl('djf-tp')||{}).value||'',pv:(_aEl('djf-pv')||{}).value||''};}
+function djLista(f){f=f||djFiltros();return (_dj||[]).filter(d=>(!f.tp||d.tipo===f.tp)&&(!f.pv||d.prova===f.pv)).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))||String(a.hora||'').localeCompare(String(b.hora||''))||(a.ts||0)-(b.ts||0));}
+function djProxNum(){let m=0;(_dj||[]).forEach(d=>{const x=/^DJ-(\d+)$/.exec(d.ref||'');if(x)m=Math.max(m,parseInt(x[1],10));});return Math.max(m,parseInt((_djcfg&&_djcfg.ultimoNum)||0,10))+1;}
+const djRef=n=>'DJ-'+String(n).padStart(4,'0');
+async function djGuardaUltimo(n){await _djSetDoc(DJ_CFG,'cfg',{ultimoNum:n});_djcfg=Object.assign({},_djcfg||{},{ultimoNum:n});}
+function djTextoSub(p,so,se,r,l){return (p?String(p).toUpperCase()+': ':'')+(so?so+' SAI':'')+(so&&se?', ':'')+(se?se+' ENTRA':'')+(r?' · Ronda '+r:'')+(l?' · Pista '+l:'');}
+function djRender(){
+  const tb=_aEl('dj-t');if(!tb)return;const L=djLista(),ed=canEdit()&&!djSelado(),sel=djSelado();
+  tb.innerHTML=L.length?L.map(d=>'<tr><td><span class="sc">'+_aEsc(d.ref||'')+'</span></td><td style="white-space:nowrap;">'+_aEsc(_aDmy(d.data))+(d.hora?' · '+_aEsc(d.hora):'')+'</td><td><span class="bge bg-bl">'+_aEsc(d.tipo||'')+'</span></td><td>'+_aEsc(d.prova||'')+(d.categoria?'<div class="mu" style="font-size:10px;">'+_aEsc(d.categoria)+'</div>':'')+'</td><td class="mu">'+_aEsc(d.pessoas||'')+'</td><td>'+_aEsc(d.texto||'')+'</td>'
+    +'<td style="white-space:nowrap;">'+(ed?'<button class="btn bo bsm" title="Editar" onclick="djEditar(\''+d.id+'\')">✏️</button> ':'')+(ed&&canDelete()?'<button class="btn bo bsm" title="Eliminar" onclick="djEliminar(\''+d.id+'\')">🗑️</button>':'')+'</td></tr>').join('')
+    :'<tr><td colspan="7" class="mu" style="text-align:center;padding:22px;">'+((_dj||[]).length?'Sem registos com estes filtros':'Ainda não há decisões nem ocorrências registadas')+'</td></tr>';
+  _aEl('dj-k-n').textContent=(_dj||[]).length;_aEl('dj-k-s').innerHTML=sel?'🔒 Selado':'Aberto';_aEl('dj-k-s').style.color=sel?'var(--ok)':'';
+  const b=_aEl('dj-bt-selo');if(b){b.textContent=sel?'Reabrir diário':'🔒 Selar diário';b.onclick=sel?djReabrir:djSelar;b.style.display=(sel?canDelete():canEdit())?'':'none';}
+  const n=_aEl('dj-aviso');if(n){n.style.display=sel?'':'none';n.innerHTML=sel?'<div><strong>Diário selado em '+_aEsc(_aDmy(_djcfg.seladoEm))+' '+_aEsc(String(_djcfg.seladoEm||'').slice(11,16))+'.</strong> Só de leitura: não se pode registar, editar nem eliminar.</div>':'';}
+  ['dj-bt-novo','dj-bt-imp'].forEach(i=>{const e=_aEl(i);if(e)e.style.display=ed?'':'none';});
+}
+function djUI(){const sub=(_aEl('dj-tp')||{}).value==='Substituição';_aEl('dj-sub').style.display=sub?'':'none';}
+function djAbrir(){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}if(djSelado()){toast('Diário selado: só de leitura','am');return;}
+  _aEl('dj-eid').value='';_aEl('dj-dt').value=new Date().toISOString().slice(0,10);_aEl('dj-hr').value='';_aEl('dj-tp').value=DJ_TIPOS[0];_aEl('dj-pv').value=DJ_PROVAS[0];_aEl('dj-ct').value='';
+  ['dj-ps','dj-sp','dj-so','dj-se','dj-sr','dj-sl','dj-tx'].forEach(i=>{_aEl(i).value='';});_aEl('dj-titulo').textContent='Registar decisão ou ocorrência';djUI();openM('m-dj');
+}
+function djEditar(id){
+  if(!canEdit()||djSelado()){toast(djSelado()?'Diário selado: só de leitura':'Sem permissão para editar',djSelado()?'am':'er');return;}const d=(_dj||[]).find(x=>x.id===id);if(!d)return;
+  _aEl('dj-eid').value=id;_aEl('dj-dt').value=d.data||'';_aEl('dj-hr').value=d.hora||'';_aEl('dj-tp').value=DJ_TIPOS.indexOf(d.tipo)>=0?d.tipo:'Outra ocorrência';_aEl('dj-pv').value=DJ_PROVAS.indexOf(d.prova)>=0?d.prova:'Geral';_aEl('dj-ct').value=DJ_CATS.indexOf(d.categoria||'')>=0?(d.categoria||''):'';
+  _aEl('dj-ps').value=d.pessoas||'';_aEl('dj-tx').value=d.texto||'';['dj-sp','dj-so','dj-se','dj-sr','dj-sl'].forEach(i=>{_aEl(i).value='';});_aEl('dj-titulo').textContent='Editar '+(d.ref||'registo');djUI();openM('m-dj');
+}
+async function djGuardar(){
+  if(!canEdit()){toast('Sem permissão para editar','er');return;}if(djSelado()){toast('Diário selado: só de leitura','am');return;}const v=i=>(_aEl(i).value||'').trim();
+  const tp=_aEl('dj-tp').value;let texto=v('dj-tx');
+  if(tp==='Substituição'&&(v('dj-so')||v('dj-se'))){const t=djTextoSub(v('dj-sp'),v('dj-so'),v('dj-se'),v('dj-sr'),v('dj-sl'));texto=texto?t+' — '+texto:t;}
+  if(!v('dj-dt')){toast('Indique a data','er');return;}if(!texto){toast('Descreva a decisão ou a ocorrência','er');return;}
+  const d={data:v('dj-dt'),hora:v('dj-hr'),tipo:tp,prova:_aEl('dj-pv').value,categoria:_aEl('dj-ct').value,pessoas:v('dj-ps')||(tp==='Substituição'?v('dj-sp'):''),texto:texto},eid=_aEl('dj-eid').value;
+  try{
+    if(eid){await _upd(DJ_COL,eid,d);if(typeof addLog==='function')addLog('edição','Diário do Júri',d.tipo+' · '+d.data);toast('Registo atualizado');}
+    else{const num=djProxNum();d.ref=djRef(num);d.ts=Date.now();await _add(DJ_COL,d);await djGuardaUltimo(num);if(typeof addLog==='function')addLog('criação','Diário do Júri',d.ref+' · '+d.tipo+' · '+d.data);toast('Registado: '+d.ref);}
+    closeM('m-dj');
+  }catch(e){console.error('djGuardar',e);toast('Erro ao guardar: '+(e&&e.message||e),'er');}
+}
+async function djEliminar(id){
+  if(!canDelete()||djSelado()){toast(djSelado()?'Diário selado: só de leitura':'Sem permissão para eliminar',djSelado()?'am':'er');return;}const d=(_dj||[]).find(x=>x.id===id);if(!d||!confirm('Eliminar o registo '+(d.ref||'')+' ('+(d.tipo||'')+')?'))return;
+  await _del(DJ_COL,id);if(typeof addLog==='function')addLog('eliminação','Diário do Júri',(d.ref||'')+' · '+d.tipo);toast('Registo eliminado','er');
+}
+async function djSelar(){
+  if(!canEdit()||djSelado())return;if(!(_dj||[]).length){toast('Ainda não há registos para selar','am');return;}
+  if(!confirm('Selar o diário do júri ('+(_dj||[]).length+' registos)?\n\nDepois de selado fica só de leitura: não se pode registar, editar nem eliminar (só reabrir, com confirmação).'))return;
+  const por=(typeof auth!=='undefined'&&auth&&auth.currentUser&&auth.currentUser.email)||'';
+  await _djSetDoc(DJ_CFG,'cfg',{selado:true,seladoEm:new Date().toISOString(),seladoPor:por});_djcfg=Object.assign({},_djcfg||{},{selado:true,seladoEm:new Date().toISOString()});if(typeof addLog==='function')addLog('edição','Diário do Júri','SELADO');toast('Diário selado: só de leitura');djRender();
+}
+async function djReabrir(){
+  if(!canDelete()||!djSelado())return;if(!confirm('Reabrir o diário do júri selado?\n\nSó deve fazer isto para corrigir um erro. Fica registado no histórico de atividade.'))return;
+  await _djSetDoc(DJ_CFG,'cfg',{selado:false,reabertoEm:new Date().toISOString()});_djcfg=Object.assign({},_djcfg||{},{selado:false});if(typeof addLog==='function')addLog('edição','Diário do Júri','REABERTO');toast('Diário reaberto','am');djRender();
+}
+function djTextoFiltros(f){const t=[];if(f.tp)t.push('Tipo: '+f.tp);if(f.pv)t.push('Prova: '+f.pv);return t.length?t.join(' · '):'Todos os registos';}
+function djPdf(){
+  const f=djFiltros(),L=djLista(f);if(!L.length){toast('Sem registos para exportar','am');return;}
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});pdfHeader(doc,'Diário do Júri — Decisões e Ocorrências','SWC Vizela 2026 · '+djTextoFiltros(f)+(djSelado()?' · SELADO em '+_aDmy(_djcfg.seladoEm):''),true);
+  doc.autoTable({startY:42,margin:{left:12,right:12,bottom:22},head:[['Ref.','Data / hora','Tipo','Prova','Pessoas / seleção','Descrição']],body:L.map(d=>[d.ref||'',_aDmy(d.data)+(d.hora?' '+d.hora:''),d.tipo||'',(d.prova||'')+(d.categoria?' · '+d.categoria:''),d.pessoas||'',d.texto||'']),theme:'striped',
+    styles:{font:'helvetica',fontSize:8,cellPadding:2.4,textColor:[30,30,30],valign:'top'},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:18},1:{cellWidth:28},2:{cellWidth:34},3:{cellWidth:34},4:{cellWidth:42},5:{cellWidth:'auto'}}});
+  pdfFooter(doc,true);doc.save('SWC2026_Diario_do_Juri.pdf');toast('PDF gerado');
+}
+function djCsv(){
+  const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"',r=['Ref;Data;Hora;Tipo;Prova;Categoria;Pessoas / seleção;Descrição'];
+  djLista().forEach(d=>r.push([q(d.ref),d.data||'',d.hora||'',q(d.tipo),q(d.prova),q(d.categoria),q(d.pessoas),q(d.texto)].join(';')));
+  const b=new Blob(['\ufeff'+r.join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='SWC2026_Diario_do_Juri.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+async function djImportar(inp){
+  if(!canEdit()||djSelado()){toast(djSelado()?'Diário selado: só de leitura':'Sem permissão para editar',djSelado()?'am':'er');return;}const f=inp.files&&inp.files[0];if(!f)return;let o;
+  try{o=JSON.parse(await f.text());}catch(e){toast('O ficheiro não é um JSON válido','er');inp.value='';return;}inp.value='';
+  if(!o||o.tipo!=='decisoes-swc2026'||!Array.isArray(o.entradas)){toast('Ficheiro não reconhecido (não é um ficheiro de decisões do júri SWC 2026)','er');return;}
+  const norm=e=>({data:String(e&&e.data||'').trim(),hora:String(e&&e.hora||'').trim(),tipo:DJ_TIPOS.indexOf(e&&e.tipo)>=0?e.tipo:'Outra ocorrência',prova:DJ_PROVAS.indexOf(e&&e.prova)>=0?e.prova:'Geral',categoria:DJ_CATS.indexOf((e&&e.categoria)||'')>=0?((e&&e.categoria)||''):'',pessoas:String(e&&e.pessoas||'').trim(),texto:String(e&&e.texto||'').trim()});
+  const chave=d=>[d.data,d.hora||'',d.tipo,String(d.texto||'').trim()].join('|'),ja=new Set((_dj||[]).map(chave)),todas=o.entradas.map(norm).filter(e=>e.data&&e.texto),novas=todas.filter(e=>!ja.has(chave(e)));
+  if(!novas.length){toast('Nada de novo: estes registos já existem','am');return;}if(!confirm('Importar '+novas.length+' registo(s) para o diário do júri?'+(o.entradas.length-novas.length?'\n('+(o.entradas.length-novas.length)+' já existiam ou não tinham data/descrição e ficam de fora)':'')))return;
+  let ok=0,num=djProxNum()-1;for(const e of novas){try{num++;await _add(DJ_COL,Object.assign({ref:djRef(num),ts:Date.now()+ok},e));ok++;}catch(er){num--;console.error('djImportar',er);}}
+  if(ok)await djGuardaUltimo(num);
+  if(typeof addLog==='function')addLog('criação','Diário do Júri','Importados '+ok+' registos');toast(ok+' registo(s) importado(s)');
+}
+window.djRender=djRender;window.djUI=djUI;window.djAbrir=djAbrir;window.djEditar=djEditar;window.djGuardar=djGuardar;window.djEliminar=djEliminar;window.djSelar=djSelar;window.djReabrir=djReabrir;window.djPdf=djPdf;window.djCsv=djCsv;window.djImportar=djImportar;
 
 
 

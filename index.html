@@ -686,11 +686,11 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
       <div class="si-sub" style="color:rgba(224,165,59,.6);">Caixa - Vendas - Stock</div>
     </div>
   </div>
-  <div class="si" id="si-acessos" title="Acessos por seccao (admin)" onclick="nav(this,'acessos','Acessos por Secção')" style="">
+  <div class="si" id="si-acessos" title="Acessos e passwords (admin)" onclick="nav(this,'acessos','Acessos e Passwords')" style="">
     <i class="ti ti-key" style="font-size:20px;color:#B98BD0;flex-shrink:0;" aria-hidden="true"></i>
     <div style="flex:1;min-width:0;">
-      <div class="si-label">Acessos por Secção</div>
-      <div class="si-sub" style="color:rgba(185,139,208,.6);">Passwords por area</div>
+      <div class="si-label">Acessos e Passwords</div>
+      <div class="si-sub" style="color:rgba(185,139,208,.6);">Alterar as passwords de entrada</div>
     </div>
   </div>
   <div class="si" title="Caixa do merchandise - vendas - stock" onclick="nav(this,'merch','Merchandise — Caixa')" style="">
@@ -1878,15 +1878,29 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 </div>
 
 <div class="pg" id="pg-acessos">
-<div class="st"><span class="sn">ACESSO</span>Acessos por Secção</div>
-<div class="sd">Cria uma password própria para cada secção. Quem entrar com ela vê apenas os módulos atribuídos. As passwords são guardadas cifradas (hash).</div>
-<div class="bb" id="bar-acessos">
-  <button class="btn bp" onclick="openNovoAcesso()">+ Novo acesso</button>
-</div>
-<div class="tbl-wrap tw"><table>
+<div class="st"><span class="sn">ACESSO</span>Acessos e Passwords</div>
+<div class="sd">Altera aqui as passwords de entrada de cada conta (Bar, Merchandise, …). Para mudar uma, é preciso saber a password atual dessa conta. A antiga deixa de funcionar assim que a nova for gravada.</div>
+<div class="tw" style="margin-bottom:14px;"><table>
+  <thead><tr><th>Conta</th><th>Email de entrada</th><th>O que vê</th><th>Ações</th></tr></thead>
+  <tbody id="t-contas-pw">
+   <tr><td class="vl">Bar</td><td class="mu">bar@swc2026.pt</td><td class="mu" style="font-size:11px;">Só as vendas do Bar</td><td><button class="btn bp bsm" onclick="abrirPw('bar@swc2026.pt')">🔑 Alterar password</button></td></tr>
+   <tr><td class="vl">Merchandise</td><td class="mu">merch@swc2026.pt</td><td class="mu" style="font-size:11px;">Só as vendas de Merchandise</td><td><button class="btn bp bsm" onclick="abrirPw('merch@swc2026.pt')">🔑 Alterar password</button></td></tr>
+   <tr><td class="vl">Operacional</td><td class="mu">operacional@swc2026.pt</td><td class="mu" style="font-size:11px;">Trabalho operacional</td><td><button class="btn bo bsm" onclick="abrirPw('operacional@swc2026.pt')">🔑 Alterar password</button></td></tr>
+   <tr><td class="vl">Leitura</td><td class="mu">leitura@swc2026.pt</td><td class="mu" style="font-size:11px;">Só consulta</td><td><button class="btn bo bsm" onclick="abrirPw('leitura@swc2026.pt')">🔑 Alterar password</button></td></tr>
+   <tr><td class="vl">Administrador</td><td class="mu">admin@swc2026.pt</td><td class="mu" style="font-size:11px;">Tudo</td><td><button class="btn bo bsm" onclick="abrirPw('admin@swc2026.pt')">🔑 Alterar password</button></td></tr>
+  </tbody>
+</table></div>
+<details style="margin-top:6px;">
+ <summary class="mu" style="cursor:pointer;font-size:12px;">Lista antiga «Acessos por secção» (sem efeito na entrada)</summary>
+ <div class="av" style="margin:8px 0;"><div><strong>Atenção:</strong> esta lista é de uma versão anterior. As passwords que aqui se guardam <b>não controlam a entrada</b> (a entrada usa as contas acima). Fica só para consulta.</div></div>
+ <div class="bb" id="bar-acessos">
+  <button class="btn bo" onclick="openNovoAcesso()">+ Novo acesso (lista antiga)</button>
+ </div>
+ <div class="tbl-wrap tw"><table>
   <thead><tr><th>Seccao</th><th>Modulos com acesso</th><th>Acoes</th></tr></thead>
   <tbody id="t-acessos"><tr><td colspan="3" class="mu" style="text-align:center;padding:22px;">Sem acessos de seccao.</td></tr></tbody>
-</table></div>
+ </table></div>
+</details>
 </div>
 
 <div class="pg" id="pg-merch">
@@ -2619,6 +2633,19 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mf"><button class="btn bo" onclick="closeM('m-acesso')">Cancelar</button><button class="btn bp" onclick="salvarAcesso()">Guardar acesso</button></div>
 </div></div>
 
+<div class="mo" id="m-pw"><div class="mdl">
+  <div class="mh"><div class="mt2" id="pw-titulo">Alterar password</div><button class="mc" onclick="closeM('m-pw')">&#10005;</button></div>
+  <div class="mb">
+  <input type="hidden" id="pw-email">
+  <div class="av" id="pw-aviso" style="display:none;margin-bottom:10px;"></div>
+  <div class="fg"><div class="fl">Password atual desta conta</div><input class="fi" type="password" id="pw-atual" autocomplete="off"></div>
+  <div class="fr"><div class="fg"><div class="fl">Nova password (mínimo 8 caracteres)</div><input class="fi" type="password" id="pw-nova" autocomplete="new-password"></div><div class="fg"><div class="fl">Repetir a nova password</div><input class="fi" type="password" id="pw-nova2" autocomplete="new-password"></div></div>
+  <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;"><input type="checkbox" id="pw-ver" onchange="pwVer(this.checked)"> Mostrar as passwords</label>
+  <div id="pw-estado" class="mu" style="font-size:12px;margin-top:10px;min-height:16px;"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-pw')">Cancelar</button><button class="btn bp" id="pw-btn" onclick="alterarPw()">Alterar password</button></div>
+</div></div>
+
 <div class="mo" id="m-auditoria"><div class="mdl" style="max-width:900px;width:96vw;">
   <div class="mh"><div class="mt2">Auditoria de duplicados</div><button class="mc" onclick="closeM('m-auditoria')">&#10005;</button></div>
   <div class="mb" id="aud-body" style="max-height:68vh;overflow:auto;"></div>
@@ -3280,9 +3307,9 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="tst" id="tst"></div>
 
 <script type="module">
-import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{initializeApp,deleteApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getFirestore,collection,doc,getDoc,getDocFromServer,getDocs,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-import{getAuth,signInWithEmailAndPassword,signOut}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getAuth,signInWithEmailAndPassword,signOut,updatePassword}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 //  FIREBASE - substituir com credenciais reais do projeto 'swc2026' 
 const fbCfg={apiKey:"AIzaSyDflwz1UIiwQNELew0Z1dKHJpSesj-DAJ0",authDomain:"swc2026-c070b.firebaseapp.com",databaseURL:"https://swc2026-c070b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"swc2026-c070b",storageBucket:"swc2026-c070b.firebasestorage.app",messagingSenderId:"303073181225",appId:"1:303073181225:web:828ba59965d1e1cf4b2638"};
 const _app=initializeApp(fbCfg);
@@ -12535,6 +12562,55 @@ function renderAcessos(){
   }).join('');
 }
 window.openNovoAcesso=openNovoAcesso;window.editAcesso=editAcesso;window.salvarAcesso=salvarAcesso;window.delAcesso=delAcesso;
+// ===================================================================================================
+// ALTERAR PASSWORDS DE ENTRADA: a entrada usa contas do Firebase Authentication; é a conta que tem de mudar.
+// Entra-se na conta (numa instância à parte, para não mexer na sessão do administrador) com a password atual,
+// muda-se a password, e verifica-se que a antiga já não entra e que a nova entra. As passwords nunca são guardadas nem registadas.
+// ===================================================================================================
+const _PW_CONTAS={'admin@swc2026.pt':'Administrador','operacional@swc2026.pt':'Operacional','leitura@swc2026.pt':'Leitura','bar@swc2026.pt':'Bar','merch@swc2026.pt':'Merchandise'};
+function abrirPw(email){
+  if(!isAdmin){toast('Apenas o administrador pode alterar passwords','er');return;}
+  const nome=_PW_CONTAS[email];if(!nome)return;
+  document.getElementById('pw-email').value=email;document.getElementById('pw-titulo').textContent='Alterar a password: '+nome;
+  ['pw-atual','pw-nova','pw-nova2'].forEach(i=>{const e=document.getElementById(i);e.value='';e.type='password';});document.getElementById('pw-ver').checked=false;document.getElementById('pw-estado').textContent='';document.getElementById('pw-btn').disabled=false;
+  const av=document.getElementById('pw-aviso');if(email==='admin@swc2026.pt'){av.style.display='';av.innerHTML='<div><strong>Atenção:</strong> é a password do <b>ADMINISTRADOR</b>. Anota-a num sítio seguro: se a perderes, só se recupera diretamente no Firebase. Depois de a alterares, vais ter de entrar de novo com a nova.</div>';}else{av.style.display='none';av.innerHTML='';}
+  openM('m-pw');
+}
+function pwVer(v){['pw-atual','pw-nova','pw-nova2'].forEach(i=>{const e=document.getElementById(i);if(e)e.type=v?'text':'password';});}
+function _pwErro(err){
+  const c=String((err&&(err.code||err.codigo))||'');
+  if(c==='atual'||c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/invalid-login-credentials')return 'A password atual não está certa. Nada foi alterado.';
+  if(c==='auth/too-many-requests')return 'Demasiadas tentativas. Espera uns minutos e tenta de novo.';
+  if(c==='auth/network-request-failed')return 'Sem ligação à internet. Nada foi alterado.';
+  if(c==='auth/weak-password')return 'A password nova é considerada fraca. Escolhe outra, mais comprida.';
+  if(c==='auth/user-disabled')return 'Esta conta está desativada no Firebase.';
+  return 'Não foi possível alterar: '+((err&&(err.message||err.code))||'erro desconhecido');
+}
+async function alterarPw(){
+  if(!isAdmin){toast('Apenas o administrador pode alterar passwords','er');return;}
+  const email=document.getElementById('pw-email').value,nome=_PW_CONTAS[email],atual=document.getElementById('pw-atual').value,nova=document.getElementById('pw-nova').value,nova2=document.getElementById('pw-nova2').value,est=document.getElementById('pw-estado'),btn=document.getElementById('pw-btn');
+  if(!nome)return;
+  if(!atual){toast('Indica a password atual desta conta','er');return;}
+  if(nova.length<8){toast('A nova password deve ter pelo menos 8 caracteres','er');return;}
+  if(nova!==nova2){toast('As duas passwords novas não são iguais','er');return;}
+  if(nova===atual){toast('A nova password é igual à atual','er');return;}
+  if(email==='admin@swc2026.pt'&&!confirm('Vais alterar a password do ADMINISTRADOR.\n\nDepois de gravada, terás de entrar de novo com a nova password. Continuar?'))return;
+  btn.disabled=true;est.style.color='';est.textContent='A alterar…';let app2=null;
+  try{
+    app2=initializeApp(fbCfg,'pw-'+Date.now());const a2=getAuth(app2);let cred;
+    try{cred=await signInWithEmailAndPassword(a2,email,atual);}catch(e){const c=e&&e.code;if(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/invalid-login-credentials'||c==='auth/user-not-found')throw {code:'atual'};throw e;}
+    await updatePassword(cred.user,nova);await signOut(a2);
+    est.textContent='A verificar…';let antigaEntra=false,novaEntra=false;
+    try{await signInWithEmailAndPassword(a2,email,atual);antigaEntra=true;await signOut(a2);}catch(e){}
+    try{await signInWithEmailAndPassword(a2,email,nova);novaEntra=true;await signOut(a2);}catch(e){}
+    if(typeof addLog==='function')addLog('edição','Acessos','Password alterada: '+nome);
+    if(novaEntra&&!antigaEntra){est.style.color='var(--ok)';est.textContent='✓ Verificado: a password nova entra e a antiga já não entra.';toast('Password do '+nome+' alterada: a antiga já não entra');setTimeout(()=>closeM('m-pw'),1400);}
+    else{est.style.color='var(--er,#e66)';est.textContent=(antigaEntra?'⚠ A password ANTIGA ainda entrou. ':'')+(!novaEntra?'⚠ A password NOVA não entrou. ':'')+'Tenta de novo ou confirma no Firebase.';toast('Alteração feita, mas a verificação falhou: confirma no Firebase','er');}
+  }catch(e){est.style.color='var(--er,#e66)';est.textContent=_pwErro(e);toast(_pwErro(e),'er');}
+  finally{btn.disabled=false;try{if(app2)await deleteApp(app2);}catch(e){}}
+}
+window.abrirPw=abrirPw;window.pwVer=pwVer;window.alterarPw=alterarPw;
+
 //  MERCHANDISE (Caixa) 
 let _merchCart={};
 // FONTE UNICA: a Caixa de merchandise usa os MESMOS dados da Consignacao (cs_artigos / cs_vendas / cs_marcas)

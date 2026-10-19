@@ -1569,7 +1569,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">DI</span>Diário de Caixa / Banco<button class="hbtn" data-help="diario" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Lançamento a lançamento · Caixa e Banco separados · Saldo corrente · Apenas valores reais com confirmação documental</div>
 <div class="av"><strong>Rigor contabilístico absoluto:</strong> Cada lançamento requer confirmação documental (fatura, recibo, transferência). Nunca são inseridos valores estimados.</div>
-<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button><button class="btn bd2" onclick="limparLancamentosDuplicados()">🔍 Detetar e Remover Duplicados</button><button class="btn bo" onclick="abrirAbertura()">Saldos de abertura</button><button class="btn bo" onclick="abrirAuditoriaCtb()">Auditoria</button></div>
+<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button><button class="btn bd2" onclick="limparLancamentosDuplicados()">🔍 Detetar e Remover Duplicados</button><button class="btn bo" onclick="abrirAbertura()">Saldos de abertura</button><button class="btn bo" onclick="abrirTransferencia()">⇄ Transferência Caixa/Banco</button><button class="btn bo" onclick="abrirAuditoriaCtb()">Auditoria</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Saldo Caixa</div><div class="smv" id="s-cx">0,00€</div></div>
   <div class="sm"><div class="sml">Saldo Banco</div><div class="smv" id="s-bk">0,00€</div></div>
@@ -1728,6 +1728,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <button class="btn bo" onclick="exportBalancete()">Exportar PDF</button>
 <button class="btn bo" onclick="abrirAbertura()">Saldos de abertura</button>
 <button class="btn bo" onclick="abrirRegularizar()">Regularizar Caixa/Banco</button>
+<button class="btn bo" onclick="abrirTransferencia()">Transferência Caixa/Banco</button>
 <button class="btn bo" onclick="abrirAuditoriaCtb()">Auditoria</button>
 </div>
 <div id="bal-onde" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px;"></div>
@@ -2574,7 +2575,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="rc-dt"></div><div class="fg"><div class="fl">Conta SNC</div><select class="fse" id="rc-cn"><option value="724">724 — Patrocinadores</option><option value="729">729 — Inscrições atletas</option><option value="751">751 — Subsídios públicos</option><option value="7151">7151 — Mat. desportivo</option><option value="7152">7152 — Bar</option><option value="7153">7153 — Merchandising</option><option value="781">781 — Rend. suplementares</option><option value="788">788 — Outros</option></select></div></div>
     <div class="fg"><div class="fl">Entidade / Descrição</div><input class="fi" id="rc-ds" placeholder="CM Vizela, IPDJ, patrocinador, federação..."></div>
     <div class="fr"><div class="fg"><div class="fl">Valor real (€)</div><input class="fi" type="number" step="0.01" id="rc-vl" placeholder="0,00"></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="rc-st" onchange="ctbFormEstado('rec')"><option value="Pendente">Pendente a receber</option><option value="Recebido">Já recebido (total)</option></select></div></div>
-<div id="rc-liqmsg" class="av" style="display:none;margin:6px 0;font-size:12px;"></div>
+<div id="rc-liqmsg" class="av" style="display:block;display:none;margin:6px 0;font-size:12px;"></div>
 <div id="rc-liqbox" style="display:none;"><div class="fr"><div class="fg"><div class="fl">Onde foi recebido</div><select class="fse" id="rc-mp"><option value="Banco">Banco — CGD (121)</option><option value="Caixa">Caixa — numerário (111)</option></select></div><div class="fg"><div class="fl">Data do recebimento</div><input class="fi" type="date" id="rc-dtl"></div></div></div>
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="rc-ob" placeholder="Referência pagamento, condições, notas..."></textarea></div>
   </div>
@@ -2618,7 +2619,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Conta SNC</div><select class="fse" id="dp-cn"><option value="6141">6141 — Material desportivo</option><option value="6143">6143 — Representação/propaganda</option><option value="6221">6221 — Trabalhos especializados</option><option value="6222">6222 — Publicidade e propaganda</option><option value="6223">6223 — Vigilância e segurança</option><option value="6228">6228 — Outros FSE (cerimónias)</option><option value="6231">6231 — Ferramentas desgaste rápido</option><option value="6233">6233 — Material de escritório</option><option value="6234">6234 — Artigos para oferta</option><option value="6242">6242 — Combustíveis</option><option value="6251">6251 — Deslocações e estadas</option><option value="6261">6261 — Rendas e alugueres</option><option value="6262">6262 — Comunicação</option><option value="6266">6266 — Desp. representação</option><option value="6268">6268 — Outros serviços</option><option value="6888">6888 — Taxas WMF/EMF</option><option value="6899">6899 — Prémios participantes</option></select></div>
     <div class="fg"><div class="fl">Fornecedor / Descrição detalhada</div><input class="fi" id="dp-ds" placeholder="Nome fornecedor e descrição..."></div>
     <div class="fr"><div class="fg"><div class="fl">Valor real (€)</div><input class="fi" type="number" step="0.01" id="dp-vl" placeholder="0,00"></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="dp-st" onchange="ctbFormEstado('desp')"><option value="Pendente">Pendente de pagamento</option><option value="Pago">Já pago (total)</option><option value="Anulado">Anulado</option></select></div></div>
-  <div id="dp-liqmsg" class="av" style="display:none;margin:6px 0;font-size:12px;"></div>
+  <div id="dp-liqmsg" class="av" style="display:block;display:none;margin:6px 0;font-size:12px;"></div>
   <div id="dp-liqbox" style="display:none;"><div class="fr"><div class="fg"><div class="fl">Onde foi pago</div><select class="fse" id="dp-mp"><option value="Banco">Banco — CGD (121)</option><option value="Caixa">Caixa — numerário (111)</option></select></div><div class="fg"><div class="fl">Data do pagamento</div><input class="fi" type="date" id="dp-dtl"></div></div></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-desp')">Cancelar</button><button class="btn bp" onclick="saveDesp()">Guardar despesa</button></div>
@@ -2661,7 +2662,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="mo" id="m-liq"><div class="mdl" style="max-width:640px;">
   <div class="mh"><div class="mt2" id="liq-titulo">Registar recebimento</div><button class="mc" onclick="closeM('m-liq')">&#10005;</button></div>
   <div class="mb">
-  <div class="av" id="liq-doc" style="margin-bottom:12px;font-size:12px;line-height:1.55;"></div>
+  <div class="av" id="liq-doc" style="display:block;margin-bottom:12px;font-size:12px;line-height:1.55;"></div>
   <div class="fr"><div class="fg"><div class="fl">Data do movimento</div><input class="fi" type="date" id="liq-dt"></div><div class="fg"><div class="fl">Valor (€)</div><input class="fi" type="number" step="0.01" min="0" id="liq-vl" placeholder="0,00"></div></div>
   <div class="fr"><div class="fg"><div class="fl">Meio</div><select class="fse" id="liq-mp"><option value="Banco">Banco — Caixa Geral de Depósitos (conta 121)</option><option value="Caixa">Caixa — numerário (conta 111)</option></select></div><div class="fg"><div class="fl">Referência (opcional)</div><input class="fi" id="liq-ref" placeholder="Nº da transferência, do recibo..."></div></div>
   <div id="liq-lista"></div>
@@ -2672,7 +2673,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="mo" id="m-reg"><div class="mdl" style="max-width:900px;width:96vw;">
   <div class="mh"><div class="mt2">Regularizar: pagos/recebidos sem Caixa ou Banco</div><button class="mc" onclick="closeM('m-reg')">&#10005;</button></div>
   <div class="mb">
-  <div class="av" style="margin-bottom:10px;font-size:12px;line-height:1.55;">Estes documentos estão marcados como <b>pagos/recebidos</b>, mas o programa não sabe <b>onde</b> está o dinheiro. Escolha Caixa ou Banco para cada um. O movimento fica com a <b>data do documento</b> (pode corrigi-la depois, no botão € do documento).</div>
+  <div class="av" style="display:block;margin-bottom:10px;font-size:12px;line-height:1.55;">Estes documentos estão marcados como <b>pagos/recebidos</b>, mas o programa não sabe <b>onde</b> está o dinheiro. Escolha Caixa ou Banco para cada um. O movimento fica com a <b>data do documento</b> (pode corrigi-la depois, no botão € do documento).</div>
   <div class="bb"><button class="btn bo bsm" onclick="regTodos('Banco')">Todos em Banco (CGD)</button><button class="btn bo bsm" onclick="regTodos('Caixa')">Todos em Caixa</button><button class="btn bo bsm" onclick="regSel(true)">Marcar todos</button><button class="btn bo bsm" onclick="regSel(false)">Desmarcar todos</button></div>
   <div id="reg-lista" style="max-height:48vh;overflow:auto;"></div>
   <div id="reg-resumo" class="mu" style="font-size:12px;margin-top:8px;"></div>
@@ -2683,7 +2684,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="mo" id="m-abertura"><div class="mdl" style="max-width:520px;">
   <div class="mh"><div class="mt2">Saldos de abertura</div><button class="mc" onclick="closeM('m-abertura')">&#10005;</button></div>
   <div class="mb">
-  <div class="av" style="margin-bottom:12px;font-size:12px;line-height:1.55;">Dinheiro que <b>já existia</b> em Caixa e na conta da CGD <b>antes</b> do primeiro movimento do evento (fundo de maneio, saldo inicial). Fica registado no Diário como «Saldo de abertura» e conta para Caixa, Banco, Balancete e Balanço. Deixe a zero se não existia nada.</div>
+  <div class="av" style="display:block;margin-bottom:12px;font-size:12px;line-height:1.55;">Dinheiro que <b>já existia</b> em Caixa e na conta da CGD <b>antes</b> do primeiro movimento do evento (fundo de maneio, saldo inicial). Fica registado no Diário como «Saldo de abertura» e conta para Caixa, Banco, Balancete e Balanço. Deixe a zero se não existia nada.</div>
   <div class="fr"><div class="fg"><div class="fl">Caixa (111) — €</div><input class="fi" type="number" step="0.01" min="0" id="ab-cx" placeholder="0,00"></div><div class="fg"><div class="fl">Banco CGD (121) — €</div><input class="fi" type="number" step="0.01" min="0" id="ab-bk" placeholder="0,00"></div></div>
   <div class="fg"><div class="fl">Data de abertura</div><input class="fi" type="date" id="ab-dt"></div>
   </div>
@@ -2700,6 +2701,18 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mh"><div class="mt2">Auditoria contabilística</div><button class="mc" onclick="closeM('m-audctb')">&#10005;</button></div>
   <div class="mb" id="audctb-corpo" style="max-height:68vh;overflow:auto;"></div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-audctb')">Fechar</button></div>
+</div></div>
+
+<div class="mo" id="m-trf"><div class="mdl" style="max-width:560px;">
+  <div class="mh"><div class="mt2">Transferência entre Caixa e Banco</div><button class="mc" onclick="closeM('m-trf')">&#10005;</button></div>
+  <div class="mb">
+  <div class="av" style="display:block;margin-bottom:12px;font-size:12px;line-height:1.55;">Passa dinheiro de um lado para o outro: por exemplo, <b>depositar na CGD</b> o numerário que está na Caixa, ou <b>levantar</b> da CGD para a Caixa. <b>Não é receita nem despesa</b>: o total não muda, só acerta onde está o dinheiro.</div>
+  <div class="fg"><div class="fl">Sentido</div><select class="fse" id="trf-sent" onchange="trfAtualiza()"><option value="CB">Da Caixa para o Banco (depósito na CGD)</option><option value="BC">Do Banco para a Caixa (levantamento)</option></select></div>
+  <div class="fr"><div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="trf-dt"></div><div class="fg"><div class="fl">Valor (€)</div><input class="fi" type="number" step="0.01" min="0" id="trf-vl" placeholder="0,00" oninput="trfAtualiza()"></div></div>
+  <div class="fg"><div class="fl">Referência (opcional)</div><input class="fi" id="trf-ref" placeholder="Nº do talão de depósito, da transferência..."></div>
+  <div id="trf-info" class="mu" style="font-size:12px;line-height:1.7;margin-top:6px;"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-trf')">Cancelar</button><button class="btn bp" id="trf-btn" onclick="salvarTransferencia()">Registar transferência</button></div>
 </div></div>
 
 <div class="mo" id="m-auditoria"><div class="mdl" style="max-width:900px;width:96vw;">
@@ -4111,12 +4124,12 @@ function renderDi_ctbOld(){
   document.getElementById('s-deb').textContent=fmt(totD);
   document.getElementById('s-cre').textContent=fmt(totC);
 }
-async function delLan(id){const _l0=(_lan||[]).find(x=>x.id===id);if(_l0&&_l0.origem==='treinosLivres'){toast('Este lançamento vem de «Treinos Livres»: altere-o nesse separador.','am');return;}if(!canDelete()||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
+async function delLan_ctbOld(id){const _l0=(_lan||[]).find(x=>x.id===id);if(_l0&&_l0.origem==='treinosLivres'){toast('Este lançamento vem de «Treinos Livres»: altere-o nesse separador.','am');return;}if(!canDelete()||!confirm('Eliminar este lançamento?'))return;await _del('lancamentos',id);toast('Eliminado','er');}
 
 // Deteta e remove lançamentos duplicados (mesmo refId a aparecer mais de uma vez em 'lancamentos'
 // e/ou 'receitas'), mantendo sempre o registo mais antigo (menor ts) de cada grupo e apagando os restantes.
 // Não apaga nada sem refId (lançamentos manuais nunca têm refId, ficam sempre intocados).
-async function detetarDuplicadosLancamentos(){
+async function detetarDuplicadosLancamentos_ctbOld(){
   // Chave SEMPRE pelo conteúdo (data+descrição+valor+conta) — cobre o caso real: dois registos
   // com IDs internos diferentes (ex.: duplo-clique ao emitir) mas exatamente a mesma informação visível.
   function chaveLan(l){ return (l.data||'')+'|'+(l.ds||'')+'|'+(l.cn||'')+'|'+Number(l.vl||0)+'|'+(l.tp||'')+'|'+(l.cb||'')+'|'+(l.refId||'')+'|'+(l.dc||''); }
@@ -4136,7 +4149,7 @@ async function detetarDuplicadosLancamentos(){
   const duplicadosRec=Object.entries(gruposRec).filter(([_,arr])=>arr.length>1);
   return {duplicadosLan,duplicadosRec};
 }
-async function limparLancamentosDuplicados(){
+async function limparLancamentosDuplicados_ctbOld(){
   if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
   const {duplicadosLan,duplicadosRec}=await detetarDuplicadosLancamentos();
   if(!duplicadosLan.length&&!duplicadosRec.length){toast('Não foram encontrados lançamentos duplicados.','ok');return;}
@@ -6769,12 +6782,22 @@ function ctbCalc(rec,desp,lan){
     });
   };
   recI.forEach(posta);despI.forEach(posta);
+  const trfG=new Map();
   diretos.forEach(l=>{
+    if(l.origem==='transferencia'){const k=l.refId||l.id;if(!trfG.has(k))trfG.set(k,[]);trfG.get(k).push(l);return;}
     const v=_cR(l.vl),dt=ctbData(l),m=ctbContaMeio(l.cb),K=l.cn||'SC',ds=l.ds||'',org=(K==='51'?'abertura':'dir');
     if(l.tp==='C'){P(dt,m,v,0,org,l.id,ds);P(dt,K,0,v,org,l.id,ds);}else{P(dt,K,v,0,org,l.id,ds);P(dt,m,0,v,org,l.id,ds);}
   });
+  // transferência entre Caixa e Banco: a «entrada» e a «saída» são o mesmo movimento visto dos dois lados → posta-se uma só vez
+  const transfIncompletas=[];
+  trfG.forEach((ls,k)=>{
+    const ent=ls.find(l=>l.tp==='C'),sai=ls.find(l=>l.tp!=='C');
+    if(!(ent&&sai))transfIncompletas.push({ref:k,lans:ls});
+    const l=ent||sai,v=_cR(l.vl),dt=ctbData(l),m=ctbContaMeio(l.cb),o=(l.cn==='111'||l.cn==='121')?l.cn:(m==='111'?'121':'111'),ds=l.ds||'Transferência entre Caixa e Banco';
+    if(l.tp==='C'){P(dt,m,v,0,'transf',l.id,ds);P(dt,o,0,v,'transf',l.id,ds);}else{P(dt,o,v,0,'transf',l.id,ds);P(dt,m,0,v,'transf',l.id,ds);}
+  });
   const porDoc=new Map();recI.concat(despI).forEach(i=>porDoc.set(i.id,i));
-  return {rec:recI,desp:despI,movs,diretos,porDoc,lan};
+  return {rec:recI,desp:despI,movs,diretos,porDoc,lan,transfIncompletas};
 }
 
 // ---- cache: só recalcula quando as listas mudam (as listas são substituídas a cada atualização do Firestore)
@@ -6861,8 +6884,9 @@ function ctbFluxoReal(calc){
     if(x.origem==='abertura'){abertura=_cR(abertura+x.d-x.c);return;}
     const y=x.data?x.data.slice(0,7):'';
     if(!por[y])por[y]={mes:y,ent:0,sai:0,caixa:0,banco:0,classif:0};
-    const o=por[y];o.ent=_cR(o.ent+x.d);o.sai=_cR(o.sai+x.c);
-    const k=x.conta==='111'?'caixa':x.conta==='121'?'banco':'classif';o[k]=_cR(o[k]+x.d-x.c);
+    const o=por[y],k=x.conta==='111'?'caixa':x.conta==='121'?'banco':'classif';
+    if(x.origem!=='transf'){o.ent=_cR(o.ent+x.d);o.sai=_cR(o.sai+x.c);}
+    o[k]=_cR(o[k]+x.d-x.c);
   });
   let saldo=abertura;
   const rows=Object.keys(por).sort().map(k=>{const o=por[k];o.liq=_cR(o.ent-o.sai);saldo=_cR(saldo+o.liq);o.saldoFim=saldo;return o;});
@@ -6891,7 +6915,7 @@ function ctbAuditar(calc,faturas,aux){
   const exc=ativos(calc.rec.concat(calc.desp)).filter(i=>i.excesso>0);
   if(exc.length)I('erro','EXCESSO','Documentos com mais dinheiro movimentado do que o valor','O total dos pagamentos/recebimentos ultrapassa o valor do documento (ou há movimentos duplicados).',exc.length,exc.reduce((s,i)=>s+i.excesso,0),'',exc.map(i=>i.id));
   // d) lançamentos diretos (sem documento) e possíveis duplicados de documentos
-  const dir=calc.diretos.filter(l=>(l.cn||'')!=='51');
+  const dir=calc.diretos.filter(l=>(l.cn||'')!=='51'&&l.origem!=='transferencia');
   if(dir.length)I('info','DIRETOS','Lançamentos do Diário sem documento','Dinheiro registado diretamente no Diário (sem fatura/receita/despesa associada). Contam para Caixa/Banco e para a DR pela conta indicada.',dir.length,dir.reduce((s,l)=>s+(l.tp==='C'?1:-1)*_cR(l.vl),0),'',dir.map(l=>l.id));
   const susp=[];
   dir.forEach(l=>{
@@ -6900,6 +6924,7 @@ function ctbAuditar(calc,faturas,aux){
     if(m)susp.push({lan:l.id,doc:m.id,tipo:m.tipo,valor:v,desc:m.doc.desc||m.doc.doc||'',data:ctbData(l)});
   });
   if(susp.length)I('aviso','POSSIVEL_DUPLICADO','Lançamento direto que parece pagar um documento em aberto','O mesmo valor e a mesma conta existem num documento ainda por pagar/receber. Se forem a mesma operação, associe o lançamento ao documento (senão fica contado duas vezes).',susp.length,susp.reduce((s,x)=>s+x.valor,0),'associar',susp);
+  if(calc.transfIncompletas&&calc.transfIncompletas.length)I('erro','TRANSF_INCOMPLETA','Transferência Caixa/Banco incompleta','Falta uma das duas partes (saída ou entrada). Elimine a que sobra e refaça a transferência.',calc.transfIncompletas.length,calc.transfIncompletas.reduce((t,x)=>t+_cR(x.lans[0].vl),0),'',calc.transfIncompletas.map(x=>x.ref));
   // e) sem conta
   const sc=calc.diretos.filter(l=>!l.cn);
   if(sc.length)I('aviso','SEM_CONTA','Lançamentos sem conta SNC','Sem conta de contrapartida, o valor fica numa conta «Sem conta atribuída».',sc.length,sc.reduce((s,l)=>s+_cR(l.vl),0),'',sc.map(l=>l.id));
@@ -7030,7 +7055,7 @@ function ctbNovoDoc(t){
 function ctbFormEstado(t){
   const rc=t==='rec',p=rc?'rc':'dp',box=_ctbG(p+'-liqbox'),msg=_ctbG(p+'-liqmsg'),st=_ctbG(p+'-st');if(!box||!st)return;
   const eid=_ctbG(rc?'rec-eid':'desp-eid'),id=eid&&eid.value?eid.value:'',inf=id?ctbAtual().porDoc.get(id):null;
-  if(inf&&inf.lans.length){box.style.display='none';st.disabled=true;if(msg){msg.style.display='';msg.innerHTML='Este documento já tem movimentos de Caixa/Banco: gerem-se no botão <b>€</b> da lista. O estado é calculado automaticamente.';}return;}
+  if(inf&&inf.lans.length){box.style.display='none';st.disabled=true;if(msg){msg.style.display='block';msg.innerHTML='Este documento já tem movimentos de Caixa/Banco: gerem-se no botão <b>€</b> da lista. O estado é calculado automaticamente.';}return;}
   st.disabled=false;if(msg)msg.style.display='none';
   const mostrar=(st.value==='Recebido'||st.value==='Pago');box.style.display=mostrar?'':'none';
   if(mostrar&&!_ctbG(p+'-dtl').value)_ctbG(p+'-dtl').value=_ctbG(p+'-dt').value||ctbHoje();
@@ -7127,7 +7152,7 @@ function renderBal(){
     ctbCartao('A pagar (221)',fmt(T.pagar),'var(--wr)','faturado e ainda não pago')+
     ctbCartao('Total em Caixa + Banco',fmt(T.total),'var(--ok)','até '+mes);
   const al=_ctbG('bal-alerta');
-  if(al){const leg=calc.rec.concat(calc.desp).filter(i=>i.legado);al.innerHTML=leg.length?'<div class="av" style="margin-bottom:12px;"><strong>'+leg.length+' documento(s) pago(s)/recebido(s) sem Caixa ou Banco</strong> ('+fmt(leg.reduce((s,i)=>s+i.valor,0))+'). O dinheiro está em «por classificar» até lhe indicar o sítio. <button class="btn bp bsm" onclick="abrirRegularizar()" style="margin-left:8px;">Regularizar agora</button></div>':'';}
+  if(al){const leg=calc.rec.concat(calc.desp).filter(i=>i.legado);al.innerHTML=leg.length?'<div class="av" style="display:block;margin-bottom:12px;"><strong>'+leg.length+' documento(s) pago(s)/recebido(s) sem Caixa ou Banco</strong> ('+fmt(leg.reduce((s,i)=>s+i.valor,0))+'). O dinheiro está em «por classificar» até lhe indicar o sítio. <button class="btn bp bsm" onclick="abrirRegularizar()" style="margin-left:8px;">Regularizar agora</button></div>':'';}
   const t=_ctbG('t-bal'),tf=_ctbG('tf-bal'),q=_ctbG('bal-quad');
   if(!B.rows.length){t.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem dados para o período</td></tr>';if(tf)tf.innerHTML='';if(q)q.innerHTML='';return;}
   const cel=(v,c)=>'<td class="'+(v>0?c:'mu')+'" style="text-align:right;">'+(v>0?fmt(v):'-')+'</td>';
@@ -7195,7 +7220,7 @@ function renderBalanco(){
     '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;"><span style="color:var(--wh);">Total Capital Próprio</span><span class="go">'+fmt(B.cp)+'</span></div>'+
     '<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--gl);font-size:14px;font-weight:700;"><span style="color:var(--wh);">Total P + CP</span><span style="color:var(--gl2);">'+fmt(B.totalPC)+'</span></div></div></div></div>'+
     '<div class="cd" style="margin-top:8px;"><div class="cdb" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;"><div style="font-size:12px;color:var(--se);">Verificação: Total Ativo = Total Passivo + Capital Próprio</div><div style="font-size:13px;font-weight:700;color:'+(B.equilibrado?'var(--ok)':'var(--er)')+';">'+(B.equilibrado?'Balanço equilibrado':'Diferença: '+fmt(B.ativo-B.totalPC))+'</div></div></div>'+
-    (calc.rec.concat(calc.desp).some(i=>i.legado)?'<div class="av" style="margin-top:8px;"><strong>Atenção:</strong> há dinheiro «por classificar» (pagos/recebidos sem Caixa ou Banco). <button class="btn bp bsm" onclick="abrirRegularizar()" style="margin-left:6px;">Regularizar</button></div>':'');
+    (calc.rec.concat(calc.desp).some(i=>i.legado)?'<div class="av" style="display:block;margin-top:8px;"><strong>Atenção:</strong> há dinheiro «por classificar» (pagos/recebidos sem Caixa ou Banco). <button class="btn bp bsm" onclick="abrirRegularizar()" style="margin-left:6px;">Regularizar</button></div>':'');
 }
 function exportBalanco(){
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),B=ctbBalanco(ctbAtual());
@@ -7350,7 +7375,7 @@ async function marcarPaga(id){
 function ctbFatBanner(){
   const el=_ctbG('fat-ctb');if(!el)return;
   const fs=(typeof _faturas!=='undefined'?_faturas:[]).filter(f=>!f.despId&&f.estado!=='Anulada');
-  el.innerHTML=fs.length?'<div class="av" style="margin-bottom:12px;"><strong>'+fs.length+' fatura(s) ainda não estão na contabilidade</strong> ('+fmt(fs.reduce((s,f)=>s+Number(f.valor||0),0))+'). Esta lista serve para acompanhar vencimentos; só conta no balancete, na DR e no balanço depois de «Contabilizar». <button class="btn bp bsm" style="margin-left:8px;" onclick="contabilizarTodasFaturas()">Contabilizar todas</button></div>':'';
+  el.innerHTML=fs.length?'<div class="av" style="display:block;margin-bottom:12px;"><strong>'+fs.length+' fatura(s) ainda não estão na contabilidade</strong> ('+fmt(fs.reduce((s,f)=>s+Number(f.valor||0),0))+'). Esta lista serve para acompanhar vencimentos; só conta no balancete, na DR e no balanço depois de «Contabilizar». <button class="btn bp bsm" style="margin-left:8px;" onclick="contabilizarTodasFaturas()">Contabilizar todas</button></div>':'';
 }
 window.contabilizarFatura=contabilizarFatura;window.contabilizarTodasFaturas=contabilizarTodasFaturas;window.marcarPaga=marcarPaga;
 
@@ -7362,6 +7387,96 @@ window.ctbExecConta=ctbExecConta;
 function renderDi(){renderDi_ctbOld();ctbRenderFluxoReal();}
 function renderFluxo(){renderFluxo_ctbOld();ctbRenderFluxoReal();}
 function renderFaturas(){renderFaturas_ctbOld();ctbFatBanner();}
+
+// =================================== TRANSFERÊNCIA ENTRE CAIXA E BANCO ===================================
+// Passa dinheiro de um lado para o outro (depósito ou levantamento). Não é receita nem despesa: o total não muda.
+// Grava DOIS lançamentos no Diário (a saída de um e a entrada no outro) ligados pelo mesmo refId; o motor conta-os uma só vez.
+let _trfBusy=false;
+function abrirTransferencia(sent){
+  if(!canEdit()){toast('Sem permissão para registar transferências','er');return;}
+  _ctbG('trf-dt').value=ctbHoje();_ctbG('trf-vl').value='';_ctbG('trf-ref').value='';_ctbG('trf-sent').value=sent==='BC'?'BC':'CB';
+  trfAtualiza();openM('m-trf');
+}
+function trfAtualiza(){
+  const T=ctbTes(ctbAtual()),cb=(_ctbG('trf-sent').value==='CB'),vl=_cR(parseFloat(_ctbG('trf-vl').value));
+  const depois=vl>0?('<br>Depois: Caixa <b>'+fmt(cb?T.caixa-vl:T.caixa+vl)+'</b> · Banco CGD <b>'+fmt(cb?T.banco+vl:T.banco-vl)+'</b> · total igual (<b>'+fmt(T.caixa+T.banco)+'</b>)'):'';
+  _ctbG('trf-info').innerHTML='Agora: Caixa <b>'+fmt(T.caixa)+'</b> · Banco CGD <b>'+fmt(T.banco)+'</b>'+depois;
+}
+async function salvarTransferencia(){
+  if(!canEdit()||_trfBusy)return;
+  const dt=_ctbG('trf-dt').value,vl=_cR(parseFloat(_ctbG('trf-vl').value)),s=_ctbG('trf-sent').value,ref=_ctbG('trf-ref').value.trim();
+  if(!dt){toast('Indique a data','er');return;}
+  if(!(vl>0)){toast('Indique o valor','er');return;}
+  const de=s==='CB'?'Caixa':'Banco',para=s==='CB'?'Banco':'Caixa',cDe=de==='Caixa'?'111':'121',cPara=para==='Caixa'?'111':'121';
+  const T=ctbTes(ctbAtual()),saldo=de==='Caixa'?T.caixa:T.banco;
+  if(vl>saldo+CTB_EPS&&!confirm('Em '+(de==='Banco'?'Banco (CGD)':'Caixa')+' há '+fmt(saldo)+' e vai transferir '+fmt(vl)+'.\n\nIsto deixa essa conta com saldo negativo. Continuar mesmo assim?'))return;
+  _trfBusy=true;const b=_ctbG('trf-btn');if(b)b.disabled=true;
+  try{
+    const refId='trf_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),txt='Transferência de '+(de==='Banco'?'Banco (CGD)':'Caixa')+' para '+(para==='Banco'?'Banco (CGD)':'Caixa')+(ref?' · '+ref:'');
+    await _add('lancamentos',{data:dt,dc:ref,cn:cPara,cb:de,ds:txt+' (saída)',tp:'D',vl:vl,origem:'transferencia',refId:refId,ts:Date.now()});
+    await _add('lancamentos',{data:dt,dc:ref,cn:cDe,cb:para,ds:txt+' (entrada)',tp:'C',vl:vl,origem:'transferencia',refId:refId,ts:Date.now()+1});
+    if(typeof addLog==='function')addLog('criação','Contabilidade',txt+' — '+fmt(vl));
+    toast('Transferência de '+fmt(vl)+' registada: '+de+' para '+para);closeM('m-trf');
+  }catch(e){console.error(e);toast('Não foi possível registar a transferência','er');}
+  finally{_trfBusy=false;if(b)b.disabled=false;}
+}
+// eliminar/editar um lançamento que faz parte de uma transferência trata sempre o par
+async function delLan(id){
+  const l=(typeof _lan!=='undefined'?_lan:[]).find(x=>x.id===id);
+  if(l&&l.origem==='transferencia'){
+    if(!canDelete()){toast('Sem permissão para eliminar','er');return;}
+    const par=_lan.filter(x=>x.origem==='transferencia'&&x.refId===l.refId);
+    if(!confirm('Eliminar esta transferência entre Caixa e Banco ('+fmt(l.vl)+')?\n\nSão eliminadas as duas partes (a saída e a entrada).'))return;
+    for(const p of par){try{await _del('lancamentos',p.id);}catch(e){}}
+    toast('Transferência eliminada','er');return;
+  }
+  return delLan_ctbOld(id);
+}
+async function editLan(id){
+  const l=(typeof _lan!=='undefined'?_lan:[]).find(x=>x.id===id);
+  if(l&&l.origem==='transferencia'){toast('Uma transferência não se edita: elimine-a e registe outra.','am');return;}
+  return editLan_ctbOld(id);
+}
+window.abrirTransferencia=abrirTransferencia;window.trfAtualiza=trfAtualiza;window.salvarTransferencia=salvarTransferencia;window.delLan=delLan;window.editLan=editLan;
+
+// =================================== DUPLICADOS: só os verdadeiros (duplo clique) ===================================
+// Duplicado = registos EXATAMENTE iguais (incluindo o documento de origem e Caixa/Banco) criados com segundos de diferença.
+// Vendas iguais feitas em momentos diferentes (várias bolas a 25 € no mesmo dia) NÃO são duplicados e nunca se apagam.
+async function detetarDuplicadosLancamentos(){
+  const JANELA=30000;   // 30 segundos
+  const chaveLan=l=>[l.data||'',l.ds||'',l.cn||'',Number(l.vl||0),l.tp||'',l.cb||'',l.refId||'',l.dc||'',l.origem||''].join('|');
+  const chaveRec=r=>[r.data||'',r.desc||'',r.conta||'',Number(r.valor||0),r.refId||'',r.origem||''].join('|');
+  const agrupa=(lista,chave)=>{
+    const m={};lista.forEach(x=>{const k=chave(x);(m[k]=m[k]||[]).push(x);});
+    const out=[];
+    Object.keys(m).forEach(k=>{
+      const o=m[k].filter(x=>Number(x.ts)>0).sort((a,b)=>a.ts-b.ts);   // sem hora de criação nunca se mexe
+      let cl=[];
+      o.forEach(x=>{if(cl.length&&x.ts-cl[cl.length-1].ts<=JANELA)cl.push(x);else{if(cl.length>1)out.push([k,cl]);cl=[x];}});
+      if(cl.length>1)out.push([k,cl]);
+    });
+    return out;
+  };
+  return {duplicadosLan:agrupa(typeof _lan!=='undefined'?_lan:[],chaveLan),duplicadosRec:agrupa(typeof _rec!=='undefined'?_rec:[],chaveRec)};
+}
+async function limparLancamentosDuplicados(){
+  if(!canEditCatalogo()){toast('Apenas o Administrador pode fazer isto.','er');return;}
+  const {duplicadosLan,duplicadosRec}=await detetarDuplicadosLancamentos();
+  if(!duplicadosLan.length&&!duplicadosRec.length){toast('Não há duplicados. (Vendas iguais feitas em momentos diferentes, como várias bolas a 25 €, são vendas distintas e não se tocam.)','ok');return;}
+  const nL=duplicadosLan.reduce((s,[k,a])=>s+a.length-1,0),nR=duplicadosRec.reduce((s,[k,a])=>s+a.length-1,0);
+  const vL=duplicadosLan.reduce((s,[k,a])=>s+(a.length-1)*Number(a[0].vl||0),0),vR=duplicadosRec.reduce((s,[k,a])=>s+(a.length-1)*Number(a[0].valor||0),0);
+  let m='Registos EXATAMENTE iguais, criados com segundos de diferença (duplo clique):\n\n';
+  duplicadosLan.slice(0,12).forEach(([k,a])=>{m+='• Diário: '+a.length+'× '+(a[0].data||'')+' · '+fmt(a[0].vl)+' · '+String(a[0].ds||'').slice(0,60)+'\n';});
+  duplicadosRec.slice(0,12).forEach(([k,a])=>{m+='• Receitas: '+a.length+'× '+(a[0].data||'')+' · '+fmt(a[0].valor)+' · '+String(a[0].desc||'').slice(0,60)+'\n';});
+  if(duplicadosLan.length+duplicadosRec.length>24)m+='• … e mais\n';
+  m+='\nFica o mais antigo de cada grupo. Vai remover '+nL+' movimento(s) do Diário ('+fmt(vL)+') e '+nR+' receita(s) ('+fmt(vR)+').\n\nConfirmar?';
+  if(!confirm(m))return;
+  let rl=0,rr=0;
+  for(const [k,arr] of duplicadosLan){for(const x of arr.slice(1)){await _del('lancamentos',x.id);rl++;}}
+  for(const [k,arr] of duplicadosRec){for(const x of arr.slice(1)){await _del('receitas',x.id);rr++;}}
+  toast(rl+' movimento(s) e '+rr+' receita(s) duplicados removidos','ok');
+}
+window.detetarDuplicadosLancamentos=detetarDuplicadosLancamentos;window.limparLancamentosDuplicados=limparLancamentosDuplicados;
 
 function renderBal_ctbOld(){
   const mes=document.getElementById('bal-mes').value;
@@ -14534,7 +14649,7 @@ async function editDesp(id){
   openM('m-desp');
 }
 {const _ed0=editDesp;editDesp=async function(id){await _ed0(id);ctbFormEstado('desp');};}window.editDesp=editDesp;
-async function editLan(id){
+async function editLan_ctbOld(id){
   const item=(_lan||[]).find(x=>x.id===id);if(!item)return;
   let hid=document.getElementById('lan-eid');
   if(!hid){hid=document.createElement('input');hid.type='hidden';hid.id='lan-eid';

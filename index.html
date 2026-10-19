@@ -1569,7 +1569,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="st"><span class="sn">DI</span>Diário de Caixa / Banco<button class="hbtn" data-help="diario" onclick="openHelp(this.dataset.help)">?</button></div>
 <div class="sd">Lançamento a lançamento · Caixa e Banco separados · Saldo corrente · Apenas valores reais com confirmação documental</div>
 <div class="av"><strong>Rigor contabilístico absoluto:</strong> Cada lançamento requer confirmação documental (fatura, recibo, transferência). Nunca são inseridos valores estimados.</div>
-<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button><button class="btn bd2" onclick="limparLancamentosDuplicados()">🔍 Detetar e Remover Duplicados</button></div>
+<div class="bb" id="bar-di"><button class="btn bp" onclick="openM('m-lan')">+ Novo lançamento</button><button class="btn bo" onclick="exportDiario()">Exportar PDF</button><button class="btn bd2" onclick="limparLancamentosDuplicados()">🔍 Detetar e Remover Duplicados</button><button class="btn bo" onclick="abrirAbertura()">Saldos de abertura</button><button class="btn bo" onclick="abrirAuditoriaCtb()">Auditoria</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Saldo Caixa</div><div class="smv" id="s-cx">0,00€</div></div>
   <div class="sm"><div class="sml">Saldo Banco</div><div class="smv" id="s-bk">0,00€</div></div>
@@ -1583,16 +1583,16 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <!-- RECEITAS -->
 <div class="pg" id="pg-receitas">
 <div class="st"><span class="sn">REC</span>Receitas<button class="hbtn" data-help="receitas" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">Classe 7 SNC-ESNL · Valores reais confirmados — nunca estimados ou assumidos</div>
-<div class="bb" id="bar-rec"><button class="btn bp" onclick="openM('m-rec')">+ Nova receita</button><button class="btn bo" onclick="abrirTaxaTreinoExtra()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">⛳ Taxa de Treino Extra</button><button class="btn bo" onclick="exportReceitas()">Exportar PDF</button></div>
+<div class="sd">Classe 7 SNC-ESNL · Registe a fatura/receita e depois cada recebimento com Caixa ou Banco (botão €) · valores reais, nunca estimados</div>
+<div class="bb" id="bar-rec"><button class="btn bp" onclick="ctbNovoDoc('rec')">+ Nova receita</button><button class="btn bo" onclick="abrirTaxaTreinoExtra()" style="background:linear-gradient(135deg,#4a7fa5,#2c5f7a);">⛳ Taxa de Treino Extra</button><button class="btn bo" onclick="exportReceitas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total recebido</div><div class="smv" id="r-tot" style="color:var(--ok)">0,00€</div><div class="smn">valor real</div></div>
   <div class="sm"><div class="sml">Pendente</div><div class="smv" id="r-pen" style="color:var(--wr)">0,00€</div></div>
   <div class="sm"><div class="sml">Subsídios públicos</div><div class="smv" id="r-pub">0,00€</div></div>
   <div class="sm"><div class="sml">Receitas privadas</div><div class="smv" id="r-prv">0,00€</div></div>
 </div>
-<div class="tw"><table><thead><tr><th>Data</th><th>Conta SNC</th><th>Entidade / Descrição</th><th>Valor real (€)</th><th>Estado</th><th>Obs.</th><th id="th-rec">Ações</th></tr></thead>
-<tbody id="t-rec"><tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas registadas</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>Data</th><th>Conta SNC</th><th>Entidade / Descrição</th><th>Valor (€)</th><th>Recebido / Por receber</th><th>Estado</th><th>Obs.</th><th id="th-rec">Ações</th></tr></thead>
+<tbody id="t-rec"><tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem receitas registadas</td></tr></tbody></table></div>
 </div>
 
 <!-- DESPESAS -->
@@ -1669,16 +1669,16 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 
 <div class="pg" id="pg-despesas">
 <div class="st"><span class="sn">DESP</span>Despesas<button class="hbtn" data-help="despesas" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">Classe 6 SNC-ESNL · 17 rubricas · Valores reais por documento fiscal confirmado</div>
-<div class="bb" id="bar-desp"><button class="btn bp" onclick="openM('m-desp')">+ Nova despesa</button><button class="btn bo" onclick="exportDespesas()">Exportar PDF</button></div>
+<div class="sd">Classe 6 SNC-ESNL · 17 rubricas · Registe a fatura e depois cada pagamento com Caixa ou Banco (botão €) · valores reais por documento fiscal</div>
+<div class="bb" id="bar-desp"><button class="btn bp" onclick="ctbNovoDoc('desp')">+ Nova despesa</button><button class="btn bo" onclick="exportDespesas()">Exportar PDF</button></div>
 <div class="g4" style="margin-bottom:14px;">
   <div class="sm"><div class="sml">Total pago</div><div class="smv" id="d-tot" style="color:var(--er)">0,00€</div><div class="smn">valor real</div></div>
   <div class="sm"><div class="sml">Pendente</div><div class="smv" id="d-pen" style="color:var(--wr)">0,00€</div></div>
   <div class="sm"><div class="sml">Maior rubrica</div><div class="smv" id="d-mrb" style="font-size:14px;">—</div></div>
   <div class="sm"><div class="sml">Nº documentos</div><div class="smv" id="d-ndoc">0</div></div>
 </div>
-<div class="tw"><table><thead><tr><th>Data</th><th>Doc. nº</th><th>Conta SNC</th><th>Fornecedor / Descrição</th><th>Valor real (€)</th><th>Estado</th><th id="th-desp">Ações</th></tr></thead>
-<tbody id="t-desp"><tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas registadas</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>Data</th><th>Doc. nº</th><th>Conta SNC</th><th>Fornecedor / Descrição</th><th>Valor (€)</th><th>Pago / Por pagar</th><th>Estado</th><th id="th-desp">Ações</th></tr></thead>
+<tbody id="t-desp"><tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem despesas registadas</td></tr></tbody></table></div>
 </div>
 
 <!-- PATROCÍNIOS -->
@@ -1720,17 +1720,22 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <!-- BALANCETE -->
 <div class="pg" id="pg-balancete">
 <div class="st"><span class="sn">BAL</span>Balancete Mensal SNC-ESNL<button class="hbtn" data-help="balancete" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">Por conta · Débito/Crédito do mês e acumulado · Apenas valores reais registados no sistema</div>
+<div class="sd">Por conta · Débito/Crédito do mês e acumulado · Inclui Caixa (111) e Banco CGD (121) · Σ débitos = Σ créditos</div>
 <div class="bb">
-  <select class="fse" id="bal-mes" style="width:180px;" onchange="renderBal()">
+<select class="fse" id="bal-mes" style="width:180px;" onchange="renderBal()">
     <option value="2025-12">Dezembro 2025</option><option value="2026-01">Janeiro 2026</option><option value="2026-02">Fevereiro 2026</option><option value="2026-03">Março 2026</option><option value="2026-04">Abril 2026</option><option value="2026-05">Maio 2026</option><option value="2026-06">Junho 2026</option><option value="2026-07">Julho 2026</option><option value="2026-08">Agosto 2026</option><option value="2026-09">Setembro 2026</option><option value="2026-10">Outubro 2026</option><option value="2026-11">Novembro 2026</option>
   </select>
-  <button class="btn bo" onclick="exportBalancete()">Exportar PDF</button>
+<button class="btn bo" onclick="exportBalancete()">Exportar PDF</button>
+<button class="btn bo" onclick="abrirAbertura()">Saldos de abertura</button>
+<button class="btn bo" onclick="abrirRegularizar()">Regularizar Caixa/Banco</button>
+<button class="btn bo" onclick="abrirAuditoriaCtb()">Auditoria</button>
 </div>
-<div class="tw"><table><thead><tr><th>Conta SNC</th><th>Descrição</th><th>Déb. Mês</th><th>Cré. Mês</th><th>Saldo Mês</th><th>Déb. Acum.</th><th>Cré. Acum.</th><th>Saldo Acum.</th></tr></thead>
-<tbody id="t-bal"><tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem dados para o período</td></tr></tbody></table></div>
+<div id="bal-onde" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px;"></div>
+<div id="bal-alerta"></div>
+<div class="tw"><table><thead><tr><th>Conta SNC</th><th>Descrição</th><th>Déb. Mês</th><th>Cré. Mês</th><th>Déb. Acum.</th><th>Cré. Acum.</th><th>Saldo Devedor</th><th>Saldo Credor</th></tr></thead>
+<tbody id="t-bal"><tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem dados para o período</td></tr></tbody><tfoot id="tf-bal"></tfoot></table></div>
+<div id="bal-quad"></div>
 </div>
-
 <!-- DR -->
 <div class="pg" id="pg-dr">
 <div class="st"><span class="sn">DR</span>Demonstração de Resultados<button class="hbtn" data-help="dr" onclick="openHelp(this.dataset.help)">?</button></div>
@@ -2215,6 +2220,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="sm"><div class="sml">Vence em 7 dias</div><div class="smv" id="fat-urg" style="color:var(--er)">0</div></div>
   <div class="sm"><div class="sml">Pagas</div><div class="smv" id="fat-pg" style="color:var(--ok)">0</div></div>
 </div>
+<div id="fat-ctb"></div>
 <div id="fat-alertas" style="margin-bottom:12px;"></div>
 <div class="tw"><table><thead><tr><th>Nr. Doc.</th><th>Fornecedor</th><th>Conta SNC</th><th>Valor (EUR)</th><th>Data fatura</th><th>Vencimento</th><th>Estado</th><th id="th-fat">Acoes</th></tr></thead>
 <tbody id="t-faturas"><tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem faturas registadas</td></tr></tbody></table></div>
@@ -2223,7 +2229,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <!-- FLUXO DE CAIXA -->
 <div class="pg" id="pg-fluxo">
 <div class="st"><span class="sn">FC</span>Fluxo de Caixa Previsto<button class="hbtn" data-help="fluxo" onclick="openHelp(this.dataset.help)">?</button></div>
-<div class="sd">Calendario mensal de entradas e saidas previstas - Saldo previsto - Visual por mes</div>
+<div class="sd">Fluxo realizado (Caixa e Banco) no topo · Calendario mensal de entradas e saidas previstas por baixo</div>
 <div class="bb">
   <button class="btn bp" onclick="openM('m-fluxo-item')">+ Adicionar previsao</button>
   <button class="btn bo" onclick="exportFluxoPDF()">Exportar PDF</button>
@@ -2233,6 +2239,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="sm"><div class="sml">Total saidas previstas</div><div class="smv" id="fc-sai" style="color:var(--er)">0,00EUR</div></div>
   <div class="sm"><div class="sml">Saldo previsto final</div><div class="smv" id="fc-sal">0,00EUR</div></div>
 </div>
+<div id="fluxo-real"></div>
 <div id="fluxo-grid"></div>
 </div>
 
@@ -2566,7 +2573,9 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div class="mb">
     <div class="fr"><div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="rc-dt"></div><div class="fg"><div class="fl">Conta SNC</div><select class="fse" id="rc-cn"><option value="724">724 — Patrocinadores</option><option value="729">729 — Inscrições atletas</option><option value="751">751 — Subsídios públicos</option><option value="7151">7151 — Mat. desportivo</option><option value="7152">7152 — Bar</option><option value="7153">7153 — Merchandising</option><option value="781">781 — Rend. suplementares</option><option value="788">788 — Outros</option></select></div></div>
     <div class="fg"><div class="fl">Entidade / Descrição</div><input class="fi" id="rc-ds" placeholder="CM Vizela, IPDJ, patrocinador, federação..."></div>
-    <div class="fr"><div class="fg"><div class="fl">Valor real (€)</div><input class="fi" type="number" step="0.01" id="rc-vl" placeholder="0,00"></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="rc-st"><option value="Recebido">Recebido</option><option value="Pendente">Pendente a receber</option><option value="Parcial">Recebido parcialmente</option></select></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Valor real (€)</div><input class="fi" type="number" step="0.01" id="rc-vl" placeholder="0,00"></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="rc-st" onchange="ctbFormEstado('rec')"><option value="Pendente">Pendente a receber</option><option value="Recebido">Já recebido (total)</option></select></div></div>
+<div id="rc-liqmsg" class="av" style="display:none;margin:6px 0;font-size:12px;"></div>
+<div id="rc-liqbox" style="display:none;"><div class="fr"><div class="fg"><div class="fl">Onde foi recebido</div><select class="fse" id="rc-mp"><option value="Banco">Banco — CGD (121)</option><option value="Caixa">Caixa — numerário (111)</option></select></div><div class="fg"><div class="fl">Data do recebimento</div><input class="fi" type="date" id="rc-dtl"></div></div></div>
     <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="rc-ob" placeholder="Referência pagamento, condições, notas..."></textarea></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-rec')">Cancelar</button><button class="btn bp" onclick="saveRec()">Guardar receita</button></div>
@@ -2596,7 +2605,8 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="tt-dt"></div><div class="fg"><div class="fl">Delegação / Entidade</div><input class="fi" id="tt-ent" placeholder="Nome do país / delegação"></div></div>
     <div class="fr"><div class="fg"><div class="fl">Nº atletas</div><input class="fi" type="number" min="1" step="1" id="tt-atl" placeholder="0" oninput="calcTaxaTreinoExtra()"></div><div class="fg"><div class="fl">Nº dias de treino extra</div><input class="fi" type="number" min="1" step="1" id="tt-dias" placeholder="0" oninput="calcTaxaTreinoExtra()"></div></div>
     <div class="fg"><div class="fl">Valor calculado (€6/dia/atleta)</div><input class="fi" id="tt-vl" readonly style="font-weight:700;color:var(--ok);" value="0,00€"></div>
-    <div class="fg"><div class="fl">Observações</div><textarea class="fta" id="tt-ob" placeholder="Notas adicionais..."></textarea></div>
+    <div class="fg"><div class="fl">Como foi paga</div><select class="fse" id="tt-mp"><option value="Caixa">Numerário (Caixa 111)</option><option value="Banco">Transferência / MB WAY (Banco CGD 121)</option></select></div>
+<div class="fg"><div class="fl">Observações</div><textarea class="fta" id="tt-ob" placeholder="Notas adicionais..."></textarea></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-taxa-treino')">Cancelar</button><button class="btn bp" onclick="saveTaxaTreinoExtra()">Guardar receita</button></div>
 </div></div>
@@ -2607,7 +2617,9 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fr"><div class="fg"><div class="fl">Data</div><input class="fi" type="date" id="dp-dt"></div><div class="fg"><div class="fl">Nº Documento fiscal</div><input class="fi" id="dp-dc" placeholder="FT/001, RB/012..."></div></div>
     <div class="fg"><div class="fl">Conta SNC</div><select class="fse" id="dp-cn"><option value="6141">6141 — Material desportivo</option><option value="6143">6143 — Representação/propaganda</option><option value="6221">6221 — Trabalhos especializados</option><option value="6222">6222 — Publicidade e propaganda</option><option value="6223">6223 — Vigilância e segurança</option><option value="6228">6228 — Outros FSE (cerimónias)</option><option value="6231">6231 — Ferramentas desgaste rápido</option><option value="6233">6233 — Material de escritório</option><option value="6234">6234 — Artigos para oferta</option><option value="6242">6242 — Combustíveis</option><option value="6251">6251 — Deslocações e estadas</option><option value="6261">6261 — Rendas e alugueres</option><option value="6262">6262 — Comunicação</option><option value="6266">6266 — Desp. representação</option><option value="6268">6268 — Outros serviços</option><option value="6888">6888 — Taxas WMF/EMF</option><option value="6899">6899 — Prémios participantes</option></select></div>
     <div class="fg"><div class="fl">Fornecedor / Descrição detalhada</div><input class="fi" id="dp-ds" placeholder="Nome fornecedor e descrição..."></div>
-    <div class="fr"><div class="fg"><div class="fl">Valor real (€)</div><input class="fi" type="number" step="0.01" id="dp-vl" placeholder="0,00"></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="dp-st"><option value="Pago">Pago</option><option value="Pendente">Pendente</option><option value="Anulado">Anulado</option></select></div></div>
+    <div class="fr"><div class="fg"><div class="fl">Valor real (€)</div><input class="fi" type="number" step="0.01" id="dp-vl" placeholder="0,00"></div><div class="fg"><div class="fl">Estado</div><select class="fse" id="dp-st" onchange="ctbFormEstado('desp')"><option value="Pendente">Pendente de pagamento</option><option value="Pago">Já pago (total)</option><option value="Anulado">Anulado</option></select></div></div>
+  <div id="dp-liqmsg" class="av" style="display:none;margin:6px 0;font-size:12px;"></div>
+  <div id="dp-liqbox" style="display:none;"><div class="fr"><div class="fg"><div class="fl">Onde foi pago</div><select class="fse" id="dp-mp"><option value="Banco">Banco — CGD (121)</option><option value="Caixa">Caixa — numerário (111)</option></select></div><div class="fg"><div class="fl">Data do pagamento</div><input class="fi" type="date" id="dp-dtl"></div></div></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-desp')">Cancelar</button><button class="btn bp" onclick="saveDesp()">Guardar despesa</button></div>
 </div></div>
@@ -2644,6 +2656,50 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <div id="pw-estado" class="mu" style="font-size:12px;margin-top:10px;min-height:16px;"></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-pw')">Cancelar</button><button class="btn bp" id="pw-btn" onclick="alterarPw()">Alterar password</button></div>
+</div></div>
+
+<div class="mo" id="m-liq"><div class="mdl" style="max-width:640px;">
+  <div class="mh"><div class="mt2" id="liq-titulo">Registar recebimento</div><button class="mc" onclick="closeM('m-liq')">&#10005;</button></div>
+  <div class="mb">
+  <div class="av" id="liq-doc" style="margin-bottom:12px;font-size:12px;line-height:1.55;"></div>
+  <div class="fr"><div class="fg"><div class="fl">Data do movimento</div><input class="fi" type="date" id="liq-dt"></div><div class="fg"><div class="fl">Valor (€)</div><input class="fi" type="number" step="0.01" min="0" id="liq-vl" placeholder="0,00"></div></div>
+  <div class="fr"><div class="fg"><div class="fl">Meio</div><select class="fse" id="liq-mp"><option value="Banco">Banco — Caixa Geral de Depósitos (conta 121)</option><option value="Caixa">Caixa — numerário (conta 111)</option></select></div><div class="fg"><div class="fl">Referência (opcional)</div><input class="fi" id="liq-ref" placeholder="Nº da transferência, do recibo..."></div></div>
+  <div id="liq-lista"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-liq')">Fechar</button><button class="btn bp" id="liq-btn" onclick="salvarLiq()">Registar</button></div>
+</div></div>
+
+<div class="mo" id="m-reg"><div class="mdl" style="max-width:900px;width:96vw;">
+  <div class="mh"><div class="mt2">Regularizar: pagos/recebidos sem Caixa ou Banco</div><button class="mc" onclick="closeM('m-reg')">&#10005;</button></div>
+  <div class="mb">
+  <div class="av" style="margin-bottom:10px;font-size:12px;line-height:1.55;">Estes documentos estão marcados como <b>pagos/recebidos</b>, mas o programa não sabe <b>onde</b> está o dinheiro. Escolha Caixa ou Banco para cada um. O movimento fica com a <b>data do documento</b> (pode corrigi-la depois, no botão € do documento).</div>
+  <div class="bb"><button class="btn bo bsm" onclick="regTodos('Banco')">Todos em Banco (CGD)</button><button class="btn bo bsm" onclick="regTodos('Caixa')">Todos em Caixa</button><button class="btn bo bsm" onclick="regSel(true)">Marcar todos</button><button class="btn bo bsm" onclick="regSel(false)">Desmarcar todos</button></div>
+  <div id="reg-lista" style="max-height:48vh;overflow:auto;"></div>
+  <div id="reg-resumo" class="mu" style="font-size:12px;margin-top:8px;"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-reg')">Fechar</button><button class="btn bp" id="reg-btn" onclick="aplicarRegularizacao()">Regularizar selecionados</button></div>
+</div></div>
+
+<div class="mo" id="m-abertura"><div class="mdl" style="max-width:520px;">
+  <div class="mh"><div class="mt2">Saldos de abertura</div><button class="mc" onclick="closeM('m-abertura')">&#10005;</button></div>
+  <div class="mb">
+  <div class="av" style="margin-bottom:12px;font-size:12px;line-height:1.55;">Dinheiro que <b>já existia</b> em Caixa e na conta da CGD <b>antes</b> do primeiro movimento do evento (fundo de maneio, saldo inicial). Fica registado no Diário como «Saldo de abertura» e conta para Caixa, Banco, Balancete e Balanço. Deixe a zero se não existia nada.</div>
+  <div class="fr"><div class="fg"><div class="fl">Caixa (111) — €</div><input class="fi" type="number" step="0.01" min="0" id="ab-cx" placeholder="0,00"></div><div class="fg"><div class="fl">Banco CGD (121) — €</div><input class="fi" type="number" step="0.01" min="0" id="ab-bk" placeholder="0,00"></div></div>
+  <div class="fg"><div class="fl">Data de abertura</div><input class="fi" type="date" id="ab-dt"></div>
+  </div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-abertura')">Cancelar</button><button class="btn bp" onclick="salvarAbertura()">Guardar</button></div>
+</div></div>
+
+<div class="mo" id="m-ext"><div class="mdl" style="max-width:860px;width:96vw;">
+  <div class="mh"><div class="mt2" id="ext-titulo">Extrato</div><button class="mc" onclick="closeM('m-ext')">&#10005;</button></div>
+  <div class="mb"><div class="tw" style="max-height:58vh;overflow:auto;"><table><thead><tr><th>Data</th><th>Descrição</th><th>Entrada</th><th>Saída</th><th>Saldo</th></tr></thead><tbody id="ext-corpo"></tbody></table></div></div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-ext')">Fechar</button><button class="btn bp" onclick="exportExtratoPDF()">Exportar PDF</button></div>
+</div></div>
+
+<div class="mo" id="m-audctb"><div class="mdl" style="max-width:920px;width:96vw;">
+  <div class="mh"><div class="mt2">Auditoria contabilística</div><button class="mc" onclick="closeM('m-audctb')">&#10005;</button></div>
+  <div class="mb" id="audctb-corpo" style="max-height:68vh;overflow:auto;"></div>
+  <div class="mf"><button class="btn bo" onclick="closeM('m-audctb')">Fechar</button></div>
 </div></div>
 
 <div class="mo" id="m-auditoria"><div class="mdl" style="max-width:900px;width:96vw;">
@@ -3320,12 +3376,12 @@ const C=id=>{const base=doc(collection(db,'swc2026'),'dados');return collection(
 const _add=(col,data)=>addDoc(C(col),data);
 const _del=(col,id)=>deleteDoc(doc(C(col),id));
 // === LIGACAO AO DIARIO (lancamentos): cria/remove entrada de Caixa por venda ===
-async function lancarVendaContab(origem,conta,ds,total,refId){
+async function lancarVendaContab(origem,conta,ds,total,refId,cbx){
   if(!(Number(total)>0))return;
   const data=new Date().toISOString().slice(0,10);
   try{
     await _add('receitas',{data,conta:conta,desc:ds,valor:Number(total),estado:'Recebido',obs:'Auto '+origem,origem:origem,refId:refId||'',ts:Date.now()});
-    await _add('lancamentos',{data,dc:'',cn:conta,cb:'Caixa',ds:ds,tp:'C',vl:Number(total),origem:origem,refId:refId||'',ts:Date.now()});
+    await _add('lancamentos',{data,dc:'',cn:conta,cb:(cbx==='Banco'?'Banco':'Caixa'),ds:ds,tp:'C',vl:Number(total),origem:origem,refId:refId||'',ts:Date.now()});
   }catch(e){console.error('lancarVendaContab',e);}
 }
 async function lancarLanConta(origem,conta,ds,valor,tp,refId){
@@ -3343,11 +3399,11 @@ async function removerLanPorRef(refId){
   for(const l of (typeof _lan!=='undefined'&&_lan?_lan:[]).filter(x=>x.refId===refId)){ try{ await _del('lancamentos',l.id); }catch(e){} }
 }
 function jaLancado(id){ const L_=(typeof _lan!=='undefined'&&_lan?_lan:[]); if(L_.some(l=>l.refId===id))return true; const r_=(typeof _rec!=='undefined'&&_rec?_rec:[]).find(x=>x.id===id); return !!(r_&&r_.origem==='treinosLivres'&&r_.refId&&L_.some(l=>l.refId===r_.refId)); }
-async function lancarReceita(id){ if(!canEdit())return; const r=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(!r)return; if(r.origem==='treinosLivres'){toast('Receita de Treinos Livres: marque-a como recebida no separador «Treinos Livres».','am');return;} if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('receita',(r.conta||'788'),(r.desc||'Receita'),Number(r.valor||0),'C',id); toast('Lancado no Diario'); }
-async function lancarDespesa(id){ if(!canEdit())return; const x=(typeof _desp!=='undefined'?_desp:[]).find(y=>y.id===id); if(!x)return; if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('despesa',(x.conta||'6268'),(x.desc||'Despesa'),Number(x.valor||0),'D',id); toast('Lancado no Diario'); }
-async function lancarPatroc(id){ if(!canEdit())return; const p=(typeof _pat!=='undefined'?_pat:[]).find(y=>y.id===id); if(!p)return; if(p.tipoValor==='Espécie'){toast('Patrocínio em espécie não é dinheiro','am');return;} if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarVendaContab('patroc','724',('Patrocinio '+(p.empresa||'')),Number(p.valor||0),id); toast('Lancado no Diario'); }
-async function deslancarRec(id){ if(!canEdit())return; const r0_=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(r0_&&r0_.origem==='treinosLivres'){toast('Receita de Treinos Livres: altere o estado no separador «Treinos Livres».','am');return;} await removerLanPorRef(id); toast('Removido do Diario','er'); }
-async function deslancarDesp(id){ if(!canEdit())return; await removerLanPorRef(id); toast('Removido do Diario','er'); }
+async function lancarReceita_ctbOld(id){ if(!canEdit())return; const r=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(!r)return; if(r.origem==='treinosLivres'){toast('Receita de Treinos Livres: marque-a como recebida no separador «Treinos Livres».','am');return;} if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('receita',(r.conta||'788'),(r.desc||'Receita'),Number(r.valor||0),'C',id); toast('Lancado no Diario'); }
+async function lancarDespesa_ctbOld(id){ if(!canEdit())return; const x=(typeof _desp!=='undefined'?_desp:[]).find(y=>y.id===id); if(!x)return; if(jaLancado(id)){toast('Ja esta no Diario','am');return;} await lancarLanConta('despesa',(x.conta||'6268'),(x.desc||'Despesa'),Number(x.valor||0),'D',id); toast('Lancado no Diario'); }
+async function lancarPatroc(id){ if(!canEdit())return; const p=(typeof _pat!=='undefined'?_pat:[]).find(y=>y.id===id); if(!p)return; if(p.tipoValor==='Espécie'){toast('Patrocínio em espécie não é dinheiro','am');return;} if(jaLancado(id)){toast('Ja esta no Diario','am');return;} const _cbP=confirm('Este patrocínio foi recebido por transferência bancária (Banco — CGD)?\n\nOK = Banco   ·   Cancelar = Caixa (numerário)')?'Banco':'Caixa'; await lancarVendaContab('patroc','724',('Patrocinio '+(p.empresa||'')),Number(p.valor||0),id,_cbP); toast('Lancado no Diario'); }
+async function deslancarRec_ctbOld(id){ if(!canEdit())return; const r0_=(typeof _rec!=='undefined'?_rec:[]).find(x=>x.id===id); if(r0_&&r0_.origem==='treinosLivres'){toast('Receita de Treinos Livres: altere o estado no separador «Treinos Livres».','am');return;} await removerLanPorRef(id); toast('Removido do Diario','er'); }
+async function deslancarDesp_ctbOld(id){ if(!canEdit())return; await removerLanPorRef(id); toast('Removido do Diario','er'); }
 async function deslancarPat(id){ if(!canEdit())return; await removerVendaContab(id); toast('Removido do Diario','er'); }
 window.lancarReceita=lancarReceita;window.lancarDespesa=lancarDespesa;window.lancarPatroc=lancarPatroc;window.deslancarRec=deslancarRec;window.deslancarDesp=deslancarDesp;window.deslancarPat=deslancarPat;
 
@@ -3395,7 +3451,7 @@ async function salvarReciboSwc(){
   const d={numero,tipo,data,entidade,nif,valor,morada,meio,referencia,finalidade,emitido,ts:Date.now()};
   const docRef=await _add('swc2026_recibos',d);
   // Lançamento automático no Diário — Patrocínio -> 724, Donativo -> 788, sem botão extra.
-  await lancarVendaContab('recibo_swc', contaSwcRecibo(tipo), numero+' — '+tipo+' — '+entidade, valor, docRef.id);
+  await lancarVendaContab('recibo_swc', contaSwcRecibo(tipo), numero+' — '+tipo+' — '+entidade, valor, docRef.id, (meio==='caixa'?'Caixa':'Banco'));
   toast('Recibo '+numero+' emitido e lançado no Diário ✅');
   closeM('m-recswc');
 }
@@ -4004,14 +4060,14 @@ function loadAll(){
 
 //  DASHBOARD 
 function renderDash(){
-  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
-  const totD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
-  const cx=_lan.filter(l=>l.cb==='Caixa').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
-  const bk=_lan.filter(l=>l.cb==='Banco').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
+  const _K=ctbAtual(),_DT=ctbDocsTot(_K),_TS=ctbTes(_K);const totR=_DT.rec.liq,totD=_DT.desp.liq,cx=_TS.caixa,bk=_TS.banco;
+
+
+
   const patC=_pat.filter(p=>(p.estado==='Recebido'||p.estado==='Confirmado')&&p.tipoValor!=='Espécie').reduce((a,p)=>a+Number(p.valor||0),0);
   (document.getElementById('k-rec')||{}).textContent=fmt(totR);
   (document.getElementById('k-desp')||{}).textContent=fmt(totD);
-  (document.getElementById('k-saldo')||{}).textContent=fmt(cx+bk);
+  (document.getElementById('k-saldo')||{}).textContent=fmt(_TS.total);
   (document.getElementById('k-atl')||{}).textContent=_atl.length;
   (document.getElementById('k-pat')||{}).textContent=fmt(patC);
   (document.getElementById('d-cx')||{}).textContent=fmt(cx);
@@ -4041,7 +4097,7 @@ async function saveLan(){
   if(_eid){await _upd('lancamentos',_eid,d);if(_e)_e.value='';toast('Lançamento actualizado');}else{await _add('lancamentos',d);toast('Lançamento registado');}
   closeM('m-lan');toast('Lançamento registado');
 }
-function renderDi(){
+function renderDi_ctbOld(){
   let cx=0,bk=0,totD=0,totC=0;
   const rows=_lan.map(l=>{
     const v=Number(l.vl||0);
@@ -4063,7 +4119,7 @@ async function delLan(id){const _l0=(_lan||[]).find(x=>x.id===id);if(_l0&&_l0.or
 async function detetarDuplicadosLancamentos(){
   // Chave SEMPRE pelo conteúdo (data+descrição+valor+conta) — cobre o caso real: dois registos
   // com IDs internos diferentes (ex.: duplo-clique ao emitir) mas exatamente a mesma informação visível.
-  function chaveLan(l){ return (l.data||'')+'|'+(l.ds||'')+'|'+(l.cn||'')+'|'+Number(l.vl||0)+'|'+(l.tp||''); }
+  function chaveLan(l){ return (l.data||'')+'|'+(l.ds||'')+'|'+(l.cn||'')+'|'+Number(l.vl||0)+'|'+(l.tp||'')+'|'+(l.cb||'')+'|'+(l.refId||'')+'|'+(l.dc||''); }
   function chaveRec(r){ return (r.data||'')+'|'+(r.desc||'')+'|'+(r.conta||'')+'|'+Number(r.valor||0); }
 
   const grupos={};
@@ -4107,7 +4163,7 @@ async function limparLancamentosDuplicados(){
 window.limparLancamentosDuplicados=limparLancamentosDuplicados;
 
 //  RECEITAS 
-async function saveRec(){
+async function saveRec_ctbOld(){
   if(!canEdit())return;
   const d={data:document.getElementById('rc-dt').value,conta:document.getElementById('rc-cn').value,desc:document.getElementById('rc-ds').value,valor:parseFloat(document.getElementById('rc-vl').value)||0,estado:document.getElementById('rc-st').value,obs:document.getElementById('rc-ob').value,ts:Date.now()};
   const _e=document.getElementById('rec-eid');const _eid=_e&&_e.value?_e.value:'';
@@ -4142,11 +4198,11 @@ async function saveTaxaTreinoExtra(){
   const obsBase='Taxa de treino extra: €6/dia/atleta, antes de 9 Out. Paga diretamente ao secretariado. Receita própria da Vizelgolfe (não é repassada à WMF).';
   const ob=document.getElementById('tt-ob').value;
   const d={data,conta:'781',desc,valor,estado:'Recebido',obs:obsBase+(ob?(' | '+ob):''),ts:Date.now()};
-  await _add('receitas',d);
+  const _trx=await _add('receitas',d);const _mpT=((document.getElementById('tt-mp')||{}).value==='Banco')?'Banco':'Caixa';await _add('lancamentos',{data,dc:'',cn:'781',cb:_mpT,ds:desc,tp:'C',vl:valor,origem:'taxaTreinoExtra',refId:_trx.id,ts:Date.now()});
   toast('Taxa de Treino Extra registada: '+fmt(valor));
   closeM('m-taxa-treino');
 }
-function renderRec(){
+function renderRec_ctbOld(){
   const totR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
   const totP=_rec.filter(r=>r.estado==='Pendente').reduce((a,r)=>a+Number(r.valor||0),0);
   const pub=_rec.filter(r=>r.conta==='751').reduce((a,r)=>a+Number(r.valor||0),0);
@@ -4156,7 +4212,7 @@ function renderRec(){
   document.getElementById('r-prv').textContent=fmt(totR-pub);
   document.getElementById('t-rec').innerHTML=_rec.length?_rec.map(r=>`<tr><td>${r.data||''}</td><td><span class="sc">${r.conta||''}</span></td><td>${r.desc||''}</td><td class="tok">${fmt(r.valor)}</td><td><span class="bge ${r.estado==='Recebido'?'bg-ok':r.estado==='Pendente'?'bg-am':'bg-bl'}">${r.estado}</span></td><td class="mu">${r.obs||''}</td>${canEdit()?`<td>${jaLancado(r.id)?`<span class="bge bg-ok" style="font-size:9px;">Diário</span><button class="btn bo bsm" title="Remover do Diario" onclick="deslancarRec('${r.id}')">&#8634;</button>`:`<button class="btn bp bsm" title="Lancar no Diario" onclick="lancarReceita('${r.id}')">&#8364;&#8594;</button>`}<button class="btn bo bsm" onclick="editRec('${r.id}')">✏️</button><button class="btn bd2 bsm" onclick="delRec('${r.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
 }
-async function delRec(id){const _r0=(_rec||[]).find(x=>x.id===id);if(_r0&&_r0.origem==='treinosLivres'){toast('Esta receita vem de «Treinos Livres»: elimine-a nesse separador.','am');return;}if(!canDelete()||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
+async function delRec_ctbOld(id){const _r0=(_rec||[]).find(x=>x.id===id);if(_r0&&_r0.origem==='treinosLivres'){toast('Esta receita vem de «Treinos Livres»: elimine-a nesse separador.','am');return;}if(!canDelete()||!confirm('Eliminar?'))return;await _del('receitas',id);toast('Eliminada','er');}
 
 // ===================================================================================================
 // TREINOS LIVRES — taxa por pessoa e por dia (atletas e treinadores) · recebimentos por seleção ou globais
@@ -4476,14 +4532,14 @@ window.tlTab=tlTab;window.tlEscolheDia=tlEscolheDia;window.tlCopiarAnterior=tlCo
 
 
 //  DESPESAS 
-async function saveDesp(){
+async function saveDesp_ctbOld(){
   if(!canEdit())return;
   const d={data:document.getElementById('dp-dt').value,doc:document.getElementById('dp-dc').value,conta:document.getElementById('dp-cn').value,desc:document.getElementById('dp-ds').value,valor:parseFloat(document.getElementById('dp-vl').value)||0,estado:document.getElementById('dp-st').value,ts:Date.now()};
   const _e=document.getElementById('desp-eid');const _eid=_e&&_e.value?_e.value:'';
   if(_eid){await _upd('despesas',_eid,d);if(_e)_e.value='';toast('Despesa actualizado');}else{await _add('despesas',d);toast('Despesa registado');}
   closeM('m-desp');toast('Despesa registada');
 }
-function renderDesp(){
+function renderDesp_ctbOld(){
   const totP=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
   const totPn=_desp.filter(d=>d.estado==='Pendente').reduce((a,d)=>a+Number(d.valor||0),0);
   document.getElementById('d-tot').textContent=fmt(totP);
@@ -4494,7 +4550,7 @@ function renderDesp(){
   document.getElementById('d-mrb').textContent=mr?mr[0]:'-';
   document.getElementById('t-desp').innerHTML=_desp.length?_desp.map(d=>`<tr><td>${d.data||''}</td><td class="mu">${d.doc||''}</td><td><span class="sc">${d.conta||''}</span></td><td>${d.desc||''}</td><td class="tv">${fmt(d.valor)}</td><td><span class="bge ${d.estado==='Pago'?'bg-ok':d.estado==='Pendente'?'bg-am':'bg-mu'}">${d.estado}</span></td>${canEdit()?`<td>${jaLancado(d.id)?`<span class="bge bg-ok" style="font-size:9px;">Diário</span><button class="btn bo bsm" title="Remover do Diario" onclick="deslancarDesp('${d.id}')">&#8634;</button>`:`<button class="btn bp bsm" title="Lancar no Diario" onclick="lancarDespesa('${d.id}')">&#8364;&#8594;</button>`}<button class="btn bo bsm" onclick="editDesp('${d.id}')">✏️</button><button class="btn bd2 bsm" onclick="delDesp('${d.id}')">🗑️</button></td>`:'<td></td>'}</tr>`).join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
 }
-async function delDesp(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('despesas',id);toast('Eliminada','er');}
+async function delDesp_ctbOld(id){if(!canDelete()||!confirm('Eliminar?'))return;await _del('despesas',id);toast('Eliminada','er');}
 
 //  PATROCÍNIOS 
 async function savePat(){
@@ -6630,7 +6686,684 @@ function initChecklist(){
 
 //  BALANCETE 
 const nomC={'6141':'Material desportivo','6143':'Repr./propaganda','6221':'Trabalhos especializados','6222':'Publicidade','6223':'Vigilância','6228':'Outros FSE','6231':'Ferramentas desgaste','6233':'Mat. escritório','6234':'Artigos oferta','6242':'Combustíveis','6251':'Deslocações/estadas','6261':'Rendas/alugueres','6262':'Comunicação','6266':'Desp. representação','6268':'Outros serviços','6888':'Taxas WMF/EMF','6899':'Prémios','7151':'Mat.desp.(venda)','7152':'Bar','7153':'Merchandising','724':'Patrocinadores','729':'Inscrições','751':'Subsídios públicos','781':'Rend.suplementares','788':'Outros rendimentos'};
+// ===================================================================================================
+// MOTOR CONTABILÍSTICO — uma só fonte de verdade para Balancete, DR, Balanço, Fluxo, Painel e relatórios.
+//
+// Modelo (partidas dobradas, SNC-ESNL):
+//   RECEITA   (documento)  : D 211 Clientes (a receber)   C 7xx Rendimento          — na data do documento
+//   RECEBIMENTO (Diário)   : D 111 Caixa | 121 Banco (CGD) C 211 Clientes           — na data do recebimento
+//   DESPESA   (documento)  : D 6xx Gasto                   C 221 Fornecedores (a pagar)
+//   PAGAMENTO (Diário)     : D 221 Fornecedores            C 111 Caixa | 121 Banco
+//   À VISTA (pago/recebido no próprio dia do documento): vai direto a Caixa/Banco ↔ 6xx/7xx, sem passar por 211/221
+//   LANÇAMENTO DIRETO (Diário sem documento): Caixa/Banco ↔ conta indicada (cn)
+//   SALDO DE ABERTURA: lançamento no Diário com a conta 51 (Fundos patrimoniais)
+//   PAGO/RECEBIDO SEM MEIO (registos antigos, sem lançamento): vai para «1X — por classificar» até ser regularizado
+//
+// A Demonstração de Resultados usa SÓ as contas 6 e 7 (base de acréscimo): não depende de Caixa nem de Banco.
+// Todos os movimentos são gerados aos pares, por isso Σ débitos = Σ créditos e Ativo = Passivo + Capital Próprio por construção.
+// ===================================================================================================
+const CTB_EPS=0.005;
+const CTB_NOMES={'111':'Caixa','121':'Depósitos à ordem — Caixa Geral de Depósitos','1X':'Meios financeiros por classificar (Caixa/Banco)','211':'Clientes e outros devedores (a receber)','221':'Fornecedores (a pagar)','51':'Fundos patrimoniais (saldos de abertura)','SC':'Sem conta atribuída (lançamento do Diário)'};
+function _cR(x){return Math.round((Number(x)||0)*100)/100;}
+function ctbMeio(cb){return cb==='Caixa'?'Caixa':'Banco';}
+function ctbContaMeio(cb){return cb==='Caixa'?'111':'121';}
+function ctbData(o){
+  const d=(o&&(o.data||o.dt))||'';
+  if(/^\d{4}-\d{2}-\d{2}/.test(d))return d.slice(0,10);
+  if(o&&o.ts){const t=new Date(o.ts);if(!isNaN(t.getTime()))return t.toISOString().slice(0,10);}
+  return '';
+}
+function ctbNomeConta(c){return CTB_NOMES[c]||((typeof nomC!=='undefined'&&nomC[c])?nomC[c]:c);}
+function ctbOrdem(c){return c==='1X'?'129':c==='SC'?'999':String(c).padEnd(6,'0');}
+function ctbCmp(a,b){const x=ctbOrdem(a),y=ctbOrdem(b);return x<y?-1:x>y?1:0;}
+
+// ---- 1) liga cada lançamento do Diário ao documento a que pertence (por id do documento ou por refId do documento)
+function ctbCalc(rec,desp,lan){
+  rec=rec||[];desp=desp||[];lan=lan||[];
+  const porId=new Map(),porRef=new Map();
+  const add=(m,k,v)=>{if(!k)return;if(!m.has(k))m.set(k,[]);m.get(k).push(v);};
+  rec.forEach(d=>{const v={doc:d,tipo:'receita'};add(porId,d.id,v);if(d.refId)add(porRef,d.refId,v);});
+  desp.forEach(d=>{const v={doc:d,tipo:'despesa'};add(porId,d.id,v);if(d.refId)add(porRef,d.refId,v);});
+  const lig=new Map(),liqAt=new Map(),diretos=[];
+  const efeito=(tipo,l)=>{const v=_cR(l.vl);const pos=tipo==='receita'?(l.tp==='C'):(l.tp!=='C');return pos?v:-v;};
+  lan.forEach(l=>{
+    let cand=[];
+    if(l.refId){const a=porId.get(l.refId)||[],b=porRef.get(l.refId)||[];cand=a.length?a:b;}
+    if(!cand.length){diretos.push(l);return;}
+    // vários documentos podem partilhar a mesma referência (duplicados): cada lançamento vai para o 1.º a que ainda «cabe»
+    let alvo=cand[0];
+    if(cand.length>1){
+      for(const c of cand){const s=efeito(c.tipo,l),atual=liqAt.get(c.doc)||0;if(atual+s<=_cR(c.doc.valor)+CTB_EPS){alvo=c;break;}}
+    }
+    liqAt.set(alvo.doc,(liqAt.get(alvo.doc)||0)+efeito(alvo.tipo,l));
+    if(!lig.has(alvo.doc))lig.set(alvo.doc,[]);lig.get(alvo.doc).push(l);
+  });
+  // ---- 2) análise de cada documento
+  const info=(d,tipo)=>{
+    const ls=lig.get(d)||[],valor=_cR(d.valor),est=d.estado||'',anulado=(est==='Anulado');
+    let liq=0;const meios={Caixa:0,Banco:0};
+    ls.forEach(l=>{const s=efeito(tipo,l);liq+=s;meios[ctbMeio(l.cb)]+=s;});
+    let legado=false;
+    if(!ls.length&&!anulado&&((tipo==='receita'&&est==='Recebido')||(tipo==='despesa'&&est==='Pago'))){liq=valor;legado=true;}
+    liq=_cR(liq);const pend=_cR(valor-liq);
+    let estado;
+    if(anulado)estado='Anulado';else if(valor>0&&liq>=valor-CTB_EPS)estado=tipo==='receita'?'Recebido':'Pago';else if(liq>CTB_EPS)estado='Parcial';else estado='Pendente';
+    return {doc:d,tipo,id:d.id,valor,liq,pend:pend>0?pend:0,excesso:pend<-CTB_EPS?_cR(-pend):0,estado,estadoGuardado:est,legado,
+      parcialSemRegisto:(!ls.length&&est==='Parcial'&&!anulado),anulado,meios:{Caixa:_cR(meios.Caixa),Banco:_cR(meios.Banco)},lans:ls,data:ctbData(d),conta:d.conta||''};
+  };
+  const recI=rec.map(d=>info(d,'receita')),despI=desp.map(d=>info(d,'despesa'));
+  // ---- 3) movimentos contabilísticos (sempre em pares D/C)
+  const movs=[];
+  const P=(data,conta,d,c,origem,ref,ds)=>{d=_cR(d);c=_cR(c);if(!d&&!c)return;movs.push({data,conta,d,c,origem,ref,ds:ds||''});};
+  const posta=(inf)=>{
+    if(inf.anulado){inf.lans.forEach(l=>diretos.push(l));return;}    // um documento anulado nunca conta; se tiver dinheiro movimentado, o dinheiro não se perde
+    const d=inf.doc,rc=inf.tipo==='receita',K=inf.conta||'SC',D0=inf.data,ds=d.desc||d.ds||'',V=inf.valor,ls=inf.lans,CT=rc?'211':'221';
+    const sentidoCerto=l=>rc?l.tp==='C':l.tp!=='C';
+    const aVista=ls.length>0&&ls.every(l=>ctbData(l)===D0&&sentidoCerto(l))&&Math.abs(inf.liq-V)<=CTB_EPS;
+    if(aVista){ls.forEach(l=>{const v=_cR(l.vl),dt=ctbData(l),m=ctbContaMeio(l.cb);if(rc){P(dt,m,v,0,'doc',d.id,ds);P(dt,K,0,v,'doc',d.id,ds);}else{P(dt,K,v,0,'doc',d.id,ds);P(dt,m,0,v,'doc',d.id,ds);}});return;}
+    if(inf.legado){if(rc){P(D0,'1X',V,0,'legado',d.id,ds);P(D0,K,0,V,'legado',d.id,ds);}else{P(D0,K,V,0,'legado',d.id,ds);P(D0,'1X',0,V,'legado',d.id,ds);}return;}
+    if(rc){P(D0,CT,V,0,'doc',d.id,ds);P(D0,K,0,V,'doc',d.id,ds);}else{P(D0,K,V,0,'doc',d.id,ds);P(D0,CT,0,V,'doc',d.id,ds);}
+    ls.forEach(l=>{
+      const v=_cR(l.vl),dt=ctbData(l),m=ctbContaMeio(l.cb),entrada=(l.tp==='C');     // entrada de dinheiro = débito do meio
+      if(entrada){P(dt,m,v,0,'liq',d.id,ds);P(dt,CT,0,v,'liq',d.id,ds);}else{P(dt,CT,v,0,'liq',d.id,ds);P(dt,m,0,v,'liq',d.id,ds);}
+    });
+  };
+  recI.forEach(posta);despI.forEach(posta);
+  diretos.forEach(l=>{
+    const v=_cR(l.vl),dt=ctbData(l),m=ctbContaMeio(l.cb),K=l.cn||'SC',ds=l.ds||'',org=(K==='51'?'abertura':'dir');
+    if(l.tp==='C'){P(dt,m,v,0,org,l.id,ds);P(dt,K,0,v,org,l.id,ds);}else{P(dt,K,v,0,org,l.id,ds);P(dt,m,0,v,org,l.id,ds);}
+  });
+  const porDoc=new Map();recI.concat(despI).forEach(i=>porDoc.set(i.id,i));
+  return {rec:recI,desp:despI,movs,diretos,porDoc,lan};
+}
+
+// ---- cache: só recalcula quando as listas mudam (as listas são substituídas a cada atualização do Firestore)
+let _ctbCache={r:null,d:null,l:null,v:null};
+function ctbAtual(){
+  const r=(typeof _rec!=='undefined')?_rec:[],d=(typeof _desp!=='undefined')?_desp:[],l=(typeof _lan!=='undefined')?_lan:[];
+  if(_ctbCache.r===r&&_ctbCache.d===d&&_ctbCache.l===l&&_ctbCache.v)return _ctbCache.v;
+  _ctbCache={r,d,l,v:ctbCalc(r,d,l)};return _ctbCache.v;
+}
+
+// ---- 4) saldos por conta (movimentos com data até ao fim do mês «ate» = 'AAAA-MM'; sem «ate», tudo)
+function ctbSaldos(calc,ate){
+  const m={};
+  calc.movs.forEach(x=>{
+    if(ate&&x.data&&x.data.slice(0,7)>ate)return;
+    if(!m[x.conta])m[x.conta]={d:0,c:0};m[x.conta].d=_cR(m[x.conta].d+x.d);m[x.conta].c=_cR(m[x.conta].c+x.c);
+  });
+  return m;
+}
+function ctbTes(calc,ate){
+  const s=ctbSaldos(calc,ate),g=c=>s[c]?_cR(s[c].d-s[c].c):0;
+  const caixa=g('111'),banco=g('121'),classif=g('1X');
+  return {caixa,banco,classif,total:_cR(caixa+banco+classif),receber:g('211'),pagar:_cR(-g('221'))};
+}
+
+// ---- 5) Balancete (mês e acumulado), com saldo devedor/credor e totais
+function ctbBalancete(calc,ano,mes){
+  const ym=ano+'-'+String(mes).padStart(2,'0'),mv={},ac={};
+  const put=(o,c,x)=>{if(!o[c])o[c]={d:0,c:0};o[c].d=_cR(o[c].d+x.d);o[c].c=_cR(o[c].c+x.c);};
+  calc.movs.forEach(x=>{
+    const y=x.data?x.data.slice(0,7):'';
+    if(!y||y<=ym)put(ac,x.conta,x);
+    if(y===ym)put(mv,x.conta,x);
+  });
+  const contas=[...new Set([...Object.keys(mv),...Object.keys(ac)])].sort(ctbCmp);
+  const rows=contas.map(c=>{
+    const m=mv[c]||{d:0,c:0},a=ac[c]||{d:0,c:0},s=_cR(a.d-a.c);
+    return {conta:c,nome:ctbNomeConta(c),mD:m.d,mC:m.c,aD:a.d,aC:a.c,sD:s>0?s:0,sC:s<0?-s:0};
+  });
+  const T={mD:0,mC:0,aD:0,aC:0,sD:0,sC:0};rows.forEach(r=>{Object.keys(T).forEach(k=>{T[k]=_cR(T[k]+r[k]);});});
+  return {ym,rows,tot:T,equilibrado:Math.abs(T.aD-T.aC)<=CTB_EPS&&Math.abs(T.sD-T.sC)<=CTB_EPS};
+}
+
+// ---- 6) Demonstração de Resultados (base de acréscimo; só classes 6 e 7)
+function ctbDR(calc,ate){
+  const s=ctbSaldos(calc,ate),rend={},gast={};let tR=0,tG=0;
+  Object.keys(s).forEach(c=>{
+    const sd=_cR(s[c].d-s[c].c);
+    if(/^7/.test(c)&&Math.abs(sd)>=CTB_EPS){rend[c]=_cR(-sd);tR=_cR(tR-sd);}
+    else if(/^6/.test(c)&&Math.abs(sd)>=CTB_EPS){gast[c]=sd;tG=_cR(tG+sd);}
+  });
+  return {rend,gast,tR,tG,res:_cR(tR-tG)};
+}
+
+// ---- 7) Balanço (Ativo = Passivo + Capital Próprio; qualquer diferença vai para «Ajustamentos de encerramento pendentes»)
+function ctbBalanco(calc,ate){
+  const s=ctbSaldos(calc,ate),dr=ctbDR(calc,ate),A=[],Pa=[];let ativo=0,passivo=0;
+  Object.keys(s).sort(ctbCmp).forEach(c=>{
+    if(/^[67]/.test(c)||c==='51')return;
+    const sd=_cR(s[c].d-s[c].c);if(Math.abs(sd)<CTB_EPS)return;
+    const sempreAtivo=(c==='111'||c==='121'||c==='1X');
+    if(sd>0||sempreAtivo){A.push({conta:c,nome:ctbNomeConta(c)+((sd<0&&sempreAtivo)?' (saldo negativo)':(c==='221'?' — adiantamentos a fornecedores':'')),valor:sd});ativo=_cR(ativo+sd);}
+    else{Pa.push({conta:c,nome:ctbNomeConta(c)+(c==='211'?' — adiantamentos de clientes':''),valor:-sd});passivo=_cR(passivo-sd);}
+  });
+  const fundos=s['51']?_cR(s['51'].c-s['51'].d):0,res=dr.res;
+  const ajuste=_cR(ativo-passivo-fundos-res);const aj=Math.abs(ajuste)>=CTB_EPS?ajuste:0;
+  const cp=_cR(fundos+res+aj);
+  return {A,P:Pa,ativo,passivo,fundos,res,ajuste:aj,cp,totalPC:_cR(passivo+cp),equilibrado:Math.abs(ativo-(passivo+cp))<CTB_EPS};
+}
+
+// ---- 8) totais dos documentos (faturado, recebido/pago, por receber/pagar) — por conta e globais
+function ctbDocsTot(calc){
+  const t={rec:{fat:0,liq:0,pend:0,n:0},desp:{fat:0,liq:0,pend:0,n:0}};
+  calc.rec.forEach(i=>{if(i.anulado)return;t.rec.fat=_cR(t.rec.fat+i.valor);t.rec.liq=_cR(t.rec.liq+Math.min(i.liq,i.valor));t.rec.pend=_cR(t.rec.pend+i.pend);t.rec.n++;});
+  calc.desp.forEach(i=>{if(i.anulado)return;t.desp.fat=_cR(t.desp.fat+i.valor);t.desp.liq=_cR(t.desp.liq+Math.min(i.liq,i.valor));t.desp.pend=_cR(t.desp.pend+i.pend);t.desp.n++;});
+  return t;
+}
+
+// ---- 9) fluxo de caixa REAL (meios financeiros: 111, 121, 1X), mês a mês, com saldo de abertura
+function ctbFluxoReal(calc){
+  const MEIOS={'111':1,'121':1,'1X':1};let abertura=0;const por={};
+  calc.movs.forEach(x=>{
+    if(!MEIOS[x.conta])return;
+    if(x.origem==='abertura'){abertura=_cR(abertura+x.d-x.c);return;}
+    const y=x.data?x.data.slice(0,7):'';
+    if(!por[y])por[y]={mes:y,ent:0,sai:0,caixa:0,banco:0,classif:0};
+    const o=por[y];o.ent=_cR(o.ent+x.d);o.sai=_cR(o.sai+x.c);
+    const k=x.conta==='111'?'caixa':x.conta==='121'?'banco':'classif';o[k]=_cR(o[k]+x.d-x.c);
+  });
+  let saldo=abertura;
+  const rows=Object.keys(por).sort().map(k=>{const o=por[k];o.liq=_cR(o.ent-o.sai);saldo=_cR(saldo+o.liq);o.saldoFim=saldo;return o;});
+  return {abertura,rows,saldoFinal:saldo};
+}
+
+// ---- 10) extrato de uma conta de meios financeiros (111, 121, 1X), com saldo corrente
+function ctbExtrato(calc,conta){
+  const ls=calc.movs.map((x,i)=>({x,i})).filter(o=>o.x.conta===conta).sort((a,b)=>(a.x.data||'').localeCompare(b.x.data||'')||a.i-b.i);
+  let saldo=0;
+  const rows=ls.map(o=>{saldo=_cR(saldo+o.x.d-o.x.c);return {data:o.x.data,ds:o.x.ds,origem:o.x.origem,ent:o.x.d,sai:o.x.c,saldo};});
+  return {rows,saldo};
+}
+
+// ---- 11) auditoria: tudo o que o programa consegue verificar sozinho
+function ctbAuditar(calc,faturas,aux){
+  aux=aux||{};const out=[];const I=(nivel,cod,titulo,detalhe,n,valor,acao,itens)=>out.push({nivel,cod,titulo,detalhe,n,valor:_cR(valor),acao:acao||'',itens:itens||[]});
+  const ativos=(arr)=>arr.filter(i=>!i.anulado);
+  // a) pagos/recebidos sem Caixa/Banco
+  const leg=calc.rec.filter(i=>i.legado).concat(calc.desp.filter(i=>i.legado));
+  if(leg.length)I('aviso','SEM_MEIO','Pagos/recebidos sem Caixa ou Banco','Estes documentos estão marcados como pagos/recebidos, mas não têm o movimento de Caixa ou Banco. Por isso o dinheiro aparece em «por classificar» e não em Caixa nem na CGD.',leg.length,leg.reduce((s,i)=>s+i.valor,0),'regularizar',leg.map(i=>i.id));
+  // b) parciais sem registos
+  const par=ativos(calc.rec.concat(calc.desp)).filter(i=>i.parcialSemRegisto);
+  if(par.length)I('aviso','PARCIAL_SEM_REGISTO','Estado «parcial» sem valores registados','O documento está como parcialmente recebido/pago, mas não há nenhum movimento. Foi considerado integralmente por receber/pagar. Registe os movimentos reais.',par.length,par.reduce((s,i)=>s+i.valor,0),'',par.map(i=>i.id));
+  // c) pago/recebido a mais
+  const exc=ativos(calc.rec.concat(calc.desp)).filter(i=>i.excesso>0);
+  if(exc.length)I('erro','EXCESSO','Documentos com mais dinheiro movimentado do que o valor','O total dos pagamentos/recebimentos ultrapassa o valor do documento (ou há movimentos duplicados).',exc.length,exc.reduce((s,i)=>s+i.excesso,0),'',exc.map(i=>i.id));
+  // d) lançamentos diretos (sem documento) e possíveis duplicados de documentos
+  const dir=calc.diretos.filter(l=>(l.cn||'')!=='51');
+  if(dir.length)I('info','DIRETOS','Lançamentos do Diário sem documento','Dinheiro registado diretamente no Diário (sem fatura/receita/despesa associada). Contam para Caixa/Banco e para a DR pela conta indicada.',dir.length,dir.reduce((s,l)=>s+(l.tp==='C'?1:-1)*_cR(l.vl),0),'',dir.map(l=>l.id));
+  const susp=[];
+  dir.forEach(l=>{
+    const v=_cR(l.vl),tipo=l.tp==='C'?calc.rec:calc.desp;
+    const m=tipo.find(i=>!i.anulado&&i.pend>=v-CTB_EPS&&Math.abs(i.pend-v)<=CTB_EPS&&(i.conta===(l.cn||'')));
+    if(m)susp.push({lan:l.id,doc:m.id,tipo:m.tipo,valor:v,desc:m.doc.desc||m.doc.doc||'',data:ctbData(l)});
+  });
+  if(susp.length)I('aviso','POSSIVEL_DUPLICADO','Lançamento direto que parece pagar um documento em aberto','O mesmo valor e a mesma conta existem num documento ainda por pagar/receber. Se forem a mesma operação, associe o lançamento ao documento (senão fica contado duas vezes).',susp.length,susp.reduce((s,x)=>s+x.valor,0),'associar',susp);
+  // e) sem conta
+  const sc=calc.diretos.filter(l=>!l.cn);
+  if(sc.length)I('aviso','SEM_CONTA','Lançamentos sem conta SNC','Sem conta de contrapartida, o valor fica numa conta «Sem conta atribuída».',sc.length,sc.reduce((s,l)=>s+_cR(l.vl),0),'',sc.map(l=>l.id));
+  // f) documentos sem data / valor não positivo
+  const sd=ativos(calc.rec.concat(calc.desp)).filter(i=>!i.data);
+  if(sd.length)I('aviso','SEM_DATA','Documentos sem data','Entram sempre no acumulado, mas não em nenhum mês.',sd.length,sd.reduce((s,i)=>s+i.valor,0),'',sd.map(i=>i.id));
+  const zv=ativos(calc.rec.concat(calc.desp)).filter(i=>!(i.valor>0));
+  if(zv.length)I('aviso','VALOR_ZERO','Documentos com valor zero ou negativo','Verifique se são mesmo necessários.',zv.length,0,'',zv.map(i=>i.id));
+  // g) saldos
+  const tes=ctbTes(calc);
+  if(tes.caixa<-CTB_EPS)I('erro','CAIXA_NEG','Caixa com saldo negativo','Não se pode pagar em dinheiro mais do que existe em Caixa. Falta um recebimento, um reforço de Caixa ou há um pagamento em Caixa que foi feito por Banco.',1,tes.caixa);
+  if(tes.banco<-CTB_EPS)I('erro','BANCO_NEG','Conta bancária (CGD) com saldo negativo','Falta um recebimento/depósito ou há pagamentos registados em Banco que foram feitos em Caixa.',1,tes.banco);
+  // h) anulados (informação)
+  const an=calc.desp.concat(calc.rec).filter(i=>i.anulado);
+  if(an.length)I('info','ANULADOS','Documentos anulados','Ignorados em todos os relatórios (balancete, DR, balanço, orçamento).',an.length,an.reduce((s,i)=>s+i.valor,0),'',an.map(i=>i.id));
+  // i) faturas que não estão na contabilidade
+  const fs=(faturas||[]).filter(f=>!f.despId&&f.estado!=='Anulada');
+  if(fs.length)I('aviso','FATURAS_SEM_DESPESA','Faturas que ainda não estão na contabilidade','A lista de «Faturas» é só de acompanhamento. Só contam no balancete, DR e balanço depois de «Contabilizar».',fs.length,fs.reduce((s,f)=>s+Number(f.valor||0),0),'faturas',fs.map(f=>f.id));
+  // j) quadratura
+  const b=ctbBalancete(calc,9999,12);
+  if(!b.equilibrado)I('erro','BALANCETE_DESEQ','Balancete desequilibrado','Σ débitos ≠ Σ créditos. Isto não devia acontecer: peça verificação.',1,b.tot.aD-b.tot.aC);
+  const bal=ctbBalanco(calc);
+  if(Math.abs(bal.ajuste)>=CTB_EPS)I('erro','AJUSTE','Balanço com «ajustamentos de encerramento pendentes»','Há uma diferença no balanço que não vem dos movimentos registados.',1,bal.ajuste);
+  return out;
+}
+
+// ===================================================================================================
+// CONTABILIDADE — ecrãs e ações (todos os números vêm do motor ctb*; ver ctb_engine.js)
+// ===================================================================================================
+function _ctbEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+const _ctbG=id=>document.getElementById(id);
+function _ctbSet(id,v){const e=_ctbG(id);if(e)e.textContent=v;}
+function ctbHoje(){return new Date().toISOString().slice(0,10);}
+function ctbContasDR(obj,lista){return lista.concat(Object.keys(obj).filter(k=>lista.indexOf(k)<0).sort());}
+function ctbEstadoPara(tipo,valor,liq){valor=_cR(valor);liq=_cR(liq);if(valor>0&&liq>=valor-CTB_EPS)return tipo==='receita'?'Recebido':'Pago';if(liq>CTB_EPS)return 'Parcial';return 'Pendente';}
+function ctbBadge(e){const c=(e==='Recebido'||e==='Pago')?'bg-ok':e==='Pendente'?'bg-am':e==='Parcial'?'bg-bl':'bg-mu';return '<span class="bge '+c+'">'+_ctbEsc(e)+'</span>';}
+function ctbMeiosHtml(i){
+  const o=[];
+  if(i.meios.Caixa)o.push('<span class="bge bg-g" style="font-size:9px;">Caixa '+fmt(i.meios.Caixa)+'</span>');
+  if(i.meios.Banco)o.push('<span class="bge bg-bl" style="font-size:9px;">CGD '+fmt(i.meios.Banco)+'</span>');
+  if(i.legado)o.push('<span class="bge bg-am" style="font-size:9px;" title="Marcado como pago/recebido, mas sem Caixa ou Banco. Use «Regularizar» ou o botão do documento.">sem Caixa/Banco</span>');
+  return o.join(' ');
+}
+function ctbEsperaPor(cond,ms){return new Promise(res=>{const t0=Date.now();(function f(){if(cond()||Date.now()-t0>(ms||3000))return res(cond());setTimeout(f,40);})();});}
+
+// =================================== MOVIMENTOS DE UM DOCUMENTO (recebimentos / pagamentos) ===================================
+let _liq=null,_liqBusy=false;
+function abrirLiq(tipo,id){
+  if(!canEdit()){toast('Sem permissão para registar movimentos','er');return;}
+  const inf=ctbAtual().porDoc.get(id);
+  if(!inf){toast('Documento não encontrado','er');return;}
+  if(inf.anulado){toast('Documento anulado','am');return;}
+  if(inf.doc.origem==='treinosLivres'){toast('Recebimento de Treinos Livres: é gerido no separador «Treinos Livres».','am');return;}
+  _liq={tipo:inf.tipo,id};
+  const rc=inf.tipo==='receita';
+  _ctbG('liq-titulo').textContent=rc?'Registar recebimento':'Registar pagamento';
+  _ctbG('liq-btn').textContent=rc?'Registar recebimento':'Registar pagamento';
+  _ctbG('liq-dt').value=ctbHoje();
+  _ctbG('liq-vl').value=(inf.legado?inf.valor:inf.pend)>0?(inf.legado?inf.valor:inf.pend).toFixed(2):'';
+  _ctbG('liq-mp').value='Banco';_ctbG('liq-ref').value='';
+  ctbLiqDesenha();
+  openM('m-liq');
+}
+function ctbLiqDesenha(){
+  if(!_liq)return;
+  const inf=ctbAtual().porDoc.get(_liq.id);if(!inf)return;
+  const rc=inf.tipo==='receita',d=inf.doc;
+  _ctbG('liq-doc').innerHTML='<div><b>'+_ctbEsc(d.desc||d.doc||'Documento')+'</b>'+(d.doc?' · '+_ctbEsc(d.doc):'')+' · conta '+_ctbEsc(inf.conta)+' · '+_ctbEsc(inf.data)+'</div>'+
+    '<div>Valor do documento <b>'+fmt(inf.valor)+'</b> · '+(rc?'Recebido':'Pago')+' <b class="'+(rc?'tok':'tv')+'">'+fmt(Math.min(inf.liq,inf.valor))+'</b> · '+(rc?'Por receber':'Por pagar')+' <b>'+fmt(inf.pend)+'</b> '+ctbBadge(inf.estado)+'</div>'+
+    (inf.legado?'<div style="margin-top:6px;color:var(--wr);">Este documento está marcado como '+(rc?'recebido':'pago')+', mas <b>sem Caixa ou Banco</b>. Registe abaixo o movimento real (o valor já vem preenchido).</div>':'')+
+    (inf.excesso>0?'<div style="margin-top:6px;color:var(--er);">Atenção: há '+fmt(inf.excesso)+' a mais do que o valor do documento.</div>':'');
+  const ls=inf.lans.slice().sort((a,b)=>(ctbData(a)).localeCompare(ctbData(b)));
+  _ctbG('liq-lista').innerHTML=ls.length?('<div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin:10px 0 6px;">Movimentos já registados</div><table style="width:100%;font-size:12px;border-collapse:collapse;">'+ls.map(l=>{
+    const ent=(l.tp==='C');return '<tr style="border-top:1px solid rgba(201,168,76,.1);"><td style="padding:5px 4px;">'+_ctbEsc(ctbData(l))+'</td><td style="padding:5px 4px;">'+(l.cb==='Caixa'?'<span class="bge bg-g" style="font-size:9px;">Caixa</span>':'<span class="bge bg-bl" style="font-size:9px;">CGD</span>')+'</td><td class="mu" style="padding:5px 4px;">'+_ctbEsc(l.dc||'')+'</td><td style="padding:5px 4px;text-align:right;" class="'+((rc?ent:!ent)?(rc?'tok':'tv'):'mu')+'">'+((rc?ent:!ent)?'':'−')+fmt(l.vl)+'</td><td style="padding:5px 4px;text-align:right;"><button class="btn bd2 bsm" title="Eliminar este movimento" onclick="delLiq(\''+l.id+'\')">&#128465;</button></td></tr>';}).join('')+'</table>'):'';
+}
+async function ctbSyncEstado(inf,liq){
+  const e=ctbEstadoPara(inf.tipo,inf.valor,liq),col=inf.tipo==='receita'?'receitas':'despesas';
+  if(e!==inf.estadoGuardado){try{await _upd(col,inf.id,{estado:e});}catch(x){console.error('ctbSyncEstado',x);}}
+  if(inf.tipo==='despesa'){   // a fatura (lista de acompanhamento) liga-se à despesa: «Paga» só quando totalmente paga
+    const f=(typeof _faturas!=='undefined'?_faturas:[]).find(x=>x.despId===inf.id);
+    if(f){const nf=(e==='Pago')?'Paga':(f.estado==='Paga'?'Pendente':f.estado);if(nf!==f.estado){try{await _upd('faturas',f.id,{estado:nf});}catch(x){}}}
+  }
+}
+async function salvarLiq(){
+  if(!_liq||_liqBusy||!canEdit())return;
+  const inf=ctbAtual().porDoc.get(_liq.id);if(!inf){toast('Documento não encontrado','er');return;}
+  const dt=_ctbG('liq-dt').value,vl=_cR(parseFloat(_ctbG('liq-vl').value)),mp=_ctbG('liq-mp').value,ref=_ctbG('liq-ref').value.trim(),rc=inf.tipo==='receita';
+  if(!dt){toast('Indique a data do movimento','er');return;}
+  if(!(vl>0)){toast('Indique o valor','er');return;}
+  if(mp!=='Caixa'&&mp!=='Banco'){toast('Escolha Caixa ou Banco','er');return;}
+  const falta=inf.legado?inf.valor:inf.pend;
+  if(vl>falta+CTB_EPS&&!confirm('O valor ('+fmt(vl)+') é superior ao que falta '+(rc?'receber':'pagar')+' ('+fmt(falta)+').\n\nRegistar mesmo assim?'))return;
+  _liqBusy=true;const b=_ctbG('liq-btn');if(b)b.disabled=true;
+  try{
+    await _add('lancamentos',{data:dt,dc:ref||(rc?'':(inf.doc.doc||'')),cn:inf.conta||'',cb:mp,ds:inf.doc.desc||inf.doc.ds||'',tp:rc?'C':'D',vl:vl,origem:rc?'receita':'despesa',refId:inf.id,ts:Date.now()});
+    await ctbSyncEstado(inf,_cR((inf.legado?0:inf.liq)+vl));
+    if(typeof addLog==='function')addLog('criação','Contabilidade',(rc?'Recebimento ':'Pagamento ')+fmt(vl)+' em '+mp+' — '+(inf.doc.desc||inf.doc.doc||inf.id));
+    toast((rc?'Recebimento':'Pagamento')+' de '+fmt(vl)+' registado em '+(mp==='Caixa'?'Caixa':'Banco (CGD)'));
+    closeM('m-liq');_liq=null;
+  }catch(e){console.error(e);toast('Não foi possível registar o movimento','er');}
+  finally{_liqBusy=false;if(b)b.disabled=false;}
+}
+async function delLiq(lanId){
+  if(!_liq||!canEdit())return;
+  const inf=ctbAtual().porDoc.get(_liq.id);if(!inf)return;
+  const l=inf.lans.find(x=>x.id===lanId);if(!l)return;
+  if(!confirm('Eliminar este movimento de '+fmt(l.vl)+' em '+(l.cb==='Caixa'?'Caixa':'Banco (CGD)')+'?'))return;
+  const rc=inf.tipo==='receita',pos=rc?(l.tp==='C'):(l.tp!=='C'),efeito=pos?_cR(l.vl):-_cR(l.vl);
+  try{await _del('lancamentos',lanId);await ctbSyncEstado(inf,_cR(inf.liq-efeito));toast('Movimento eliminado','er');
+    await ctbEsperaPor(()=>!ctbAtual().porDoc.get(_liq.id)||ctbAtual().porDoc.get(_liq.id).lans.every(x=>x.id!==lanId),1500);ctbLiqDesenha();}
+  catch(e){console.error(e);toast('Não foi possível eliminar','er');}
+}
+// compatibilidade: os botões e funções antigos «Lançar no Diário» passam a abrir o registo de movimento
+async function lancarReceita(id){abrirLiq('receita',id);}
+async function lancarDespesa(id){abrirLiq('despesa',id);}
+async function deslancarRec(id){abrirLiq('receita',id);}
+async function deslancarDesp(id){abrirLiq('despesa',id);}
+window.abrirLiq=abrirLiq;window.salvarLiq=salvarLiq;window.delLiq=delLiq;window.lancarReceita=lancarReceita;window.lancarDespesa=lancarDespesa;window.deslancarRec=deslancarRec;window.deslancarDesp=deslancarDesp;
+
+// =================================== FORMULÁRIOS DE RECEITA E DESPESA ===================================
+function ctbNovoDoc(t){
+  const rc=t==='rec',p=rc?'rc':'dp';
+  const eid=_ctbG(rc?'rec-eid':'desp-eid');if(eid)eid.value='';
+  const campos=rc?['rc-ds','rc-vl','rc-ob']:['dp-dc','dp-ds','dp-vl'];campos.forEach(i=>{const e=_ctbG(i);if(e)e.value='';});
+  _ctbG(p+'-dt').value=ctbHoje();_ctbG(p+'-st').value='Pendente';_ctbG(p+'-mp').value='Banco';_ctbG(p+'-dtl').value='';
+  ctbFormEstado(t);openM(rc?'m-rec':'m-desp');
+}
+function ctbFormEstado(t){
+  const rc=t==='rec',p=rc?'rc':'dp',box=_ctbG(p+'-liqbox'),msg=_ctbG(p+'-liqmsg'),st=_ctbG(p+'-st');if(!box||!st)return;
+  const eid=_ctbG(rc?'rec-eid':'desp-eid'),id=eid&&eid.value?eid.value:'',inf=id?ctbAtual().porDoc.get(id):null;
+  if(inf&&inf.lans.length){box.style.display='none';st.disabled=true;if(msg){msg.style.display='';msg.innerHTML='Este documento já tem movimentos de Caixa/Banco: gerem-se no botão <b>€</b> da lista. O estado é calculado automaticamente.';}return;}
+  st.disabled=false;if(msg)msg.style.display='none';
+  const mostrar=(st.value==='Recebido'||st.value==='Pago');box.style.display=mostrar?'':'none';
+  if(mostrar&&!_ctbG(p+'-dtl').value)_ctbG(p+'-dtl').value=_ctbG(p+'-dt').value||ctbHoje();
+}
+let _ctbSalvando=false;
+async function ctbSalvarDoc(tipo){
+  if(!canEdit()||_ctbSalvando)return;
+  const rc=tipo==='receita',p=rc?'rc':'dp',col=rc?'receitas':'despesas',eidEl=_ctbG(rc?'rec-eid':'desp-eid'),eid=eidEl&&eidEl.value?eidEl.value:'';
+  const d=rc?{data:_ctbG('rc-dt').value,conta:_ctbG('rc-cn').value,desc:_ctbG('rc-ds').value.trim(),valor:_cR(parseFloat(_ctbG('rc-vl').value)),obs:_ctbG('rc-ob').value}
+            :{data:_ctbG('dp-dt').value,doc:_ctbG('dp-dc').value.trim(),conta:_ctbG('dp-cn').value,desc:_ctbG('dp-ds').value.trim(),valor:_cR(parseFloat(_ctbG('dp-vl').value))};
+  if(!d.data){toast('Indique a data do documento','er');return;}
+  if(!(d.valor>0)){toast('Indique o valor','er');return;}
+  const sel=_ctbG(p+'-st').value,inf=eid?ctbAtual().porDoc.get(eid):null;
+  let estado,nova=null;
+  if(sel==='Anulado')estado='Anulado';
+  else if(inf&&inf.lans.length)estado=ctbEstadoPara(tipo,d.valor,inf.liq);
+  else if(sel==='Recebido'||sel==='Pago'){
+    const mp=_ctbG(p+'-mp').value,dl=_ctbG(p+'-dtl').value||d.data;
+    if(mp!=='Caixa'&&mp!=='Banco'){toast('Escolha Caixa ou Banco','er');return;}
+    estado=rc?'Recebido':'Pago';nova={data:dl,dc:rc?'':(d.doc||''),cn:d.conta,cb:mp,ds:d.desc||(rc?'Receita':'Despesa'),tp:rc?'C':'D',vl:d.valor,origem:tipo,ts:Date.now()};
+  }else estado='Pendente';
+  d.estado=estado;d.ts=Date.now();
+  _ctbSalvando=true;
+  try{
+    let id=eid;
+    if(eid){await _upd(col,eid,d);toast((rc?'Receita':'Despesa')+' atualizada');}
+    else{const r=await _add(col,d);id=r.id;toast((rc?'Receita':'Despesa')+' registada');}
+    if(nova){nova.refId=id;await _add('lancamentos',nova);}
+    closeM(rc?'m-rec':'m-desp');
+  }catch(e){console.error(e);toast('Não foi possível guardar','er');}
+  finally{_ctbSalvando=false;}
+}
+async function saveRec(){return ctbSalvarDoc('receita');}
+async function saveDesp(){return ctbSalvarDoc('despesa');}
+async function delRec(id){
+  const r0=(_rec||[]).find(x=>x.id===id);
+  if(r0&&r0.origem==='treinosLivres'){toast('Esta receita vem de «Treinos Livres»: elimine-a nesse separador.','am');return;}
+  if(!canDelete())return;
+  const inf=ctbAtual().porDoc.get(id),n=inf?inf.lans.length:0;
+  if(!confirm(n?('Eliminar esta receita e os '+n+' recebimento(s) de Caixa/Banco associados?'):'Eliminar?'))return;
+  for(const l of (inf?inf.lans:[])){try{await _del('lancamentos',l.id);}catch(e){}}
+  await _del('receitas',id);toast('Eliminada','er');
+}
+async function delDesp(id){
+  if(!canDelete())return;
+  const inf=ctbAtual().porDoc.get(id),n=inf?inf.lans.length:0;
+  if(!confirm(n?('Eliminar esta despesa e os '+n+' pagamento(s) de Caixa/Banco associados?'):'Eliminar?'))return;
+  for(const l of (inf?inf.lans:[])){try{await _del('lancamentos',l.id);}catch(e){}}
+  await _del('despesas',id);
+  const f=(typeof _faturas!=='undefined'?_faturas:[]).find(x=>x.despId===id);if(f){try{await _upd('faturas',f.id,{despId:''});}catch(e){}}
+  toast('Eliminada','er');
+}
+window.ctbNovoDoc=ctbNovoDoc;window.ctbFormEstado=ctbFormEstado;window.saveRec=saveRec;window.saveDesp=saveDesp;window.delRec=delRec;window.delDesp=delDesp;
+
+// =================================== LISTAS DE RECEITAS E DESPESAS ===================================
+function renderRec(){
+  const calc=ctbAtual(),T=ctbDocsTot(calc),D=ctbDR(calc),pub=D.rend['751']||0;
+  _ctbSet('r-tot',fmt(T.rec.liq));_ctbSet('r-pen',fmt(T.rec.pend));_ctbSet('r-pub',fmt(pub));_ctbSet('r-prv',fmt(_cR(D.tR-pub)));
+  const el=_ctbG('t-rec');if(!el)return;
+  el.innerHTML=calc.rec.length?calc.rec.map(i=>{
+    const r=i.doc,tl=(r.origem==='treinosLivres');
+    const acoes=canEdit()?('<td style="white-space:nowrap;">'+(i.anulado||tl?'':(i.pend>0?'<button class="btn bp bsm" title="Registar recebimento (Caixa ou Banco)" onclick="abrirLiq(\'receita\',\''+r.id+'\')">&#8364; Receber</button>':(i.legado?'<button class="btn bsu bsm" title="Definir Caixa ou Banco" onclick="abrirLiq(\'receita\',\''+r.id+'\')">&#8364; Caixa/Banco</button>':'<button class="btn bo bsm" title="Ver / corrigir movimentos" onclick="abrirLiq(\'receita\',\''+r.id+'\')">&#8364;</button>')))+'<button class="btn bo bsm" onclick="editRec(\''+r.id+'\')">✏️</button><button class="btn bd2 bsm" onclick="delRec(\''+r.id+'\')">🗑️</button></td>'):'<td></td>';
+    return '<tr'+(i.anulado?' style="opacity:.5;"':'')+'><td>'+_ctbEsc(r.data||'')+'</td><td><span class="sc">'+_ctbEsc(r.conta||'')+'</span></td><td>'+_ctbEsc(r.desc||'')+'</td><td class="tok">'+fmt(r.valor)+'</td>'+
+      '<td style="font-size:11px;line-height:1.5;"><div>Recebido <b class="tok">'+fmt(Math.min(i.liq,i.valor))+'</b></div><div class="mu">Por receber '+fmt(i.pend)+'</div><div>'+ctbMeiosHtml(i)+'</div></td>'+
+      '<td>'+ctbBadge(i.estado)+'</td><td class="mu">'+_ctbEsc(r.obs||'')+'</td>'+acoes+'</tr>';
+  }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem receitas</td></tr>';
+}
+function renderDesp(){
+  const calc=ctbAtual(),T=ctbDocsTot(calc);
+  _ctbSet('d-tot',fmt(T.desp.liq));_ctbSet('d-pen',fmt(T.desp.pend));_ctbSet('d-ndoc',calc.desp.length);
+  const byR={};calc.desp.forEach(i=>{if(!i.anulado)byR[i.conta]=(byR[i.conta]||0)+i.valor;});
+  const mr=Object.entries(byR).sort((a,b)=>b[1]-a[1])[0];_ctbSet('d-mrb',mr?mr[0]:'-');
+  const el=_ctbG('t-desp');if(!el)return;
+  el.innerHTML=calc.desp.length?calc.desp.map(i=>{
+    const d=i.doc;
+    const acoes=canEdit()?('<td style="white-space:nowrap;">'+(i.anulado?'':(i.pend>0?'<button class="btn bp bsm" title="Registar pagamento (Caixa ou Banco)" onclick="abrirLiq(\'despesa\',\''+d.id+'\')">&#8364; Pagar</button>':(i.legado?'<button class="btn bsu bsm" title="Definir Caixa ou Banco" onclick="abrirLiq(\'despesa\',\''+d.id+'\')">&#8364; Caixa/Banco</button>':'<button class="btn bo bsm" title="Ver / corrigir movimentos" onclick="abrirLiq(\'despesa\',\''+d.id+'\')">&#8364;</button>')))+'<button class="btn bo bsm" onclick="editDesp(\''+d.id+'\')">✏️</button><button class="btn bd2 bsm" onclick="delDesp(\''+d.id+'\')">🗑️</button></td>'):'<td></td>';
+    return '<tr'+(i.anulado?' style="opacity:.5;"':'')+'><td>'+_ctbEsc(d.data||'')+'</td><td class="mu">'+_ctbEsc(d.doc||'')+'</td><td><span class="sc">'+_ctbEsc(d.conta||'')+'</span></td><td>'+_ctbEsc(d.desc||'')+'</td><td class="tv">'+fmt(d.valor)+'</td>'+
+      '<td style="font-size:11px;line-height:1.5;"><div>Pago <b class="tv">'+fmt(Math.min(i.liq,i.valor))+'</b></div><div class="mu">Por pagar '+fmt(i.pend)+'</div><div>'+ctbMeiosHtml(i)+'</div></td>'+
+      '<td>'+ctbBadge(i.estado)+'</td>'+acoes+'</tr>';
+  }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem despesas</td></tr>';
+}
+window.renderRec=renderRec;window.renderDesp=renderDesp;
+
+// =================================== BALANCETE: onde estão os valores ===================================
+function ctbCartao(rot,val,cor,extra){return '<div class="sm"><div class="sml">'+rot+'</div><div class="smv" style="'+(cor?'color:'+cor+';':'')+'">'+val+'</div>'+(extra?'<div class="smn">'+extra+'</div>':'')+'</div>';}
 function renderBal(){
+  const mes=_ctbG('bal-mes').value,pt=mes.split('-').map(Number),calc=ctbAtual(),B=ctbBalancete(calc,pt[0],pt[1]),T=ctbTes(calc,mes);
+  const od=_ctbG('bal-onde');
+  if(od)od.innerHTML=
+    ctbCartao('Caixa (111)',fmt(T.caixa),T.caixa<-CTB_EPS?'var(--er)':'var(--ok)','<a href="#" onclick="abrirExtrato(\'111\');return false;" style="color:var(--gl2);">ver extrato</a>')+
+    ctbCartao('Banco — CGD (121)',fmt(T.banco),T.banco<-CTB_EPS?'var(--er)':'var(--ok)','<a href="#" onclick="abrirExtrato(\'121\');return false;" style="color:var(--gl2);">ver extrato</a>')+
+    (Math.abs(T.classif)>=CTB_EPS?ctbCartao('Por classificar',fmt(T.classif),'var(--wr)','<a href="#" onclick="abrirRegularizar();return false;" style="color:var(--gl2);">regularizar</a>'):'')+
+    ctbCartao('A receber (211)',fmt(T.receber),'var(--gl2)','faturado e ainda não recebido')+
+    ctbCartao('A pagar (221)',fmt(T.pagar),'var(--wr)','faturado e ainda não pago')+
+    ctbCartao('Total em Caixa + Banco',fmt(T.total),'var(--ok)','até '+mes);
+  const al=_ctbG('bal-alerta');
+  if(al){const leg=calc.rec.concat(calc.desp).filter(i=>i.legado);al.innerHTML=leg.length?'<div class="av" style="margin-bottom:12px;"><strong>'+leg.length+' documento(s) pago(s)/recebido(s) sem Caixa ou Banco</strong> ('+fmt(leg.reduce((s,i)=>s+i.valor,0))+'). O dinheiro está em «por classificar» até lhe indicar o sítio. <button class="btn bp bsm" onclick="abrirRegularizar()" style="margin-left:8px;">Regularizar agora</button></div>':'';}
+  const t=_ctbG('t-bal'),tf=_ctbG('tf-bal'),q=_ctbG('bal-quad');
+  if(!B.rows.length){t.innerHTML='<tr><td colspan="8" class="mu" style="text-align:center;padding:24px;">Sem dados para o período</td></tr>';if(tf)tf.innerHTML='';if(q)q.innerHTML='';return;}
+  const cel=(v,c)=>'<td class="'+(v>0?c:'mu')+'" style="text-align:right;">'+(v>0?fmt(v):'-')+'</td>';
+  t.innerHTML=B.rows.map(r=>{
+    const ext=(r.conta==='111'||r.conta==='121'||r.conta==='1X')?' <button class="btn bo bsm" style="padding:1px 7px;font-size:10px;" onclick="abrirExtrato(\''+r.conta+'\')">extrato</button>':'';
+    return '<tr><td><span class="sc">'+_ctbEsc(r.conta)+'</span></td><td>'+_ctbEsc(r.nome)+ext+'</td>'+cel(r.mD,'tv')+cel(r.mC,'tok')+cel(r.aD,'tv')+cel(r.aC,'tok')+cel(r.sD,'go')+cel(r.sC,'go')+'</tr>';
+  }).join('');
+  if(tf)tf.innerHTML='<tr style="font-weight:700;border-top:2px solid var(--gl);"><td colspan="2">TOTAIS</td><td style="text-align:right;">'+fmt(B.tot.mD)+'</td><td style="text-align:right;">'+fmt(B.tot.mC)+'</td><td style="text-align:right;">'+fmt(B.tot.aD)+'</td><td style="text-align:right;">'+fmt(B.tot.aC)+'</td><td style="text-align:right;">'+fmt(B.tot.sD)+'</td><td style="text-align:right;">'+fmt(B.tot.sC)+'</td></tr>';
+  if(q)q.innerHTML='<div style="font-size:12px;font-weight:600;margin-top:10px;color:'+(B.equilibrado?'var(--ok)':'var(--er)')+';">'+(B.equilibrado?'Balancete equilibrado: Σ débitos = Σ créditos ('+fmt(B.tot.aD)+')':'Atenção: balancete desequilibrado ('+fmt(B.tot.aD-B.tot.aC)+')')+'</div>';
+}
+window.renderBal=renderBal;
+function exportBalancete(){
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'}),mes=_ctbG('bal-mes').value,pt=mes.split('-').map(Number),calc=ctbAtual(),B=ctbBalancete(calc,pt[0],pt[1]),T=ctbTes(calc,mes);
+  const meses={'2025-12':'Dezembro 2025','2026-01':'Janeiro 2026','2026-02':'Fevereiro 2026','2026-03':'Março 2026','2026-04':'Abril 2026','2026-05':'Maio 2026','2026-06':'Junho 2026','2026-07':'Julho 2026','2026-08':'Agosto 2026','2026-09':'Setembro 2026','2026-10':'Outubro 2026','2026-11':'Novembro 2026'};
+  pdfHeader(doc,'Balancete Mensal SNC-ESNL','SWC Vizela 2026 - '+(meses[mes]||mes),true);
+  const f=v=>v>0?fmtPDF(v):'-';
+  const rows=B.rows.map(r=>[r.conta,r.nome,f(r.mD),f(r.mC),f(r.aD),f(r.aC),f(r.sD),f(r.sC)]);
+  doc.autoTable({startY:38,head:[['Conta','Descrição','Déb. Mês','Cré. Mês','Déb. Acum.','Cré. Acum.','Saldo Devedor','Saldo Credor']],body:rows.length?rows:[['-','Sem dados para o período','','','','','','']],
+    foot:rows.length?[['','TOTAIS',fmtPDF(B.tot.mD),fmtPDF(B.tot.mC),fmtPDF(B.tot.aD),fmtPDF(B.tot.aC),fmtPDF(B.tot.sD),fmtPDF(B.tot.sC)]]:undefined,theme:'striped',
+    styles:{fontSize:8,textColor:[35,35,35],cellPadding:3.2,lineColor:[200,190,170],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8,cellPadding:4},
+    footStyles:{fillColor:[245,240,220],textColor:[40,40,40],fontStyle:'bold'},alternateRowStyles:{fillColor:[250,247,240]},
+    columnStyles:{0:{cellWidth:18,fontStyle:'bold'},1:{cellWidth:78},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right',fontStyle:'bold'},7:{halign:'right',fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
+  let y=(doc.lastAutoTable&&doc.lastAutoTable.finalY||120)+8;
+  if(y>150){doc.addPage();y=20;}
+  doc.autoTable({startY:y,head:[['Onde estão os valores (até '+(meses[mes]||mes)+')','Valor (€)']],body:[['Caixa (111)',fmtPDF(T.caixa)],['Banco — Caixa Geral de Depósitos (121)',fmtPDF(T.banco)],['Por classificar (pagos/recebidos sem Caixa ou Banco)',fmtPDF(T.classif)],['Total em Caixa + Banco',fmtPDF(T.total)],['A receber (211)',fmtPDF(T.receber)],['A pagar (221)',fmtPDF(T.pagar)]],theme:'grid',
+    styles:{fontSize:9,textColor:[35,35,35],cellPadding:3,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:110},1:{halign:'right',fontStyle:'bold'}},margin:{left:14,right:110,bottom:28}});
+  const yq=(doc.lastAutoTable.finalY||150)+6;doc.setFontSize(9);doc.setFont('helvetica','bold');if(B.equilibrado)doc.setTextColor(30,120,60);else doc.setTextColor(190,50,50);
+  doc.text(B.equilibrado?'Balancete equilibrado: soma dos débitos = soma dos créditos.':'ATENÇÃO: balancete desequilibrado ('+fmtPDF(B.tot.aD-B.tot.aC)+').',14,yq);
+  pdfFooter(doc,true,true);doc.save('SWC2026_Balancete_'+mes+'.pdf');toast('PDF gerado com sucesso');
+}
+window.exportBalancete=exportBalancete;
+
+// =================================== EXTRATO DE CAIXA / BANCO ===================================
+let _extConta='111';
+function abrirExtrato(c){
+  _extConta=c;const X=ctbExtrato(ctbAtual(),c);
+  _ctbG('ext-titulo').textContent='Extrato — '+c+' '+ctbNomeConta(c);
+  _ctbG('ext-corpo').innerHTML=X.rows.length?X.rows.map(r=>'<tr><td>'+_ctbEsc(r.data||'sem data')+'</td><td>'+_ctbEsc(r.ds||'')+(r.origem==='legado'?' <span class="bge bg-am" style="font-size:9px;">sem Caixa/Banco</span>':'')+'</td><td class="tok" style="text-align:right;">'+(r.ent?fmt(r.ent):'')+'</td><td class="tv" style="text-align:right;">'+(r.sai?fmt(r.sai):'')+'</td><td class="go" style="text-align:right;">'+fmt(r.saldo)+'</td></tr>').join('')+'<tr style="font-weight:700;border-top:2px solid var(--gl);"><td colspan="4">Saldo atual</td><td style="text-align:right;">'+fmt(X.saldo)+'</td></tr>':'<tr><td colspan="5" class="mu" style="text-align:center;padding:20px;">Sem movimentos</td></tr>';
+  openM('m-ext');
+}
+function exportExtratoPDF(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),X=ctbExtrato(ctbAtual(),_extConta);
+  pdfHeader(doc,'Extrato — '+_extConta+' '+ctbNomeConta(_extConta),'SWC Vizela 2026 - movimentos e saldo corrente',false);
+  doc.autoTable({startY:38,head:[['Data','Descrição','Entrada','Saída','Saldo']],body:X.rows.length?X.rows.map(r=>[r.data||'sem data',r.ds||'',r.ent?fmtPDF(r.ent):'',r.sai?fmtPDF(r.sai):'',fmtPDF(r.saldo)]):[['','Sem movimentos','','','']],foot:[['','Saldo atual','','',fmtPDF(X.saldo)]],theme:'striped',
+    styles:{fontSize:8.5,textColor:[35,35,35],cellPadding:3},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},footStyles:{fillColor:[245,240,220],textColor:[40,40,40],fontStyle:'bold'},columnStyles:{0:{cellWidth:24},2:{halign:'right'},3:{halign:'right'},4:{halign:'right',fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
+  pdfFooter(doc,false,true);doc.save('SWC2026_Extrato_'+_extConta+'.pdf');toast('PDF gerado com sucesso');
+}
+window.abrirExtrato=abrirExtrato;window.exportExtratoPDF=exportExtratoPDF;
+
+// =================================== BALANÇO ===================================
+function ctbLinhaBal(rot,val,cls,extra){return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);'+(extra||'')+'">'+rot+'</span><span class="'+(cls||'tok')+'">'+fmt(val)+'</span></div>';}
+function renderBalanco(){
+  const el=_ctbG('bal-ct');if(!el)return;
+  const calc=ctbAtual(),B=ctbBalanco(calc);
+  const A=B.A.map(a=>ctbLinhaBal(_ctbEsc(a.nome),a.valor,a.valor<0?'tv':'tok')).join('')||'<div class="mu" style="padding:8px 0;font-size:12px;">Sem ativos</div>';
+  const Pa=B.P.map(p=>ctbLinhaBal(_ctbEsc(p.nome),p.valor,'tv')).join('')||'<div class="mu" style="padding:8px 0;font-size:12px;">Sem passivos</div>';
+  el.innerHTML='<div class="g2"><div class="cd"><div class="cdh"><div><div class="cdt">Ativo</div></div></div><div class="cdb">'+A+
+    '<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;font-weight:600;"><span style="color:var(--wh);">Total Ativo</span><span class="tok">'+fmt(B.ativo)+'</span></div></div></div>'+
+    '<div class="cd"><div class="cdh"><div><div class="cdt">Passivo + Capital Próprio</div></div></div><div class="cdb"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--mu);margin-bottom:8px;">PASSIVO</div>'+Pa+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;"><span style="color:var(--wh);">Total Passivo</span><span class="tv">'+fmt(B.passivo)+'</span></div>'+
+    '<div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--mu);margin:10px 0 8px;">CAPITAL PRÓPRIO</div>'+
+    (Math.abs(B.fundos)>=CTB_EPS?ctbLinhaBal('Fundos patrimoniais (saldos de abertura)',B.fundos,'tok'):'')+
+    ctbLinhaBal('Resultado do evento (demonstração de resultados)',B.res,B.res>=0?'tok':'tv')+
+    (B.ajuste!==0?ctbLinhaBal('Ajustamentos de encerramento pendentes',B.ajuste,'mu','font-style:italic;'):'')+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;"><span style="color:var(--wh);">Total Capital Próprio</span><span class="go">'+fmt(B.cp)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--gl);font-size:14px;font-weight:700;"><span style="color:var(--wh);">Total P + CP</span><span style="color:var(--gl2);">'+fmt(B.totalPC)+'</span></div></div></div></div>'+
+    '<div class="cd" style="margin-top:8px;"><div class="cdb" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;"><div style="font-size:12px;color:var(--se);">Verificação: Total Ativo = Total Passivo + Capital Próprio</div><div style="font-size:13px;font-weight:700;color:'+(B.equilibrado?'var(--ok)':'var(--er)')+';">'+(B.equilibrado?'Balanço equilibrado':'Diferença: '+fmt(B.ativo-B.totalPC))+'</div></div></div>'+
+    (calc.rec.concat(calc.desp).some(i=>i.legado)?'<div class="av" style="margin-top:8px;"><strong>Atenção:</strong> há dinheiro «por classificar» (pagos/recebidos sem Caixa ou Banco). <button class="btn bp bsm" onclick="abrirRegularizar()" style="margin-left:6px;">Regularizar</button></div>':'');
+}
+function exportBalanco(){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),B=ctbBalanco(ctbAtual());
+  pdfHeader(doc,'Balanço do Evento','SWC Vizela 2026 - Ativo - Passivo - Capital Próprio',false);
+  doc.autoTable({startY:38,head:[['ATIVO','Valor (€)']],body:B.A.length?B.A.map(a=>[a.nome,fmtPDF(a.valor)]):[['Sem ativos','']],foot:[['Total Ativo',fmtPDF(B.ativo)]],theme:'plain',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4},headStyles:{fillColor:[15,30,56],textColor:[201,168,76],fontStyle:'bold'},footStyles:{fillColor:[10,22,40],textColor:[100,220,130],fontStyle:'bold',fontSize:11},columnStyles:{1:{halign:'right'}},margin:{left:14,right:110,bottom:28}});
+  const corpo=B.P.map(p=>[p.nome,fmtPDF(p.valor)]);corpo.push(['Total Passivo',fmtPDF(B.passivo)]);corpo.push(['','']);
+  if(Math.abs(B.fundos)>=CTB_EPS)corpo.push(['Fundos patrimoniais (abertura)',fmtPDF(B.fundos)]);
+  corpo.push(['Resultado do evento',fmtPDF(B.res)]);if(B.ajuste!==0)corpo.push(['Ajustamentos de encerramento pendentes',fmtPDF(B.ajuste)]);corpo.push(['Total Capital Próprio',fmtPDF(B.cp)]);
+  doc.autoTable({startY:38,head:[['PASSIVO + CAPITAL PRÓPRIO','Valor (€)']],body:corpo,foot:[['Total Passivo + CP',fmtPDF(B.totalPC)]],theme:'grid',styles:{fontSize:9,textColor:[40,40,40],cellPadding:4,lineColor:[220,210,190],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:9},footStyles:{fillColor:[245,240,220],textColor:[140,100,20],fontStyle:'bold',fontSize:11},columnStyles:{1:{halign:'right',fontStyle:'bold'}},margin:{left:110,right:14,bottom:28}});
+  const yq=(doc.lastAutoTable&&doc.lastAutoTable.finalY||130)+8;doc.setFillColor(B.equilibrado?15:40,B.equilibrado?40:15,15);doc.rect(14,yq,182,10,'F');doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(B.equilibrado?100:220,B.equilibrado?220:100,B.equilibrado?130:100);
+  doc.text(B.equilibrado?' Balanço equilibrado - Total Ativo = Total Passivo + Capital Próprio':' Diferença: '+fmtPDF(B.ativo-B.totalPC),105,yq+6.5,{align:'center'});
+  pdfFooter(doc,false,true);doc.save('SWC2026_Balanco.pdf');toast('PDF gerado com sucesso');
+}
+window.renderBalanco=renderBalanco;window.exportBalanco=exportBalanco;
+
+// =================================== FLUXO DE CAIXA REAL ===================================
+function ctbRenderFluxoReal(){
+  const el=_ctbG('fluxo-real');if(!el)return;
+  const F=ctbFluxoReal(ctbAtual()),nm=m=>m?(m.slice(5)+'/'+m.slice(0,4)):'Sem data';
+  el.innerHTML='<div class="cd" style="margin-bottom:14px;"><div class="cdh"><div style="flex:1;"><div class="cdt">Fluxo de caixa realizado</div><div class="cds">O que realmente entrou e saiu de Caixa e do Banco (CGD) · vem dos movimentos registados</div></div><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px;color:'+(F.saldoFinal>=0?'var(--ok)':'var(--er)')+';">'+fmt(F.saldoFinal)+'</div></div>'+
+    '<div class="cdb"><div class="tw"><table><thead><tr><th>Mês</th><th>Entradas</th><th>Saídas</th><th>Saldo do mês</th><th>Caixa</th><th>Banco</th><th>Saldo acumulado</th></tr></thead><tbody>'+
+    (F.abertura?'<tr><td class="mu">Saldo de abertura</td><td></td><td></td><td></td><td></td><td></td><td class="go" style="text-align:right;">'+fmt(F.abertura)+'</td></tr>':'')+
+    (F.rows.length?F.rows.map(r=>'<tr><td>'+nm(r.mes)+'</td><td class="tok" style="text-align:right;">'+fmt(r.ent)+'</td><td class="tv" style="text-align:right;">'+fmt(r.sai)+'</td><td style="text-align:right;">'+fmt(r.liq)+'</td><td class="mu" style="text-align:right;">'+fmt(r.caixa)+'</td><td class="mu" style="text-align:right;">'+fmt(r.banco+r.classif)+'</td><td class="go" style="text-align:right;">'+fmt(r.saldoFim)+'</td></tr>').join(''):'<tr><td colspan="7" class="mu" style="text-align:center;padding:16px;">Ainda sem movimentos de Caixa ou Banco</td></tr>')+
+    '</tbody></table></div></div></div>';
+}
+window.ctbRenderFluxoReal=ctbRenderFluxoReal;
+
+// =================================== REGULARIZAR (pagos/recebidos sem Caixa ou Banco) ===================================
+let _regBusy=false;
+function abrirRegularizar(){
+  if(!canEdit()){toast('Sem permissão para regularizar','er');return;}
+  const leg=ctbAtual().rec.concat(ctbAtual().desp).filter(i=>i.legado).sort((a,b)=>(a.data||'').localeCompare(b.data||''));
+  _ctbG('reg-lista').innerHTML=leg.length?('<table style="width:100%;font-size:12px;border-collapse:collapse;"><thead><tr style="text-align:left;color:var(--mu);font-size:10px;text-transform:uppercase;"><th></th><th>Tipo</th><th>Data</th><th>Descrição</th><th style="text-align:right;">Valor</th><th>Onde está o dinheiro</th></tr></thead><tbody>'+
+    leg.map(i=>'<tr style="border-top:1px solid rgba(201,168,76,.1);" data-id="'+i.id+'" data-tipo="'+i.tipo+'"><td style="padding:6px 4px;"><input type="checkbox" class="reg-ck" checked onchange="regResumo()"></td><td>'+(i.tipo==='receita'?'<span class="bge bg-ok" style="font-size:9px;">Receita</span>':'<span class="bge bg-er" style="font-size:9px;">Despesa</span>')+'</td><td>'+_ctbEsc(i.data||'')+'</td><td>'+_ctbEsc(i.doc.desc||i.doc.doc||'')+'</td><td style="text-align:right;" class="'+(i.tipo==='receita'?'tok':'tv')+'">'+fmt(i.valor)+'</td><td><select class="fse reg-mp" style="min-width:150px;" onchange="regResumo()"><option value="Banco">Banco (CGD)</option><option value="Caixa">Caixa</option></select></td></tr>').join('')+'</tbody></table>'):'<div class="mu" style="text-align:center;padding:24px;">Nada para regularizar: todos os documentos pagos/recebidos já têm Caixa ou Banco.</div>';
+  _ctbG('reg-btn').style.display=leg.length?'':'none';regResumo();openM('m-reg');
+}
+function regTodos(m){document.querySelectorAll('#reg-lista .reg-mp').forEach(s=>{s.value=m;});regResumo();}
+function regSel(v){document.querySelectorAll('#reg-lista .reg-ck').forEach(c=>{c.checked=v;});regResumo();}
+function regResumo(){
+  const calc=ctbAtual();let n=0,cx=0,bk=0;
+  document.querySelectorAll('#reg-lista tr[data-id]').forEach(tr=>{if(!tr.querySelector('.reg-ck').checked)return;const i=calc.porDoc.get(tr.dataset.id);if(!i)return;n++;const s=(i.tipo==='receita'?1:-1)*i.valor;if(tr.querySelector('.reg-mp').value==='Caixa')cx+=s;else bk+=s;});
+  const r=_ctbG('reg-resumo');if(r)r.textContent=n?(n+' selecionado(s): Caixa '+fmt(cx)+' · Banco (CGD) '+fmt(bk)+' (efeito líquido: recebimentos − pagamentos)'):'Nenhum selecionado.';
+}
+async function aplicarRegularizacao(){
+  if(_regBusy||!canEdit())return;
+  const calc=ctbAtual(),itens=[];
+  document.querySelectorAll('#reg-lista tr[data-id]').forEach(tr=>{if(tr.querySelector('.reg-ck').checked){const i=calc.porDoc.get(tr.dataset.id);if(i&&i.legado)itens.push({i,mp:tr.querySelector('.reg-mp').value});}});
+  if(!itens.length){toast('Nada selecionado','am');return;}
+  if(!confirm('Vai criar '+itens.length+' movimento(s) de Caixa/Banco, com a data de cada documento.\n\nContinuar?'))return;
+  _regBusy=true;const b=_ctbG('reg-btn');if(b)b.disabled=true;let ok=0;
+  try{
+    for(const x of itens){
+      const i=x.i,rc=i.tipo==='receita',d=i.doc;
+      await _add('lancamentos',{data:i.data||ctbHoje(),dc:rc?'':(d.doc||''),cn:i.conta||'',cb:x.mp==='Caixa'?'Caixa':'Banco',ds:d.desc||d.ds||'',tp:rc?'C':'D',vl:i.valor,origem:i.tipo,refId:i.id,ts:Date.now()});ok++;
+    }
+    if(typeof addLog==='function')addLog('edição','Contabilidade','Regularização: '+ok+' documento(s) com Caixa/Banco atribuído');
+    toast(ok+' documento(s) regularizado(s)');
+  }catch(e){console.error(e);toast('Parou após '+ok+' de '+itens.length+': '+(e&&e.message||'erro'),'er');}
+  finally{_regBusy=false;if(b)b.disabled=false;}
+  await ctbEsperaPor(()=>!ctbAtual().rec.concat(ctbAtual().desp).some(i=>i.legado)||false,2500);abrirRegularizar();
+}
+window.abrirRegularizar=abrirRegularizar;window.regTodos=regTodos;window.regSel=regSel;window.regResumo=regResumo;window.aplicarRegularizacao=aplicarRegularizacao;
+
+// =================================== SALDOS DE ABERTURA ===================================
+function abrirAbertura(){
+  if(!canEdit()){toast('Sem permissão','er');return;}
+  const L=(typeof _lan!=='undefined'?_lan:[]).filter(l=>l.origem==='abertura'),cx=L.find(l=>l.refId==='abertura_caixa'),bk=L.find(l=>l.refId==='abertura_banco');
+  _ctbG('ab-cx').value=cx?cx.vl:'';_ctbG('ab-bk').value=bk?bk.vl:'';_ctbG('ab-dt').value=(cx||bk||{}).data||'2026-10-01';openM('m-abertura');
+}
+async function salvarAbertura(){
+  if(!canEdit())return;
+  const dt=_ctbG('ab-dt').value,cx=_cR(parseFloat(_ctbG('ab-cx').value)),bk=_cR(parseFloat(_ctbG('ab-bk').value));
+  if(!dt){toast('Indique a data de abertura','er');return;}
+  if(cx<0||bk<0){toast('Os saldos de abertura não podem ser negativos','er');return;}
+  try{
+    for(const x of [['abertura_caixa','Caixa',cx],['abertura_banco','Banco',bk]]){
+      const ex=(typeof _lan!=='undefined'?_lan:[]).find(l=>l.refId===x[0]&&l.origem==='abertura');
+      if(x[2]>0){const d={data:dt,dc:'',cn:'51',cb:x[1],ds:'Saldo de abertura — '+x[1],tp:'C',vl:x[2],origem:'abertura',refId:x[0],ts:Date.now()};if(ex)await _upd('lancamentos',ex.id,d);else await _add('lancamentos',d);}
+      else if(ex)await _del('lancamentos',ex.id);
+    }
+    toast('Saldos de abertura guardados');closeM('m-abertura');
+  }catch(e){console.error(e);toast('Não foi possível guardar','er');}
+}
+window.abrirAbertura=abrirAbertura;window.salvarAbertura=salvarAbertura;
+
+// =================================== AUDITORIA ===================================
+function abrirAuditoriaCtb(){
+  const calc=ctbAtual(),A=ctbAuditar(calc,(typeof _faturas!=='undefined'?_faturas:[])),T=ctbTes(calc),D=ctbDocsTot(calc),B=ctbBalanco(calc),Bl=ctbBalancete(calc,9999,12);
+  const cor={erro:'var(--er)',aviso:'var(--wr)',info:'var(--mu)'},rot={erro:'ERRO',aviso:'ATENÇÃO',info:'INFORMAÇÃO'};
+  let h='<div class="g4" style="margin-bottom:14px;">'+ctbCartao('Caixa (111)',fmt(T.caixa),'')+ctbCartao('Banco CGD (121)',fmt(T.banco),'')+ctbCartao('A receber',fmt(T.receber),'')+ctbCartao('A pagar',fmt(T.pagar),'')+'</div>'+
+    '<div class="cd" style="margin-bottom:12px;"><div class="cdb" style="font-size:12px;line-height:1.7;">Documentos: <b>'+D.rec.n+'</b> receitas ('+fmt(D.rec.fat)+', recebido '+fmt(D.rec.liq)+') · <b>'+D.desp.n+'</b> despesas ('+fmt(D.desp.fat)+', pago '+fmt(D.desp.liq)+')<br>Balancete: <b style="color:'+(Bl.equilibrado?'var(--ok)':'var(--er)')+';">'+(Bl.equilibrado?'equilibrado':'DESEQUILIBRADO')+'</b> · Balanço: <b style="color:'+(B.equilibrado&&!B.ajuste?'var(--ok)':'var(--er)')+';">'+(B.equilibrado&&!B.ajuste?'equilibrado, sem ajustamentos':'com diferença')+'</b></div></div>';
+  if(!A.length)h+='<div class="cd"><div class="cdb" style="color:var(--ok);font-weight:600;">Nenhum problema encontrado.</div></div>';
+  A.forEach(x=>{
+    let acao='';
+    if(x.acao==='regularizar')acao='<button class="btn bp bsm" onclick="closeM(\'m-audctb\');abrirRegularizar()">Regularizar</button>';
+    else if(x.acao==='faturas')acao='<button class="btn bp bsm" onclick="closeM(\'m-audctb\');contabilizarTodasFaturas()">Contabilizar todas</button>';
+    else if(x.acao==='associar')acao='<div style="margin-top:6px;">'+x.itens.map(s=>'<div style="display:flex;gap:8px;align-items:center;font-size:11px;padding:3px 0;"><span>'+_ctbEsc(s.data)+' · '+fmt(s.valor)+' · '+_ctbEsc(s.desc)+'</span><button class="btn bp bsm" onclick="ctbAssociar(\''+s.lan+'\',\''+s.doc+'\')">Associar ao documento</button></div>').join('')+'</div>';
+    h+='<div class="cd" style="margin-bottom:10px;border-left:3px solid '+cor[x.nivel]+';"><div class="cdb"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;"><div style="font-size:13px;font-weight:700;color:var(--wh);"><span style="font-size:9px;letter-spacing:.1em;color:'+cor[x.nivel]+';margin-right:8px;">'+rot[x.nivel]+'</span>'+_ctbEsc(x.titulo)+'</div><div style="font-size:12px;" class="mu">'+x.n+' · '+fmt(x.valor)+'</div></div><div class="mu" style="font-size:12px;margin:5px 0 8px;line-height:1.55;">'+_ctbEsc(x.detalhe)+'</div>'+acao+'</div></div>';
+  });
+  _ctbG('audctb-corpo').innerHTML=h;openM('m-audctb');
+}
+async function ctbAssociar(lanId,docId){
+  if(!canEdit())return;
+  const calc=ctbAtual(),inf=calc.porDoc.get(docId),l=(typeof _lan!=='undefined'?_lan:[]).find(x=>x.id===lanId);if(!inf||!l){toast('Não encontrado','er');return;}
+  if(!confirm('Associar o lançamento de '+fmt(l.vl)+' ('+(l.cb==='Caixa'?'Caixa':'Banco')+') ao documento «'+(inf.doc.desc||inf.doc.doc||'')+'»?\n\nO documento passa a contar como '+(inf.tipo==='receita'?'recebido':'pago')+' e a despesa/receita deixa de ser contada duas vezes.'))return;
+  try{
+    await _upd('lancamentos',lanId,{refId:docId,origem:inf.tipo});
+    const rc=inf.tipo==='receita',pos=rc?(l.tp==='C'):(l.tp!=='C');await ctbSyncEstado(inf,_cR((inf.legado?0:inf.liq)+(pos?_cR(l.vl):-_cR(l.vl))));
+    toast('Associado');await ctbEsperaPor(()=>true,300);setTimeout(abrirAuditoriaCtb,350);
+  }catch(e){console.error(e);toast('Não foi possível associar','er');}
+}
+window.abrirAuditoriaCtb=abrirAuditoriaCtb;window.ctbAssociar=ctbAssociar;
+
+// =================================== FATURAS → CONTABILIDADE ===================================
+async function contabilizarFatura(id,sil){
+  if(!canEdit())return null;
+  const f=(typeof _faturas!=='undefined'?_faturas:[]).find(x=>x.id===id);if(!f)return null;
+  if(f.despId&&(_desp||[]).some(d=>d.id===f.despId)){if(!sil)toast('Esta fatura já está na contabilidade','am');return f.despId;}
+  const val=_cR(f.valor);if(!(val>0)){toast('A fatura não tem valor','er');return null;}
+  const jaLigadas=new Set((_faturas||[]).map(x=>x.despId).filter(Boolean));
+  const cand=(_desp||[]).filter(d=>d.estado!=='Anulado'&&!jaLigadas.has(d.id)&&((f.nr&&d.doc&&String(d.doc).trim().toLowerCase()===String(f.nr).trim().toLowerCase())||(Math.abs(_cR(d.valor)-val)<CTB_EPS&&d.conta===f.conta&&(d.data||'')===(f.data||''))));
+  if(cand.length&&confirm('Já existe a despesa «'+(cand[0].desc||cand[0].doc||'')+'» ('+fmt(cand[0].valor)+') com o mesmo documento ou valor.\n\nOK = associar a essa despesa (recomendado: não duplica)\nCancelar = criar uma despesa nova')){
+    await _upd('faturas',id,{despId:cand[0].id});if(!sil)toast('Fatura associada à despesa existente');return cand[0].id;
+  }
+  const paga=(f.estado==='Paga');
+  const ref=await _add('despesas',{data:f.data||ctbHoje(),doc:f.nr||'',conta:f.conta,desc:(f.forn||'')+(f.notas?(' — '+f.notas):''),valor:val,estado:paga?'Pago':'Pendente',origem:'fatura',refId:'fat_'+id,ts:Date.now()});
+  await _upd('faturas',id,{despId:ref.id});
+  if(!sil)toast(paga?'Fatura contabilizada como paga: defina Caixa ou Banco em «Regularizar».':'Fatura contabilizada: já conta como despesa a pagar');
+  return ref.id;
+}
+async function contabilizarTodasFaturas(){
+  if(!canEdit())return;
+  const fs=(_faturas||[]).filter(f=>!f.despId&&f.estado!=='Anulada');
+  if(!fs.length){toast('Todas as faturas já estão na contabilidade','ok');return;}
+  if(!confirm('Contabilizar '+fs.length+' fatura(s) como despesas?\n\nAs que já existirem em Despesas (mesmo nº ou valor) ser-lhe-ão perguntadas uma a uma.'))return;
+  let n=0;for(const f of fs){try{if(await contabilizarFatura(f.id,true))n++;}catch(e){console.error(e);}}
+  toast(n+' fatura(s) contabilizada(s)');
+}
+async function marcarPaga(id){
+  if(!canEdit())return;
+  const f=(_faturas||[]).find(x=>x.id===id);if(!f)return;
+  let despId=f.despId;
+  if(!despId||!(_desp||[]).some(d=>d.id===despId)){
+    if(!confirm('Esta fatura ainda não está na contabilidade.\n\nContabilizar agora e registar o pagamento (Caixa ou Banco)?'))return;
+    // cria sempre como pendente: o pagamento é registado já a seguir, com Caixa ou Banco
+    const bak=f.estado;f.estado='Pendente';despId=await contabilizarFatura(id,true);f.estado=bak;
+    if(!despId)return;
+    await ctbEsperaPor(()=>(_desp||[]).some(d=>d.id===despId),3000);
+  }
+  abrirLiq('despesa',despId);
+}
+function ctbFatBanner(){
+  const el=_ctbG('fat-ctb');if(!el)return;
+  const fs=(typeof _faturas!=='undefined'?_faturas:[]).filter(f=>!f.despId&&f.estado!=='Anulada');
+  el.innerHTML=fs.length?'<div class="av" style="margin-bottom:12px;"><strong>'+fs.length+' fatura(s) ainda não estão na contabilidade</strong> ('+fmt(fs.reduce((s,f)=>s+Number(f.valor||0),0))+'). Esta lista serve para acompanhar vencimentos; só conta no balancete, na DR e no balanço depois de «Contabilizar». <button class="btn bp bsm" style="margin-left:8px;" onclick="contabilizarTodasFaturas()">Contabilizar todas</button></div>':'';
+}
+window.contabilizarFatura=contabilizarFatura;window.contabilizarTodasFaturas=contabilizarTodasFaturas;window.marcarPaga=marcarPaga;
+
+// =================================== ORÇAMENTO: executado pela mesma fonte da DR ===================================
+function ctbExecConta(c){const D=ctbDR(ctbAtual());return String(c).startsWith('6')?(D.gast[c]||0):(D.rend[c]||0);}
+window.ctbExecConta=ctbExecConta;
+
+// =================================== LIGAÇÕES: fluxo realizado no Diário e no Fluxo, aviso nas Faturas ===================================
+function renderDi(){renderDi_ctbOld();ctbRenderFluxoReal();}
+function renderFluxo(){renderFluxo_ctbOld();ctbRenderFluxoReal();}
+function renderFaturas(){renderFaturas_ctbOld();ctbFatBanner();}
+
+function renderBal_ctbOld(){
   const mes=document.getElementById('bal-mes').value;
   const[ano,m]=mes.split('-').map(Number);
   const mv={},acum={};
@@ -6654,16 +7387,16 @@ function renderBal(){
 //  DR 
 let drL='PT';
 function renderDR(){
-  const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
-  const tD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
+  const _D=ctbDR(ctbAtual());const tR=_D.tR,tD=_D.tG;
+
   const res=tR-tD;const L=drL;
-  const r7=['724','729','751','7151','7152','7153','781','788'].map(c=>{const v=_rec.filter(r=>r.conta===c).reduce((a,r)=>a+Number(r.valor||0),0);if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--ok);font-weight:500;">${fmt(v)}</td></tr>`;}).join('');
-  const r6=['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899'].map(c=>{const v=_desp.filter(d=>d.conta===c).reduce((a,d)=>a+Number(d.valor||0),0);if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--er);">${fmt(v)}</td></tr>`;}).join('');
+  const r7=ctbContasDR(_D.rend,['724','729','751','7151','7152','7153','781','788']).map(c=>{const v=_D.rend[c]||0;if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--ok);font-weight:500;">${fmt(v)}</td></tr>`;}).join('');
+  const r6=ctbContasDR(_D.gast,['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899']).map(c=>{const v=_D.gast[c]||0;if(!v)return'';return`<tr><td style="padding:8px 14px;font-size:12px;color:var(--se);"><span class="sc">${c}</span> ${nomC[c]||c}</td><td style="padding:8px 14px;text-align:right;color:var(--er);">${fmt(v)}</td></tr>`;}).join('');
   document.getElementById('dr-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">${L==='PT'?'Demonstração de Resultados':'Income Statement'}</div><div class="cds">SWC Vizela 2026 - ${L==='PT'?'Intercalar - valores reais':'Interim - actual values'}</div></div></div><div class="cdb"><table style="width:100%;border-collapse:collapse;"><thead><tr style="background:rgba(201,168,76,.06);"><th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Rubrica':'Item'}</th><th style="padding:10px 14px;text-align:right;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);">${L==='PT'?'Valor real (€)':'Actual value (€)'}</th></tr></thead><tbody><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--ok);background:rgba(74,184,122,.04);">${L==='PT'?'RENDIMENTOS':'INCOME'}</td></tr>${r7}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Rendimentos':'Total Income'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--ok);">${fmt(tR)}</td></tr><tr><td colspan="2" style="padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--er);background:rgba(224,82,82,.04);">${L==='PT'?'GASTOS':'EXPENSES'}</td></tr>${r6}<tr style="border-top:1px solid var(--bs);"><td style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--wh);">${L==='PT'?'Total Gastos':'Total Expenses'}</td><td style="padding:10px 14px;text-align:right;font-size:15px;font-weight:600;color:var(--er);">${fmt(tD)}</td></tr><tr style="background:rgba(201,168,76,.08);border-top:2px solid var(--gl);"><td style="padding:14px;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gl);">${L==='PT'?'Resultado do Evento':'Event Result'}</td><td style="padding:14px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:${res>=0?'var(--ok)':'var(--er)'};">${fmt(res)}</td></tr></tbody></table><div style="margin-top:14px;padding:10px 14px;border-top:1px solid var(--bd);font-size:11px;color:var(--mu);font-style:italic;">${L==='PT'?'Documento intercalar. Valores definitivos após encerramento total do evento.':'Interim document. Final values after complete event closure.'}</div></div></div>`;
 }
 
 //  BALANÇO 
-function renderBalanco(){
+function renderBalanco_ctbOld(){
   const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
   const tD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
   const cx=_lan.filter(l=>l.cb==='Caixa').reduce((a,l)=>l.tp==='C'?a+Number(l.vl||0):a-Number(l.vl||0),0);
@@ -6678,16 +7411,16 @@ function renderBalanco(){
 
 //  IPDJ 
 function renderIPDJ(){
-  const tR=_rec.reduce((a,r)=>a+Number(r.valor||0),0);
-  const tD=_desp.reduce((a,d)=>a+Number(d.valor||0),0);
-  const pub=_rec.filter(r=>r.conta==='751').reduce((a,r)=>a+Number(r.valor||0),0);
+  const _D=ctbDR(ctbAtual());const tR=_D.tR;
+  const tD=_D.tG;
+  const pub=_D.rend['751']||0;
   const prv=tR-pub;
   document.getElementById('ipdj-ct').innerHTML=`<div class="av"><strong>Formulário Anexo B - IPDJ - Programa de Eventos Desportivos Internacionais</strong><br>Federação Portuguesa de Minigolfe - SWC Vizela 2026 - Gerado com valores reais registados no sistema.</div><div class="cd"><div class="cdh"><div><div class="cdt">Mapa Síntese</div><div class="cds">FPM - SWC Vizela 2026</div></div></div><div class="cdb"><div class="g4" style="margin-bottom:16px;"><div class="sm"><div class="sml">Total Gastos (cl. 6)</div><div class="smv tv">${fmt(tD)}</div></div><div class="sm"><div class="sml">Total Rendimentos (cl. 7)</div><div class="smv tok">${fmt(tR)}</div></div><div class="sm"><div class="sml">Rend. públicos (751)</div><div class="smv">${fmt(pub)}</div><div class="smn">${tR>0?(pub/tR*100).toFixed(1)+'%':'-'} do total</div></div><div class="sm"><div class="sml">Rend. privados</div><div class="smv">${fmt(prv)}</div><div class="smn">${tR>0?(prv/tR*100).toFixed(1)+'%':'-'} do total</div></div></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid var(--gl);font-size:15px;font-weight:600;"><span style="color:var(--gl);">Resultado Apurado</span><span style="color:${tR-tD>=0?'var(--ok)':'var(--er)'};">${fmt(tR-tD)}</span></div><div style="font-size:11px;color:var(--mu);margin-top:12px;font-style:italic;">Pronto para submissão ao IPDJ e arquivo com a FPM.</div></div></div>`;
 }
 
 //  WMF 
 function renderWMF(){
-  const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
+  const taxas=(ctbDR(ctbAtual()).rend['729']||0);
   const c1=325,c2=2000,liq=taxas-c1-c2;
   document.getElementById('wmf-ct').innerHTML=`<div class="cd"><div class="cdh"><div><div class="cdt">Financial Statement - WMF/EMF</div><div class="cds">SWC Vizela 2026 - Participation Fees Statement</div></div></div><div class="cdb"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Gross participation fees received (acct 729)</span><span class="go">${fmt(taxas)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">C1 - WMF Championship fee (fixed contractual)</span><span class="tv">- ${fmt(c1)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);font-size:12px;"><span style="color:var(--se);">C2 - Sponsorship income share (fixed contractual)</span><span class="tv">- ${fmt(c2)}</span></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:14px;font-weight:600;"><span style="color:var(--wh);">Net amount to organiser</span><span class="tok">${fmt(liq)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,.07);font-size:12px;"><span style="color:var(--se);">Pre-payment (75%) - 4 weeks before event</span><span class="go">${fmt(liq*0.75)}</span></div><div style="display:flex;justify-content:space-between;padding:10px 0;font-size:12px;"><span style="color:var(--se);">Remaining (25%) - post-event inventory approval</span><span class="go">${fmt(liq*0.25)}</span></div><div style="margin-top:14px;padding:12px 14px;background:rgba(201,168,76,.06);border-radius:8px;font-size:11px;color:var(--mu);">Bank details: IBAN PT50 0035 0931 0002 8547 9306 4 - NIF 509 227 902<br>Vizelgolfe - Associação de Minigolfe de Vizela</div></div></div>`;
 }
@@ -8400,9 +9133,9 @@ function renderOrcamento(){
   tbody.innerHTML=_orcamento.map(o=>{
     const orc=Number(o.valor||0);
     // Calcular executado real a partir de receitas/despesas
-    const exec=o.conta.startsWith('6')?
-      _desp.filter(d=>d.conta===o.conta).reduce((s,d)=>s+Number(d.valor||0),0):
-      _rec.filter(r=>r.conta===o.conta).reduce((s,r)=>s+Number(r.valor||0),0);
+    const exec=ctbExecConta(o.conta);
+
+
     const desv=exec-orc;
     const pct=orc>0?Math.round(exec/orc*100):0;
     totOrc+=orc;totExec+=exec;
@@ -8441,7 +9174,7 @@ async function saveFatura(){
   closeM('m-fatura');toast('Fatura registada');
 }
 
-function renderFaturas(){
+function renderFaturas_ctbOld(){
   const hoje=new Date();
   const pp=_faturas.filter(f=>f.estado==='Pendente').reduce((s,f)=>s+Number(f.valor||0),0);
   const urg=_faturas.filter(f=>{if(f.estado!=='Pendente')return false;const d=new Date(f.venc);return(d-hoje)/86400000<=7;}).length;
@@ -8473,13 +9206,13 @@ function renderFaturas(){
       <td style="text-align:right;font-weight:600;">${fmt(f.valor)}</td>
       <td class="mu">${f.data||''}</td>
       <td style="font-weight:${urgente?700:400};color:${urgente?'var(--er)':'var(--se)'};">${f.venc||''}</td>
-      <td><span class="bge ${f.estado==='Paga'?'bg-ok':f.estado==='Pendente'?'bg-am':'bg-er'}">${f.estado}</span></td>
-      ${canEdit()?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''}<button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFatura('${f.id}')">🗑️</button></td>`:'<td></td>'}
+      <td><span class="bge ${f.estado==='Paga'?'bg-ok':f.estado==='Pendente'?'bg-am':'bg-er'}">${f.estado}</span>${f.despId?'<div class="mu" style="font-size:9px;">✓ na contabilidade</div>':'<div style="font-size:9px;color:var(--wr);">fora da contabilidade</div>'}</td>
+      ${canEdit()?`<td style="display:flex;gap:4px;">${f.estado==='Pendente'?`<button class="btn bsu bsm" onclick="marcarPaga('${f.id}')">Pagar</button>`:''}${!f.despId?`<button class="btn bp bsm" onclick="contabilizarFatura('${f.id}')">Contabilizar</button>`:''}<button class="btn bo bsm" onclick="editFatura('${f.id}')">✏️</button><button class="btn bd2 bsm" onclick="delFatura('${f.id}')">🗑️</button></td>`:'<td></td>'}
     </tr>`;
   }).join(''):'<tr><td colspan="8" class="mu" style="text-align:center;padding:22px;">Sem faturas</td></tr>';
 }
 
-async function marcarPaga(id){if(!canEdit())return;await _upd('faturas',id,{estado:'Paga'});toast('Fatura marcada como paga');}
+async function marcarPaga_ctbOld(id){if(!canEdit())return;await _upd('faturas',id,{estado:'Paga'});toast('Fatura marcada como paga');}
 async function delFatura(id){if(!canDelete()||!confirm('Eliminar fatura?'))return;await _del('faturas',id);toast('Eliminada','er');}
 
 // --- FLUXO DE CAIXA ---
@@ -8491,7 +9224,7 @@ async function saveFluxoItem(){
   closeM('m-fluxo-item');toast('Previsao adicionada');
 }
 
-function renderFluxo(){
+function renderFluxo_ctbOld(){
   const totEnt=_fluxo.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+Number(f.valor||0),0);
   const totSai=_fluxo.filter(f=>f.tipo==='saida').reduce((s,f)=>s+Number(f.valor||0),0);
   const elE=document.getElementById('fc-ent');
@@ -8588,13 +9321,13 @@ function exportOrcamentoPDF(){
   pdfHeader(doc,'Orçamento vs Execução Real','SWC Vizela 2026 - Comparação rubrica a rubrica',true);
   const rows=_orcamento.map(o=>{
     const orc=Number(o.valor||0);
-    const exec=o.conta.startsWith('6')?_desp.filter(d=>d.conta===o.conta).reduce((s,d)=>s+Number(d.valor||0),0):_rec.filter(r=>r.conta===o.conta).reduce((s,r)=>s+Number(r.valor||0),0);
+    const exec=ctbExecConta(o.conta);
     const desv=exec-orc;
     const pct=orc>0?Math.round(exec/orc*100):0;
     return[o.conta,nomC[o.conta]||o.conta,fmtPDF(orc),fmtPDF(exec),(desv>=0?'+':'')+fmtPDF(desv),pct+'%',pct<=80?'OK':pct<=110?'Atencao':'Desvio'];
   });
   const totOrc=_orcamento.reduce((s,o)=>s+Number(o.valor||0),0);
-  const totExec=_orcamento.reduce((s,o)=>{const exec=o.conta.startsWith('6')?_desp.filter(d=>d.conta===o.conta).reduce((a,d)=>a+Number(d.valor||0),0):_rec.filter(r=>r.conta===o.conta).reduce((a,r)=>a+Number(r.valor||0),0);return s+exec;},0);
+  const totExec=_orcamento.reduce((s,o)=>{const exec=ctbExecConta(o.conta);return s+exec;},0);
   doc.autoTable({startY:38,head:[['Conta','Rubrica','Orcamentado','Executado','Desvio','Exec%','Estado']],body:rows.length?rows:[['','Sem rubricas definidas','','','','','']],foot:[['TOTAL','',fmtPDF(totOrc),fmtPDF(totExec),(totExec-totOrc>=0?'+':'')+fmtPDF(totExec-totOrc),(totOrc>0?Math.round(totExec/totOrc*100):0)+'%','']],theme:'grid',styles:{fontSize:9,textColor:[35,35,35],cellPadding:4,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:8},footStyles:{fillColor:[240,235,210],textColor:[100,70,10],fontStyle:'bold'},columnStyles:{0:{cellWidth:18,fontStyle:'bold'},1:{cellWidth:60},2:{cellWidth:30,halign:'right'},3:{cellWidth:30,halign:'right'},4:{cellWidth:28,halign:'right'},5:{cellWidth:18,halign:'center',fontStyle:'bold'},6:{cellWidth:22,halign:'center'}},margin:{left:5,right:5,bottom:28}});
   pdfFooter(doc,true,true);doc.save('SWC2026_Orcamento_vs_Real.pdf');toast('PDF orcamento gerado');
 }
@@ -8757,7 +9490,7 @@ function renderPressKit(){
   if(!el)return;
   const nAtl=_atl.length;
   const nPaises=new Set(_atl.map(a=>a.pais)).size;
-  const totRec=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
+  const totRec=ctbDocsTot(ctbAtual()).rec.liq;
   el.innerHTML=[
     {label:'Evento',val:'SWC Vizela 2026 - Seniors World Minigolf Championship'},
     {label:'Data',val:'14-17 Outubro 2026'},
@@ -8811,9 +9544,9 @@ function exportRelWMFFinal(){
   let y=42;
   const nAtl=_atl.length;
   const nPaises=new Set(_atl.map(a=>a.pais)).size;
-  const taxas=_rec.filter(r=>r.conta==='729').reduce((s,r)=>s+Number(r.valor||0),0);
-  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
-  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
+  const taxas=(ctbDR(ctbAtual()).rend['729']||0);
+  const _DR=ctbDR(ctbAtual()),_TS2=ctbTes(ctbAtual()),_TT=ctbDocsTot(ctbAtual());const totR=_DR.tR;
+  const totD=_DR.tG;
   const homens=_resultados.filter(r=>r.categoria==='SM').sort((a,b)=>a.total-b.total).slice(0,3);
   const senhoras=_resultados.filter(r=>r.categoria==='SF').sort((a,b)=>a.total-b.total).slice(0,3);
   doc.autoTable({startY:y,head:[['Section','Data']],body:[
@@ -8823,6 +9556,9 @@ function exportRelWMFFinal(){
     ['Total income (actual)',''+fmtPDF(totR)],
     ['Total expenses (actual)',''+fmtPDF(totD)],
     ['Net result',''+fmtPDF(totR-totD)],
+    ['Received / Paid to date',fmtPDF(_TT.rec.liq)+' / '+fmtPDF(_TT.desp.liq)],
+    ['Receivable / Payable',fmtPDF(_TS2.receber)+' / '+fmtPDF(_TS2.pagar)],
+    ['Cash on hand / Bank (CGD)',fmtPDF(_TS2.caixa)+' / '+fmtPDF(_TS2.banco)+(Math.abs(_TS2.classif)>=0.005?'  (+ unallocated '+fmtPDF(_TS2.classif)+')':'')],
     ['Participation fees received',''+fmtPDF(taxas)],
     ['WMF C1+C2 deducted',''+fmtPDF(325+2000)],
     ['Net to organiser',''+fmtPDF(Math.max(0,taxas-325-2000))],
@@ -8844,8 +9580,8 @@ function exportRelAG(){
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc,'Relatorio para Assembleia Geral','Vizelgolfe - Associação de Minigolfe de Vizela - SWC 2026',false);
   const nAtl=_atl.length;const nPaises=new Set(_atl.map(a=>a.pais)).size;
-  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
-  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
+  const _DR=ctbDR(ctbAtual()),_TS2=ctbTes(ctbAtual()),_TT=ctbDocsTot(ctbAtual());const totR=_DR.tR;
+  const totD=_DR.tG;
   let y=42;
   doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(35,35,35);
   doc.text('A Assembleia Geral da Vizelgolfe apresenta o relatorio do evento SWC Vizela 2026.',14,y);y+=12;
@@ -8856,6 +9592,9 @@ function exportRelAG(){
     ['Total receitas reais',fmtPDF(totR)],
     ['Total despesas reais',fmtPDF(totD)],
     ['Resultado liquido do evento',fmtPDF(totR-totD)],
+    ['Recebido até à data / Pago até à data',fmtPDF(_TT.rec.liq)+' / '+fmtPDF(_TT.desp.liq)],
+    ['A receber / A pagar',fmtPDF(_TS2.receber)+' / '+fmtPDF(_TS2.pagar)],
+    ['Caixa (111) / Banco CGD (121)',fmtPDF(_TS2.caixa)+' / '+fmtPDF(_TS2.banco)+(Math.abs(_TS2.classif)>=0.005?'  (+ por classificar '+fmtPDF(_TS2.classif)+')':'')],
     ['Patrocinadores confirmados',''+_pat.filter(p=>p.estado==='Confirmado'||p.estado==='Recebido').length],
   ],theme:'grid',styles:{fontSize:10,textColor:[35,35,35],cellPadding:5,lineColor:[210,200,180],lineWidth:0.2},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold'},columnStyles:{0:{cellWidth:80,fontStyle:'bold'},1:{fontStyle:'bold'}},margin:{left:14,right:14,bottom:28}});
   pdfFooter(doc,false);
@@ -9395,8 +10134,8 @@ function renderSlideChecklist(){
 function renderSlideKPIs(){
   const el=document.getElementById('slide-content');
   if(!el)return;
-  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
-  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
+  const _DR=ctbDR(ctbAtual()),_TS2=ctbTes(ctbAtual()),_TT=ctbDocsTot(ctbAtual());const totR=_DR.tR;
+  const totD=_DR.tG;
   el.innerHTML=`<div>
     <div style="font-size:14px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gl);margin-bottom:32px;text-align:center;">ESTADO DO EVENTO — RESUMO</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
@@ -9783,9 +10522,9 @@ function renderEstatisticas(){
   // ── KPIs ──
   const nAtl=_atl.length;
   const nPaises=new Set(_atl.map(a=>a.pais).filter(Boolean)).size;
-  const totR=_rec.filter(r=>r.estado==='Recebido').reduce((s,r)=>s+Number(r.valor||0),0);
-  const totD=_desp.filter(d=>d.estado==='Pago').reduce((s,d)=>s+Number(d.valor||0),0);
-  const saldo=_lan.reduce((s,l)=>l.tp==='C'?s+Number(l.vl||0):s-Number(l.vl||0),0);
+  const _DR=ctbDR(ctbAtual()),_TS2=ctbTes(ctbAtual()),_TT=ctbDocsTot(ctbAtual());const totR=_DR.tR;
+  const totD=_DR.tG;
+  const saldo=_TS2.total;
   const done=_chkData?Object.values(_chkData).filter(v=>v.status==='Done').length:0;
   const pctChk=Math.round(done/45*100);
 
@@ -10422,18 +11161,18 @@ function exportDR(){
     'SWC Vizela 2026 - '+(L==='PT'?'Intercalar - valores reais registados':'Interim - actual registered values')
   );
 
-  const tR=_rec.filter(r=>r.estado==='Recebido').reduce((a,r)=>a+Number(r.valor||0),0);
-  const tD=_desp.filter(d=>d.estado==='Pago').reduce((a,d)=>a+Number(d.valor||0),0);
+  const _D=ctbDR(ctbAtual());const tR=_D.tR,tD=_D.tG;
+
 
   const rows7=[];
-  ['724','729','751','7151','7152','7153','781','788'].forEach(c=>{
-    const v=_rec.filter(r=>r.conta===c).reduce((a,r)=>a+Number(r.valor||0),0);
+  ctbContasDR(_D.rend,['724','729','751','7151','7152','7153','781','788']).forEach(c=>{
+    const v=_D.rend[c]||0;
     if(v>0) rows7.push([c, nomC[c]||c, fmtPDF(v)]);
   });
 
   const rows6=[];
-  ['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899'].forEach(c=>{
-    const v=_desp.filter(d=>d.conta===c).reduce((a,d)=>a+Number(d.valor||0),0);
+  ctbContasDR(_D.gast,['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899']).forEach(c=>{
+    const v=_D.gast[c]||0;
     if(v>0) rows6.push([c, nomC[c]||c, fmtPDF(v)]);
   });
 
@@ -10517,7 +11256,7 @@ function exportDR(){
 }
 
 //  BALANÇO PDF 
-function exportBalanco(){
+function exportBalanco_ctbOld(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc, 'Balanco do Evento', 'SWC Vizela 2026 - Ativo - Passivo - Capital Próprio', false);
 
@@ -10585,7 +11324,7 @@ function exportBalanco(){
 }
 
 //  BALANCETE PDF 
-function exportBalancete(){
+function exportBalancete_ctbOld(){
   const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const mes = document.getElementById('bal-mes').value;
   const meses = {'2025-12':'Dezembro 2025','2026-01':'Janeiro 2026','2026-02':'Fevereiro 2026','2026-03':'Março 2026','2026-04':'Abril 2026','2026-05':'Maio 2026','2026-06':'Junho 2026','2026-07':'Julho 2026','2026-08':'Agosto 2026','2026-09':'Setembro 2026','2026-10':'Outubro 2026','2026-11':'Novembro 2026'};
@@ -10637,9 +11376,9 @@ function exportIPDJ(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc, 'Formulario Anexo B - IPDJ', 'Programa de Eventos Desportivos Internacionais - SWC Vizela 2026', false);
 
-  const tR=_rec.reduce((a,r)=>a+Number(r.valor||0),0);
-  const tD=_desp.reduce((a,d)=>a+Number(d.valor||0),0);
-  const pub=_rec.filter(r=>r.conta==='751').reduce((a,r)=>a+Number(r.valor||0),0);
+  const _D=ctbDR(ctbAtual());const tR=_D.tR;
+  const tD=_D.tG;
+  const pub=_D.rend['751']||0;
   const prv=tR-pub;
 
   // Cabeçalho entidade
@@ -10673,8 +11412,8 @@ function exportIPDJ(){
   y = doc.lastAutoTable.finalY + 10;
 
   // Detalhe receitas
-  const rowsR = ['724','729','751','7151','7152','7153','781','788'].map(c=>{
-    const v=_rec.filter(r=>r.conta===c).reduce((a,r)=>a+Number(r.valor||0),0);
+  const rowsR = ctbContasDR(_D.rend,['724','729','751','7151','7152','7153','781','788']).map(c=>{
+    const v=_D.rend[c]||0;
     return v>0?[c,nomC[c]||c,fmtPDF(v)]:null;
   }).filter(Boolean);
 
@@ -10695,8 +11434,8 @@ function exportIPDJ(){
   }
 
   // Detalhe despesas
-  const rowsD = ['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899'].map(c=>{
-    const v=_desp.filter(d=>d.conta===c).reduce((a,d)=>a+Number(d.valor||0),0);
+  const rowsD = ctbContasDR(_D.gast,['6141','6143','6221','6222','6223','6228','6231','6233','6234','6242','6251','6261','6262','6266','6268','6888','6899']).map(c=>{
+    const v=_D.gast[c]||0;
     return v>0?[c,nomC[c]||c,fmtPDF(v)]:null;
   }).filter(Boolean);
 
@@ -10725,7 +11464,7 @@ function exportWMF(){
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   pdfHeader(doc, 'Financial Statement - WMF/EMF', 'SWC Vizela 2026 - Participation Fees Statement', false);
 
-  const taxas=_rec.filter(r=>r.conta==='729').reduce((a,r)=>a+Number(r.valor||0),0);
+  const taxas=(ctbDR(ctbAtual()).rend['729']||0);
   const c1=325,c2=2000,liq=taxas-c1-c2;
 
   let y=42;
@@ -13779,7 +14518,7 @@ async function editRec(id){
   const _erc_ob=document.getElementById('rc-ob');if(_erc_ob)_erc_ob.value=item.obs||'';
   openM('m-rec');
 }
-window.editRec=editRec;
+{const _er0=editRec;editRec=async function(id){await _er0(id);ctbFormEstado('rec');};}window.editRec=editRec;
 async function editDesp(id){
   const item=(_desp||[]).find(x=>x.id===id);if(!item)return;
   let hid=document.getElementById('desp-eid');
@@ -13794,7 +14533,7 @@ async function editDesp(id){
   const _edp_st=document.getElementById('dp-st');if(_edp_st)_edp_st.value=item.estado||'';
   openM('m-desp');
 }
-window.editDesp=editDesp;
+{const _ed0=editDesp;editDesp=async function(id){await _ed0(id);ctbFormEstado('desp');};}window.editDesp=editDesp;
 async function editLan(id){
   const item=(_lan||[]).find(x=>x.id===id);if(!item)return;
   let hid=document.getElementById('lan-eid');

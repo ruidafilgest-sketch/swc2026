@@ -1923,6 +1923,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
 <div class="bb" id="merch-admin-tot" style="display:none;">
   <button class="btn bp" onclick="abrirTotalDia('merch')" style="background:linear-gradient(135deg,#8A6D1F,#C9A84C);color:#0B2E4F;font-weight:700;">🧾 Registar total do dia (folha)</button>
   <button class="btn bo" onclick="abrirAuditoriaDuplicados()">🔎 Auditar duplicados</button>
+  <button class="btn bp" onclick="abrirAuditoriaStock()">📋 Auditoria de stock</button>
   <span class="mu" style="font-size:11px;align-self:center;margin-left:8px;">Só Administrador. Total de folha e auditoria de duplicados.</span>
 </div>
 <div id="merch-pendente"></div>
@@ -1983,6 +1984,7 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
   <button class="btn bp" id="btn-restruturacao-merch" onclick="resetTotalMerchandise()" style="background:linear-gradient(135deg,#B84A3E,#7a2e26);">⚠️ Reset Total + Reestruturação (Set/2026)</button>
   <button class="btn bo" onclick="openM('m-venda')">+ Registar venda</button>
   <button class="btn bo" onclick="exportConsigPDF()">Exportar PDF acerto contas</button>
+<button class="btn bp" onclick="abrirAuditoriaStock()">📋 Auditoria de stock</button>
 </div>
 
 <!-- KPIs -->
@@ -3076,6 +3078,40 @@ function stopSlideshow(){if(window._stopSlideshow)window._stopSlideshow();}
     <div class="fg"><div class="fl">Notas</div><input class="fi" id="art-notas" placeholder="Observações sobre o artigo..."></div>
   </div>
   <div class="mf"><button class="btn bo" onclick="closeM('m-artigo')">Cancelar</button><button class="btn bp" onclick="saveArtigo()">Guardar artigo</button></div>
+</div></div>
+
+<!-- MODAL AUDITORIA DE STOCK (MERCHANDISE) -->
+<div class="mo" id="m-aud-stock"><div class="mdl" style="width:1280px;max-width:97vw;">
+<div class="mh"><div class="mt2">Auditoria de Stock — Merchandise</div><button class="mc" onclick="closeM('m-aud-stock')">X</button></div>
+<div class="mb">
+<div class="av"><div><strong>Tinha, vendi, tenho.</strong> «Entrou» é o que deu entrada, «Vendido» é a soma das vendas de cada artigo e «Em stock» é a diferença. Escreve a <strong>contagem física</strong> de cada artigo para ver a diferença e carrega em «Guardar contagens». <span class="mu">Nota: as t-shirts e os hoodies estão registados por cor, com todos os tamanhos juntos.</span></div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;align-items:end;">
+<div class="fg"><div class="fl">Marca</div><select class="fse" id="mst-marca" onchange="mstRender()"></select></div>
+<div class="fg"><div class="fl">Tipo de artigo</div><select class="fse" id="mst-grupo" onchange="mstRender()"></select></div>
+<div class="fg"><div class="fl">Estado</div><select class="fse" id="mst-estado" onchange="mstRender()"><option value="">Todos</option><option value="stock">Com stock</option><option value="semstock">Sem stock</option><option value="neg">Stock negativo</option><option value="dif">Com diferença na contagem</option><option value="semcontagem">Ainda sem contagem</option></select></div>
+<div class="fg"><div class="fl">Procurar</div><input class="fi" id="mst-texto" placeholder="boné, hoodie, azul…" oninput="mstRender()"></div>
+<div class="fg"><div class="fl">Vendas de (data)</div><input class="fi" type="date" id="mst-de" onchange="mstRender()"></div>
+<div class="fg"><div class="fl">até (data)</div><input class="fi" type="date" id="mst-ate" onchange="mstRender()"></div>
+<div class="fg"><button class="btn bo" style="width:100%;" onclick="mstLimparFiltros()">Limpar filtros</button></div>
+</div>
+<div id="mst-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 16px;"></div>
+<div class="st" style="font-size:15px;margin-bottom:8px;"><span class="sn">1</span>Resumo por produto (como a lista escrita)</div>
+<div class="tbl-wrap tw" style="margin-bottom:18px;"><table><thead><tr><th>Produto</th><th style="text-align:right;">Artigos</th><th style="text-align:right;">Entrou</th><th style="text-align:right;">Vendido</th><th style="text-align:right;">Em stock</th><th style="text-align:right;">Valor vendido</th></tr></thead><tbody id="mst-resumo"></tbody></table></div>
+<div class="st" style="font-size:15px;margin-bottom:8px;"><span class="sn">2</span>Detalhe por artigo e contagem física</div>
+<div class="tbl-wrap tw" style="margin-bottom:18px;max-height:46vh;overflow:auto;"><table><thead><tr><th>Marca</th><th>Referência</th><th style="min-width:230px;">Artigo</th><th style="text-align:right;">Preço</th><th style="text-align:right;">Entrou</th><th style="text-align:right;">Vendido</th><th style="text-align:right;">No período</th><th style="text-align:right;">Em stock</th><th>Contagem física</th><th style="text-align:center;">Diferença</th><th style="text-align:right;">Valor vendido</th><th>Última venda</th></tr></thead><tbody id="mst-corpo"></tbody></table></div>
+<div class="st" style="font-size:15px;margin-bottom:8px;"><span class="sn">3</span>Anomalias</div>
+<div id="mst-anom" style="margin-bottom:12px;"></div>
+</div>
+<div class="mf" style="flex-wrap:wrap;gap:8px;">
+<button class="btn bp" onclick="mstGuardarContagens()">Guardar contagens</button>
+<button class="btn bo" onclick="mstPDF('auditoria')">PDF auditoria</button>
+<button class="btn bo" onclick="mstPDF('contagem')">PDF folha de contagem</button>
+<button class="btn bo" onclick="mstPDF('movimentos')">PDF movimentos</button>
+<button class="btn bo" onclick="mstPDF('dias')">PDF vendas por dia</button>
+<button class="btn bo" onclick="mstPDF('devolucao')">PDF lista de devolução</button>
+<button class="btn bo" onclick="mstCSV()">Excel (CSV)</button>
+<button class="btn bo" onclick="closeM('m-aud-stock')">Fechar</button>
+</div>
 </div></div>
 
 <!-- MODAL VENDA -->
@@ -14276,6 +14312,196 @@ function exportConsigPDF(){
   toast('PDF resumo gerado');
 }
 
+
+// ===== AUDITORIA DE STOCK (MERCHANDISE) =====
+// ===================================================================================================
+// AUDITORIA DE STOCK (MERCHANDISE / CONSIGNAÇÃO) — por artigo: tinha, vendi, tenho, contagem física e diferença
+// Fonte única: cs_artigos (entrou), cs_vendas (vendas normais, linhas de folha do dia, totais de folha) e cs_marcas.
+// Stock teórico = quantidade que entrou − quantidades vendidas. A contagem física guarda-se no próprio artigo (qtyContada).
+// ===================================================================================================
+const MST_G=[['hoodie|sweat','Hoodies'],['t-?shirt|tshirt|camisola','T-shirts'],['\\bbone|\\bcap\\b','Bonés'],['\\bima-|iman','Ímanes'],['caneta','Canetas'],['abre-?latas|abrelatas','Abre-latas'],['bola','Bolas']];
+function _mstN(s){return String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function _mstE(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function mstGrupo(a){const t=_mstN((a.ref||'')+' '+(a.desc||''));for(const g of MST_G){if(new RegExp(g[0]).test(t))return g[1];}return 'Outros';}
+function mstCor(a){
+  const t=_mstN((a.ref||'')+' '+(a.desc||'')),m=t.match(/\b(azul|branc[ao]|verde|bege|pret[ao]|vermelh[ao]|cinz[ao]|amarel[ao]|laranja|rosa|sortid[ao]s?|rugosa)\b/);
+  if(!m)return '';const c=m[1];if(/^branc/.test(c))return 'Branca';if(/^pret/.test(c))return 'Preta';if(/^vermelh/.test(c))return 'Vermelha';if(/^cinz/.test(c))return 'Cinzenta';if(/^amarel/.test(c))return 'Amarela';if(/^sortid/.test(c))return 'Sortidas';
+  return c.charAt(0).toUpperCase()+c.slice(1);
+}
+function mstProduto(r){return r.grupo+(r.cor?(' · '+r.cor):'')+(r.grupo==='Bolas'&&r.marca?(' · '+r.marca):'');}
+function _mstData(v){
+  if(typeof _tdDataDe==='function')return String(_tdDataDe(v)||'').slice(0,10);
+  const d=(v&&(v.data||v.dt))||'';return /^\d{4}-\d{2}-\d{2}/.test(d)?d.slice(0,10):'';
+}
+// ---- cálculo (puro): recebe artigos, vendas e marcas; devolve linhas por artigo + anomalias
+function mstCalc(arts,vend,marcas,o){
+  o=o||{};const de=o.de||'',ate=o.ate||'';arts=arts||[];vend=vend||[];marcas=marcas||[];
+  const rows=arts.map(a=>({id:a.id,marcaId:a.marcaId||'',marca:a.marcaNome||'',ref:a.ref||'',desc:a.desc||'',preco:Number(a.preco||0),entrou:Number(a.qtyEntrou||0),vendido:0,vendidoPer:0,valor:0,valorPer:0,comissao:0,nVendas:0,ultima:'',
+    contada:(a.qtyContada===undefined||a.qtyContada===null||a.qtyContada==='')?null:Number(a.qtyContada),contadoEm:a.contadoEm||'',grupo:mstGrupo(a),cor:mstCor(a),notas:a.notas||'',linhas:[]}));
+  const mapa=new Map(rows.map(r=>[r.id,r])),orfas=[],folhas=[];let semDetalhe=0,valorTotal=0;
+  vend.forEach(v=>{
+    const d=_mstData(v);
+    if(v.tipo==='total_dia'){const val=Number(v.total||0);semDetalhe+=val;folhas.push({id:v.id,data:d,turno:v.turno||'',folhas:v.folhas||'',totalFolha:Number(v.totalFolha||0),semDetalhe:val,dinheiro:Number(v.dinheiro||0),mbway:Number(v.mbway||0)});valorTotal+=val;return;}
+    const q=Number(v.qty||0),t=Number(v.total||0),r=mapa.get(v.artigoId);valorTotal+=t;
+    if(!r){orfas.push({id:v.id,data:d,desc:v.desc||v.ref||'',marca:v.marcaNome||'',qty:q,total:t,tipo:v.tipo||'venda'});return;}
+    r.vendido+=q;r.valor+=t;r.comissao+=Number(v.comissao||0);r.nVendas++;if(d&&d>r.ultima)r.ultima=d;
+    if((!de||d>=de)&&(!ate||d<=ate)){r.vendidoPer+=q;r.valorPer+=t;}
+    r.linhas.push({data:d,qty:q,preco:Number(v.precoUnit||0),total:t,tipo:v.tipo||'venda',vendaId:v.vendaId||v.lote||'',notas:v.notas||''});
+  });
+  rows.forEach(r=>{r.stock=r.entrou-r.vendido;r.diff=r.contada===null?null:r.contada-r.stock;r.linhas.sort((a,b)=>(a.data||'')<(b.data||'')?-1:(a.data||'')>(b.data||'')?1:0);});
+  const refs={};rows.forEach(r=>{const k=_mstN(r.ref);if(k)refs[k]=(refs[k]||0)+1;});
+  const an=[];
+  const neg=rows.filter(r=>r.stock<0);if(neg.length)an.push({nivel:'erro',cod:'STOCK_NEG',titulo:'Artigos com stock negativo',det:'Venderam-se mais unidades do que as que entraram. Falta registar entrada de stock ou há vendas a mais.',n:neg.length,itens:neg.map(r=>r.marca+' · '+(r.desc||r.ref)+': '+r.stock)});
+  if(orfas.length)an.push({nivel:'erro',cod:'VENDAS_ORFAS',titulo:'Vendas de artigos que já não existem',det:'Linhas de venda ligadas a um artigo apagado (por exemplo, no reset do catálogo). Não descontam em nenhum stock atual.',n:orfas.length,itens:orfas.map(o=>o.data+' · '+o.desc+' · '+o.qty+' un. · '+o.total.toFixed(2)+' €')});
+  if(semDetalhe>0.005)an.push({nivel:'aviso',cod:'SEM_DETALHE',titulo:'Vendas de folhas do dia sem detalhe de artigos',det:'Valor vendido em folhas do dia sem indicar os artigos: entra no dinheiro, mas não desconta em nenhum stock. O stock teórico fica por cima do real.',n:folhas.filter(f=>f.semDetalhe>0.005).length,valor:semDetalhe,itens:folhas.filter(f=>f.semDetalhe>0.005).map(f=>f.data+' · '+(f.turno||'folha')+' · '+f.semDetalhe.toFixed(2)+' €')});
+  const dup=Object.keys(refs).filter(k=>refs[k]>1);if(dup.length)an.push({nivel:'aviso',cod:'REF_DUP',titulo:'Referências repetidas',det:'Duas ou mais fichas de artigo com a mesma referência: o stock aparece dividido.',n:dup.length,itens:dup});
+  const vazias=marcas.filter(m=>!rows.some(r=>r.marcaId===m.id));if(vazias.length)an.push({nivel:'info',cod:'MARCA_VAZIA',titulo:'Marcas sem artigos',det:'Marcas criadas mas sem nenhum artigo registado (por exemplo, as bolas sortidas ainda sem referências).',n:vazias.length,itens:vazias.map(m=>m.nome)});
+  const dif=rows.filter(r=>r.diff!==null&&r.diff!==0);if(dif.length)an.push({nivel:'aviso',cod:'DIF_CONTAGEM',titulo:'Contagem física diferente do stock teórico',det:'A diferença é a contagem menos o stock teórico: negativa = falta material; positiva = sobra.',n:dif.length,itens:dif.map(r=>r.marca+' · '+(r.desc||r.ref)+': '+(r.diff>0?'+':'')+r.diff)});
+  const semC=rows.filter(r=>r.contada===null&&r.stock!==0);
+  return {rows,orfas,folhas,semDetalhe,valorTotal,anomalias:an,semContagem:semC.length};
+}
+function mstFiltra(rows,f){
+  f=f||{};const tx=_mstN(f.texto||'');
+  return rows.filter(r=>{
+    if(f.marca&&r.marcaId!==f.marca)return false;if(f.grupo&&r.grupo!==f.grupo)return false;
+    if(tx&&_mstN(r.marca+' '+r.ref+' '+r.desc+' '+r.grupo+' '+r.cor).indexOf(tx)<0)return false;
+    if(f.estado==='stock'&&!(r.stock>0))return false;if(f.estado==='semstock'&&r.stock!==0)return false;if(f.estado==='neg'&&!(r.stock<0))return false;
+    if(f.estado==='dif'&&!(r.diff!==null&&r.diff!==0))return false;if(f.estado==='semcontagem'&&!(r.contada===null))return false;
+    return true;
+  });
+}
+function mstResumo(rows){
+  const m={};
+  rows.forEach(r=>{const k=mstProduto(r);if(!m[k])m[k]={produto:k,grupo:r.grupo,artigos:0,entrou:0,vendido:0,stock:0,valor:0,contada:0,comContagem:0};const o=m[k];o.artigos++;o.entrou+=r.entrou;o.vendido+=r.vendido;o.stock+=r.stock;o.valor+=r.valor;if(r.contada!==null){o.contada+=r.contada;o.comContagem++;}});
+  return Object.values(m).sort((a,b)=>a.produto.localeCompare(b.produto,'pt'));
+}
+function mstTotais(rows){const t={artigos:rows.length,entrou:0,vendido:0,vendidoPer:0,stock:0,valor:0,valorPer:0,comissao:0,dif:0,comContagem:0};rows.forEach(r=>{t.entrou+=r.entrou;t.vendido+=r.vendido;t.vendidoPer+=r.vendidoPer;t.stock+=r.stock;t.valor+=r.valor;t.valorPer+=r.valorPer;t.comissao+=r.comissao;if(r.diff!==null){t.dif+=r.diff;t.comContagem++;}});return t;}
+
+// ---- ecrã
+function _mstFiltros(){const g=id=>{const e=document.getElementById(id);return e?e.value:'';};return {marca:g('mst-marca'),grupo:g('mst-grupo'),estado:g('mst-estado'),texto:g('mst-texto'),de:g('mst-de'),ate:g('mst-ate')};}
+function _mstDados(){const f=_mstFiltros(),calc=mstCalc(MART(),MVEN(),(typeof _marcas!=='undefined'?_marcas:[]),{de:f.de,ate:f.ate});return {f,calc,rows:mstFiltra(calc.rows,f)};}
+function abrirAuditoriaStock(){
+  const sm=document.getElementById('mst-marca'),sg=document.getElementById('mst-grupo');
+  if(sm){const v=sm.value;sm.innerHTML='<option value="">— Todas as marcas —</option>'+(typeof _marcas!=='undefined'?_marcas:[]).map(m=>'<option value="'+_mstE(m.id)+'">'+_mstE(m.nome||'')+'</option>').join('');sm.value=v;}
+  if(sg){const v=sg.value;sg.innerHTML='<option value="">— Todos os tipos —</option>'+[...new Set(mstCalc(MART(),[],[]).rows.map(r=>r.grupo))].sort().map(g=>'<option>'+_mstE(g)+'</option>').join('');sg.value=v;}
+  mstRender();openM('m-aud-stock');
+}
+function mstRender(){
+  const {f,calc,rows}=_mstDados(),T=mstTotais(rows),el=id=>document.getElementById(id);
+  const card=(r,v,c)=>'<div class="sm"><div class="sml">'+r+'</div><div class="smv" style="'+(c?'color:'+c+';':'')+'">'+v+'</div></div>';
+  el('mst-kpis').innerHTML=card('Artigos',T.artigos)+card('Entrou (tinha)',T.entrou+' un.')+card('Vendido',T.vendido+' un.','var(--ok)')+card('Em stock (teórico)',T.stock+' un.','var(--gl2)')+card('Valor vendido',fmt(T.valor),'var(--ok)')+card('Diferença na contagem',T.comContagem?((T.dif>0?'+':'')+T.dif+' un.'):'sem contagens',T.dif<0?'var(--er)':'var(--wh)');
+  el('mst-resumo').innerHTML=mstResumo(rows).map(g=>'<tr><td>'+_mstE(g.produto)+'</td><td style="text-align:right;">'+g.artigos+'</td><td style="text-align:right;">'+g.entrou+'</td><td style="text-align:right;" class="tok">'+g.vendido+'</td><td style="text-align:right;font-weight:700;">'+g.stock+'</td><td style="text-align:right;">'+fmt(g.valor)+'</td></tr>').join('')||'<tr><td colspan="6" class="mu" style="text-align:center;padding:14px;">Sem artigos com estes filtros</td></tr>';
+  el('mst-corpo').innerHTML=rows.map(r=>{
+    const cor=r.stock<0?'var(--er)':r.stock===0?'var(--mu)':r.stock<=5?'var(--wr)':'var(--wh)';
+    const d=r.diff===null?'':('<span style="font-weight:700;color:'+(r.diff<0?'var(--er)':r.diff>0?'var(--wr)':'var(--ok)')+';">'+(r.diff>0?'+':'')+r.diff+'</span>');
+    return '<tr data-id="'+_mstE(r.id)+'"><td class="go">'+_mstE(r.marca)+'</td><td style="font-family:monospace;font-size:11px;">'+_mstE(r.ref)+'</td><td>'+_mstE(r.desc)+'</td><td style="text-align:right;">'+fmt(r.preco)+'</td><td style="text-align:right;">'+r.entrou+'</td><td style="text-align:right;" class="tok">'+r.vendido+'</td><td style="text-align:right;" class="mu">'+r.vendidoPer+'</td><td style="text-align:right;font-weight:700;color:'+cor+';">'+r.stock+'</td>'+
+      '<td><input class="fi mst-ct" type="number" min="0" step="1" value="'+(r.contada===null?'':r.contada)+'" data-orig="'+(r.contada===null?'':r.contada)+'" data-stock="'+r.stock+'" oninput="mstDif(this)" style="width:78px;padding:4px 6px;"></td><td style="text-align:center;" class="mst-df">'+d+'</td><td style="text-align:right;">'+fmt(r.valor)+'</td><td class="mu" style="font-size:11px;">'+_mstE(r.ultima)+'</td></tr>';
+  }).join('')||'<tr><td colspan="12" class="mu" style="text-align:center;padding:20px;">Sem artigos com estes filtros</td></tr>';
+  const A=calc.anomalias;
+  el('mst-anom').innerHTML=A.length?A.map(x=>'<div class="av" style="display:block;margin-bottom:8px;border-left:3px solid '+(x.nivel==='erro'?'var(--er)':x.nivel==='aviso'?'var(--wr)':'var(--mu)')+';"><div><b>'+_mstE(x.titulo)+'</b> · '+x.n+(x.valor?(' · '+fmt(x.valor)):'')+'<div class="mu" style="font-size:12px;margin:3px 0;">'+_mstE(x.det)+'</div><div style="font-size:11px;color:var(--se);">'+x.itens.slice(0,6).map(_mstE).join('<br>')+(x.itens.length>6?'<br>… e mais '+(x.itens.length-6):'')+'</div></div></div>').join(''):'<div class="mu" style="font-size:12px;">Nenhuma anomalia encontrada.</div>';
+}
+function mstDif(inp){
+  const v=inp.value.trim(),st=Number(inp.dataset.stock),td=inp.closest('tr').querySelector('.mst-df');
+  if(v===''){td.innerHTML='';return;}const d=Number(v)-st;td.innerHTML='<span style="font-weight:700;color:'+(d<0?'var(--er)':d>0?'var(--wr)':'var(--ok)')+';">'+(d>0?'+':'')+d+'</span>';
+}
+async function mstGuardarContagens(){
+  if(!canEdit()){toast('Sem permissão para guardar contagens','er');return;}
+  const hoje=new Date().toISOString().slice(0,10);let n=0;
+  for(const inp of document.querySelectorAll('#mst-corpo .mst-ct')){
+    const v=inp.value.trim(),orig=inp.dataset.orig;if(v===orig)continue;
+    const id=inp.closest('tr').dataset.id;if(v!==''&&!(Number(v)>=0)){toast('Contagem inválida','er');return;}
+    await _upd('cs_artigos',id,{qtyContada:v===''?null:Number(v),contadoEm:v===''?'':hoje});n++;
+  }
+  toast(n?(n+' contagem(ns) guardada(s)'):'Nada para guardar','ok');
+  if(n){await new Promise(r=>setTimeout(r,300));mstRender();}
+}
+function mstLimparFiltros(){['mst-marca','mst-grupo','mst-estado','mst-texto','mst-de','mst-ate'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});mstRender();}
+
+// ---- exportações
+function mstCSV(){
+  const {rows}=_mstDados();
+  const q=s=>'"'+String(s==null?'':s).replace(/"/g,'""')+'"',n=v=>String(v).replace('.',',');
+  const L=[['Marca','Referência','Artigo','Tipo','Cor','Preço','Entrou','Vendido','Vendido no período','Stock teórico','Contagem física','Diferença','Valor vendido','Comissão','Última venda'].map(q).join(';')];
+  rows.forEach(r=>L.push([q(r.marca),q(r.ref),q(r.desc),q(r.grupo),q(r.cor),n(r.preco.toFixed(2)),r.entrou,r.vendido,r.vendidoPer,r.stock,r.contada===null?'':r.contada,r.diff===null?'':r.diff,n(r.valor.toFixed(2)),n(r.comissao.toFixed(2)),q(r.ultima)].join(';')));
+  const b=new Blob(['\ufeff'+L.join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='SWC2026_Merchandise_Auditoria.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);toast('CSV gerado (abre no Excel)');
+}
+function _mstEspaco(doc,y,h){if(y+h>doc.internal.pageSize.getHeight()-24){doc.addPage();return 20;}return y;}
+const _mstEst={styles:{fontSize:8,textColor:[35,35,35],cellPadding:2.6,lineColor:[210,200,180],lineWidth:0.15},headStyles:{fillColor:[10,22,40],textColor:[201,168,76],fontStyle:'bold',fontSize:7.8},alternateRowStyles:{fillColor:[250,247,240]},margin:{left:12,right:12,bottom:26},showFoot:'lastPage'};
+function _mstSub(f){
+  const m=f.marca?((typeof _marcas!=='undefined'?_marcas:[]).find(x=>x.id===f.marca)||{}).nome:'';
+  const p=[];if(m)p.push('Marca: '+m);if(f.grupo)p.push('Tipo: '+f.grupo);if(f.de||f.ate)p.push('Vendas de '+(f.de||'…')+' a '+(f.ate||'…'));if(f.texto)p.push('Texto: '+f.texto);
+  return 'SWC Vizela 2026 - '+(p.length?p.join(' · '):'todos os artigos');
+}
+function mstPDF(modo){
+  const {f,calc,rows}=_mstDados(),doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'}),hoje=new Date().toISOString().slice(0,10);
+  const T=mstTotais(rows);
+  if(modo==='contagem'){
+    pdfHeader(doc,'Folha de Contagem Física - Merchandise',_mstSub(f),true);
+    const b=rows.map(r=>[r.marca,r.ref,r.desc,String(r.entrou),String(r.vendido),String(r.stock),'','','']);
+    doc.autoTable(Object.assign({},_mstEst,{startY:38,head:[['Marca','Referência','Artigo','Entrou','Vendido','Stock teórico','Contagem física','Lista escrita (Nuno)','Observações']],body:b.length?b:[['','','Sem artigos','','','','','','']],theme:'grid',
+      bodyStyles:{minCellHeight:10},columnStyles:{0:{cellWidth:34},1:{cellWidth:38},2:{cellWidth:64},3:{halign:'right',cellWidth:15},4:{halign:'right',cellWidth:16},5:{halign:'right',cellWidth:20,fontStyle:'bold'},6:{cellWidth:26},7:{cellWidth:28},8:{cellWidth:'auto'}}}));
+    let y=_mstEspaco(doc,doc.lastAutoTable.finalY+10,16);doc.setFontSize(9);doc.setTextColor(35,35,35);doc.text('Contado por: ______________________________        Data: ____ / ____ / ________        Assinatura: ______________________________',12,y);
+    pdfFooter(doc,true);doc.save('SWC2026_Merchandise_Folha_Contagem.pdf');toast('Folha de contagem gerada');return;
+  }
+  if(modo==='movimentos'){
+    pdfHeader(doc,'Movimentos de Merchandise por Artigo',_mstSub(f),true);let y=38;
+    rows.forEach(r=>{
+      let st=r.entrou;const corpo=[['','Entrada (stock inicial)',String(r.entrou),'','',String(st)]];
+      r.linhas.forEach(l=>{st-=l.qty;corpo.push([l.data,(l.tipo==='detalhe_dia'?'Folha do dia':l.tipo==='total_dia'?'Total de folha':'Venda')+(l.notas?(' · '+l.notas):''),'-'+l.qty,fmtPDF(l.preco),fmtPDF(l.total),String(st)]);});
+      y=_mstEspaco(doc,y,Math.min(40,12+corpo.length*7));
+      doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);doc.text((r.marca?r.marca+' · ':'')+(r.desc||r.ref)+'  ('+r.ref+')',12,y+3);
+      doc.autoTable(Object.assign({},_mstEst,{startY:y+5,head:[['Data','Movimento','Qtd','Preço','Total','Stock após']],body:corpo,theme:'striped',columnStyles:{0:{cellWidth:24},1:{cellWidth:'auto'},2:{halign:'right',cellWidth:18},3:{halign:'right',cellWidth:24},4:{halign:'right',cellWidth:26},5:{halign:'right',cellWidth:24,fontStyle:'bold'}}}));
+      y=doc.lastAutoTable.finalY+7;
+    });
+    if(!rows.length){doc.setFontSize(10);doc.text('Sem artigos com estes filtros.',12,y+4);}
+    pdfFooter(doc,true);doc.save('SWC2026_Merchandise_Movimentos.pdf');toast('PDF de movimentos gerado');return;
+  }
+  if(modo==='dias'){
+    pdfHeader(doc,'Merchandise - Unidades Vendidas por Dia',_mstSub(f),true);
+    const dias=[...new Set(rows.flatMap(r=>r.linhas.map(l=>l.data)).filter(Boolean))].sort();
+    const b=rows.filter(r=>r.linhas.length).map(r=>[r.marca+' · '+(r.desc||r.ref)].concat(dias.map(d=>{const q=r.linhas.filter(l=>l.data===d).reduce((s,l)=>s+l.qty,0);return q?String(q):'';})).concat([String(r.vendido)]));
+    const tot=['TOTAL'].concat(dias.map(d=>String(rows.reduce((s,r)=>s+r.linhas.filter(l=>l.data===d).reduce((t,l)=>t+l.qty,0),0)))).concat([String(rows.reduce((s,r)=>s+r.vendido,0))]);
+    const cs={0:{cellWidth:105}};dias.forEach((d,i)=>{cs[i+1]={halign:'center',cellWidth:Math.max(11,Math.min(20,190/Math.max(1,dias.length)))};});cs[dias.length+1]={halign:'right',fontStyle:'bold',cellWidth:22};
+    doc.autoTable(Object.assign({},_mstEst,{startY:38,head:[['Artigo'].concat(dias.map(d=>d.slice(8)+'/'+d.slice(5,7))).concat(['Total'])],body:b.length?b:[['Sem vendas com estes filtros']],foot:b.length?[tot]:undefined,footStyles:{fillColor:[245,240,220],textColor:[40,40,40],fontStyle:'bold'},theme:'grid',columnStyles:cs}));
+    if(calc.semDetalhe>0.005){let y=_mstEspaco(doc,doc.lastAutoTable.finalY+8,14);doc.setFontSize(8.5);doc.setTextColor(150,60,40);doc.text('Atenção: '+fmtPDF(calc.semDetalhe)+' vendidos em folhas do dia SEM detalhe de artigos não aparecem neste quadro.',12,y);}
+    pdfFooter(doc,true);doc.save('SWC2026_Merchandise_Vendas_por_Dia.pdf');toast('PDF de vendas por dia gerado');return;
+  }
+  if(modo==='devolucao'){
+    pdfHeader(doc,'Lista de Devolução - Merchandise',_mstSub(f)+' · a devolver = stock teórico',true);
+    const marcas={};rows.filter(r=>r.stock>0).forEach(r=>{(marcas[r.marca||'Sem marca']=marcas[r.marca||'Sem marca']||[]).push(r);});
+    let y=38;const ks=Object.keys(marcas).sort();
+    ks.forEach(k=>{
+      const arr=marcas[k];y=_mstEspaco(doc,y,40);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);doc.text(k,12,y+3);
+      doc.autoTable(Object.assign({},_mstEst,{startY:y+5,head:[['Referência','Artigo','Entrou','Vendido','A devolver (teórico)','Contagem física','Conferido']],body:arr.map(r=>[r.ref,r.desc,String(r.entrou),String(r.vendido),String(r.stock),r.contada===null?'':String(r.contada),'']),
+        foot:[['','TOTAL',String(arr.reduce((s,r)=>s+r.entrou,0)),String(arr.reduce((s,r)=>s+r.vendido,0)),String(arr.reduce((s,r)=>s+r.stock,0)),'','']],footStyles:{fillColor:[245,240,220],textColor:[40,40,40],fontStyle:'bold'},theme:'grid',columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right',fontStyle:'bold'},5:{halign:'right'}}}));
+      y=doc.lastAutoTable.finalY+8;
+    });
+    if(!ks.length){doc.setFontSize(10);doc.text('Nada para devolver com estes filtros (nenhum artigo com stock).',12,y+4);}
+    y=_mstEspaco(doc,y+4,16);doc.setFontSize(9);doc.setTextColor(35,35,35);doc.text('Entregue por: ________________________   Recebido por: ________________________   Data: ____ / ____ / ________',12,y);
+    pdfFooter(doc,true);doc.save('SWC2026_Merchandise_Lista_Devolucao.pdf');toast('Lista de devolução gerada');return;
+  }
+  // auditoria completa (por defeito)
+  pdfHeader(doc,'Auditoria de Merchandise - Tinha, Vendi, Tenho',_mstSub(f),true);
+  const res=mstResumo(rows);
+  doc.autoTable(Object.assign({},_mstEst,{startY:38,head:[['Produto (tipo · cor)','Artigos','Entrou (tinha)','Vendido','Em stock','Valor vendido']],body:res.length?res.map(g=>[g.produto,String(g.artigos),String(g.entrou),String(g.vendido),String(g.stock),fmtPDF(g.valor)]):[['Sem artigos','','','','','']],
+    foot:[['TOTAL',String(T.artigos),String(T.entrou),String(T.vendido),String(T.stock),fmtPDF(T.valor)]],footStyles:{fillColor:[245,240,220],textColor:[40,40,40],fontStyle:'bold'},theme:'grid',columnStyles:{1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right',fontStyle:'bold'},5:{halign:'right'}}}));
+  let y=doc.lastAutoTable.finalY+10;
+  const marcas={};rows.forEach(r=>{(marcas[r.marca||'Sem marca']=marcas[r.marca||'Sem marca']||[]).push(r);});
+  Object.keys(marcas).sort().forEach(k=>{
+    const arr=marcas[k];y=_mstEspaco(doc,y,44);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(10,22,40);doc.text(k,12,y+3);
+    doc.autoTable(Object.assign({},_mstEst,{startY:y+5,head:[['Referência','Artigo','Preço','Entrou','Vendido','Em stock','Contagem','Diferença','Valor vendido','Última venda']],
+      body:arr.map(r=>[r.ref,r.desc,fmtPDF(r.preco),String(r.entrou),String(r.vendido),String(r.stock),r.contada===null?'':String(r.contada),r.diff===null?'':((r.diff>0?'+':'')+r.diff),fmtPDF(r.valor),r.ultima||'']),
+      foot:[['','TOTAL '+k,'',String(arr.reduce((s,r)=>s+r.entrou,0)),String(arr.reduce((s,r)=>s+r.vendido,0)),String(arr.reduce((s,r)=>s+r.stock,0)),'','',fmtPDF(arr.reduce((s,r)=>s+r.valor,0)),'']],footStyles:{fillColor:[245,240,220],textColor:[40,40,40],fontStyle:'bold'},theme:'striped',
+      columnStyles:{0:{cellWidth:38},1:{cellWidth:'auto'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right',fontStyle:'bold'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right'},9:{cellWidth:22}}}));
+    y=doc.lastAutoTable.finalY+9;
+  });
+  if(calc.anomalias.length){
+    y=_mstEspaco(doc,y,30);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(150,60,40);doc.text('Anomalias encontradas',12,y+3);
+    doc.autoTable(Object.assign({},_mstEst,{startY:y+5,head:[['Nível','Assunto','Quantas','O que significa']],body:calc.anomalias.map(a=>[a.nivel.toUpperCase(),a.titulo+(a.valor?(' ('+fmtPDF(a.valor)+')'):''),String(a.n),a.det]),theme:'grid',columnStyles:{0:{cellWidth:20},1:{cellWidth:70},2:{cellWidth:18,halign:'right'},3:{cellWidth:'auto'}}}));
+  }
+  pdfFooter(doc,true);doc.save('SWC2026_Merchandise_Auditoria.pdf');toast('PDF de auditoria gerado');
+}
+window.abrirAuditoriaStock=abrirAuditoriaStock;window.mstRender=mstRender;window.mstDif=mstDif;window.mstGuardarContagens=mstGuardarContagens;window.mstLimparFiltros=mstLimparFiltros;window.mstCSV=mstCSV;window.mstPDF=mstPDF;
 
 //  EXPOR FUNCÕES AO HTML
 window.doLogin=doLogin;

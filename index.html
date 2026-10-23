@@ -14319,10 +14319,10 @@ function exportConsigPDF(){
 // Fonte única: cs_artigos (entrou), cs_vendas (vendas normais, linhas de folha do dia, totais de folha) e cs_marcas.
 // Stock teórico = quantidade que entrou − quantidades vendidas. A contagem física guarda-se no próprio artigo (qtyContada).
 // ===================================================================================================
-const MST_G=[['hoodie|sweat','Hoodies'],['t-?shirt|tshirt|camisola','T-shirts'],['\\bbone|\\bcap\\b','Bonés'],['\\bima-|iman','Ímanes'],['caneta','Canetas'],['abre-?latas|abrelatas','Abre-latas'],['bola','Bolas']];
+const MST_G=[['hoodie|sweat','Hoodies'],['t-?shirt|tshirt|camisola','T-shirts'],['\\bbone|\\bcap\\b(?! for)','Bonés'],['\\bima-|iman','Ímanes'],['caneta','Canetas'],['abre-?latas|abrelatas','Abre-latas'],['bola','Bolas']];
 function _mstN(s){return String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
 function _mstE(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function mstGrupo(a){const t=_mstN((a.ref||'')+' '+(a.desc||''));for(const g of MST_G){if(new RegExp(g[0]).test(t))return g[1];}return 'Outros';}
+function mstGrupo(a){if(/sortid/.test(_mstN(a.marcaNome||'')))return 'Bolas sortidas';const t=_mstN((a.ref||'')+' '+(a.desc||''));for(const g of MST_G){if(new RegExp(g[0]).test(t))return g[1];}return 'Outros';}
 function mstCor(a){
   const t=_mstN((a.ref||'')+' '+(a.desc||'')),m=t.match(/\b(azul|branc[ao]|verde|bege|pret[ao]|vermelh[ao]|cinz[ao]|amarel[ao]|laranja|rosa|sortid[ao]s?|rugosa)\b/);
   if(!m)return '';const c=m[1];if(/^branc/.test(c))return 'Branca';if(/^pret/.test(c))return 'Preta';if(/^vermelh/.test(c))return 'Vermelha';if(/^cinz/.test(c))return 'Cinzenta';if(/^amarel/.test(c))return 'Amarela';if(/^sortid/.test(c))return 'Sortidas';
